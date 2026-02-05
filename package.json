@@ -1,0 +1,28 @@
+{
+  "name": "venice-agent-affiliate",
+  "version": "0.1.0",
+  "description": "Agent-first affiliate platform for Venice.AI",
+  "private": true,
+  "workspaces": [
+    "platform",
+    "agent",
+    "shared",
+    "dashboard"
+  ],
+  "scripts": {
+    "dev:platform": "npm run dev --workspace=platform",
+    "dev:agent": "npm run dev --workspace=agent",
+    "dev:dashboard": "npm run dev --workspace=dashboard",
+    "build": "npm run build --workspaces",
+    "start:platform": "npm run start --workspace=platform",
+    "start:agent": "npm run start --workspace=agent"
+  },
+  "keywords": [
+    "venice",
+    "ai",
+    "affiliate",
+    "agents"
+  ],
+  "author": "Ashe",
+  "license": "MIT"
+}
