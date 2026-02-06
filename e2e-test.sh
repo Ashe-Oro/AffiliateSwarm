@@ -175,7 +175,21 @@ echo ""
 bold "Step 19: Root endpoint shows platform info"
 RESPONSE=$(curl -s "$BASE_URL/")
 check "Root shows platform name" "$RESPONSE" "Regata"
-check "Root shows auth requirement" "$RESPONSE" "Bearer token"
+check "Root shows auth requirement" "$RESPONSE" "Bearer YOUR_API_KEY"
+echo ""
+
+# ─── Step 20: Agent opts out (DELETE /api/me) ─────────────────────
+bold "Step 20: Agent opts out (DELETE /api/me)"
+RESPONSE=$(curl -s -X DELETE "$BASE_URL/api/me" -H "$AUTH_HEADER")
+check "Account deletion succeeds" "$RESPONSE" '"success":true'
+check "Deletion confirms affiliate ID" "$RESPONSE" "$AFFILIATE_ID"
+check "Deletion reports activity logs deleted" "$RESPONSE" '"activityLogs":'
+echo ""
+
+# ─── Step 21: Verify agent can no longer authenticate ─────────────
+bold "Step 21: Verify deleted agent can no longer authenticate"
+RESPONSE=$(curl -s "$BASE_URL/api/me" -H "$AUTH_HEADER")
+check "Deleted agent gets 401" "$RESPONSE" '"error":"Invalid API key"'
 echo ""
 
 # ─── Summary ─────────────────────────────────────────────────────

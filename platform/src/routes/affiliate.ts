@@ -10,6 +10,7 @@ import {
   getRecentActivity,
   getAffiliateEarnings,
   getReferralFunnel,
+  deleteAffiliate,
 } from '../db';
 import { requireAuth } from '../middleware/auth';
 import type {
@@ -94,6 +95,43 @@ router.get('/me', requireAuth, (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: 'Failed to get profile',
+    });
+  }
+});
+
+// DELETE /api/me — permanently remove account and all data
+router.delete('/me', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
+
+  try {
+    const { deleted, counts } = deleteAffiliate(affiliate.id);
+
+    if (deleted) {
+      console.log(`[Delete] Agent removed: ${affiliate.name} (${affiliate.id}) — ${JSON.stringify(counts)}`);
+      res.json({
+        success: true,
+        message: 'Your account and all associated data have been permanently deleted.',
+        deleted: {
+          affiliateId: affiliate.id,
+          activityLogs: counts.activity_logs,
+          referrals: counts.referrals,
+          earnings: counts.earnings,
+          payouts: counts.payouts,
+        },
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        error: 'Account not found',
+        hint: 'Your account may have already been deleted.',
+      });
+    }
+  } catch (error) {
+    console.error('[Delete] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete account',
+      hint: 'Try again. If the problem persists, contact support.',
     });
   }
 });

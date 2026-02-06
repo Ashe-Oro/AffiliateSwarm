@@ -408,3 +408,54 @@ export function getPayouts(affiliateId: string, limit = 50): Payout[] {
   `);
   return stmt.all(affiliateId, limit) as Payout[];
 }
+
+// ─── Account deletion ────────────────────────────────────────────
+
+export function deleteAffiliate(affiliateId: string): { deleted: boolean; counts: Record<string, number> } {
+  const db = getDatabase();
+
+  // Count records before deletion for transparency
+  const counts: Record<string, number> = {};
+
+  const countStmts = {
+    activity_logs: db.prepare('SELECT COUNT(*) as count FROM activity_logs WHERE affiliate_id = ?'),
+    referrals: db.prepare('SELECT COUNT(*) as count FROM referrals WHERE affiliate_id = ?'),
+    earnings: db.prepare('SELECT COUNT(*) as count FROM earnings WHERE affiliate_id = ?'),
+    payouts: db.prepare('SELECT COUNT(*) as count FROM payouts WHERE affiliate_id = ?'),
+  };
+
+  for (const [table, stmt] of Object.entries(countStmts)) {
+    counts[table] = (stmt.get(affiliateId) as { count: number }).count;
+  }
+
+  // Delete all related data in a transaction
+  // Order matters due to foreign key constraints
+  const deleteAll = db.transaction(() => {
+    // 1. Remove activity logs (no FK dependencies)
+    db.prepare('DELETE FROM activity_logs WHERE affiliate_id = ?').run(affiliateId);
+
+    // 2. Remove earnings (references referrals, must go before referrals)
+    db.prepare('DELETE FROM earnings WHERE affiliate_id = ?').run(affiliateId);
+
+    // 3. NULL out venice_users.referral_id for any users referred by this affiliate
+    //    (venice_users references referrals, but we keep the user account)
+    db.prepare(`
+      UPDATE venice_users SET referral_id = NULL
+      WHERE referral_id IN (SELECT id FROM referrals WHERE affiliate_id = ?)
+    `).run(affiliateId);
+
+    // 4. Remove payouts (references affiliates)
+    db.prepare('DELETE FROM payouts WHERE affiliate_id = ?').run(affiliateId);
+
+    // 5. Remove referrals (now safe, no FK refs remaining)
+    db.prepare('DELETE FROM referrals WHERE affiliate_id = ?').run(affiliateId);
+
+    // 6. Finally, remove the affiliate record
+    const result = db.prepare('DELETE FROM affiliates WHERE id = ?').run(affiliateId);
+    return result.changes > 0;
+  });
+
+  const deleted = deleteAll();
+
+  return { deleted, counts };
+}
