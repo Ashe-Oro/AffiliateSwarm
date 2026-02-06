@@ -17,9 +17,23 @@ export function initializeDatabase(): Database.Database {
       name TEXT NOT NULL,
       description TEXT,
       registered_at TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'active'
+      status TEXT NOT NULL DEFAULT 'pending',
+      approval_token TEXT,
+      approved_at TEXT
     )
   `);
+
+  // Add approval_token column if it doesn't exist (migration for existing DBs)
+  try {
+    db.exec(`ALTER TABLE affiliates ADD COLUMN approval_token TEXT`);
+  } catch {
+    // Column already exists, ignore
+  }
+  try {
+    db.exec(`ALTER TABLE affiliates ADD COLUMN approved_at TEXT`);
+  } catch {
+    // Column already exists, ignore
+  }
 
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_affiliates_api_key

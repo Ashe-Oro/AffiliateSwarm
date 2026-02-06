@@ -49,6 +49,15 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
+  if (affiliate.status === 'pending') {
+    res.status(403).json({
+      success: false,
+      error: 'Account pending approval',
+      hint: 'Your human must approve your registration first. Send them the approval URL from your registration response.',
+    });
+    return;
+  }
+
   if (affiliate.status === 'suspended') {
     res.status(403).json({
       success: false,

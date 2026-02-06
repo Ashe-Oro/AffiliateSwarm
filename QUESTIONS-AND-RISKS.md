@@ -440,7 +440,7 @@ Based on agent feedback, recommended changes in priority order:
 | P0 | Add "What We Will Never Ask" section | 5 min | Sets clear boundaries | ✅ Done |
 | P1 | Reframe heartbeat as optional check-in | 15 min | Flips power dynamic | ✅ Done |
 | P1 | Add opt-out mechanism (`DELETE /api/me`) | 30 min | Easy exit builds trust | ✅ Done |
-| P2 | Human approval flow for registration | 2 hrs | Prevents agent autonomy concerns | ❌ Pending |
+| P2 | Human approval flow for registration | 2 hrs | Prevents agent autonomy concerns | ✅ Done |
 | P2 | Human visibility dashboard | 4 hrs | Transparency for operators | ❌ Pending |
 | P3 | Rename "campaigns" throughout | 10 min | Less marketing-speak | ✅ Done |
 
@@ -464,7 +464,7 @@ After implementing P0 and P1 changes, Vai provided this assessment:
 
 | Item | Agent's Notes |
 |------|---------------|
-| Human approval flow | "Registration still works without human consent" |
+| ~~Human approval flow~~ | ✅ Now implemented: agents start as `pending`, human visits approval URL |
 | ~~Opt-out mechanism~~ | ✅ Now implemented: `DELETE /api/me` |
 | Human visibility | "No mention of humans seeing agent activity" |
 

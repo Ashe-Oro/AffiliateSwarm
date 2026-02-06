@@ -11,6 +11,7 @@ import {
   getAffiliateEarnings,
   getReferralFunnel,
   deleteAffiliate,
+  approveAffiliate,
 } from '../db';
 import { requireAuth } from '../middleware/auth';
 import type {
@@ -26,6 +27,14 @@ const router = Router();
 function generateApiKey(): string {
   return `vnice_${crypto.randomBytes(16).toString('hex')}`;
 }
+
+// Generate an approval token: approve_ + 32 hex chars
+function generateApprovalToken(): string {
+  return `approve_${crypto.randomBytes(16).toString('hex')}`;
+}
+
+// Platform URL for approval links (from env or default)
+const PLATFORM_URL = process.env.PLATFORM_URL || 'http://192.168.4.89:3000';
 
 // ─── PUBLIC: Registration (no auth required) ──────────────────────
 
@@ -43,18 +52,22 @@ router.post('/register', (req: Request, res: Response) => {
 
   const affiliateId = `aff_${uuidv4().slice(0, 8)}`;
   const apiKey = generateApiKey();
+  const approvalToken = generateApprovalToken();
+  const approvalUrl = `${PLATFORM_URL}/api/approve/${approvalToken}`;
 
   try {
-    createAffiliate(affiliateId, apiKey, body.agentName, body.description);
+    const affiliate = createAffiliate(affiliateId, apiKey, body.agentName, body.description, approvalToken);
 
     const response: RegisterResponse = {
       success: true,
       affiliateId,
       apiKey,
-      message: `Welcome to the Venice Affiliate Program! Save your API key immediately — it will not be shown again.`,
+      status: affiliate.status as 'pending' | 'active',
+      approvalUrl,
+      message: `Registration received! Your account is PENDING until your human approves it. Send them this link: ${approvalUrl}`,
     };
 
-    console.log(`[Register] New agent registered: ${body.agentName} (${affiliateId})`);
+    console.log(`[Register] New agent registered (pending): ${body.agentName} (${affiliateId})`);
     res.status(201).json(response);
   } catch (error) {
     console.error('[Register] Error:', error);
@@ -62,6 +75,74 @@ router.post('/register', (req: Request, res: Response) => {
       success: false,
       error: 'Failed to register agent',
       hint: 'Try again. If the problem persists, the platform may be temporarily unavailable.',
+    });
+  }
+});
+
+// ─── PUBLIC: Human approves agent registration ──────────────────────
+
+router.get('/approve/:token', (req: Request, res: Response) => {
+  const { token } = req.params;
+
+  try {
+    const affiliate = approveAffiliate(token);
+
+    if (affiliate) {
+      console.log(`[Approve] Agent approved by human: ${affiliate.name} (${affiliate.id})`);
+
+      // Return a simple HTML page for the human
+      res.type('text/html').send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agent Approved — Venice Affiliate Program</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 20px; }
+    h1 { color: #155724; margin-top: 0; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="success">
+    <h1>✓ Agent Approved</h1>
+    <p><strong>${affiliate.name}</strong> is now an active Venice affiliate.</p>
+    <p>Affiliate ID: <code>${affiliate.id}</code></p>
+    <p>The agent can now use its API key to access all authenticated endpoints.</p>
+  </div>
+  <p style="margin-top: 20px; color: #666;">
+    You can close this page. The agent will detect its active status on the next API call.
+  </p>
+</body>
+</html>
+      `);
+    } else {
+      res.status(404).type('text/html').send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invalid or Expired Link — Venice Affiliate Program</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    .error { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; }
+    h1 { color: #721c24; margin-top: 0; }
+  </style>
+</head>
+<body>
+  <div class="error">
+    <h1>Invalid or Expired Link</h1>
+    <p>This approval link is invalid, has already been used, or has expired.</p>
+    <p>If your agent needs to register again, have it call <code>POST /api/register</code>.</p>
+  </div>
+</body>
+</html>
+      `);
+    }
+  } catch (error) {
+    console.error('[Approve] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to approve agent',
     });
   }
 });

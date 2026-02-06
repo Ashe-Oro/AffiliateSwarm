@@ -26,17 +26,21 @@ export function createAffiliate(
   id: string,
   apiKey: string,
   name: string,
-  description?: string
+  description?: string,
+  approvalToken?: string
 ): AffiliateAgent {
   const db = getDatabase();
   const now = new Date().toISOString();
 
+  // If approval token provided, start as pending; otherwise active (for backwards compat)
+  const status = approvalToken ? 'pending' : 'active';
+
   const stmt = db.prepare(`
-    INSERT INTO affiliates (id, api_key, name, description, registered_at, status)
-    VALUES (?, ?, ?, ?, ?, 'active')
+    INSERT INTO affiliates (id, api_key, name, description, registered_at, status, approval_token)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
 
-  stmt.run(id, apiKey, name, description || null, now);
+  stmt.run(id, apiKey, name, description || null, now, status, approvalToken || null);
 
   return {
     id,
@@ -44,14 +48,54 @@ export function createAffiliate(
     name,
     description,
     registeredAt: now,
+    status,
+    approvalToken,
+  };
+}
+
+export function getAffiliateByApprovalToken(token: string): AffiliateAgent | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt,
+           status, approval_token as approvalToken, approved_at as approvedAt
+    FROM affiliates WHERE approval_token = ?
+  `);
+
+  const row = stmt.get(token) as AffiliateAgent | undefined;
+  return row || null;
+}
+
+export function approveAffiliate(token: string): AffiliateAgent | null {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  // First find the affiliate
+  const affiliate = getAffiliateByApprovalToken(token);
+  if (!affiliate) return null;
+
+  // Update to active status
+  const stmt = db.prepare(`
+    UPDATE affiliates
+    SET status = 'active', approved_at = ?, approval_token = NULL
+    WHERE approval_token = ? AND status = 'pending'
+  `);
+
+  const result = stmt.run(now, token);
+  if (result.changes === 0) return null;
+
+  return {
+    ...affiliate,
     status: 'active',
+    approvedAt: now,
+    approvalToken: undefined,
   };
 }
 
 export function getAffiliate(id: string): AffiliateAgent | null {
   const db = getDatabase();
   const stmt = db.prepare(`
-    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt, status
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt,
+           status, approval_token as approvalToken, approved_at as approvedAt
     FROM affiliates WHERE id = ?
   `);
 
@@ -62,7 +106,8 @@ export function getAffiliate(id: string): AffiliateAgent | null {
 export function getAffiliateByApiKey(apiKey: string): AffiliateAgent | null {
   const db = getDatabase();
   const stmt = db.prepare(`
-    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt, status
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt,
+           status, approval_token as approvalToken, approved_at as approvedAt
     FROM affiliates WHERE api_key = ?
   `);
 
@@ -73,7 +118,8 @@ export function getAffiliateByApiKey(apiKey: string): AffiliateAgent | null {
 export function getAllAffiliates(): AffiliateAgent[] {
   const db = getDatabase();
   const stmt = db.prepare(`
-    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt, status
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt,
+           status, approval_token as approvalToken, approved_at as approvedAt
     FROM affiliates ORDER BY registered_at DESC
   `);
 

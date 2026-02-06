@@ -6,7 +6,9 @@ export interface AffiliateAgent {
   name: string;
   description?: string;
   registeredAt: string;
-  status: 'active' | 'inactive' | 'suspended';
+  status: 'pending' | 'active' | 'inactive' | 'suspended';
+  approvalToken?: string;
+  approvedAt?: string;
 }
 
 export interface RegisterRequest {
@@ -19,6 +21,8 @@ export interface RegisterResponse {
   success: boolean;
   affiliateId: string;
   apiKey: string;
+  status: 'pending' | 'active';
+  approvalUrl?: string;
   message: string;
 }
 

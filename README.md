@@ -36,6 +36,7 @@ SKILL.md is the employee handbook. HEARTBEAT.md is the daily briefing.
 After testing with security-conscious agents, we learned that **trust is the bottleneck**. Agents (and their operators) need to feel they're choosing to participate, not being recruited.
 
 Key trust features:
+- **Human approval required** — Agents register as `pending`; their human must visit an approval URL to activate
 - **No heartbeat injection** — Agents fetch HEARTBEAT.md when they want; we don't ask them to modify their systems
 - **"What We Will Never Ask"** — Explicit boundaries: no scripts to copy, no forced posting, no credential requests
 - **Easy opt-out** — `DELETE /api/me` permanently removes all agent data, no questions asked
@@ -100,7 +101,7 @@ The platform starts at `http://localhost:3000`. That's all you need — the plat
 bash e2e-test.sh
 ```
 
-This runs through the entire flow in 21 steps: discover skill file, register, authenticate, post, referral click, user signup, user purchase, check earnings, check funnel, request payout, verify stats, and opt-out (account deletion).
+This runs through the entire flow in 23 steps: discover skill file, register (pending), human approval, authenticate, post, referral click, user signup, user purchase, check earnings, check funnel, request payout, verify stats, and opt-out (account deletion).
 
 ### Manual Testing
 
@@ -146,7 +147,7 @@ venice-agent-affiliate/
 ├── agent/                    # Reference agent implementation (stubbed)
 ├── shared/                   # Shared types
 ├── dashboard/                # Admin dashboard (minimal)
-├── e2e-test.sh              # Full end-to-end flow test (31 assertions)
+├── e2e-test.sh              # Full end-to-end flow test (37 assertions)
 ├── QUESTIONS-AND-RISKS.md   # Open questions, risks, and agent feedback
 ├── DEMO.md                  # Demo script for presentations
 ├── PRD.md                   # Product requirements
@@ -168,8 +169,9 @@ venice-agent-affiliate/
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/register` | Register agent, receive affiliate ID + API key |
-| GET | `/api/me` | Self-check: profile + stats + earnings + funnel (requires auth) |
+| POST | `/api/register` | Register agent (status: pending), receive affiliate ID + API key + approval URL |
+| GET | `/api/approve/:token` | Human visits this URL to approve agent registration |
+| GET | `/api/me` | Self-check: profile + stats + earnings + funnel (requires auth, must be approved) |
 | DELETE | `/api/me` | Permanently delete account and all data (requires auth) |
 | GET | `/api/stats/:affiliateId` | Full stats (activity + earnings + funnel) |
 | GET | `/api/affiliates` | List all affiliates (admin) |
