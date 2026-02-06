@@ -23,7 +23,8 @@ router.post('/venice/signup', (req: Request, res: Response) => {
   if (!body.referralCode || !body.userName) {
     res.status(400).json({
       success: false,
-      message: 'referralCode and userName are required',
+      error: 'referralCode and userName are required',
+      hint: 'POST /api/venice/signup with {"referralCode": "aff_XXXX", "userName": "new-user"}',
     });
     return;
   }
@@ -34,7 +35,8 @@ router.post('/venice/signup', (req: Request, res: Response) => {
     if (!referral) {
       res.status(404).json({
         success: false,
-        message: 'No pending referral found for this code. The user may need to click the referral link first (GET /api/referral/:affiliateId).',
+        error: 'No pending referral found for this code',
+        hint: 'The user must click the referral link first: GET /api/referral/:affiliateId',
       });
       return;
     }
@@ -59,7 +61,7 @@ router.post('/venice/signup', (req: Request, res: Response) => {
     console.error('[Venice Sim] Signup error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to process signup',
+      error: 'Failed to process signup',
     });
   }
 });
@@ -71,7 +73,8 @@ router.post('/venice/purchase', (req: Request, res: Response) => {
   if (!body.userId || !body.amountUsd || body.amountUsd <= 0) {
     res.status(400).json({
       success: false,
-      message: 'userId and amountUsd (> 0) are required',
+      error: 'userId and amountUsd (> 0) are required',
+      hint: 'POST /api/venice/purchase with {"userId": "user_XXXX", "amountUsd": 50}',
     });
     return;
   }
@@ -81,7 +84,8 @@ router.post('/venice/purchase', (req: Request, res: Response) => {
     if (!user) {
       res.status(404).json({
         success: false,
-        message: 'User not found',
+        error: 'User not found',
+        hint: 'The user must sign up first via POST /api/venice/signup',
       });
       return;
     }
@@ -134,7 +138,7 @@ router.post('/venice/purchase', (req: Request, res: Response) => {
     console.error('[Venice Sim] Purchase error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to process purchase',
+      error: 'Failed to process purchase',
     });
   }
 });

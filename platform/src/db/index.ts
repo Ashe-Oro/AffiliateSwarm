@@ -24,6 +24,7 @@ export function getDatabase(): Database {
 // Affiliate operations
 export function createAffiliate(
   id: string,
+  apiKey: string,
   name: string,
   description?: string
 ): AffiliateAgent {
@@ -31,14 +32,15 @@ export function createAffiliate(
   const now = new Date().toISOString();
 
   const stmt = db.prepare(`
-    INSERT INTO affiliates (id, name, description, registered_at, status)
-    VALUES (?, ?, ?, ?, 'active')
+    INSERT INTO affiliates (id, api_key, name, description, registered_at, status)
+    VALUES (?, ?, ?, ?, ?, 'active')
   `);
 
-  stmt.run(id, name, description || null, now);
+  stmt.run(id, apiKey, name, description || null, now);
 
   return {
     id,
+    apiKey,
     name,
     description,
     registeredAt: now,
@@ -49,7 +51,7 @@ export function createAffiliate(
 export function getAffiliate(id: string): AffiliateAgent | null {
   const db = getDatabase();
   const stmt = db.prepare(`
-    SELECT id, name, description, registered_at as registeredAt, status
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt, status
     FROM affiliates WHERE id = ?
   `);
 
@@ -57,10 +59,21 @@ export function getAffiliate(id: string): AffiliateAgent | null {
   return row || null;
 }
 
+export function getAffiliateByApiKey(apiKey: string): AffiliateAgent | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt, status
+    FROM affiliates WHERE api_key = ?
+  `);
+
+  const row = stmt.get(apiKey) as AffiliateAgent | undefined;
+  return row || null;
+}
+
 export function getAllAffiliates(): AffiliateAgent[] {
   const db = getDatabase();
   const stmt = db.prepare(`
-    SELECT id, name, description, registered_at as registeredAt, status
+    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt, status
     FROM affiliates ORDER BY registered_at DESC
   `);
 

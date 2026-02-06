@@ -5,10 +5,11 @@ import {
   getAffiliateReferrals,
   getReferralFunnel,
 } from '../db';
+import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
-// Simulate a referral link click (GET /api/referral/:affiliateId)
+// GET /api/referral/:affiliateId — track a referral click (PUBLIC — no auth)
 // This is what happens when a user visits venice.ai/?ref=aff_XXXX
 router.get('/referral/:affiliateId', (req: Request, res: Response) => {
   const { affiliateId } = req.params;
@@ -17,7 +18,8 @@ router.get('/referral/:affiliateId', (req: Request, res: Response) => {
   if (!affiliate) {
     res.status(404).json({
       success: false,
-      message: 'Invalid referral code',
+      error: 'Invalid referral code',
+      hint: 'The affiliate ID in the referral link is not valid.',
     });
     return;
   }
@@ -44,21 +46,22 @@ router.get('/referral/:affiliateId', (req: Request, res: Response) => {
     console.error('[Referral] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to track referral',
+      error: 'Failed to track referral',
     });
   }
 });
 
-// Get all referrals for an affiliate
-router.get('/referrals/:affiliateId', (req: Request, res: Response) => {
+// GET /api/referrals/:affiliateId — list referrals (authenticated, own account only)
+router.get('/referrals/:affiliateId', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
   const { affiliateId } = req.params;
   const limit = parseInt(req.query.limit as string) || 50;
 
-  const affiliate = getAffiliate(affiliateId);
-  if (!affiliate) {
-    res.status(404).json({
+  if (affiliate.id !== affiliateId) {
+    res.status(403).json({
       success: false,
-      message: 'Affiliate not found',
+      error: 'You can only view your own referrals',
+      hint: `Use your own affiliate ID: ${affiliate.id}`,
     });
     return;
   }
@@ -74,20 +77,21 @@ router.get('/referrals/:affiliateId', (req: Request, res: Response) => {
     console.error('[Referrals] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get referrals',
+      error: 'Failed to get referrals',
     });
   }
 });
 
-// Get referral funnel stats for an affiliate
-router.get('/referrals/:affiliateId/funnel', (req: Request, res: Response) => {
+// GET /api/referrals/:affiliateId/funnel — funnel stats (authenticated, own account only)
+router.get('/referrals/:affiliateId/funnel', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
   const { affiliateId } = req.params;
 
-  const affiliate = getAffiliate(affiliateId);
-  if (!affiliate) {
-    res.status(404).json({
+  if (affiliate.id !== affiliateId) {
+    res.status(403).json({
       success: false,
-      message: 'Affiliate not found',
+      error: 'You can only view your own referral funnel',
+      hint: `Use your own affiliate ID: ${affiliate.id}`,
     });
     return;
   }
@@ -102,7 +106,7 @@ router.get('/referrals/:affiliateId/funnel', (req: Request, res: Response) => {
     console.error('[Referral Funnel] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get referral funnel',
+      error: 'Failed to get referral funnel',
     });
   }
 });

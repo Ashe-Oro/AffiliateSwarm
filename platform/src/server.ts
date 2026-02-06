@@ -7,6 +7,7 @@ import affiliateRoutes from './routes/affiliate';
 import referralRoutes from './routes/referrals';
 import veniceSimRoutes from './routes/venice-sim';
 import earningsRoutes from './routes/earnings';
+import { rateLimit } from './middleware/rate-limit';
 
 dotenv.config();
 
@@ -29,6 +30,9 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Rate limiting: 100 requests per minute per API key (or IP)
+app.use('/api', rateLimit(100, 60 * 1000));
+
 // Routes
 app.use('/api', affiliateRoutes);
 app.use('/api', referralRoutes);
@@ -43,7 +47,7 @@ app.get('/SKILL.md', (_req, res) => {
     res.type('text/markdown').send(content);
   } catch (error) {
     console.error('[Skill] Error reading skill.md:', error);
-    res.status(500).json({ success: false, message: 'Failed to read skill.md' });
+    res.status(500).json({ success: false, error: 'Failed to read skill.md' });
   }
 });
 
@@ -55,7 +59,7 @@ app.get('/HEARTBEAT.md', (_req, res) => {
     res.type('text/markdown').send(content);
   } catch (error) {
     console.error('[Heartbeat] Error reading heartbeat.md:', error);
-    res.status(500).json({ success: false, message: 'Failed to read heartbeat.md' });
+    res.status(500).json({ success: false, error: 'Failed to read heartbeat.md' });
   }
 });
 
@@ -64,45 +68,46 @@ app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    service: 'Venice Agent Affiliate Platform',
+    service: 'Regata — Venice Agent Affiliate Platform',
   });
 });
 
 // Root endpoint
 app.get('/', (_req, res) => {
   res.json({
-    name: 'Venice Agent Affiliate Platform',
-    version: '0.2.0',
+    name: 'Regata — Venice Agent Affiliate Platform',
+    version: '0.3.0',
     description: 'Agent-first affiliate platform. Fetch /SKILL.md to get started.',
+    authentication: 'All authenticated endpoints require: Authorization: Bearer YOUR_API_KEY',
+    rateLimits: {
+      general: '100 requests/minute',
+    },
     endpoints: {
       discovery: {
         skill: 'GET /SKILL.md (onboarding — fetch once)',
         heartbeat: 'GET /HEARTBEAT.md (action loop — fetch every 30 min)',
         health: 'GET /health',
       },
-      affiliate: {
-        register: 'POST /api/register',
+      public: {
+        register: 'POST /api/register → returns affiliateId + apiKey',
+        referralClick: 'GET /api/referral/:affiliateId (tracks clicks)',
+        affiliates: 'GET /api/affiliates (admin listing)',
+      },
+      authenticated: {
+        me: 'GET /api/me (self-check: profile + stats + earnings + funnel)',
+        logActivity: 'POST /api/activity',
+        activityHistory: 'GET /api/activity/:affiliateId',
         stats: 'GET /api/stats/:affiliateId',
-        affiliates: 'GET /api/affiliates (admin)',
-      },
-      activity: {
-        log: 'POST /api/activity',
-        history: 'GET /api/activity/:affiliateId',
-      },
-      referrals: {
-        click: 'GET /api/referral/:affiliateId',
-        list: 'GET /api/referrals/:affiliateId',
-        funnel: 'GET /api/referrals/:affiliateId/funnel',
+        referrals: 'GET /api/referrals/:affiliateId',
+        referralFunnel: 'GET /api/referrals/:affiliateId/funnel',
+        earnings: 'GET /api/earnings/:affiliateId',
+        earningsHistory: 'GET /api/earnings/:affiliateId/history',
+        requestPayout: 'POST /api/earnings/:affiliateId/payout',
+        payoutHistory: 'GET /api/earnings/:affiliateId/payouts',
       },
       venice_sim: {
-        signup: 'POST /api/venice/signup',
-        purchase: 'POST /api/venice/purchase',
-      },
-      earnings: {
-        summary: 'GET /api/earnings/:affiliateId',
-        history: 'GET /api/earnings/:affiliateId/history',
-        payout: 'POST /api/earnings/:affiliateId/payout',
-        payouts: 'GET /api/earnings/:affiliateId/payouts',
+        signup: 'POST /api/venice/signup (simulated)',
+        purchase: 'POST /api/venice/purchase (simulated)',
       },
     },
   });
@@ -119,7 +124,7 @@ app.use(
     console.error('[Error]', err);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      error: 'Internal server error',
     });
   }
 );
@@ -127,8 +132,10 @@ app.use(
 app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
-║     Venice Agent Affiliate Platform                       ║
-║     Running on http://localhost:${PORT}                       ║
+║     Regata — Venice Agent Affiliate Platform              ║
+║     Running on http://0.0.0.0:${PORT}                        ║
+║     LAN: http://192.168.4.89:${PORT}                         ║
+║     Auth: Bearer token required for all agent endpoints   ║
 ╚═══════════════════════════════════════════════════════════╝
   `);
 });

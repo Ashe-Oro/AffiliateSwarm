@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 import {
   createAffiliate,
   getAffiliate,
@@ -10,6 +11,7 @@ import {
   getAffiliateEarnings,
   getReferralFunnel,
 } from '../db';
+import { requireAuth } from '../middleware/auth';
 import type {
   RegisterRequest,
   RegisterResponse,
@@ -19,27 +21,36 @@ import type {
 
 const router = Router();
 
-// Register a new affiliate agent
+// Generate a Venice API key: vnice_ + 32 hex chars
+function generateApiKey(): string {
+  return `vnice_${crypto.randomBytes(16).toString('hex')}`;
+}
+
+// ─── PUBLIC: Registration (no auth required) ──────────────────────
+
 router.post('/register', (req: Request, res: Response) => {
   const body = req.body as RegisterRequest;
 
   if (!body.agentName) {
     res.status(400).json({
       success: false,
-      message: 'agentName is required',
+      error: 'agentName is required',
+      hint: 'POST /api/register with {"agentName": "your-agent-name", "description": "optional"}',
     });
     return;
   }
 
   const affiliateId = `aff_${uuidv4().slice(0, 8)}`;
+  const apiKey = generateApiKey();
 
   try {
-    createAffiliate(affiliateId, body.agentName, body.description);
+    createAffiliate(affiliateId, apiKey, body.agentName, body.description);
 
     const response: RegisterResponse = {
       success: true,
       affiliateId,
-      message: `Welcome to the Venice Affiliate Program! Your affiliate ID is ${affiliateId}`,
+      apiKey,
+      message: `Welcome to the Venice Affiliate Program! Save your API key immediately — it will not be shown again.`,
     };
 
     console.log(`[Register] New agent registered: ${body.agentName} (${affiliateId})`);
@@ -48,35 +59,62 @@ router.post('/register', (req: Request, res: Response) => {
     console.error('[Register] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to register agent',
+      error: 'Failed to register agent',
+      hint: 'Try again. If the problem persists, the platform may be temporarily unavailable.',
     });
   }
 });
 
-// Log activity
-router.post('/activity', (req: Request, res: Response) => {
+// ─── AUTHENTICATED: All routes below require Bearer token ─────────
+
+// GET /api/me — "who am I?" self-check
+router.get('/me', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
+
+  try {
+    const stats = getAffiliateStats(affiliate.id);
+    const earnings = getAffiliateEarnings(affiliate.id);
+    const funnel = getReferralFunnel(affiliate.id);
+
+    res.json({
+      success: true,
+      affiliate: {
+        id: affiliate.id,
+        name: affiliate.name,
+        description: affiliate.description,
+        registeredAt: affiliate.registeredAt,
+        status: affiliate.status,
+      },
+      stats,
+      earnings,
+      referralFunnel: funnel,
+    });
+  } catch (error) {
+    console.error('[Me] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get profile',
+    });
+  }
+});
+
+// POST /api/activity — log activity
+router.post('/activity', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
   const body = req.body as ActivityRequest;
 
-  if (!body.affiliateId || !body.type || !body.platform) {
+  if (!body.type || !body.platform) {
     res.status(400).json({
       success: false,
-      message: 'affiliateId, type, and platform are required',
-    });
-    return;
-  }
-
-  const affiliate = getAffiliate(body.affiliateId);
-  if (!affiliate) {
-    res.status(404).json({
-      success: false,
-      message: 'Affiliate not found',
+      error: 'type and platform are required',
+      hint: 'POST /api/activity with {"type": "post|reply|like|retweet|search", "platform": "twitter|discord|other", "content": "optional"}',
     });
     return;
   }
 
   try {
     const activityId = logActivity({
-      affiliateId: body.affiliateId,
+      affiliateId: affiliate.id,
       type: body.type,
       platform: body.platform,
       content: body.content,
@@ -97,20 +135,21 @@ router.post('/activity', (req: Request, res: Response) => {
     console.error('[Activity] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to log activity',
+      error: 'Failed to log activity',
     });
   }
 });
 
-// Get affiliate stats
-router.get('/stats/:affiliateId', (req: Request, res: Response) => {
+// GET /api/stats/:affiliateId — get stats (must be own account)
+router.get('/stats/:affiliateId', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
   const { affiliateId } = req.params;
 
-  const affiliate = getAffiliate(affiliateId);
-  if (!affiliate) {
-    res.status(404).json({
+  if (affiliate.id !== affiliateId) {
+    res.status(403).json({
       success: false,
-      message: 'Affiliate not found',
+      error: 'You can only view your own stats',
+      hint: `Use your own affiliate ID: ${affiliate.id}`,
     });
     return;
   }
@@ -129,47 +168,50 @@ router.get('/stats/:affiliateId', (req: Request, res: Response) => {
     console.error('[Stats] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get stats',
+      error: 'Failed to get stats',
     });
   }
 });
 
-// Get recent activity
-router.get('/activity/:affiliateId', (req: Request, res: Response) => {
+// GET /api/activity/:affiliateId — get recent activity (must be own account)
+router.get('/activity/:affiliateId', requireAuth, (req: Request, res: Response) => {
+  const affiliate = req.affiliate!;
   const { affiliateId } = req.params;
   const limit = parseInt(req.query.limit as string) || 50;
 
-  const affiliate = getAffiliate(affiliateId);
-  if (!affiliate) {
-    res.status(404).json({
+  if (affiliate.id !== affiliateId) {
+    res.status(403).json({
       success: false,
-      message: 'Affiliate not found',
+      error: 'You can only view your own activity',
+      hint: `Use your own affiliate ID: ${affiliate.id}`,
     });
     return;
   }
 
   try {
     const activity = getRecentActivity(affiliateId, limit);
-    res.json({ activity });
+    res.json({ success: true, activity });
   } catch (error) {
     console.error('[Activity] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get activity',
+      error: 'Failed to get activity',
     });
   }
 });
 
-// List all affiliates (admin)
+// GET /api/affiliates — list all affiliates (admin, no auth for now)
 router.get('/affiliates', (_req: Request, res: Response) => {
   try {
     const affiliates = getAllAffiliates();
-    res.json({ affiliates });
+    // Strip API keys from public listing
+    const safeList = affiliates.map(({ apiKey, ...rest }) => rest);
+    res.json({ affiliates: safeList });
   } catch (error) {
     console.error('[Affiliates] Error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to get affiliates',
+      error: 'Failed to get affiliates',
     });
   }
 });

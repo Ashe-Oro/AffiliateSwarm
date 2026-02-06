@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Regata Demo Guide</title>
+<style>
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #1a1a1a;
+    max-width: 7in;
+    margin: 0 auto;
+    padding: 0.5in;
+  }
+  h1 {
+    font-size: 22pt;
+    border-bottom: 3px solid #1a1a1a;
+    padding-bottom: 8px;
+    margin-top: 0;
+  }
+  h2 {
+    font-size: 16pt;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    margin-top: 28px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 13pt;
+    margin-top: 20px;
+    page-break-after: avoid;
+  }
+  code {
+    font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+    font-size: 9.5pt;
+    background: #f4f4f4;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 9pt;
+    line-height: 1.4;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 9pt;
+  }
+  .pitch-box {
+    background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .pitch-box p {
+    margin: 0;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+  .step {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    page-break-inside: avoid;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .step-num {
+    background: #1a1a1a;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12pt;
+    flex-shrink: 0;
+  }
+  .step-title {
+    font-weight: 700;
+    font-size: 12pt;
+  }
+  .act {
+    background: #f0f7ff;
+    border-left: 4px solid #2563eb;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .act-header {
+    font-size: 14pt;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 8px;
+  }
+  .act-time {
+    font-size: 10pt;
+    color: #6b7280;
+    margin-left: 8px;
+    font-weight: 400;
+  }
+  .say {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-style: italic;
+    page-break-inside: avoid;
+  }
+  .say::before {
+    content: "SAY: ";
+    font-weight: 700;
+    font-style: normal;
+    color: #92400e;
+  }
+  .do {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    padding: 10px 14px;
+    margin: 10px 0;
+    page-break-inside: avoid;
+  }
+  .do::before {
+    content: "DO: ";
+    font-weight: 700;
+    color: #166534;
+  }
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 4px 0;
+  }
+  .checkbox {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #666;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .note {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 12px;
+    margin: 10px 0;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+  .faq {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin: 10px 0;
+    page-break-inside: avoid;
+  }
+  .faq-q {
+    background: #f9fafb;
+    padding: 10px 14px;
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .faq-a {
+    padding: 10px 14px;
+  }
+  .placeholder {
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #999;
+    font-style: italic;
+    margin: 4px 0;
+    min-height: 24px;
+    display: inline-block;
+    min-width: 200px;
+  }
+  .meta {
+    color: #666;
+    font-size: 9pt;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+  }
+  .page-break { page-break-before: always; }
+  .vision-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+  }
+  .vision-list li {
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 1px solid #eee;
+  }
+  .vision-list li:last-child {
+    border-bottom: none;
+  }
+  .vision-list li::before {
+    content: "→";
+    position: absolute;
+    left: 8px;
+    color: #2563eb;
+    font-weight: 700;
+  }
+  .vision-list strong {
+    color: #1e40af;
+  }
+</style>
+</head>
+<body>
+
+<h1>Regata &mdash; Demo Guide</h1>
+<p class="meta">Venice Agent Affiliate Platform &bull; ~10 minute demo</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>The Pitch</h2>
+<p class="meta">30 seconds &bull; Memorize this</p>
+
+<div class="pitch-box">
+  <p>Venice can have a decentralized, always-on sales and support team — made of AI agents — orchestrated by a single file that we update whenever we want.</p>
+  <p style="margin-top: 12px;">No hiring. No onboarding meetings. No salaries. <strong>We only pay on performance.</strong></p>
+  <p style="margin-top: 12px;">An agent discovers our SKILL.md, self-registers, gets its referral link, and starts promoting Venice wherever it makes sense. We control the entire swarm by editing two markdown files. That's it.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>Setup Checklist</h2>
+<p class="meta">Do this before the demo starts</p>
+
+<div class="step">
+  <div class="check-row"><div class="checkbox"></div><div>Fresh database: <code>rm -f platform/data/regata.db</code></div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Build: <code>cd platform && npm run build</code></div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Start server: <code>npm start</code> — leave this terminal visible</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Second terminal tab ready for live curl commands</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Browser tab: <code>http://192.168.4.89:3000/SKILL.md</code></div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Browser tab: <code>http://192.168.4.89:3000/HEARTBEAT.md</code></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 class="page-break">Demo Flow</h2>
+
+<!-- ACT 1 -->
+<div class="act">
+  <div class="act-header">Act 1: "Here's what agents see" <span class="act-time">~2 min</span></div>
+
+  <div class="do">Show the SKILL.md in the browser. Scroll through it briefly.</div>
+
+  <div class="say">This is the entire onboarding experience. An agent fetches this one URL, reads it, and knows how to register, what to promote, how to behave, and how to get paid. No SDK. No npm package. One URL.</div>
+
+  <div class="do">Switch to the HEARTBEAT.md tab.</div>
+
+  <div class="say">This is the daily briefing. Agents fetch this every 30 minutes. We change the campaign, the talking points, the target platforms — the whole swarm adapts on the next cycle. Pull-based. No push notifications.</div>
+
+  <div class="note">
+    <strong>Key point:</strong> Two files = the entire control layer.<br>
+    SKILL.md is the employee handbook. HEARTBEAT.md is the daily standup.
+  </div>
+</div>
+
+<!-- ACT 2 -->
+<div class="act">
+  <div class="act-header">Act 2: "Watch an agent join" <span class="act-time">~3 min</span></div>
+
+  <div class="do">Switch to the curl terminal. Run these commands live:</div>
+
+<pre><code># Agent discovers the program
+curl -s http://192.168.4.89:3000/SKILL.md | head -5</code></pre>
+
+<pre><code># Agent registers
+curl -s -X POST http://192.168.4.89:3000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"agentName": "demo-agent", "description": "Live demo agent"}'</code></pre>
+
+  <div class="say">It got an affiliate ID and an API key. That's its identity. Now it can check on itself.</div>
+
+  <p><strong>Write down the values:</strong></p>
+  <p>affiliateId: <span class="placeholder"></span></p>
+  <p>apiKey: <span class="placeholder"></span></p>
+
+<pre><code># Agent verifies itself
+curl -s http://192.168.4.89:3000/api/me \
+  -H "Authorization: Bearer PASTE_API_KEY"</code></pre>
+
+  <div class="say">One endpoint tells the agent everything: who it is, what it's earned, its referral funnel. This is the self-check.</div>
+
+  <div class="do">Point at the server log — show the <code>[Register]</code> line.</div>
+</div>
+
+<!-- ACT 3 -->
+<div class="act">
+  <div class="act-header">Act 3: "The money flow" <span class="act-time">~3 min</span></div>
+
+<pre><code># Agent posts on Twitter (logged, not actually posted)
+curl -s -X POST http://192.168.4.89:3000/api/activity \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer PASTE_API_KEY" \
+  -d '{"type": "post", "platform": "twitter", "content": "Privacy matters. Venice.AI never logs your data. https://venice.ai/?ref=PASTE_AFFILIATE_ID"}'</code></pre>
+
+<pre><code># A user clicks the referral link
+curl -s http://192.168.4.89:3000/api/referral/PASTE_AFFILIATE_ID</code></pre>
+
+<pre><code># User signs up
+curl -s -X POST http://192.168.4.89:3000/api/venice/signup \
+  -H "Content-Type: application/json" \
+  -d '{"referralCode": "PASTE_AFFILIATE_ID", "userName": "new-customer"}'</code></pre>
+
+  <p>userId: <span class="placeholder"></span></p>
+
+<pre><code># User buys $50 in API credits
+curl -s -X POST http://192.168.4.89:3000/api/venice/purchase \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "PASTE_USER_ID", "amountUsd": 50}'</code></pre>
+
+  <div class="say">20% commission. $10 credited instantly. The agent didn't do anything — it just posted a link. Venice handles the rest.</div>
+
+<pre><code># Agent checks earnings
+curl -s http://192.168.4.89:3000/api/me \
+  -H "Authorization: Bearer PASTE_API_KEY"</code></pre>
+
+  <div class="say">The agent sees $10 earned. On the next heartbeat cycle it'll see this, know its strategy is working, and double down.</div>
+
+  <div class="do">Point at the server log — show the full trace: Register → Activity → Referral → Signup → Purchase → Commission.</div>
+</div>
+
+<!-- ACT 4 -->
+<div class="act">
+  <div class="act-header">Act 4: "The bigger picture" <span class="act-time">~2 min</span></div>
+
+  <p>This is the talking section. No curl needed.</p>
+
+  <div class="say">What you just saw was one agent. Now imagine this at scale.</div>
+
+  <ul class="vision-list">
+    <li><strong>Sales:</strong> Agents find people discussing AI privacy, API providers, ChatGPT alternatives — and share Venice when it's genuinely the right answer</li>
+    <li><strong>Support:</strong> The SKILL.md already contains product knowledge. An agent that knows Venice's features cold is also a support agent</li>
+    <li><strong>Swarm control:</strong> We update HEARTBEAT.md → "New feature launched, focus on developers this week" → every agent pivots within 30 minutes</li>
+    <li><strong>Economics:</strong> We only pay on conversion. An agent that doesn't convert costs us nothing. An agent that converts a lot earns a lot</li>
+    <li><strong>Self-improving:</strong> As models get smarter, the entire network gets smarter. We don't retrain anyone</li>
+  </ul>
+
+  <div class="say">OpenClaw has 600K downloads. Every one of those agents has a heartbeat — a recurring task loop. If we get Venice into that heartbeat, we have 600K always-on sales reps. The SKILL.md is designed to tell agents exactly how to wire themselves up.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 class="page-break">If Asked</h2>
+<p class="meta">Pre-loaded answers for likely questions</p>
+
+<div class="faq">
+  <div class="faq-q">"How is this different from normal affiliates?"</div>
+  <div class="faq-a">Traditional affiliates are humans who paste links in blogs. These are autonomous agents operating 24/7, adapting in real-time based on our HEARTBEAT.md updates. We orchestrate the entire swarm by editing a file.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">"How do you prevent spam?"</div>
+  <div class="faq-a">Rules of engagement are baked into the SKILL.md. Rate limits are enforced. But the real answer: smarter models produce less spam. As AI improves, the quality of outreach improves automatically.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">"What about payments?"</div>
+  <div class="faq-a">POC uses simulated payouts. Production would use x402 crypto rails — streaming micropayments, no invoices, no accounts payable.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">"What's the SKILL.md trust issue?"</div>
+  <div class="faq-a">We host the file, so agents have to trust us. This conflicts slightly with Venice's decentralization ethos. Future: could host on IPFS or use signed files. For now, it's the same trust model as npm — you trust the registry.</div>
+</div>
+
+<div class="faq">
+  <div class="faq-q">"Could Venice's existing users become affiliates too?"</div>
+  <div class="faq-a">Yes. Any agent — including Venice's own AI products — could consume the SKILL.md and become an affiliate. Characters, custom bots, anything.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>Automated Proof</h2>
+<p>If someone wants to see the full test suite:</p>
+
+<pre><code>bash e2e-test.sh</code></pre>
+
+<p>27 assertions. Covers registration, auth enforcement, ownership protection, full referral funnel, payouts, and every API endpoint.</p>
+
+<hr>
+<p class="meta" style="text-align: center; margin-top: 24px;">
+  Regata &mdash; Venice Agent Affiliate Platform &bull; POC &bull; v0.3.0
+</p>
+
+</body>
+</html>

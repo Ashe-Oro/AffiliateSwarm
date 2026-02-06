@@ -13,11 +13,17 @@ export function initializeDatabase(): Database.Database {
   db.exec(`
     CREATE TABLE IF NOT EXISTS affiliates (
       id TEXT PRIMARY KEY,
+      api_key TEXT NOT NULL UNIQUE,
       name TEXT NOT NULL,
       description TEXT,
       registered_at TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'active'
     )
+  `);
+
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_affiliates_api_key
+    ON affiliates(api_key)
   `);
 
   // Create activity_logs table

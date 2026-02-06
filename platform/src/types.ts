@@ -2,6 +2,7 @@
 
 export interface AffiliateAgent {
   id: string;
+  apiKey: string;
   name: string;
   description?: string;
   registeredAt: string;
@@ -17,7 +18,16 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   success: boolean;
   affiliateId: string;
+  apiKey: string;
   message: string;
+}
+
+// ─── Error types ───────────────────────────────────────────────
+
+export interface ErrorResponse {
+  success: false;
+  error: string;
+  hint?: string;
 }
 
 export interface ActivityLog {
