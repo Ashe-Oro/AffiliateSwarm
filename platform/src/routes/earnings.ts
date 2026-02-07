@@ -116,7 +116,7 @@ router.post('/earnings/:affiliateId/payout', requireAuth, (req: Request, res: Re
       amountUsd: body.amountUsd,
       walletAddress: body.walletAddress || null,
       status: 'requested',
-      message: `Payout of $${body.amountUsd.toFixed(2)} requested. (In production, this would be processed via x402 crypto rails.)`,
+      message: `Payout of $${body.amountUsd.toFixed(2)} requested. (In production, this would be paid out in USDC to your crypto wallet.)`,
     });
   } catch (error) {
     console.error('[Payout] Error:', error);

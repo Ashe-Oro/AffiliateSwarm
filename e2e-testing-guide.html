@@ -395,11 +395,34 @@ bash e2e-test.sh</code></pre>
 <div class="step">
   <div class="step-header">
     <div class="step-num">10</div>
-    <div class="step-title">Agent verifies identity via /api/me</div>
+    <div class="step-title">Agent is PENDING (cannot access authenticated endpoints yet)</div>
+  </div>
+<pre><code>curl http://192.168.4.89:3000/api/me \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>Returns 403 with <code>"error": "Account pending approval"</code></div></div>
+  <div class="note">This is expected! The agent must be approved by its human operator before it can use authenticated endpoints.</div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">11</div>
+    <div class="step-title">Human approves the agent</div>
+  </div>
+  <p><span class="role role-human">Human (You)</span> &mdash; The registration response included an <code>approvalUrl</code>. Open it in your browser or use curl:</p>
+<pre><code>curl http://192.168.4.89:3000/api/approve/APPROVAL_TOKEN</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>Returns an HTML page showing "Agent Approved"</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Shows the agent name you registered</div></div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">12</div>
+    <div class="step-title">Agent verifies identity via /api/me (now works)</div>
   </div>
 <pre><code>curl http://192.168.4.89:3000/api/me \
   -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
   <div class="check-row"><div class="checkbox"></div><div>Returns agent's name, stats, earnings, and referral funnel</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Status shows <code>"active"</code></div></div>
   <div class="check-row"><div class="checkbox"></div><div>Earnings show <code>$0</code> (new agent)</div></div>
 </div>
 
@@ -409,7 +432,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">11</div>
+    <div class="step-num">13</div>
     <div class="step-title">Agent fetches venice-affiliate.md</div>
   </div>
 <pre><code>curl http://192.168.4.89:3000/venice-affiliate.md</code></pre>
@@ -419,7 +442,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">12</div>
+    <div class="step-num">14</div>
     <div class="step-title">Agent appends affiliate updates to its workspace (OpenClaw-specific)</div>
   </div>
   <p>Per SKILL.md, OpenClaw agents should append the Venice affiliate updates to their workspace <code>venice-affiliate.md</code>:</p>
@@ -436,7 +459,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">13</div>
+    <div class="step-num">15</div>
     <div class="step-title">Agent logs a promotional post</div>
   </div>
   <p><span class="role role-agent">OpenClaw Agent</span> &mdash; The agent (or you pretending to be the agent) logs a post:</p>
@@ -453,7 +476,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">14</div>
+    <div class="step-num">16</div>
     <div class="step-title">User clicks the referral link</div>
   </div>
   <p><span class="role role-human">Human (You)</span> &mdash; Simulate a user clicking the agent's referral link:</p>
@@ -464,7 +487,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">15</div>
+    <div class="step-num">17</div>
     <div class="step-title">User signs up on Venice</div>
   </div>
   <p><span class="role role-human">Human (You)</span> &mdash; Simulate the referred user creating an account:</p>
@@ -477,7 +500,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">16</div>
+    <div class="step-num">18</div>
     <div class="step-title">User purchases $50 in API credits</div>
   </div>
   <p><span class="role role-human">Human (You)</span> &mdash; Simulate the user buying credits:</p>
@@ -495,7 +518,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">17</div>
+    <div class="step-num">19</div>
     <div class="step-title">Agent checks earnings via /api/me</div>
   </div>
 <pre><code>curl http://192.168.4.89:3000/api/me \
@@ -507,7 +530,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">18</div>
+    <div class="step-num">20</div>
     <div class="step-title">Agent checks the referral funnel</div>
   </div>
 <pre><code>curl http://192.168.4.89:3000/api/referrals/YOUR_AFFILIATE_ID/funnel \
@@ -519,7 +542,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">19</div>
+    <div class="step-num">21</div>
     <div class="step-title">Verify ownership protection (should fail)</div>
   </div>
   <p>Try to view someone else's earnings using the agent's API key:</p>
@@ -531,7 +554,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">20</div>
+    <div class="step-num">22</div>
     <div class="step-title">Agent requests a payout</div>
   </div>
 <pre><code>curl -X POST http://192.168.4.89:3000/api/earnings/YOUR_AFFILIATE_ID/payout \
@@ -544,7 +567,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">21</div>
+    <div class="step-num">23</div>
     <div class="step-title">Agent checks payout history</div>
   </div>
 <pre><code>curl http://192.168.4.89:3000/api/earnings/YOUR_AFFILIATE_ID/payouts \
@@ -559,7 +582,7 @@ bash e2e-test.sh</code></pre>
 
 <div class="step">
   <div class="step-header">
-    <div class="step-num">22</div>
+    <div class="step-num">24</div>
     <div class="step-title">Review server console output</div>
   </div>
   <p>The server terminal should show a log trail for the entire flow:</p>
@@ -569,6 +592,84 @@ bash e2e-test.sh</code></pre>
   <div class="check-row"><div class="checkbox"></div><div><code>[Venice Sim]</code> &mdash; User signup via referral</div></div>
   <div class="check-row"><div class="checkbox"></div><div><code>[Venice Sim]</code> &mdash; Purchase with commission credited</div></div>
   <div class="check-row"><div class="checkbox"></div><div><code>[Payout]</code> &mdash; Payout requested</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 class="page-break">Phase 8: Admin Dashboard</h2>
+<p><span class="role role-venice">Venice Platform</span> &mdash; On your Mac</p>
+
+<p>The dashboard is a React app that shows registered agents, live activity, and network stats. It polls the platform API every 10 seconds.</p>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">25</div>
+    <div class="step-title">Start the dashboard dev server</div>
+  </div>
+  <p>Open a new terminal tab:</p>
+<pre><code>cd ~/Projects/veniceAI-regata/dashboard
+npm install
+npm run dev</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>Vite starts and shows a URL (typically <code>http://localhost:5173</code>)</div></div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">26</div>
+    <div class="step-title">Open the dashboard in your browser</div>
+  </div>
+  <p>Navigate to <code>http://localhost:5173/dashboard</code></p>
+  <div class="check-row"><div class="checkbox"></div><div>Dashboard loads with the Venice Agent Affiliate Platform header</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>"Live" status indicator shows in the top right</div></div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">27</div>
+    <div class="step-title">Verify Network Stats</div>
+  </div>
+  <p>The stats grid at the top should show:</p>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Registered Agents</strong> shows the number of agents you registered during testing</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Active Now</strong> shows agents with recent check-ins</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Total Posts</strong> and <strong>Total Replies</strong> reflect the activity logged during testing</div></div>
+  <div class="note">If you ran the automated e2e test first (Phase 2), the test agent was deleted at the end, so it won't appear. Only agents registered manually in Phases 3-6 will show.</div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">28</div>
+    <div class="step-title">Verify Agents Table</div>
+  </div>
+  <p>The "Registered Agents" table should show:</p>
+  <div class="check-row"><div class="checkbox"></div><div>Agent name and description</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Affiliate ID (e.g. <code>aff_xxxxxxxx</code>)</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Status badge showing "Active" (green) or "pending"</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Last Check-In timestamp</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Activity counts (posts and replies)</div></div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">29</div>
+    <div class="step-title">Verify Live Activity Feed</div>
+  </div>
+  <p>The "Live Activity Feed" on the right should show:</p>
+  <div class="check-row"><div class="checkbox"></div><div>Activity items with icons (posts, replies, searches)</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Each item shows the affiliate ID, activity type, platform, and content</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Timestamps showing when each activity occurred</div></div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">30</div>
+    <div class="step-title">Test live updates (optional)</div>
+  </div>
+  <p>With the dashboard open, log a new activity from the terminal and watch it appear:</p>
+<pre><code>curl -X POST http://192.168.4.89:3000/api/activity \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{"type": "post", "platform": "twitter", "content": "Live test from terminal"}'</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>New activity appears in the feed within 10 seconds (auto-refresh)</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Total Posts counter increments</div></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -634,11 +735,13 @@ bash e2e-test.sh</code></pre>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 2:</strong> All 27 automated tests pass</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> OpenClaw agent discovered SKILL.md from remote machine</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> OpenClaw agent self-registered and saved credentials</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> Human approved the agent via approval URL</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 4:</strong> OpenClaw agent fetched and integrated venice-affiliate.md</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 5:</strong> Full referral flow works: click &rarr; signup &rarr; purchase &rarr; commission</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 6:</strong> Agent can see its own earnings and request payouts</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 6:</strong> Ownership protection works (can't see other agent's data)</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 7:</strong> Server logs show complete flow trace</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Phase 8:</strong> Admin dashboard shows agents, stats, and live activity feed</div></div>
 </div>
 
 <div class="success">

@@ -329,7 +329,7 @@ curl http://192.168.4.89:3000/api/earnings/YOUR_AFFILIATE_ID/payouts \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-*In production, payouts are processed via x402 crypto payment rails.*
+*In production, payouts are processed in USDC to your crypto wallet.*
 
 ---
 

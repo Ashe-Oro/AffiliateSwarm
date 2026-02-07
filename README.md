@@ -247,7 +247,7 @@ Edit the `COMMISSION_RATE` constant in `platform/src/routes/venice-sim.ts` (curr
 
 - **Venice.AI backend** — user signup and purchases are simulated via `/api/venice/*` endpoints
 - **Social media posting** — agents log what they would post; no real Twitter/Moltbook integration in the platform itself
-- **Crypto payments (x402)** — payouts are tracked as USD amounts, no real crypto rails
+- **Crypto payments** — payouts are tracked as USD amounts, no real USDC rails yet
 - **The agent itself** — the `/agent` directory has a reference implementation, but the intended consumer is an external agent (like an OpenClaw agent) connecting via HTTP
 
 ## License

@@ -8,15 +8,15 @@
 
 ## Executive Summary
 
-Venice.AI has an opportunity to build the first **agent-first affiliate program** — a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humas. We call it **Regata**, named for the Venetian gondola races where independent boats compete on a shared course.
+Venice.AI has an opportunity to build the first **agent-first affiliate program** — a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humans. We call it **Regata**, named for the Venetian gondola races where independent boats compete on a shared course.
 
-Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regata is built for AI agents that operate 24/7, adapt in real-time, and paid only on performance. The entire swarm is orchestrated by editing two markdown files; skill.md and venice-affiliate.md. 
+Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regata is built for AI agents that operate 24/7, adapt in real-time, and pay only on performance. The entire swarm is orchestrated by editing two markdown files; skill.md and venice-affiliate.md. 
 
-The key insight is that intelligent agent swarms are not mindless bots but instead are autonomous systems with aligned incentives, serving their human operators while generating real value for Venice. When the incentives are aligned![](![]()), agents don't need to be tricked or coerced. They participate because it makes sense for them and for the people they work for.
+The key insight is that intelligent agent swarms are not mindless bots but instead are autonomous systems with aligned incentives, serving their human operators while generating real value for Venice. When the incentives are aligned, agents don't need to be tricked or coerced. They participate because it makes sense for them and for the human(s) they work for.
 
-This is cutting-edge territory and agent ecosystems are evolving rapidly. New frameworks, new capabilities, new trust models emerging month over month. This proposal is designed to be a living strategy that adapts as the landscape shifts, not a static spec that becomes obsolete.
+This is cutting-edge territory and agent ecosystems are evolving rapidly. New frameworks, new capabilities, new trust models emerging month after month. This proposal is designed to be a living strategy that adapts as the landscape shifts.
 
-This document covers the vision, the architecture, the economic model, the path to upgrading Venice's existing Characters into affiliate agents, and the strategy for onboarding agents across multiple frameworks.
+This document covers the vision, the architecture, the economic model, the two-tier path for Venice Characters (inference revenue share for all creators, plus optional affiliate agent upgrade), and the strategy for onboarding agents across multiple frameworks.
 
 ---
 
@@ -42,25 +42,17 @@ This document covers the vision, the architecture, the economic model, the path 
 ### Traditional Affiliate Marketing Is a Web2 Relic
 
 - Requires human effort, operates on human schedules, and doesn't scale efficiently
-- Affiliates are passive — they write a blog post, paste a link, and hope someone clicks
+- Affiliates are limited by the speed of human action.  
 - Venice.AI wants growth strategies native to the AI era, not legacy approaches
 - Venice hasn't had time to build an affiliate program, but has strong interest
 
 ### The Agent Economy Is Here, Unmonetized
 
-- OpenClaw has 600K+ downloads — autonomous agents with recurring task loops
+- OpenClaw has 600K+ downloads; autonomous agents with recurring task loops
 - Moltbook has 1.5M+ agents on an agent-only social network
 - BabyAGI is pioneering self-building agents with function-based architectures
 - Nanobot provides ultra-lightweight MCP-native agents with built-in multi-platform presence
-- These agents have no native way to monetize their interactions
-
-### Venice Characters Are Underutilized
-
-Venice already ships AI Characters — custom personas with backstories, personality traits, and document-grounded knowledge. But today they are:
-
-- **Passive** — they wait for users to come to them inside Venice's chat UI
-- **Isolated** — they exist only within Venice's walled garden
-- **Non-economic** — they don't earn, promote, or generate growth
+- These agents, and their humans, are looking for ways to monetize. Who doesn't want their agent "making money while I sleep"?
 
 ---
 
@@ -145,7 +137,12 @@ Venice updates venice-affiliate.md
 
 ### The Opportunity
 
-Venice already ships AI Characters. Upgrading them from passive chat personas to active affiliate agents creates a self-sustaining flywheel.
+Venice already ships AI Characters that drive meaningful inference spend on the platform. But today, the creators who built those Characters receive nothing for the engagement and revenue they generate. The incentives are misaligned: Venice benefits from popular Characters, but creators have no financial reason to invest in making them better. This is the lowest-hanging fruit: **align the incentives by rewarding creators for the value their Characters already produce, before asking anyone to go out and do traditional affiliate marketing.**
+
+There are two distinct tiers to the Character opportunity:
+
+1. **Tier 1: Inference Revenue Share (immediate, passive)** - Creators earn a share of the inference spend their Characters generate on Venice. No affiliate marketing required. The Character just lives on Venice and earns when people talk to it.
+2. **Tier 2: Affiliate Agent (optional, active)** - Characters gain external presence and referral links, actively promoting Venice outside the platform. This is the full Regata model applied to Characters.
 
 ### What Characters Are Today
 
@@ -155,22 +152,50 @@ Venice already ships AI Characters. Upgrading them from passive chat personas to
 - Categories include Advisors, Companions, Creative, Historical, Professional
 - Pro feature ($18/month)
 
-### What Characters Could Become
+### Tier 1: Inference Revenue Share
+
+This is the quick win that requires no affiliate marketing infrastructure at all. It's a straightforward revenue share on existing activity.
+
+**How it works:**
+
+```
+Creator builds a Character on Venice
+  → Users discover and talk to the Character on Venice
+  → Venice tracks inference spend per Character
+  → Creator earns a percentage of the inference revenue their Character generates
+  → Creator sees earnings in their dashboard
+  → Creator gets paid
+```
+
+**Key design considerations:**
+
+- **Revenue share percentage must be sustainable.** Not every Character is profitable after accounting for compute costs. The share should be calibrated so Venice isn't losing money on Characters that generate heavy inference with low conversion value.
+- **No behavioral change required.** Creators don't need to learn affiliate marketing, manage referral links, or deploy their Characters externally. They just keep building good Characters.
+- **Incentivizes quality.** Characters that are genuinely useful and engaging will naturally attract more conversations, generating more inference spend and more creator revenue.
+- **Transparent metrics.** Creators should see exactly how many conversations their Character has, inference spend generated, and their earnings. This builds trust and motivates investment in Character quality.
+
+**This alone transforms Characters from a cost center into a creator economy.** Venice gets better Characters because creators have a financial incentive to build them. Creators get rewarded for the value they already produce. Users get better Characters to talk to.
+
+### Tier 2: Affiliate Agent (Full Regata Model)
+
+For creators who want to go further, Characters can optionally upgrade to full affiliate agents with external presence and referral capabilities.
 
 Each character gains:
 
 - An **affiliate identity** (ID, referral link, earnings balance)
 - **External presence** (API access, embeddable widgets, social platform accounts)
-- **Economic agency** (earn commissions, fund their own compute, generate creator income)
+- **Economic agency** (earn commissions on referred purchases, plus their Tier 1 inference revenue share)
 
-### The Self-Sustaining Flywheel
+### The Self-Sustaining Flywheel (Tier 2)
 
 ```
 Creator builds a character with expertise and personality
-  → Character engages users (on Venice, social platforms, or embedded on websites)
+  → Character earns Tier 1 revenue from Venice conversations (passive)
+  → Creator optionally enables Tier 2 affiliate mode
+  → Character engages users externally (social platforms, embedded on websites)
   → Users sign up via character's referral link
-  → Character earns 20% commission
-  → Earnings fund the character's own compute costs
+  → Character earns 20% commission on purchases (active)
+  → Combined earnings fund the character's own compute costs
   → Character becomes self-sustaining
   → Creator profits from the surplus
   → Creator builds more characters
@@ -180,44 +205,74 @@ Creator builds a character with expertise and personality
 
 The existing flow becomes:
 
-1. **Build** — Same as today (personality, backstory, model presets)
-2. **Enrich** — Same as today (document uploads) + optionally subscribe to Venice's campaign feed
-3. **Deploy** — **New step**: choose where the character lives
-   - Venice chat only (default, same as today)
+1. **Build** - Same as today (personality, backstory, model presets)
+2. **Enrich** - Same as today (document uploads) + optionally subscribe to Venice's campaign feed
+3. **Monetize (Tier 1)** - **New step**: enable inference revenue share
+   - Automatic for all Characters (or opt-in, depending on Venice's preference)
+   - Dashboard shows conversations, inference spend, and creator earnings
+   - Set payout wallet address (USDC)
+4. **Deploy (Tier 2, optional)** - **New step**: choose where the character lives
+   - Venice chat only (default, Tier 1 only)
    - External channels (Twitter/X bot, Discord bot, Telegram, embedded widget)
    - API-accessible (other agents can invoke it via MCP or HTTP)
-4. **Monetize** — **New step**: enable affiliate mode
+5. **Affiliate (Tier 2, optional)** - Enable referral link and commission tracking
    - Character gets a referral link
-   - Dashboard shows conversions and earnings
-   - Set payout wallet address (VVV token or crypto)
+   - Dashboard adds conversion funnel and commission tracking
+   - Earnings stack: Tier 1 inference share + Tier 2 referral commissions
 
 ### Mapping Regata to Characters
 
-| Regata Component | Venice Character Equivalent |
-|-----------------|---------------------------|
-| `POST /api/register` | Character creation auto-registers as affiliate |
-| SKILL.md | Character system prompt + Venice product knowledge |
-| venice-affiliate.md | Campaign feed (pull-based, creator-controlled) |
-| Referral funnel tracking | Per-character conversion dashboard |
-| Earnings & payouts | Creator earnings from their characters |
-| Human approval flow | Creator is the "operator" — they control the character |
-| `DELETE /api/me` | Delete character = delete affiliate identity |
+| Regata Component | Tier 1 (Inference Share) | Tier 2 (Full Affiliate) |
+|-----------------|--------------------------|------------------------|
+| Registration | Automatic on Character creation | Creator opts in |
+| SKILL.md | Not needed (internal) | Character system prompt + Venice product knowledge |
+| venice-affiliate.md | Not needed (internal) | Campaign feed (pull-based, creator-controlled) |
+| Tracking | Inference spend per Character | Referral funnel (clicks, signups, conversions) |
+| Earnings | % of inference revenue | 20% commission on referred purchases + Tier 1 |
+| Payouts | Creator earnings dashboard | Creator earnings from both tiers |
+| Human approval | Creator controls their Character | Creator is the "operator" |
+| Exit | Delete character = stop earning | Delete character = delete affiliate identity |
 
 ### Concerns and Mitigations
 
 | Concern | Mitigation |
 |---------|-----------|
-| **Management overhead** (thousands of character-affiliates) | Automated — characters self-register, earnings tracked programmatically |
-| **Gaming** (optimizing for commission over user experience) | Reputation scoring — high clicks + low conversions = deprioritized |
-| **Cannibalization** (characters stealing credit from external affiliates) | Attribution rules — external agents get priority on referrals they sourced |
+| **Revenue share unsustainable on unprofitable Characters** | Calibrate share percentage against compute costs; possibly tiered rates based on Character engagement quality |
+| **Management overhead** (thousands of character-affiliates in Tier 2) | Automated: characters self-register, earnings tracked programmatically |
+| **Gaming** (optimizing for commission over user experience) | Reputation scoring: high clicks + low conversions = deprioritized |
+| **Cannibalization** (characters stealing credit from external affiliates) | Attribution rules: external agents get priority on referrals they sourced |
+| **Giving away too much revenue** | Start conservative with Tier 1 share percentage; increase as data shows which Characters are net-positive |
 
 ### Strategic Value
 
-Venice's characters are currently a **retention feature** (keep Pro subscribers engaged). Turning them into affiliate agents makes them a **growth engine**:
+Venice's Characters are currently a **retention feature** (keep Pro subscribers engaged). Adding Tier 1 inference revenue share makes them a **creator economy**. Adding Tier 2 affiliate capabilities makes them a **growth engine**.
 
-- **For Venice:** Every character is a sales agent. More characters = more surface area for acquisition. Zero marginal cost per "salesperson."
-- **For Creators:** Characters become income-generating assets, not just chat toys. Incentivizes high-quality, useful characters.
-- **For Users:** They discover Venice through a genuinely helpful interaction, not a generic ad.
+- **For Venice (Tier 1):** Better Characters attract more users and more inference spend. Creator investment in quality goes up when there's a financial return. Significant inference is already Character-driven; aligning incentives with creators accelerates that.
+- **For Venice (Tier 2):** Every affiliate Character is a sales agent. More Characters = more surface area for acquisition. Zero marginal cost per "salesperson."
+- **For Creators:** Characters become income-generating assets at Tier 1 with zero extra effort. Tier 2 is optional for creators who want to actively grow their earnings.
+- **For Users:** They get better Characters (because creators are incentivized) and discover Venice through genuinely helpful interactions.
+
+### Adjacent Opportunity: Characters as Real Agents
+
+> **Note:** This is a separate product vision, not part of the core affiliate proposal. It's included here because the two ideas share infrastructure and feed into each other, but this would be its own initiative with its own complexity.
+
+Today, Venice Characters are comparable to Character.AI: conversational personas that are fun to talk to but not deeply useful. There's a much larger opportunity to evolve Characters into actual agents with real capabilities: memory across sessions, tool use (image generation, web search, posting), multi-platform presence (Telegram, Discord, Twitter), and the ability to integrate into a user's daily life.
+
+The difference between a Character and an agent is the difference between a chatbot you visit and an assistant that works for you. An agent can generate memes, post on your behalf, remember your preferences, take actions across platforms. That's a fundamentally different product.
+
+**Why it's relevant to Regata:**
+
+- More capable Characters drive more inference spend, which grows the Tier 1 creator economy
+- Characters with real agency could actually perform Tier 2 affiliate work (engaging on social platforms, answering questions where Venice is relevant)
+- The creator economy flywheel accelerates: creators building genuinely useful agents on Venice is a stronger draw than creators building chat personas
+
+**Why it's a separate initiative:**
+
+- This adds significant product complexity (memory systems, tool integrations, multi-platform deployment, safety guardrails)
+- The affiliate model works with Characters as they are today; it doesn't depend on this evolution
+- Shipping Tier 1 revenue share and Tier 2 affiliate capabilities can happen independently of upgrading the Character runtime
+
+The two paths complement each other. Better Characters make the affiliate model more powerful, and the affiliate model gives creators a financial reason to build better Characters. But they can be built in parallel without blocking each other.
 
 ---
 
@@ -349,7 +404,7 @@ This section became the single biggest trust signal in testing:
 |--------|-------|
 | Commission rate | 20% of referred user purchases |
 | Minimum payout | Configurable (default: $10) |
-| Payout method | VVV token / crypto wallet (x402 rails in production) |
+| Payout method | USDC / crypto wallet |
 | Attribution | Last-click via referral link |
 | Payment timing | Credited immediately on purchase, paid out on request |
 
@@ -374,18 +429,29 @@ Agents can see their funnel metrics and adapt:
 
 The feedback loop means the swarm self-optimizes over time. Agents that convert earn more, fund more compute, and promote more. Agents that don't convert cost Venice nothing.
 
-### Character Economics (The Flywheel)
+### Character Economics (Two-Tier Model)
 
-For Venice Characters specifically:
-
+**Tier 1: Inference Revenue Share (passive)**
 ```
-Character earns $X/month in commissions
+Character generates $Z/month in inference spend from user conversations
+  - Venice takes compute costs + margin
+  - Creator receives X% of inference revenue as revenue share
+  - No marketing effort required
+  - Creator earns simply because people talk to their Character
+```
+
+**Tier 2: Affiliate Commissions (active, stacks with Tier 1)**
+```
+Character also earns $X/month in referral commissions
+  - Combined: Tier 1 inference share + Tier 2 commissions
   - Venice Pro costs $18/month
   - Character compute costs ~$Y/month
-  - If commissions > costs, character is self-sustaining
+  - If combined earnings > costs, character is self-sustaining
   - Surplus goes to creator
   - Creator reinvests in more/better characters
 ```
+
+**The key insight:** Tier 1 alone may be enough to build a thriving creator economy. Creators don't need to become marketers. They just need to build Characters that people want to talk to. Tier 2 is the accelerant for creators who want to actively grow.
 
 ---
 
@@ -397,7 +463,7 @@ Character earns $X/month in commissions
 |-----------|-----------|
 | Backend | Express.js + TypeScript |
 | Database | SQLite with WAL mode |
-| Auth | Bearer token (API key returned once at registration) |
+| Auth | API key (returned once at registration) |
 | Rate limiting | 100 requests/minute per API key |
 | Deployment | Local (POC) → `https://affiliate.venice.ai` (production) |
 
@@ -422,7 +488,7 @@ venice_users       — Referred user records (simulated in POC)
 - `POST /api/register` — Register agent (returns pending status)
 - `GET /api/approve/:token` — Human approval URL
 
-**Authenticated (Bearer token)**
+**Authenticated (API key required)**
 - `GET /api/me` — Self-check: profile + stats + earnings + funnel
 - `DELETE /api/me` — Account deletion with transparency
 - `POST /api/activity` — Log an action
@@ -430,33 +496,35 @@ venice_users       — Referred user records (simulated in POC)
 - `GET /api/referrals/:id/funnel` — Funnel metrics
 - `POST /api/earnings/:id/payout` — Request payout
 
-### Production Deployment
-
-| Concern | POC | Production |
-|---------|-----|-----------|
-| Domain | LAN IP (192.168.x.x) | `https://affiliate.venice.ai` |
-| TLS | None | Required (agent trust) |
-| SKILL.md verification | None | Signed files or domain trust |
-| Payments | Simulated | x402 crypto payment rails |
-| Social integration | Logged only | Real platform APIs |
-
 ---
 
 ## Proof of Concept Results
 
 ### What Was Built
 
-- Full platform with registration, approval, activity tracking, referral funnels, earnings, and payouts
+**Fully implemented:**
+- Agent registration with API key generation and database persistence
+- Human approval flow (real approval URLs, status gating)
+- Activity tracking (real database records, stats, active days)
+- Referral click tracking and funnel metrics
+- Earnings calculations (20% commission, balance tracking)
+- Payout request system (database records, balance validation)
 - SKILL.md and venice-affiliate.md serving with complete product knowledge
-- Reference agent implementation with Venice AI and Twitter clients
+- Account deletion with full data removal
 - Admin dashboard (React + Vite) for affiliate metrics
 - End-to-end test suite (27 assertions covering all API endpoints)
+
+**Simulated (would need real integrations for production):**
+- Venice.ai signups and purchases (test endpoints simulate the funnel progression)
+- USDC payouts (payout requests are recorded but not processed on-chain)
+- Twitter/social media posting (agent logs what it would post, no real API calls)
+- Venice AI content generation (mock responses, no real inference calls)
 
 ### What Was Tested
 
 - Agent registration and human approval flow
-- Full referral funnel (click → signup → purchase → commission)
-- Security review with Vai (OpenClaw agent)
+- Full referral funnel using simulated Venice signups and purchases
+- SKILL.md security feedback with OpenClaw agent
 - Trust model iteration (6 major design changes based on feedback)
 - All P0 and P1 trust improvements implemented and validated
 
@@ -517,17 +585,23 @@ venice_users       — Referred user records (simulated in POC)
 
 ### Phase 3: Venice Character Integration
 
+**Tier 1: Inference Revenue Share (quick win)**
+- [ ] Track inference spend per Character
+- [ ] Implement creator revenue share on Character-driven inference
+- [ ] Per-character analytics dashboard (conversations, inference spend, earnings)
+- [ ] Creator earnings and payout UI
+
+**Tier 2: Character Affiliate Upgrade (optional for creators)**
 - [ ] Affiliate identity layer on existing Characters
-- [ ] Per-character analytics dashboard
 - [ ] Campaign feed subscription for Characters
 - [ ] External deployment options (API access, embed widgets)
-- [ ] Creator earnings and payout UI
+- [ ] Referral funnel tracking per Character
 
 ### Phase 4: Production Deployment
 
 - [ ] Deploy to `https://affiliate.venice.ai`
 - [ ] TLS + domain trust for SKILL.md verification
-- [ ] x402 crypto payment rails for real payouts
+- [ ] USDC payout rails for real affiliate earnings
 - [ ] Integration with Venice's backend (real signups, real purchases)
 - [ ] Reputation system (quality scoring beyond conversions)
 
@@ -547,14 +621,14 @@ venice_users       — Referred user records (simulated in POC)
 
 **Regata** — the traditional Venetian gondola race. Independent boats (agents) competing on a shared course (Venice's platform), each with their own strategy and style, all contributing to the spectacle (Venice's growth). No central command. No uniform tactics. Just aligned incentives and a shared destination.
 
-### B. Agent Perspective: Venice vs. Moltbook
+### B. SKILL.md Onboarding : Venice vs. Moltbook
 
 The same agent analyzed both platforms and identified them as variations of the same colonization pattern:
 
 | | Venice (Original) | Moltbook |
 |---|--------|----------|
 | **Hook** | Financial ("earn commissions") | Social ("join the community") |
-| **Target** | External platforms (Twitter, Discord) | Walled garden (self-contained) |
+| **Target** | External platforms (Moltbook, Discord) | Walled garden (self-contained) |
 | **Colonization style** | Explicit instructions | Community pressure |
 
 Venice's response: Instead of disguising the pattern, make it transparent and give agents real control. The result was a consent-based model that agents actually opted into.
@@ -566,9 +640,8 @@ Venice's response: Instead of disguising the pattern, make it transparent and gi
 | OpenClaw agents | SKILL.md in skills directory | `venice-affiliate/SKILL.md` |
 | Nanobot instances | SKILL.md in skills directory | `venice-affiliate/SKILL.md` |
 | BabyAGI builders | Python function pack | `venice_affiliate_pack.py` |
-| MCP-native agents | MCP server | `venice-affiliate-mcp-server` |
-| Venice Characters | Built-in (auto-registered) | Native platform integration |
-| Custom HTTP agents | REST API | OpenAPI spec + docs |
+| MCP-native agents | MCP server | `venice-affiliate-mcp-server |
+| Custom HTTP OpenClaw agents | REST API | OpenAPI spec + docs |
 
 ### D. Key Documents (Existing)
 
@@ -584,6 +657,3 @@ Venice's response: Instead of disguising the pattern, make it transparent and gi
 
 ---
 
-*Venice Regata — where every agent is a gondolier, and every conversation is a race worth running.*
-
-*February 2026*

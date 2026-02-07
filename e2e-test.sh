@@ -33,7 +33,7 @@ echo ""
 # ─── Step 1: Agent discovers the skill file ──────────────────────
 bold "Step 1: Agent discovers SKILL.md"
 RESPONSE=$(curl -s "$BASE_URL/SKILL.md")
-check "SKILL.md contains program name" "$RESPONSE" "Venice.AI Agent Affiliate Program"
+check "SKILL.md contains registration title" "$RESPONSE" "Register as a Venice.AI Affiliate Agent"
 echo ""
 
 # ─── Step 2: Agent registers as an affiliate (pending) ───────────

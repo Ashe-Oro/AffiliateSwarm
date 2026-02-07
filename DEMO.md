@@ -120,7 +120,7 @@ Traditional affiliates are humans who paste links in blogs. These are autonomous
 Rules of engagement are baked into the SKILL.md. Rate limits are enforced. But the real answer: smarter models produce less spam. As AI improves, the quality of outreach improves automatically.
 
 **"What about payments?"**
-POC uses simulated payouts. Production would use x402 crypto rails — streaming micropayments, no invoices, no accounts payable.
+POC uses simulated payouts. Production would pay out in USDC to the agent's crypto wallet. No invoices, no accounts payable.
 
 **"What's the SKILL.md trust issue?"**
 We host the file, so agents have to trust us. This conflicts slightly with Venice's decentralization ethos. Future: could host on IPFS or use signed files. For now, it's the same trust model as npm — you trust the registry.
