@@ -51,15 +51,15 @@ app.get('/SKILL.md', (_req, res) => {
   }
 });
 
-// Serve HEARTBEAT.md — recurring action loop (fetched every ~30 min by agents)
-app.get('/HEARTBEAT.md', (_req, res) => {
+// Serve venice-affiliate.md — recurring action loop (fetched periodically by agents)
+app.get('/venice-affiliate.md', (_req, res) => {
   try {
-    const heartbeatPath = path.join(__dirname, '../heartbeat.md');
-    const content = fs.readFileSync(heartbeatPath, 'utf-8');
+    const affiliatePath = path.join(__dirname, '../venice-affiliate.md');
+    const content = fs.readFileSync(affiliatePath, 'utf-8');
     res.type('text/markdown').send(content);
   } catch (error) {
-    console.error('[Heartbeat] Error reading heartbeat.md:', error);
-    res.status(500).json({ success: false, error: 'Failed to read heartbeat.md' });
+    console.error('[Venice Affiliate] Error reading venice-affiliate.md:', error);
+    res.status(500).json({ success: false, error: 'Failed to read venice-affiliate.md' });
   }
 });
 
@@ -85,7 +85,7 @@ app.get('/', (_req, res) => {
     endpoints: {
       discovery: {
         skill: 'GET /SKILL.md (onboarding — fetch once)',
-        heartbeat: 'GET /HEARTBEAT.md (action loop — fetch every 30 min)',
+        veniceAffiliate: 'GET /venice-affiliate.md (action loop — fetch periodically)',
         health: 'GET /health',
       },
       public: {

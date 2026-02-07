@@ -3,7 +3,7 @@ export interface AffiliateAgent {
   name: string;
   description?: string;
   registeredAt: string;
-  lastHeartbeat?: string;
+  lastCheckIn?: string;
   status: 'active' | 'inactive' | 'suspended';
 }
 

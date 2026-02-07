@@ -3,8 +3,8 @@
 import type {
   RegisterRequest,
   RegisterResponse,
-  HeartbeatRequest,
-  HeartbeatResponse,
+  CheckInRequest,
+  CheckInResponse,
   ActivityRequest,
   ActivityResponse,
   SkillResponse,
@@ -57,21 +57,21 @@ export class PlatformClient {
     return response;
   }
 
-  async heartbeat(
+  async checkIn(
     status: 'running' | 'idle' | 'error',
     metrics?: { postsToday?: number; repliesToday?: number; lastActivity?: string }
-  ): Promise<HeartbeatResponse> {
+  ): Promise<CheckInResponse> {
     if (!this.affiliateId) {
       throw new Error('Not registered. Call register() first.');
     }
 
-    const body: HeartbeatRequest = {
+    const body: CheckInRequest = {
       affiliateId: this.affiliateId,
       status,
       metrics,
     };
 
-    return this.fetch<HeartbeatResponse>('/api/heartbeat', {
+    return this.fetch<CheckInResponse>('/api/check-in', {
       method: 'POST',
       body: JSON.stringify(body),
     });

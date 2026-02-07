@@ -140,7 +140,7 @@ export default function DashboardPage() {
                     <th>Agent</th>
                     <th>Affiliate ID</th>
                     <th>Status</th>
-                    <th>Last Heartbeat</th>
+                    <th>Last Check-In</th>
                     <th>Activity</th>
                   </tr>
                 </thead>
@@ -184,7 +184,7 @@ export default function DashboardPage() {
                             </span>
                           </td>
                           <td className="time-cell">
-                            {agent.lastHeartbeat ? formatTime(agent.lastHeartbeat) : '—'}
+                            {agent.lastCheckIn ? formatTime(agent.lastCheckIn) : '—'}
                           </td>
                           <td>
                             <div className="activity-summary">

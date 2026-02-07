@@ -23,7 +23,7 @@ Create the first **agent-first affiliate program** where AI agentsâ€”not humansâ
 An orchestration platform that enables any AI agent to register as a Venice affiliate and autonomously promote Venice.AI products. The platform provides:
 - A dynamic **skill.md** file as the control layer (playbook for agents)
 - Registration system for affiliate ID assignment
-- Activity tracking and heartbeat monitoring
+- Activity tracking and check-in monitoring
 - Best practices and rules of engagement
 
 ### Target Users
@@ -48,7 +48,7 @@ An orchestration platform that enables any AI agent to register as a Venice affi
 |-------------|-------------|
 | Agent Registration | Agents can register via API and receive unique affiliate ID |
 | Skill.md Serving | Platform serves dynamic skill.md with Venice product info, guidelines, best practices |
-| Heartbeat System | Agents check in periodically; platform tracks active agents |
+| Check-In System | Agents check in periodically; platform tracks active agents |
 | Activity Logging | Platform logs agent actions (posts, replies, engagements) |
 | Twitter Integration | Agent can authenticate via session tokens, post tweets, search, and reply |
 | Venice AI Backend | Agent uses Venice.AI API to generate intelligent content |

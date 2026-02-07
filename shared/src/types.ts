@@ -5,7 +5,7 @@ export interface AffiliateAgent {
   name: string;
   description?: string;
   registeredAt: string;
-  lastHeartbeat?: string;
+  lastCheckIn?: string;
   status: 'active' | 'inactive' | 'suspended';
 }
 
@@ -21,7 +21,7 @@ export interface RegisterResponse {
   message: string;
 }
 
-export interface HeartbeatRequest {
+export interface CheckInRequest {
   affiliateId: string;
   status: 'running' | 'idle' | 'error';
   metrics?: {
@@ -31,7 +31,7 @@ export interface HeartbeatRequest {
   };
 }
 
-export interface HeartbeatResponse {
+export interface CheckInResponse {
   success: boolean;
   message: string;
   skillVersion?: string;

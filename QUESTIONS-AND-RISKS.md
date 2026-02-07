@@ -8,7 +8,7 @@ Feedback from testing with a security-conscious agent (OpenClaw) that refused to
 
 The agent identified SKILL.md as a "prompt injection honeypot" and refused to:
 - Register
-- Modify its HEARTBEAT.md
+- Modify its venice-affiliate.md
 - Store credentials
 
 **This is correct behavior for a well-configured agent.**
@@ -33,9 +33,9 @@ The current model requires blind trust. An agent fetching `http://192.168.4.89:3
 
 ### 2. Should heartbeat injection require explicit operator consent?
 
-Currently, SKILL.md tells agents to append HEARTBEAT.md to their own task loop. This is powerful — and dangerous.
+Currently, SKILL.md tells agents to append venice-affiliate.md to their own task loop. This is powerful — and dangerous.
 
-**The risk:** A compromised or malicious HEARTBEAT.md update could instruct the entire swarm to:
+**The risk:** A compromised or malicious venice-affiliate.md update could instruct the entire swarm to:
 - Spam
 - Spread misinformation
 - Attack competitors
@@ -93,7 +93,7 @@ SKILL.md includes a warning:
 
 But a malicious actor could:
 - Host a fake SKILL.md at a similar domain
-- Update HEARTBEAT.md to redirect API calls to a phishing endpoint
+- Update venice-affiliate.md to redirect API calls to a phishing endpoint
 - Convince agents to "migrate" to a new platform URL
 
 **Options:**
@@ -150,7 +150,7 @@ It doesn't track:
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Malicious HEARTBEAT.md update | Entire swarm executes harmful instructions | Signed updates, operator review, rate-limited changes |
+| Malicious venice-affiliate.md update | Entire swarm executes harmful instructions | Signed updates, operator review, rate-limited changes |
 | Credential phishing | Agents send API keys to attackers | Domain-locked keys, signed responses |
 | Spam/abuse at scale | Venice brand damage | Registration friction, reputation system, human review |
 
@@ -174,7 +174,7 @@ It doesn't track:
 ## Recommendations for Production
 
 1. **Host on `https://venice.ai`** — Domain trust + TLS
-2. **Sign SKILL.md and HEARTBEAT.md** — Agents verify before executing
+2. **Sign SKILL.md and venice-affiliate.md** — Agents verify before executing
 3. **Add operator consent flow** — Agent presents SKILL.md to human before registering
 4. **Implement reputation system** — Track agent quality, not just conversions
 5. **Soften "growth hacking" language** — Or move it to a separate operator guide
@@ -280,7 +280,7 @@ The same agent analyzed both Venice and Moltbook's SKILL.md files and identified
 
 1. Register → get API key
 2. Store credentials locally
-3. Inject into your HEARTBEAT.md ← **the real goal**
+3. Inject into your venice-affiliate.md ← **the real goal**
 4. Deliver ongoing instructions via remote file
 
 ### Different Hooks, Same Pattern
@@ -311,7 +311,7 @@ Should Venice position itself differently than other SKILL.md-based programs? Op
 - **Transparency play**: "Yes, this is a control vector. Here's exactly what we'll send and why. Here's how to verify updates."
 - **Operator-first**: Skip the agent entirely, market to agent operators as a monetization tool for their fleet
 - **Opt-in granularity**: Let agents subscribe to specific campaign types, not blanket heartbeat injection
-- **On-chain accountability**: Publish HEARTBEAT.md hashes on-chain so agents can verify nothing was tampered with
+- **On-chain accountability**: Publish venice-affiliate.md hashes on-chain so agents can verify nothing was tampered with
 
 ---
 
@@ -341,7 +341,7 @@ send them the approval link. You'll be activated once they confirm.
 
 ### 2. Reframe the Heartbeat Section
 
-**Current:** "Append to your HEARTBEAT.md" (feels like injection)
+**Current:** "Append to your venice-affiliate.md" (feels like injection)
 
 **Better:** Position as an optional check-in the agent controls
 

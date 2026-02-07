@@ -42,10 +42,10 @@ export async function fetchAllActivity(affiliates: AffiliateAgent[], limit = 20)
 }
 
 export function isAgentActive(agent: AffiliateAgent): boolean {
-  if (!agent.lastHeartbeat) return false;
-  const lastBeat = new Date(agent.lastHeartbeat).getTime();
+  if (!agent.lastCheckIn) return false;
+  const lastCheck = new Date(agent.lastCheckIn).getTime();
   const oneHourAgo = Date.now() - (60 * 60 * 1000);
-  return lastBeat > oneHourAgo;
+  return lastCheck > oneHourAgo;
 }
 
 export function getSkillUrl(): string {

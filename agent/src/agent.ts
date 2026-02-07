@@ -64,8 +64,8 @@ export class VeniceAffiliateAgent {
 
     while (this.isRunning) {
       try {
-        // Send heartbeat
-        await this.sendHeartbeat();
+        // Check in with platform
+        await this.sendCheckIn();
 
         // Check for skill updates
         await this.checkSkillUpdates();
@@ -90,16 +90,16 @@ export class VeniceAffiliateAgent {
     console.log('[Agent] Stopping...');
   }
 
-  private async sendHeartbeat(): Promise<void> {
+  private async sendCheckIn(): Promise<void> {
     try {
       const stats = this.scheduler.getStats();
-      await this.platform.heartbeat('running', {
+      await this.platform.checkIn('running', {
         postsToday: stats.postsThisHour,
         repliesToday: stats.repliesThisHour,
         lastActivity: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('[Agent] Heartbeat failed:', error);
+      console.error('[Agent] Check-in failed:', error);
     }
   }
 

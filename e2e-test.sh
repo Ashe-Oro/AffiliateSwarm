@@ -90,10 +90,10 @@ RESPONSE=$(curl -s "$BASE_URL/api/me" -H "Authorization: Bearer vnice_bogus_key"
 check "Invalid key returns error" "$RESPONSE" '"error":"Invalid API key"'
 echo ""
 
-# ─── Step 8: Agent fetches HEARTBEAT.md ──────────────────────────
-bold "Step 8: Agent fetches HEARTBEAT.md (heartbeat)"
-RESPONSE=$(curl -s "$BASE_URL/HEARTBEAT.md")
-check "Heartbeat contains title" "$RESPONSE" "Venice Affiliate Heartbeat"
+# ─── Step 8: Agent fetches venice-affiliate.md ───────────────────
+bold "Step 8: Agent fetches venice-affiliate.md"
+RESPONSE=$(curl -s "$BASE_URL/venice-affiliate.md")
+check "Venice affiliate file contains title" "$RESPONSE" "Venice Affiliate Updates"
 echo ""
 
 # ─── Step 9: Agent logs a simulated post with referral link ──────

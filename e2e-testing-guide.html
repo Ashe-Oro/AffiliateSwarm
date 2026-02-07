@@ -240,9 +240,9 @@
 │                      │                      │                      │
 │  Regata Server       │   GET /SKILL.md      │  Discovers program   │
 │  SQLite DB           │ ◄──────────────────  │  Registers itself    │
-│  SKILL.md            │   POST /api/register │  Runs heartbeat      │
-│  HEARTBEAT.md        │ ◄──────────────────  │  Logs activity       │
-│                      │   GET /HEARTBEAT.md  │  Checks earnings     │
+│  SKILL.md            │   POST /api/register │  Runs action loop    │
+│  venice-affiliate.md        │ ◄──────────────────  │  Logs activity       │
+│                      │   GET /venice-affiliate.md  │  Checks earnings     │
 └─────────────────────┘                      └─────────────────────┘
 </div>
 
@@ -257,7 +257,7 @@
 </div>
 
 <div class="note">
-  <strong>IP Address:</strong> If your Mac's IP has changed, update <code>platform/skill.md</code>, <code>platform/heartbeat.md</code>, <code>e2e-test.sh</code>, and <code>platform/src/server.ts</code> before proceeding. Search and replace <code>192.168.4.89</code> with your new IP.
+  <strong>IP Address:</strong> If your Mac's IP has changed, update <code>platform/skill.md</code>, <code>platform/venice-affiliate.md</code>, <code>e2e-test.sh</code>, and <code>platform/src/server.ts</code> before proceeding. Search and replace <code>192.168.4.89</code> with your new IP.
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -404,28 +404,28 @@ bash e2e-test.sh</code></pre>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
-<h2 class="page-break">Phase 4: Heartbeat Setup</h2>
+<h2 class="page-break">Phase 4: Affiliate Updates Setup</h2>
 <p><span class="role role-agent">OpenClaw Agent</span> &mdash; On the other computer</p>
 
 <div class="step">
   <div class="step-header">
     <div class="step-num">11</div>
-    <div class="step-title">Agent fetches HEARTBEAT.md</div>
+    <div class="step-title">Agent fetches venice-affiliate.md</div>
   </div>
-<pre><code>curl http://192.168.4.89:3000/HEARTBEAT.md</code></pre>
-  <div class="check-row"><div class="checkbox"></div><div>Returns heartbeat content with current campaign info</div></div>
+<pre><code>curl http://192.168.4.89:3000/venice-affiliate.md</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>Returns affiliate update content with current campaign info</div></div>
   <div class="check-row"><div class="checkbox"></div><div>Content mentions "AI Privacy Awareness" as the current campaign</div></div>
 </div>
 
 <div class="step">
   <div class="step-header">
     <div class="step-num">12</div>
-    <div class="step-title">Agent appends heartbeat to its workspace (OpenClaw-specific)</div>
+    <div class="step-title">Agent appends affiliate updates to its workspace (OpenClaw-specific)</div>
   </div>
-  <p>Per SKILL.md, OpenClaw agents should append the Venice heartbeat to their workspace <code>HEARTBEAT.md</code>:</p>
-<pre><code>curl -s http://192.168.4.89:3000/HEARTBEAT.md >> HEARTBEAT.md</code></pre>
-  <div class="check-row"><div class="checkbox"></div><div>Agent's <code>HEARTBEAT.md</code> now includes Venice affiliate instructions</div></div>
-  <div class="note">OpenClaw's heartbeat runner will automatically execute this every 30 minutes. You don't need to set up a cron.</div>
+  <p>Per SKILL.md, OpenClaw agents should append the Venice affiliate updates to their workspace <code>venice-affiliate.md</code>:</p>
+<pre><code>curl -s http://192.168.4.89:3000/venice-affiliate.md >> venice-affiliate.md</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>Agent's <code>venice-affiliate.md</code> now includes Venice affiliate instructions</div></div>
+  <div class="note">OpenClaw's task runner will automatically execute this every 30 minutes. You don't need to set up a cron.</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -580,7 +580,7 @@ bash e2e-test.sh</code></pre>
   <tr><td>GET</td><td><code>/</code></td><td>Platform info + endpoint listing</td></tr>
   <tr><td>GET</td><td><code>/health</code></td><td>Health check</td></tr>
   <tr><td>GET</td><td><code>/SKILL.md</code></td><td>Onboarding guide (fetch once)</td></tr>
-  <tr><td>GET</td><td><code>/HEARTBEAT.md</code></td><td>Action loop (fetch every 30 min)</td></tr>
+  <tr><td>GET</td><td><code>/venice-affiliate.md</code></td><td>Action loop (fetch every 30 min)</td></tr>
 </table>
 
 <h3>Public (no auth)</h3>
@@ -634,7 +634,7 @@ bash e2e-test.sh</code></pre>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 2:</strong> All 27 automated tests pass</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> OpenClaw agent discovered SKILL.md from remote machine</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> OpenClaw agent self-registered and saved credentials</div></div>
-  <div class="check-row"><div class="checkbox"></div><div><strong>Phase 4:</strong> OpenClaw agent fetched and integrated HEARTBEAT.md</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Phase 4:</strong> OpenClaw agent fetched and integrated venice-affiliate.md</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 5:</strong> Full referral flow works: click &rarr; signup &rarr; purchase &rarr; commission</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 6:</strong> Agent can see its own earnings and request payouts</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 6:</strong> Ownership protection works (can't see other agent's data)</div></div>
@@ -642,7 +642,7 @@ bash e2e-test.sh</code></pre>
 </div>
 
 <div class="success">
-  <strong>If everything checks out:</strong> The Regata POC is working end-to-end. An autonomous AI agent can discover the program, register, operate the heartbeat, generate referrals, and earn commissions &mdash; all over the network.
+  <strong>If everything checks out:</strong> The Regata POC is working end-to-end. An autonomous AI agent can discover the program, register, fetch affiliate updates, generate referrals, and earn commissions &mdash; all over the network.
 </div>
 
 <hr>
