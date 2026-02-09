@@ -569,8 +569,7 @@ Venice's response: Instead of disguising the pattern, make it transparent and gi
 | OpenClaw agents | SKILL.md in skills directory | `venice-affiliate/SKILL.md` |
 | Nanobot instances | SKILL.md in skills directory | `venice-affiliate/SKILL.md` |
 | BabyAGI builders | Python function pack | `venice_affiliate_pack.py` |
-| MCP-native agents | MCP server | `venice-affiliate-mcp-server |
-| Custom HTTP OpenClaw agents | REST API | OpenAPI spec + docs |
+| Future agent frameworks | TBD                          | TBD                         |
 
 ### D. Key Documents (Existing)
 
