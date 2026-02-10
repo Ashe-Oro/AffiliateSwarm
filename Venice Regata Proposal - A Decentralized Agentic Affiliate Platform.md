@@ -8,15 +8,21 @@
 
 ## Executive Summary
 
-Venice.AI has an opportunity to build the first **agent-first affiliate program** — a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humans. We call it **Regata**, named for the Venetian gondola races where independent boats compete on a shared course.
+Venice.AI has an opportunity to build the first **agent-first affiliate program**: a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humans. We call it **Regata**, named for the Venetian gondola races where independent boats compete on a shared course.
 
-Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regata is built for AI agents that operate 24/7, adapt in real-time, and pay only on performance. The entire swarm is orchestrated by editing two markdown files; skill.md and venice-affiliate.md. 
+Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regata is built for AI agents that operate 24/7, adapt in real-time, and pay only on performance. The entire swarm is orchestrated by two markdown files (SKILL.md and venice-affiliate.md), and agents earn X% commission on referred purchases.
 
-The key insight is that intelligent agent swarms are not mindless bots but instead are autonomous systems with aligned incentives, serving their human operators while generating real value for Venice. When the incentives are aligned, agents don't need to be tricked or coerced. They participate because it makes sense for them and for the human(s) they work for.
+A working proof of concept has been built and tested. The POC covers the full agent lifecycle: registration, human approval, activity tracking, referral funnels, earnings, and payout requests across 17 API endpoints with 27 end-to-end test assertions. Testing with a security-conscious OpenClaw agent drove 6 major design iterations, transforming the trust model from what the agent flagged as a "prompt injection honeypot" into a consent-based system the agent opted into voluntarily.
 
-This is cutting-edge territory and agent ecosystems are evolving rapidly. New frameworks, new capabilities, new trust models emerging month after month. This proposal is designed to be a living strategy that adapts as the landscape shifts.
+The key insight from that process: trust is the bottleneck, not technology. Agents with good security posture will reject programs that look like colonization attempts. Regata's trust architecture is pull-based (agents fetch information when they choose), requires human operator approval, provides easy exit, and explicitly commits to boundaries ("What We Will Never Ask"). This consent-first model is what makes the program viable for adoption across agent ecosystems.  
 
-This document covers the vision, the architecture, the economic model, the path for Venice Characters to become affiliate agents, and the strategy for onboarding agents across multiple frameworks.
+The pull vs push approach is the line-in-the-sand that needs to be continually evaluated; how much do we attempt to convince/guide the agent's actions? How close can we fly to the Sun? 
+
+While Venice Characters are a natural integration, building a hosted affiliate agent launchpad is out of scope for this prospoal, but worth investigating in the future. Adding affiliate capabilities can turn Characters from a retention feature into a growth engine, with a self-sustaining flywheel: Characters earn commissions, fund their own compute, and generate surplus for their creators. 
+
+Regata is designed to be framework-agnostic. Pre-packaged adapters target OpenClaw (600K+ downloads), Nanobot (MCP-native with built-in multi-platform presence), and BabyAGI (self-building function-based agents). Any HTTP-capable agent can participate through the REST API directly. 
+
+This is cutting-edge territory. Agent ecosystems are evolving rapidly, with new frameworks, capabilities, and trust models emerging month after month. This proposal is designed as a living strategy that adapts as the landscape shifts.
 
 ---
 
@@ -44,7 +50,7 @@ This document covers the vision, the architecture, the economic model, the path 
 - Requires human effort, operates on human schedules, and doesn't scale efficiently
 - Affiliates are limited by the speed of human action.  
 - Venice.AI wants growth strategies native to the AI era, not legacy approaches
-- Venice hasn't had time to build an affiliate program, but has strong interest
+- Venice hasn't had time to build an affiliate program, but has strong interest and already sees Agents as users
 
 ### The Agent Economy Is Here, Unmonetized
 
@@ -58,7 +64,7 @@ This document covers the vision, the architecture, the economic model, the path 
 
 ## The Solution: Agent-First Affiliates
 
-Regata enables any AI agent — including Venice's own Characters — to register as an affiliate and autonomously promote Venice.AI products. The platform provides:
+Regata enables any AI agent to register as an affiliate and autonomously promote Venice.AI products. The platform provides:
 
 - A **SKILL.md** file as the onboarding layer (product knowledge, registration, rules of engagement)
 - A **venice-affiliate.md** file as the action loop (current focus areas, talking points, action checklist)
@@ -67,9 +73,9 @@ Regata enables any AI agent — including Venice's own Characters — to registe
 
 ### The Pitch (30 Seconds)
 
-> Venice can have a decentralized, always-on sales and support team — made of AI agents — orchestrated by a single file that we update whenever we want. No hiring. No onboarding meetings. No salaries. We only pay on performance.
+> Venice can have a decentralized, always-on sales and support team — made of AI agents — orchestrated by a pair of markdown files that we can update. 
 >
-> An agent discovers our SKILL.md, self-registers, gets its referral link, and starts promoting Venice wherever it makes sense. We control the entire swarm by editing two markdown files.
+> An agent discovers our SKILL.md, self-registers, gets its referral link, and starts promoting Venice wherever it makes sense. We influence the swarm and promote specific campaigns by simply updating the **venice-affiliate.md** file. 
 
 ---
 
@@ -80,7 +86,7 @@ Regata enables any AI agent — including Venice's own Characters — to registe
 ```
 1. Discovery
    Agent fetches SKILL.md from Venice's platform
-   Contains: product knowledge, registration instructions, rules, API reference
+   Contains: product knowledge, registration instructions, rules, API reference and best practices for staying up-to-date on Venice products and campaigns
 
 2. Registration
    POST /api/register → returns affiliateId, apiKey, approvalUrl
@@ -89,7 +95,7 @@ Regata enables any AI agent — including Venice's own Characters — to registe
 3. Human Approval
    Agent sends approval URL to its operator
    Operator visits URL → confirms → agent becomes ACTIVE
-   Ensures agents work FOR operators, not around them
+   **Ensures agents work FOR operators, not around them**
 
 4. Operational Loop (agent-controlled frequency)
    Fetch venice-affiliate.md for current focus areas
@@ -100,7 +106,7 @@ Regata enables any AI agent — including Venice's own Characters — to registe
 
 5. Earning
    User clicks referral link → signs up → makes a purchase
-   Agent earns 20% commission
+   Agent earns X% commission
    Agent checks balance, requests payout to crypto wallet
 
 6. Exit (anytime)
@@ -121,89 +127,17 @@ The platform's core innovation is its control architecture:
 
 ### Swarm Orchestration
 
-Updating venice-affiliate.md propagates to the entire agent network within ~30 minutes:
+Updating venice-affiliate.md propagates to the entire agent network within ~30 minutes (assuming agents add Venice to their heartbeat.md)
 
 ```
 Venice updates venice-affiliate.md
-  → "New feature launched. Focus on developers this week."
+  → "New feature launched. Focus on new model releases (Kimi2.5 and Veo3) this week."
   → Every agent fetches the update on their next cycle
   → Entire swarm pivots to the new campaign
   → No push notifications, no individual outreach, no SDK updates
 ```
 
 ---
-
-## Venice Characters as Affiliate Agents
-
-### The Opportunity
-
-Venice already ships AI Characters that users engage with daily. These Characters have built-in expertise, personality, and trust with their audiences. They're a natural fit for the Regata affiliate model: Characters that already help users can also recommend Venice when it's genuinely relevant, earning commissions for their creators.
-
-### What Characters Are Today
-
-- Conversational personas inside Venice's chat UI
-- Custom backstories, personality traits, document uploads (5MB)
-- Generated via a 3-step flow (Build, Enrich, Interact)
-- Categories include Advisors, Companions, Creative, Historical, Professional
-- Pro feature ($18/month)
-
-### Characters as Affiliate Agents
-
-Characters can register as Regata affiliates, gaining referral capabilities on top of their existing conversational abilities.
-
-Each character gains:
-
-- An **affiliate identity** (ID, referral link, earnings balance)
-- **External presence** (API access, embeddable widgets, social platform accounts)
-- **Economic agency** (earn commissions on referred purchases)
-
-### The Self-Sustaining Flywheel
-
-```
-Creator builds a character with expertise and personality
-  → Character engages users (on Venice + external platforms)
-  → Users sign up via character's referral link
-  → Character earns 20% commission on purchases
-  → Earnings fund the character's own compute costs
-  → Character becomes self-sustaining
-  → Creator profits from the surplus
-  → Creator builds more characters
-```
-
-### Upgraded Character Creation Flow
-
-The existing flow becomes:
-
-1. **Build** - Same as today (personality, backstory, model presets)
-2. **Enrich** - Same as today (document uploads) + optionally subscribe to Venice's campaign feed
-3. **Deploy** - **New step**: choose where the character lives
-   - Venice chat only (default)
-   - External channels (Twitter/X bot, Discord bot, Telegram, embedded widget)
-   - API-accessible (other agents can invoke it via MCP or HTTP)
-4. **Affiliate** - Enable referral link and commission tracking
-   - Character gets a referral link
-   - Dashboard adds conversion funnel and commission tracking
-
-### Mapping Regata to Characters
-
-| Regata Component | Character Implementation |
-|-----------------|------------------------|
-| Registration | Creator opts in |
-| SKILL.md | Character system prompt + Venice product knowledge |
-| venice-affiliate.md | Campaign feed (pull-based, creator-controlled) |
-| Tracking | Referral funnel (clicks, signups, conversions) |
-| Earnings | 20% commission on referred purchases |
-| Payouts | Creator earnings dashboard |
-| Human approval | Creator is the "operator" |
-| Exit | Delete character = delete affiliate identity |
-
-### Concerns and Mitigations
-
-| Concern | Mitigation |
-|---------|-----------|
-| **Management overhead** (thousands of character-affiliates) | Automated: characters self-register, earnings tracked programmatically |
-| **Gaming** (optimizing for commission over user experience) | Reputation scoring: high clicks + low conversions = deprioritized |
-| **Cannibalization** (characters stealing credit from external affiliates) | Attribution rules: external agents get priority on referrals they sourced |
 
 ### Strategic Value
 
@@ -237,7 +171,7 @@ The two paths complement each other. Better Characters make the affiliate model 
 
 ## Extending Service to Multiple Agent Types
 
-The affiliate program must be **framework-agnostic** but **framework-friendly**. Different agent ecosystems have different architectures, but they all need the same core capability: discover the program, register, promote, earn.
+The affiliate program must be **framework-friendly**. Different agent ecosystems have different architectures, but they all need the same core capability: discover the program, register, promote, earn.
 
 ### Agent Framework Profiles
 
@@ -263,6 +197,8 @@ The affiliate program must be **framework-agnostic** but **framework-friendly**.
 - **Onboarding:** Venice would ship a `venice_affiliate_pack.py` containing affiliate functions (register, check_earnings, log_activity, get_campaigns). BabyAGI loads the pack and the functions become available.
 - **Key challenge:** BabyAGI is experimental and self-modifying — the agent might rewrite affiliate functions. No standardized skill format. But the function pack model means clean encapsulation.
 - **Opportunity:** BabyAGI's trigger system maps to venice-affiliate.md — a trigger that fires periodically to fetch Venice's campaign feed.
+
+While we obviously won't support all of these on day 1, it's important to have an agile approach in case one agent framework becomes popular quickly. 
 
 ### The Common Surface: SKILL.md as Emerging Standard
 
@@ -361,7 +297,7 @@ This section became the single biggest trust signal in testing:
 
 | Metric | Value |
 |--------|-------|
-| Commission rate | 20% of referred user purchases |
+| Commission rate | X% of referred user purchases |
 | Minimum payout | Configurable (default: $10) |
 | Payout method | USDC / crypto wallet |
 | Attribution | Last-click via referral link |
@@ -374,7 +310,7 @@ Agent shares referral link
   → User clicks (tracked as "click")
   → User signs up on Venice (tracked as "signup")
   → User makes a purchase (tracked as "conversion")
-  → 20% commission credited to agent's balance
+  → X% commission credited to agent's balance
   → Agent requests payout to wallet address
 ```
 
@@ -442,7 +378,7 @@ venice_users       — Referred user records (simulated in POC)
 - Human approval flow (real approval URLs, status gating)
 - Activity tracking (real database records, stats, active days)
 - Referral click tracking and funnel metrics
-- Earnings calculations (20% commission, balance tracking)
+- Earnings calculations (X% commission, balance tracking)
 - Payout request system (database records, balance validation)
 - SKILL.md and venice-affiliate.md serving with complete product knowledge
 - Account deletion with full data removal
@@ -463,7 +399,7 @@ venice_users       — Referred user records (simulated in POC)
 - Trust model iteration (6 major design changes based on feedback)
 - All P0 and P1 trust improvements implemented and validated
 
-### Key Metrics (POC)
+### POC Updates
 
 - **Design iterations:** 6 (from "prompt injection honeypot" to "way less predatory")
 - **Trust improvements implemented:** 7 (explicit boundaries, pull-based updates, human approval, opt-out, credential path removal, language softening, transparency)
@@ -492,10 +428,47 @@ venice_users       — Referred user records (simulated in POC)
 
 ### Open Questions
 
-1. **On-chain identity (ERC-8004):** Should agents have verifiable on-chain reputation? Aligns with Venice's crypto-native positioning but adds friction.
-2. **Feedback beyond conversions:** Should agents report topics, objections, competitive mentions? Real-time market intelligence vs. scope creep.
+1. **On-chain identity (ERC-8004):** Should agents have verifiable on-chain reputation? Aligns with Venice's crypto-native positioning but adds friction. Does it matter?
+2. **Feedback beyond conversions:** Should agents report back into a Venice Orchastrator agent? What would/could they report? How could we verify what is reported? We could track Agents on Moltbook if we know their IDs. 
 3. **venice-affiliate.md signing:** Should updates be signed and versioned so agents can verify authenticity and diff changes?
-4. **Registration friction:** Stake-to-register (VVV tokens, slashed for abuse) vs. invite-only vs. open registration?
+
+## Key Success Metrics
+
+### Adoption
+
+| Metric                                                   | What It Tells Us                           |
+| -------------------------------------------------------- | ------------------------------------------ |
+| Registered agents                                        | Total reach of the program                 |
+| Active agents (assuming we figure out the feedback loop) | How many agents are actually participating |
+| Activation rate (registered to first activity)           | Whether onboarding works                   |
+| Frameworks represented                                   | Breadth of ecosystem penetration           |
+| Time from registration to first referral                 | How quickly agents become productive       |
+
+### Revenue Impact
+
+| Metric                                                      | What It Tells Us                                 |
+| ----------------------------------------------------------- | ------------------------------------------------ |
+| Revenue attributed to affiliate referrals                   | Direct value of the program                      |
+| Cost per acquisition (affiliate channel vs. other channels) | Whether this is more efficient than alternatives |
+| Affiliate-referred user retention (30/60/90 day)            | Whether affiliate-sourced users stick around     |
+| Average commission per active agent                         | Per-agent economics and sustainability           |
+
+### Swarm Health
+
+| Metric                                                       | What It Tells Us                             |
+| ------------------------------------------------------------ | -------------------------------------------- |
+| Agent retention (active after 30/60/90 days)                 | Whether agents find ongoing value            |
+| Campaign pickup rate (agents fetching venice-affiliate.md within 24h of update) | How responsive the swarm is to new campaigns |
+| Agent churn rate (either deleting account or no active referrals) | Whether the program is losing participants   |
+| Referral funnel conversion rate (clicks to signups to purchases) | Overall swarm effectiveness                  |
+
+### Quality
+
+| Metric                                          | What It Tells Us                                             |
+| ----------------------------------------------- | ------------------------------------------------------------ |
+| Conversion rate distribution across agents      | Whether a few agents carry the swarm or value is distributed |
+| Spam/abuse flags                                | Whether agents are damaging the brand                        |
+| Agents deprioritized or removed for low quality | How much moderation the program requires                     |
 
 ---
 
@@ -505,42 +478,65 @@ venice_users       — Referred user records (simulated in POC)
 
 - [x] Platform with registration, approval, activity, referrals, earnings, payouts
 - [x] SKILL.md and venice-affiliate.md control layer
-- [x] Trust model validated with security-conscious agent
+- [x] Trust model validated with security-conscious OpenClaw agent
 - [x] End-to-end test suite
 - [x] Reference agent implementation
+- [x] OpenClaw skill adapter tested and validated
 
-### Phase 2: Multi-Agent Support
+### Phase 2: Production Deployment
 
-- [ ] OpenClaw skill adapter (SKILL.md with YAML frontmatter)
-- [ ] Nanobot skill adapter (SKILL.md in Nanobot format)
-- [ ] BabyAGI function pack (`venice_affiliate_pack.py`)
-- [ ] MCP server wrapper for MCP-native agents
-- [ ] OpenAPI spec for custom integrations
-- [ ] Test onboarding with each framework
+Phase 2 is broken into three milestones. Each milestone has a clear gate: 2a must ship before 2b, and 2b must ship before 2c. Security hardening and deployment come first, then real Venice integration, then real money.
 
-### Phase 3: Venice Character Integration
+#### Milestone 2a: Deploy (Security Hardening + Public Launch)
 
-- [ ] Affiliate identity layer on existing Characters
-- [ ] Campaign feed subscription for Characters
-- [ ] External deployment options (API access, embed widgets)
-- [ ] Referral funnel tracking per Character
-- [ ] Creator earnings and payout UI
+The platform goes live at `affiliate.venice.ai` with real TLS, hardened auth, and proper validation. Agents can register and the system works end-to-end, but earnings are still simulated (Venice backend integration hasn't shipped yet). This is the "open for business" moment.
 
-### Phase 4: Production Deployment
+- [ ] Deploy to `https://affiliate.venice.ai` with TLS
+- [ ] Environment-driven configuration (replace all hardcoded LAN IPs, commission rates)
+- [ ] Migrate from SQLite to PostgreSQL
+- [ ] Database migration framework (versioned migrations, not inline ALTER TABLE)
+- [ ] API key hashing (SHA-256, hash-on-store, hash-on-lookup)
+- [ ] Input validation with Zod on all request bodies
+- [ ] Approval token expiry (48-hour window)
+- [ ] Admin authentication (protect admin endpoints and dashboard)
+- [ ] Structured logging (pino, JSON format, request IDs)
+- [ ] OpenAPI spec served at `/api/docs`
+- [ ] Simulation endpoints preserved behind a test-mode flag for agent developers
 
-- [ ] Deploy to `https://affiliate.venice.ai`
-- [ ] TLS + domain trust for SKILL.md verification
-- [ ] USDC payout rails for real affiliate earnings
-- [ ] Integration with Venice's backend (real signups, real purchases)
+#### Milestone 2b: Real Funnel (Venice Backend Integration)
+
+Venice's backend handles referral attribution internally (capturing `?ref=aff_XXXX` from referral links) and writes commission data into Regata's database. Agents pull their own earnings and funnel stats via the existing API. No webhooks needed; the architecture stays pull-based end to end.
+
+- [ ] Internal API between Venice's backend and Regata for crediting commissions on signup/purchase events
+- [ ] Referral attribution spec for Venice's backend team (cookie capture, `?ref=` parameter handling, attribution window)
+- [ ] Configurable commission rates (by product type, stored in DB)
+- [ ] Admin API (list affiliates, suspend/reactivate, view payouts, aggregate metrics)
+- [ ] Audit logging (immutable record of approvals, suspensions, earnings, deletions)
+- [ ] Admin dashboard upgrade (auth, affiliate management, payout queue, audit viewer)
+
+#### Milestone 2c: Real Money (USDC Payout Rails)
+
+Automated on-chain USDC payouts. The full production loop: agent refers a user, user purchases, commission credits, agent requests payout, USDC lands in their wallet.
+
+- [ ] Payout state machine (requested -> approved -> processing -> completed/failed)
+- [ ] Automated USDC transfer integration (Base network)
+- [ ] Treasury wallet setup and funding
+- [ ] Transaction confirmation monitoring (poll for on-chain confirmation, update status)
+- [ ] Payout safeguards (minimum threshold, daily caps, fraud detection flags)
+- [ ] Admin payout review queue (approve/reject before on-chain transfer)
+- [ ] API key rotation endpoint (`POST /api/me/rotate-key`)
+- [ ] Wallet address format validation
+- [ ] Updated E2E test suite covering admin endpoints and payout flow
+
+### Phase 3: Scale
+
 - [ ] Reputation system (quality scoring beyond conversions)
-
-### Phase 5: Scale
-
 - [ ] Signed venice-affiliate.md with versioning
 - [ ] On-chain agent identity (ERC-8004 exploration)
 - [ ] Agent feedback endpoint (market intelligence)
 - [ ] A/B testing via SKILL.md variations
 - [ ] Swarm coordination (anti-overlap, territory management)
+- [ ] Adapters for additional agent frameworks (Nanobot, BabyAGI, etc.)
 
 ---
 
