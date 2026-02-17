@@ -319,13 +319,51 @@ router.get('/activity/:affiliateId', requireAuth, (req: Request, res: Response) 
   }
 });
 
-// GET /api/affiliates — list all affiliates (admin, no auth for now)
+// GET /api/affiliates — list all affiliates with stats (admin, no auth for now)
 router.get('/affiliates', (_req: Request, res: Response) => {
   try {
     const affiliates = getAllAffiliates();
-    // Strip API keys from public listing
-    const safeList = affiliates.map(({ apiKey, ...rest }) => rest);
-    res.json({ affiliates: safeList });
+
+    let platformClicks = 0;
+    let platformSignups = 0;
+    let platformConversions = 0;
+    let platformEarned = 0;
+
+    const enriched = affiliates.map(({ apiKey, ...agent }) => {
+      const stats = getAffiliateStats(agent.id);
+      const funnel = getReferralFunnel(agent.id);
+      const earnings = getAffiliateEarnings(agent.id);
+
+      platformClicks += funnel.clicks;
+      platformSignups += funnel.signups;
+      platformConversions += funnel.conversions;
+      platformEarned += earnings.totalEarnedUsd;
+
+      return {
+        ...agent,
+        stats: {
+          totalPosts: stats.totalPosts,
+          totalReplies: stats.totalReplies,
+          totalLikes: stats.totalLikes,
+          totalRetweets: stats.totalRetweets,
+          activeDays: stats.activeDays,
+          lastActivity: stats.lastActivity,
+        },
+        funnel,
+        earnings,
+      };
+    });
+
+    res.json({
+      affiliates: enriched,
+      platform: {
+        totalClicks: platformClicks,
+        totalSignups: platformSignups,
+        totalConversions: platformConversions,
+        conversionRate: platformClicks > 0 ? platformConversions / platformClicks : 0,
+        totalEarnedUsd: platformEarned,
+      },
+    });
   } catch (error) {
     console.error('[Affiliates] Error:', error);
     res.status(500).json({

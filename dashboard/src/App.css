@@ -501,8 +501,23 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--status-color);
-  box-shadow: 0 0 6px var(--status-color);
+  background: var(--text-tertiary);
+  box-shadow: 0 0 6px var(--text-tertiary);
+}
+
+.status-active .status-indicator {
+  background: var(--green-glow);
+  box-shadow: 0 0 6px var(--green-glow);
+}
+
+.status-pending .status-indicator {
+  background: var(--yellow-glow, #f0c040);
+  box-shadow: 0 0 6px var(--yellow-glow, #f0c040);
+}
+
+.status-suspended .status-indicator {
+  background: var(--red-glow);
+  box-shadow: 0 0 6px var(--red-glow);
 }
 
 .time-cell {
@@ -630,6 +645,88 @@
 
 .footer-divider {
   opacity: 0.3;
+}
+
+/* Agent Name Link */
+.agent-name-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.agent-name-link:hover strong {
+  color: var(--cyan-glow);
+}
+
+/* Agent Page */
+.agent-page {
+  width: 100%;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--text-tertiary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-xl);
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--cyan-glow);
+}
+
+.back-link::before {
+  content: '\2190';
+}
+
+.agent-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.agent-header-info {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+}
+
+.agent-header-avatar {
+  font-size: 2.5rem;
+}
+
+.agent-header-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.agent-header-desc {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin-top: var(--space-sm);
+}
+
+.agent-header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.agent-meta-item {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* Responsive */

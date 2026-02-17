@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import JoinPage from './pages/JoinPage';
 import DashboardPage from './pages/DashboardPage';
+import AgentPage from './pages/AgentPage';
 import './App.css';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Routes>
             <Route path="/" element={<JoinPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/agent/:affiliateId" element={<AgentPage />} />
           </Routes>
         </main>
 

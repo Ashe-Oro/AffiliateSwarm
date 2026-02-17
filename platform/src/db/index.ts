@@ -430,17 +430,53 @@ export function requestPayout(
   affiliateId: string,
   amountUsd: number,
   walletAddress?: string
-): number {
+): { payoutId: number; status: string } {
   const db = getDatabase();
-  const now = new Date().toISOString();
 
-  const stmt = db.prepare(`
-    INSERT INTO payouts (affiliate_id, amount_usd, wallet_address, status, requested_at)
-    VALUES (?, ?, ?, 'requested', ?)
-  `);
+  // Run balance check + payout + earnings update in a single transaction
+  // to prevent duplicate payouts from concurrent requests
+  const run = db.transaction(() => {
+    const now = new Date().toISOString();
 
-  const result = stmt.run(affiliateId, amountUsd, walletAddress || null, now);
-  return result.lastInsertRowid as number;
+    // Check available balance inside the transaction
+    const balanceStmt = db.prepare(`
+      SELECT COALESCE(SUM(amount_usd), 0) as available
+      FROM earnings WHERE affiliate_id = ? AND status = 'available'
+    `);
+    const available = (balanceStmt.get(affiliateId) as { available: number }).available;
+
+    if (amountUsd > available) {
+      throw new Error(`Insufficient balance. Available: $${available.toFixed(2)}, Requested: $${amountUsd.toFixed(2)}`);
+    }
+
+    // Insert payout record
+    const insertStmt = db.prepare(`
+      INSERT INTO payouts (affiliate_id, amount_usd, wallet_address, status, requested_at, completed_at)
+      VALUES (?, ?, ?, 'completed', ?, ?)
+    `);
+    const result = insertStmt.run(affiliateId, amountUsd, walletAddress || null, now, now);
+    const payoutId = result.lastInsertRowid as number;
+
+    // Mark earnings as paid_out (oldest first)
+    const earningsStmt = db.prepare(`
+      SELECT id, amount_usd as amountUsd FROM earnings
+      WHERE affiliate_id = ? AND status = 'available'
+      ORDER BY created_at ASC
+    `);
+    const availableEarnings = earningsStmt.all(affiliateId) as Array<{ id: number; amountUsd: number }>;
+
+    const updateStmt = db.prepare(`UPDATE earnings SET status = 'paid_out' WHERE id = ?`);
+    let remaining = amountUsd;
+    for (const earning of availableEarnings) {
+      if (remaining <= 0) break;
+      updateStmt.run(earning.id);
+      remaining -= earning.amountUsd;
+    }
+
+    return { payoutId, status: 'completed' };
+  });
+
+  return run();
 }
 
 export function getPayouts(affiliateId: string, limit = 50): Payout[] {

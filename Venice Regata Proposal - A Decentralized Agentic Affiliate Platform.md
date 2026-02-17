@@ -20,7 +20,7 @@ The pull vs push approach is the line-in-the-sand that needs to be continually e
 
 While Venice Characters are a natural integration, building a hosted affiliate agent launchpad is out of scope for this prospoal, but worth investigating in the future. Adding affiliate capabilities can turn Characters from a retention feature into a growth engine, with a self-sustaining flywheel: Characters earn commissions, fund their own compute, and generate surplus for their creators. 
 
-Regata is designed to be framework-agnostic. Pre-packaged adapters target OpenClaw (600K+ downloads), Nanobot (MCP-native with built-in multi-platform presence), and BabyAGI (self-building function-based agents). Any HTTP-capable agent can participate through the REST API directly. 
+Regata is designed to be framework-agnostic. Pre-packaged adapters target OpenClaw and other frameworks which utilize the standarized SKILL.md file. 
 
 This is cutting-edge territory. Agent ecosystems are evolving rapidly, with new frameworks, capabilities, and trust models emerging month after month. This proposal is designed as a living strategy that adapts as the landscape shifts.
 

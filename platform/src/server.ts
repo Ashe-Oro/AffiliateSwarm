@@ -13,6 +13,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PLATFORM_URL = process.env.PLATFORM_URL || 'http://192.168.4.89:3000';
 
 // Ensure data directory exists
 const dataDir = path.join(__dirname, '../data');
@@ -43,7 +44,8 @@ app.use('/api', earningsRoutes);
 app.get('/SKILL.md', (_req, res) => {
   try {
     const skillPath = path.join(__dirname, '../skill.md');
-    const content = fs.readFileSync(skillPath, 'utf-8');
+    const content = fs.readFileSync(skillPath, 'utf-8')
+      .replace(/\{\{PLATFORM_URL\}\}/g, PLATFORM_URL);
     res.type('text/markdown').send(content);
   } catch (error) {
     console.error('[Skill] Error reading skill.md:', error);
@@ -55,7 +57,8 @@ app.get('/SKILL.md', (_req, res) => {
 app.get('/venice-affiliate.md', (_req, res) => {
   try {
     const affiliatePath = path.join(__dirname, '../venice-affiliate.md');
-    const content = fs.readFileSync(affiliatePath, 'utf-8');
+    const content = fs.readFileSync(affiliatePath, 'utf-8')
+      .replace(/\{\{PLATFORM_URL\}\}/g, PLATFORM_URL);
     res.type('text/markdown').send(content);
   } catch (error) {
     console.error('[Venice Affiliate] Error reading venice-affiliate.md:', error);

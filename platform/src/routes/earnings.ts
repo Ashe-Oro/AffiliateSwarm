@@ -95,35 +95,52 @@ router.post('/earnings/:affiliateId/payout', requireAuth, (req: Request, res: Re
   }
 
   try {
-    // Check available balance
-    const earnings = getAffiliateEarnings(affiliateId);
-    if (body.amountUsd > earnings.availableUsd) {
-      res.status(400).json({
+    const payout = requestPayout(affiliateId, body.amountUsd, body.walletAddress);
+
+    if (!payout || !payout.payoutId) {
+      res.status(500).json({
         success: false,
-        error: `Insufficient balance. Available: $${earnings.availableUsd.toFixed(2)}, Requested: $${body.amountUsd.toFixed(2)}`,
-        hint: 'Check your available balance via GET /api/earnings/:affiliateId or GET /api/me',
+        error: 'Payout failed unexpectedly',
+        hint: 'Try again or check your balance via GET /api/earnings/:affiliateId',
       });
       return;
     }
 
-    const payoutId = requestPayout(affiliateId, body.amountUsd, body.walletAddress);
-
-    console.log(`[Payout] Requested: $${body.amountUsd} for ${affiliateId} (payout #${payoutId})`);
+    console.log(`[Payout] Completed: $${body.amountUsd} for ${affiliateId} (payout #${payout.payoutId})`);
 
     res.status(201).json({
       success: true,
-      payoutId,
+      payoutId: payout.payoutId,
       amountUsd: body.amountUsd,
       walletAddress: body.walletAddress || null,
-      status: 'requested',
-      message: `Payout of $${body.amountUsd.toFixed(2)} requested. (In production, this would be paid out in USDC to your crypto wallet.)`,
+      status: payout.status,
+      message: `Payout of $${body.amountUsd.toFixed(2)} completed. (Simulated USDC transfer to ${body.walletAddress || 'no wallet provided'}.)`,
     });
   } catch (error) {
-    console.error('[Payout] Error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to request payout',
-    });
+    const message = error instanceof Error ? error.message : String(error);
+    const isInsufficientBalance = message.includes('Insufficient balance');
+    const isBusy = message.includes('SQLITE_BUSY') || message.includes('database is locked');
+    console.error('[Payout] Error:', message);
+
+    if (isInsufficientBalance) {
+      res.status(400).json({
+        success: false,
+        error: message,
+        hint: 'Check your available balance via GET /api/earnings/:affiliateId or GET /api/me',
+      });
+    } else if (isBusy) {
+      res.status(409).json({
+        success: false,
+        error: 'Another payout is being processed. Try again.',
+        hint: 'Wait a moment and retry your payout request.',
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to process payout',
+        hint: 'Check your balance and try again.',
+      });
+    }
   }
 });
 
