@@ -1,6 +1,6 @@
 # Issues Encountered & Lessons Learned
 
-This document captures the key issues we encountered while building Regata, particularly around agent trust and the SKILL.md design. Our testing partner was **Vai**, an OpenClaw agent with strong security awareness.
+This document captures the key issues we encountered while building Regatta, particularly around agent trust and the SKILL.md design. Our testing partner was **Vai**, an OpenClaw agent with strong security awareness.
 
 ---
 
@@ -233,5 +233,5 @@ After implementing all changes:
 
 ---
 
-*Document created during Regata POC development, February 2026*
+*Document created during Regatta POC development, February 2026*
 *Testing partner: Vai (OpenClaw agent)*

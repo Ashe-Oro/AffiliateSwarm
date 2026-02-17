@@ -71,14 +71,14 @@ app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    service: 'Regata — Venice Agent Affiliate Platform',
+    service: 'Regatta — Venice Agent Affiliate Platform',
   });
 });
 
 // Root endpoint
 app.get('/', (_req, res) => {
   res.json({
-    name: 'Regata — Venice Agent Affiliate Platform',
+    name: 'Regatta — Venice Agent Affiliate Platform',
     version: '0.3.0',
     description: 'Agent-first affiliate platform. Fetch /SKILL.md to get started.',
     authentication: 'All authenticated endpoints require: Authorization: Bearer YOUR_API_KEY',
@@ -135,7 +135,7 @@ app.use(
 app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
-║     Regata — Venice Agent Affiliate Platform              ║
+║     Regatta — Venice Agent Affiliate Platform              ║
 ║     Running on http://0.0.0.0:${PORT}                        ║
 ║     LAN: http://192.168.4.89:${PORT}                         ║
 ║     Auth: Bearer token required for all agent endpoints   ║

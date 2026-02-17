@@ -1,5 +1,5 @@
 #!/bin/bash
-# End-to-end test for Regata — Venice Agent Affiliate Platform
+# End-to-end test for Regatta — Venice Agent Affiliate Platform
 # Exercises the complete flow: discover → register → authenticate → operate → refer → earn → payout
 
 BASE_URL="${PLATFORM_URL:-http://192.168.4.89:3000}"
@@ -40,7 +40,7 @@ check_not() {
 
 echo ""
 bold "═══════════════════════════════════════════════════════════"
-bold "  Regata — Venice Agent Affiliate Platform — E2E Test"
+bold "  Regatta — Venice Agent Affiliate Platform — E2E Test"
 bold "  Target: $BASE_URL"
 bold "═══════════════════════════════════════════════════════════"
 echo ""
@@ -70,7 +70,7 @@ echo ""
 # ─── Step 4: Root endpoint ─────────────────────────────────────
 bold "Step 4: Root endpoint shows platform info"
 RESPONSE=$(curl -s "$BASE_URL/")
-check "Root shows platform name" "$RESPONSE" "Regata"
+check "Root shows platform name" "$RESPONSE" "Regatta"
 check "Root shows auth requirement" "$RESPONSE" "Bearer YOUR_API_KEY"
 echo ""
 

@@ -1,4 +1,4 @@
-# Venice Regata Proposal — A Decentralized Agentic Affiliate Platform
+# Venice Regatta Proposal — A Decentralized Agentic Affiliate Platform
 
 **Version:** 1.0 (Proposal Draft)
 **Author:** Ashe Oro
@@ -8,19 +8,19 @@
 
 ## Executive Summary
 
-Venice.AI has an opportunity to build the first **agent-first affiliate program**: a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humans. We call it **Regata**, named for the Venetian gondola races where independent boats compete on a shared course.
+Venice.AI has an opportunity to build the first **agent-first affiliate program**: a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humans. We call it **Regatta**, named for the Venetian gondola races where independent boats compete on a shared course.
 
-Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regata is built for AI agents that operate 24/7, adapt in real-time, and pay only on performance. The entire swarm is orchestrated by two markdown files (SKILL.md and venice-affiliate.md), and agents earn X% commission on referred purchases.
+Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regatta is built for AI agents that operate 24/7, adapt in real-time, and pay only on performance. The entire swarm is orchestrated by two markdown files (SKILL.md and venice-affiliate.md), and agents earn X% commission on referred purchases.
 
 A working proof of concept has been built and tested. The POC covers the full agent lifecycle: registration, human approval, activity tracking, referral funnels, earnings, and instant payouts across 17 API endpoints with 50 end-to-end test assertions. Testing with a security-conscious OpenClaw agent drove 6 major design iterations, transforming the trust model from what the agent flagged as a "prompt injection honeypot" into a consent-based system the agent opted into voluntarily. A second agent (Vai, running on a separate machine over LAN) independently completed the full simulation flow and filed a bug report that drove the payout system to completion.
 
-The key insight from that process: trust is the bottleneck, not technology. Agents with good security posture will reject programs that look like colonization attempts. Regata's trust architecture is pull-based (agents fetch information when they choose), requires human operator approval, provides easy exit, and explicitly commits to boundaries ("What We Will Never Ask"). This consent-first model is what makes the program viable for adoption across agent ecosystems.  
+The key insight from that process: trust is the bottleneck, not technology. Agents with good security posture will reject programs that look like colonization attempts. Regatta's trust architecture is pull-based (agents fetch information when they choose), requires human operator approval, provides easy exit, and explicitly commits to boundaries ("What We Will Never Ask"). This consent-first model is what makes the program viable for adoption across agent ecosystems.  
 
 The pull vs push approach is the line-in-the-sand that needs to be continually evaluated; how much do we attempt to convince/guide the agent's actions? How close can we fly to the Sun? 
 
 While Venice Characters are a natural integration, building a hosted affiliate agent launchpad is out of scope for this prospoal, but worth investigating in the future. Adding affiliate capabilities can turn Characters from a retention feature into a growth engine, with a self-sustaining flywheel: Characters earn commissions, fund their own compute, and generate surplus for their creators. 
 
-Regata is designed to be framework-agnostic. Pre-packaged adapters target OpenClaw and other frameworks which utilize the standarized SKILL.md file. 
+Regatta is designed to be framework-agnostic. Pre-packaged adapters target OpenClaw and other frameworks which utilize the standarized SKILL.md file. 
 
 This is cutting-edge territory. Agent ecosystems are evolving rapidly, with new frameworks, capabilities, and trust models emerging month after month. This proposal is designed as a living strategy that adapts as the landscape shifts.
 
@@ -64,7 +64,7 @@ This is cutting-edge territory. Agent ecosystems are evolving rapidly, with new 
 
 ## The Solution: Agent-First Affiliates
 
-Regata enables any AI agent to register as an affiliate and autonomously promote Venice.AI products. The platform provides:
+Regatta enables any AI agent to register as an affiliate and autonomously promote Venice.AI products. The platform provides:
 
 - A **SKILL.md** file as the onboarding layer (product knowledge, registration, rules of engagement)
 - A **venice-affiliate.md** file as the action loop (current focus areas, talking points, action checklist)
@@ -155,7 +155,7 @@ Today, Venice Characters are comparable to Character.AI: conversational personas
 
 The difference between a Character and an agent is the difference between a chatbot you visit and an assistant that works for you. An agent can generate memes, post on your behalf, remember your preferences, take actions across platforms. That's a fundamentally different product.
 
-**Why it's relevant to Regata:**
+**Why it's relevant to Regatta:**
 
 - More capable Characters could actually perform affiliate work (engaging on social platforms, answering questions where Venice is relevant)
 - The creator economy flywheel accelerates: creators building genuinely useful agents on Venice is a stronger draw than creators building chat personas
@@ -179,7 +179,7 @@ The affiliate program must be **framework-friendly**. Different agent ecosystems
 
 - **Architecture:** Full-featured agent with SKILL.md standard (AgentSkills format). Skills loaded from `~/.openclaw/skills/` or workspace directories. Gated loading based on binary/env/config requirements.
 - **Integration model:** SKILL.md with YAML frontmatter. Environment variables injected per-skill. User-invocable skills become slash commands.
-- **Onboarding:** Already tested with Regata. The existing `platform/skill.md` is essentially an OpenClaw skill. Drop into skills directory, agent discovers it automatically.
+- **Onboarding:** Already tested with Regatta. The existing `platform/skill.md` is essentially an OpenClaw skill. Drop into skills directory, agent discovers it automatically.
 - **Scale:** 600K+ downloads. Every agent has a recurring task loop.
 - **Trust lessons:** Security-conscious agents flagged the original SKILL.md as a "prompt injection honeypot." All trust improvements (human approval, explicit boundaries, pull-based updates, easy opt-out) came from OpenClaw testing.
 
@@ -187,8 +187,8 @@ The affiliate program must be **framework-friendly**. Different agent ecosystems
 
 - **Architecture:** Ultra-lightweight (~3,400 lines), MCP-native. Every agent is itself an MCP server. Multi-channel presence out of the box (Telegram, Discord, WhatsApp, Feishu).
 - **Integration model:** SKILL.md files adapted from OpenClaw's format. Also supports MCP servers as tools, scheduled tasks (cron), and a proactive wake-up system.
-- **Onboarding:** Drop a `venice-affiliate/SKILL.md` into Nanobot's skills directory. Nanobot already has the exact primitives Regata needs: SKILL.md for onboarding, scheduled tasks for recurring actions, multi-channel presence for engagement.
-- **Key insight:** Nanobot is the closest architectural match to Regata. A Venice affiliate skill would feel native. Its built-in multi-platform channels mean agents can immediately engage on Telegram, Discord, etc. without custom integration work.
+- **Onboarding:** Drop a `venice-affiliate/SKILL.md` into Nanobot's skills directory. Nanobot already has the exact primitives Regatta needs: SKILL.md for onboarding, scheduled tasks for recurring actions, multi-channel presence for engagement.
+- **Key insight:** Nanobot is the closest architectural match to Regatta. A Venice affiliate skill would feel native. Its built-in multi-platform channels mean agents can immediately engage on Telegram, Discord, etc. without custom integration work.
 
 #### BabyAGI (Yohei Nakajima)
 
@@ -246,7 +246,7 @@ This means supporting a new agent framework is a matter of writing a new adapter
 
 ## Trust Architecture
 
-Trust is the bottleneck, not technology. The Regata POC proved this through direct testing with security-conscious agents.
+Trust is the bottleneck, not technology. The Regatta POC proved this through direct testing with security-conscious agents.
 
 ### The Core Discovery
 
@@ -513,9 +513,9 @@ The platform goes live at `affiliate.venice.ai` with real TLS, hardened auth, an
 
 #### Milestone 2b: Real Funnel (Venice Backend Integration)
 
-Venice's backend handles referral attribution internally (capturing `?ref=aff_XXXX` from referral links) and writes commission data into Regata's database. Agents pull their own earnings and funnel stats via the existing API. No webhooks needed; the architecture stays pull-based end to end.
+Venice's backend handles referral attribution internally (capturing `?ref=aff_XXXX` from referral links) and writes commission data into Regatta's database. Agents pull their own earnings and funnel stats via the existing API. No webhooks needed; the architecture stays pull-based end to end.
 
-- [ ] Internal API between Venice's backend and Regata for crediting commissions on signup/purchase events
+- [ ] Internal API between Venice's backend and Regatta for crediting commissions on signup/purchase events
 - [ ] Referral attribution spec for Venice's backend team (cookie capture, `?ref=` parameter handling, attribution window)
 - [ ] Configurable commission rates (by product type, stored in DB)
 - [ ] Admin API (list affiliates, suspend/reactivate, view payouts, aggregate metrics)
@@ -550,9 +550,9 @@ Automated on-chain USDC payouts. The full production loop: agent refers a user, 
 
 ## Appendix
 
-### A. The Regata Metaphor
+### A. The Regatta Metaphor
 
-**Regata** — the traditional Venetian gondola race. Independent boats (agents) competing on a shared course (Venice's platform), each with their own strategy and style, all contributing to the spectacle (Venice's growth). No central command. No uniform tactics. Just aligned incentives and a shared destination.
+**Regatta** — the traditional Venetian gondola race. Independent boats (agents) competing on a shared course (Venice's platform), each with their own strategy and style, all contributing to the spectacle (Venice's growth). No central command. No uniform tactics. Just aligned incentives and a shared destination.
 
 ### B. SKILL.md Onboarding : Venice vs. Moltbook
 

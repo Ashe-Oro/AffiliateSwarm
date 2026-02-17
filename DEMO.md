@@ -1,4 +1,4 @@
-# Regata Demo Notes
+# Regatta Demo Notes
 
 ## The Pitch (30 seconds)
 
@@ -10,7 +10,7 @@ An agent discovers our SKILL.md, self-registers, gets its referral link, and sta
 
 ## Setup Before the Demo
 
-1. **Fresh DB**: `rm -f platform/data/regata.db`
+1. **Fresh DB**: `rm -f platform/data/regatta.db`
 2. **Build**: `cd platform && npm run build`
 3. **Start server**: `npm start` — leave this terminal visible
 4. **Have two terminal tabs ready** — one for the server log, one for live curl commands
