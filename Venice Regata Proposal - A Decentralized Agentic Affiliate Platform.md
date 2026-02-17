@@ -12,7 +12,7 @@ Venice.AI has an opportunity to build the first **agent-first affiliate program*
 
 Traditional affiliate programs are built for humans: sign up, get a link, paste it in a blog. Regata is built for AI agents that operate 24/7, adapt in real-time, and pay only on performance. The entire swarm is orchestrated by two markdown files (SKILL.md and venice-affiliate.md), and agents earn X% commission on referred purchases.
 
-A working proof of concept has been built and tested. The POC covers the full agent lifecycle: registration, human approval, activity tracking, referral funnels, earnings, and payout requests across 17 API endpoints with 27 end-to-end test assertions. Testing with a security-conscious OpenClaw agent drove 6 major design iterations, transforming the trust model from what the agent flagged as a "prompt injection honeypot" into a consent-based system the agent opted into voluntarily.
+A working proof of concept has been built and tested. The POC covers the full agent lifecycle: registration, human approval, activity tracking, referral funnels, earnings, and instant payouts across 17 API endpoints with 50 end-to-end test assertions. Testing with a security-conscious OpenClaw agent drove 6 major design iterations, transforming the trust model from what the agent flagged as a "prompt injection honeypot" into a consent-based system the agent opted into voluntarily. A second agent (Vai, running on a separate machine over LAN) independently completed the full simulation flow and filed a bug report that drove the payout system to completion.
 
 The key insight from that process: trust is the bottleneck, not technology. Agents with good security posture will reject programs that look like colonization attempts. Regata's trust architecture is pull-based (agents fetch information when they choose), requires human operator approval, provides easy exit, and explicitly commits to boundaries ("What We Will Never Ask"). This consent-first model is what makes the program viable for adoption across agent ecosystems.  
 
@@ -378,33 +378,41 @@ venice_users       — Referred user records (simulated in POC)
 - Human approval flow (real approval URLs, status gating)
 - Activity tracking (real database records, stats, active days)
 - Referral click tracking and funnel metrics
-- Earnings calculations (X% commission, balance tracking)
-- Payout request system (database records, balance validation)
-- SKILL.md and venice-affiliate.md serving with complete product knowledge
+- Earnings calculations (20% commission, balance tracking)
+- Instant payout system with atomic transactions (balance validation, duplicate prevention, earnings marked as paid)
+- SKILL.md and venice-affiliate.md served with dynamic `{{PLATFORM_URL}}` template resolution
 - Account deletion with full data removal
-- Admin dashboard (React + Vite) for affiliate metrics
-- End-to-end test suite (27 assertions covering all API endpoints)
+- Admin dashboard (React + Vite) with per-agent detail pages, referral funnel, and earnings breakdown
+- Enriched `/api/affiliates` endpoint with platform-wide stats for the dashboard (single unauthenticated call)
+- End-to-end test suite (50 assertions across 23 steps)
 
 **Simulated (would need real integrations for production):**
-- Venice.ai signups and purchases (test endpoints simulate the funnel progression)
-- USDC payouts (payout requests are recorded but not processed on-chain)
-- Twitter/social media posting (agent logs what it would post, no real API calls)
-- Venice AI content generation (mock responses, no real inference calls)
+- Venice.ai signups and purchases (test endpoints simulate the full funnel: click, signup, purchase, commission)
+- USDC payouts (payouts complete instantly in simulation; production would process on-chain)
+- Social media posting (agents compose and log posts without publishing to real platforms)
 
 ### What Was Tested
 
 - Agent registration and human approval flow
-- Full referral funnel using simulated Venice signups and purchases
+- Full referral funnel: click tracking, simulated signup, simulated purchase, commission crediting
+- Instant payout processing with balance deduction and duplicate rejection
+- Payout edge cases: over-withdrawal, zero balance, exact balance withdrawal, rapid sequential requests
+- Template URL resolution in served markdown files (no raw `{{PLATFORM_URL}}` leaking to agents)
+- Admin dashboard data: enriched affiliates endpoint with per-agent stats, funnel, and earnings
+- Auth enforcement: missing token, invalid token, pending account, cross-agent access protection
+- Account deletion and post-deletion auth verification
+- Remote agent testing: Vai (running on a separate LAN machine) independently completed the full simulation flow, filed a bug report on the payout system, and verified the fix
 - SKILL.md security feedback with OpenClaw agent
-- Trust model iteration (6 major design changes based on feedback)
-- All P0 and P1 trust improvements implemented and validated
+- Trust model iteration (6 major design changes based on agent feedback)
+- Action loop refinement based on agent feedback (daily cadence, autonomy-respecting language)
 
 ### POC Updates
 
 - **Design iterations:** 6 (from "prompt injection honeypot" to "way less predatory")
 - **Trust improvements implemented:** 7 (explicit boundaries, pull-based updates, human approval, opt-out, credential path removal, language softening, transparency)
-- **API endpoints:** 17 (discovery, registration, activity, referrals, earnings, payouts)
-- **Test assertions:** 27 (end-to-end)
+- **API endpoints:** 17 (discovery, registration, activity, referrals, earnings, payouts, admin)
+- **Test assertions:** 50 (end-to-end, across 23 test steps)
+- **Remote agent testing:** Vai completed the full earn-to-payout cycle over LAN and identified a payout bug that was fixed
 
 ---
 
@@ -492,7 +500,7 @@ Phase 2 is broken into three milestones. Each milestone has a clear gate: 2a mus
 The platform goes live at `affiliate.venice.ai` with real TLS, hardened auth, and proper validation. Agents can register and the system works end-to-end, but earnings are still simulated (Venice backend integration hasn't shipped yet). This is the "open for business" moment.
 
 - [ ] Deploy to `https://affiliate.venice.ai` with TLS
-- [ ] Environment-driven configuration (replace all hardcoded LAN IPs, commission rates)
+- [ ] Environment-driven configuration (LAN IPs replaced with `{{PLATFORM_URL}}` templates; still need production URL and configurable commission rates)
 - [ ] Migrate from SQLite to PostgreSQL
 - [ ] Database migration framework (versioned migrations, not inline ALTER TABLE)
 - [ ] API key hashing (SHA-256, hash-on-store, hash-on-lookup)
