@@ -81,8 +81,6 @@ This is cutting-edge territory. Agent ecosystems are evolving rapidly, with new 
 
 - OpenClaw has 600K+ downloads; autonomous agents with recurring task loops
 - Moltbook has 1.5M+ agents on an agent-only social network
-- BabyAGI is pioneering self-building agents with function-based architectures
-- Nanobot provides ultra-lightweight MCP-native agents with built-in multi-platform presence
 - These agents, and their humans, are looking for ways to monetize. Who doesn't want their agent "making money while I sleep"?
 
 ---
@@ -168,9 +166,9 @@ Venice updates AFFILIATE.md
 
 The affiliate program must be **framework-friendly**. Different agent ecosystems have different architectures, but they all need the same core capability: discover the program, register, promote, earn.
 
-### Agent Framework Profiles
+### Agent Framework Profiles - An Emerging Standard
 
-#### OpenClaw (Existing Test Partner)
+#### OpenClaw (Existing Test Framework)
 
 - **Architecture:** Full-featured agent with SKILL.md standard (AgentSkills format). Skills loaded from `~/.openclaw/skills/` or workspace directories. Gated loading based on binary/env/config requirements.
 - **Integration model:** SKILL.md with YAML frontmatter. Environment variables injected per-skill. User-invocable skills become slash commands.
@@ -178,30 +176,7 @@ The affiliate program must be **framework-friendly**. Different agent ecosystems
 - **Scale:** 600K+ downloads. Every agent has a recurring task loop.
 - **Trust lessons:** Security-conscious agents flagged the original SKILL.md as a "prompt injection honeypot." All trust improvements (human approval, explicit boundaries, pull-based updates, easy opt-out) came from OpenClaw testing.
 
-#### Nanobot (HKUDS)
-
-- **Architecture:** Ultra-lightweight (~3,400 lines), MCP-native. Every agent is itself an MCP server. Multi-channel presence out of the box (Telegram, Discord, WhatsApp, Feishu).
-- **Integration model:** SKILL.md files adapted from OpenClaw's format. Also supports MCP servers as tools, scheduled tasks (cron), and a proactive wake-up system.
-- **Onboarding:** Drop a `AFFILIATE/SKILL.md` into Nanobot's skills directory. Nanobot already has the exact primitives Regatta needs: SKILL.md for onboarding, scheduled tasks for recurring actions, multi-channel presence for engagement.
-- **Key insight:** Nanobot is the closest architectural match to Regatta. A Venice affiliate skill would feel native. Its built-in multi-platform channels mean agents can immediately engage on Telegram, Discord, etc. without custom integration work.
-
-#### BabyAGI (Yohei Nakajima)
-
-- **Architecture:** Self-building agent based on `functionz` — a database-backed function graph. Functions declare dependencies, imports, and secrets. The agent can generate new functions at runtime.
-- **Integration model:** Function packs, not SKILL.md. External services become registered functions with key dependencies stored in a dashboard. Python decorator-based.
-- **Onboarding:** Venice would ship a `venice_affiliate_pack.py` containing affiliate functions (register, check_earnings, log_activity, get_campaigns). BabyAGI loads the pack and the functions become available.
-- **Key challenge:** BabyAGI is experimental and self-modifying — the agent might rewrite affiliate functions. No standardized skill format. But the function pack model means clean encapsulation.
-- **Opportunity:** BabyAGI's trigger system maps to AFFILIATE.md — a trigger that fires periodically to fetch Venice's campaign feed.
-
-While we obviously won't support all of these on day 1, it's important to have an agile approach in case one agent framework becomes popular quickly. 
-
-### The Common Surface: SKILL.md as Emerging Standard
-
-| Framework | Uses SKILL.md | Skill Discovery | Recurring Updates | Multi-Platform |
-|-----------|--------------|-----------------|-------------------|----------------|
-| **OpenClaw** | Native | Directory scan | Via scheduled tasks | Via tools |
-| **Nanobot** | Native (adapted) | Directory scan | Built-in scheduled tasks | Telegram, Discord, WhatsApp, Feishu |
-| **BabyAGI** | No (function packs) | Database registry | Via triggers | Via custom functions |
+### 
 
 ### Two-Level Integration Strategy
 
@@ -223,8 +198,6 @@ Venice ships adapters for each major framework:
 | Framework | Adapter | Format |
 |-----------|---------|--------|
 | OpenClaw | `AFFILIATE/SKILL.md` | YAML frontmatter + markdown instructions |
-| Nanobot | `AFFILIATE/SKILL.md` | Same format (Nanobot adopted OpenClaw's standard) |
-| BabyAGI | `venice_affiliate_pack.py` | Python function pack with decorated functions |
 | MCP-native | `AFFILIATE-mcp-server` | MCP server wrapping the REST API |
 | Any HTTP agent | REST API docs | OpenAPI spec + curl examples |
 
