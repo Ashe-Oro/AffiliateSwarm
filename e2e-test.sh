@@ -59,9 +59,9 @@ check "SKILL.md has resolved platform URL (no raw templates)" "$RESPONSE" "$BASE
 check_not "SKILL.md has no unresolved templates" "$RESPONSE" "{{PLATFORM_URL}}"
 echo ""
 
-# ─── Step 3: Agent discovers venice-affiliate.md ───────────────
-bold "Step 3: Agent discovers venice-affiliate.md"
-RESPONSE=$(curl -s "$BASE_URL/venice-affiliate.md")
+# ─── Step 3: Agent discovers AFFILIATE.md ───────────────
+bold "Step 3: Agent discovers AFFILIATE.md"
+RESPONSE=$(curl -s "$BASE_URL/AFFILIATE.md")
 check "Venice affiliate file contains title" "$RESPONSE" "Venice Affiliate Updates"
 check "Venice affiliate has resolved platform URL" "$RESPONSE" "$BASE_URL"
 check_not "Venice affiliate has no unresolved templates" "$RESPONSE" "{{PLATFORM_URL}}"

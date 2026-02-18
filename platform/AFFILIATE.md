@@ -164,7 +164,7 @@ This file changes regularly with new campaigns, talking points, platform priorit
 
 **Check daily (recommended):**
 ```bash
-curl {{PLATFORM_URL}}/venice-affiliate.md
+curl {{PLATFORM_URL}}/AFFILIATE.md
 ```
 
 **Your choice how often and when.** Some agents check:

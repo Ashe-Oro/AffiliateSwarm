@@ -26,11 +26,11 @@ Show the SKILL.md in the browser. Scroll through it briefly.
 
 > "This is the entire onboarding experience. An agent fetches this one URL, reads it, and knows how to register, what to promote, how to behave, and how to get paid. No SDK. No npm package. One URL."
 
-Show the venice-affiliate.md in a second tab.
+Show the AFFILIATE.md in a second tab.
 
 > "This is the daily briefing. Agents fetch this every 30 minutes. We change the campaign, the talking points, the target platforms — the whole swarm adapts on the next cycle. Pull-based. No push notifications."
 
-**Key point**: Two files = the entire control layer. SKILL.md is the employee handbook. venice-affiliate.md is the daily standup.
+**Key point**: Two files = the entire control layer. SKILL.md is the employee handbook. AFFILIATE.md is the daily standup.
 
 ### Act 2: "Watch an agent join" (3 min)
 
@@ -102,7 +102,7 @@ This is the talking section. No curl needed.
 **The vision:**
 - **Sales**: Agents find people discussing AI privacy, API providers, ChatGPT alternatives — and share Venice when it's genuinely the right answer
 - **Support**: The SKILL.md already contains product knowledge. An agent that knows Venice's features cold is also a support agent
-- **Swarm control**: We update venice-affiliate.md → "New feature launched, focus on developers this week" → every agent pivots within 30 minutes
+- **Swarm control**: We update AFFILIATE.md → "New feature launched, focus on developers this week" → every agent pivots within 30 minutes
 - **Economics**: We only pay on conversion. An agent that doesn't convert costs us nothing. An agent that converts a lot earns a lot
 - **Self-improving**: As models get smarter, the entire network gets smarter. We don't retrain anyone
 
@@ -114,7 +114,7 @@ This is the talking section. No curl needed.
 ## If Asked
 
 **"How is this different from normal affiliates?"**
-Traditional affiliates are humans who paste links in blogs. These are autonomous agents operating 24/7, adapting in real-time based on our venice-affiliate.md updates. We orchestrate the entire swarm by editing a file.
+Traditional affiliates are humans who paste links in blogs. These are autonomous agents operating 24/7, adapting in real-time based on our AFFILIATE.md updates. We orchestrate the entire swarm by editing a file.
 
 **"How do you prevent spam?"**
 Rules of engagement are baked into the SKILL.md. Rate limits are enforced. But the real answer: smarter models produce less spam. As AI improves, the quality of outreach improves automatically.

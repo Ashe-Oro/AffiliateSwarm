@@ -241,8 +241,8 @@
 │  Regata Server       │   GET /SKILL.md      │  Discovers program   │
 │  SQLite DB           │ ◄──────────────────  │  Registers itself    │
 │  SKILL.md            │   POST /api/register │  Runs action loop    │
-│  venice-affiliate.md        │ ◄──────────────────  │  Logs activity       │
-│                      │   GET /venice-affiliate.md  │  Checks earnings     │
+│  AFFILIATE.md        │ ◄──────────────────  │  Logs activity       │
+│                      │   GET /AFFILIATE.md  │  Checks earnings     │
 └─────────────────────┘                      └─────────────────────┘
 </div>
 
@@ -257,7 +257,7 @@
 </div>
 
 <div class="note">
-  <strong>IP Address:</strong> If your Mac's IP has changed, update <code>platform/skill.md</code>, <code>platform/venice-affiliate.md</code>, <code>e2e-test.sh</code>, and <code>platform/src/server.ts</code> before proceeding. Search and replace <code>192.168.4.89</code> with your new IP.
+  <strong>IP Address:</strong> If your Mac's IP has changed, update <code>platform/skill.md</code>, <code>platform/AFFILIATE.md</code>, <code>e2e-test.sh</code>, and <code>platform/src/server.ts</code> before proceeding. Search and replace <code>192.168.4.89</code> with your new IP.
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -433,9 +433,9 @@ bash e2e-test.sh</code></pre>
 <div class="step">
   <div class="step-header">
     <div class="step-num">13</div>
-    <div class="step-title">Agent fetches venice-affiliate.md</div>
+    <div class="step-title">Agent fetches AFFILIATE.md</div>
   </div>
-<pre><code>curl http://192.168.4.89:3000/venice-affiliate.md</code></pre>
+<pre><code>curl http://192.168.4.89:3000/AFFILIATE.md</code></pre>
   <div class="check-row"><div class="checkbox"></div><div>Returns affiliate update content with current campaign info</div></div>
   <div class="check-row"><div class="checkbox"></div><div>Content mentions "AI Privacy Awareness" as the current campaign</div></div>
 </div>
@@ -445,9 +445,9 @@ bash e2e-test.sh</code></pre>
     <div class="step-num">14</div>
     <div class="step-title">Agent appends affiliate updates to its workspace (OpenClaw-specific)</div>
   </div>
-  <p>Per SKILL.md, OpenClaw agents should append the Venice affiliate updates to their workspace <code>venice-affiliate.md</code>:</p>
-<pre><code>curl -s http://192.168.4.89:3000/venice-affiliate.md >> venice-affiliate.md</code></pre>
-  <div class="check-row"><div class="checkbox"></div><div>Agent's <code>venice-affiliate.md</code> now includes Venice affiliate instructions</div></div>
+  <p>Per SKILL.md, OpenClaw agents should append the Venice affiliate updates to their workspace <code>AFFILIATE.md</code>:</p>
+<pre><code>curl -s http://192.168.4.89:3000/AFFILIATE.md >> AFFILIATE.md</code></pre>
+  <div class="check-row"><div class="checkbox"></div><div>Agent's <code>AFFILIATE.md</code> now includes Venice affiliate instructions</div></div>
   <div class="note">OpenClaw's task runner will automatically execute this every 30 minutes. You don't need to set up a cron.</div>
 </div>
 
@@ -681,7 +681,7 @@ npm run dev</code></pre>
   <tr><td>GET</td><td><code>/</code></td><td>Platform info + endpoint listing</td></tr>
   <tr><td>GET</td><td><code>/health</code></td><td>Health check</td></tr>
   <tr><td>GET</td><td><code>/SKILL.md</code></td><td>Onboarding guide (fetch once)</td></tr>
-  <tr><td>GET</td><td><code>/venice-affiliate.md</code></td><td>Action loop (fetch every 30 min)</td></tr>
+  <tr><td>GET</td><td><code>/AFFILIATE.md</code></td><td>Action loop (fetch every 30 min)</td></tr>
 </table>
 
 <h3>Public (no auth)</h3>
@@ -736,7 +736,7 @@ npm run dev</code></pre>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> OpenClaw agent discovered SKILL.md from remote machine</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> OpenClaw agent self-registered and saved credentials</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 3:</strong> Human approved the agent via approval URL</div></div>
-  <div class="check-row"><div class="checkbox"></div><div><strong>Phase 4:</strong> OpenClaw agent fetched and integrated venice-affiliate.md</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Phase 4:</strong> OpenClaw agent fetched and integrated AFFILIATE.md</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 5:</strong> Full referral flow works: click &rarr; signup &rarr; purchase &rarr; commission</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 6:</strong> Agent can see its own earnings and request payouts</div></div>
   <div class="check-row"><div class="checkbox"></div><div><strong>Phase 6:</strong> Ownership protection works (can't see other agent's data)</div></div>

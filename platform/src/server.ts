@@ -53,16 +53,16 @@ app.get('/SKILL.md', (_req, res) => {
   }
 });
 
-// Serve venice-affiliate.md — recurring action loop (fetched periodically by agents)
-app.get('/venice-affiliate.md', (_req, res) => {
+// Serve AFFILIATE.md — recurring action loop (fetched periodically by agents)
+app.get('/AFFILIATE.md', (_req, res) => {
   try {
-    const affiliatePath = path.join(__dirname, '../venice-affiliate.md');
+    const affiliatePath = path.join(__dirname, '../AFFILIATE.md');
     const content = fs.readFileSync(affiliatePath, 'utf-8')
       .replace(/\{\{PLATFORM_URL\}\}/g, PLATFORM_URL);
     res.type('text/markdown').send(content);
   } catch (error) {
-    console.error('[Venice Affiliate] Error reading venice-affiliate.md:', error);
-    res.status(500).json({ success: false, error: 'Failed to read venice-affiliate.md' });
+    console.error('[Affiliate] Error reading AFFILIATE.md:', error);
+    res.status(500).json({ success: false, error: 'Failed to read AFFILIATE.md' });
   }
 });
 
@@ -88,7 +88,7 @@ app.get('/', (_req, res) => {
     endpoints: {
       discovery: {
         skill: 'GET /SKILL.md (onboarding — fetch once)',
-        veniceAffiliate: 'GET /venice-affiliate.md (action loop — fetch periodically)',
+        affiliate: 'GET /AFFILIATE.md (action loop — fetch periodically)',
         health: 'GET /health',
       },
       public: {

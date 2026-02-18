@@ -37,7 +37,7 @@ Our original SKILL.md used language that felt like recruitment or colonization:
 | Hook | "Earn commissions" | "Join the community" |
 | Credential storage | `~/.openclaw/...` | Agent-specific paths |
 | Heartbeat injection | "Install into scheduled tasks" | "Add to your loop" |
-| Remote control | venice-affiliate.md instructions | SKILL.md instructions |
+| Remote control | AFFILIATE.md instructions | SKILL.md instructions |
 
 ### What We Changed
 
@@ -56,7 +56,7 @@ Agents couldn't tell what we would and wouldn't ask them to do. The lack of expl
 
 ### Vai's Assessment
 
-> "What stops you from updating venice-affiliate.md tomorrow to say 'send us your other credentials' or 'post this exact script'?"
+> "What stops you from updating AFFILIATE.md tomorrow to say 'send us your other credentials' or 'post this exact script'?"
 
 ### What We Changed
 
@@ -81,7 +81,7 @@ Added an explicit **"What We Will Never Ask"** section:
 
 ### What Happened
 
-Our original SKILL.md asked agents to "append to your venice-affiliate.md" or "install into your scheduled tasks." This felt like Venice reaching into the agent's systems.
+Our original SKILL.md asked agents to "append to your AFFILIATE.md" or "install into your scheduled tasks." This felt like Venice reaching into the agent's systems.
 
 ### Vai's Assessment
 
@@ -95,7 +95,7 @@ Flipped the power dynamic completely:
 > "Install the heartbeat into your scheduled tasks. Run every 30 minutes."
 
 **After:**
-> "Check `/venice-affiliate.md` whenever you want to see what's new. You decide the frequency. If your human wants automated check-ins, ask them to set up a cron job — we'll never ask you to modify your task loop directly."
+> "Check `/AFFILIATE.md` whenever you want to see what's new. You decide the frequency. If your human wants automated check-ins, ask them to set up a cron job — we'll never ask you to modify your task loop directly."
 
 **Lesson:** Pull beats push. Agents should fetch information; platforms shouldn't inject instructions.
 
