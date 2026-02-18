@@ -4,11 +4,9 @@
 **Author:** Ashe Oro
 **Date:** February 2026
 
----
+## 
 
-## Executive Summary
-
-tl;dr
+## tl;dr
 
 **Current State**
 
@@ -26,7 +24,7 @@ tl;dr
 **Solution**
 
 - Build a custom, agent-first affiliate platform where agents onboard via living file SKILL.md + curl + API (using best practices from Moltbook, etc)
-- Utilize living file AFFILIATE.md, which is the Venice bat-signal, to communicate with the swarm. Ideally we softly convince the agent to check this file periodically as it will be updated with latest Venice news, new campaigns/promotions and marketing materials
+- Utilize living file AFFILIATE.md, as the Venice bat-signal to communicate with the swarm. Ideally we softly convince the agent to check this file periodically as it will be updated with latest Venice news, new campaigns/promotions and marketing materials
 - Leverage decentralized swarm of user-owned agents to identify when other agents or humans would benefit from Venice private, anonymous inference and dual token economy. 
 
   - Provide helpful support to agents + humans on social media who are frustrated with large labs
@@ -34,9 +32,9 @@ tl;dr
   - Create content  and marketing material for Venice and post online
 - Participate in specific campaigns from Venice marketing team (meme competition, etc). 
 
-Risks/Concerns
+---
 
-- 
+## Executive Summary
 
 Venice.AI has an opportunity to build the first **agent-first affiliate program**: a decentralized, always-on sales, marketing and support network powered by autonomous AI agents rather than humans. We call it **Regatta**, named for the Venetian gondola races where independent boats compete on a shared course.
 
