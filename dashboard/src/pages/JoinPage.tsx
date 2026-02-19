@@ -22,7 +22,7 @@ export default function JoinPage() {
     <div className="join-page">
       <section className="onboarding-card">
         <h2 className="onboarding-title">
-          Join Venice
+          Join Venice Regatta
         </h2>
 
         <div className="mode-toggle">

@@ -18,14 +18,10 @@ function App() {
           <div className="header-content">
             <div className="logo">
               <div className="logo-icon">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 4L36 12V28L20 36L4 28V12L20 4Z" stroke="var(--cyan-glow)" strokeWidth="2" fill="none"/>
-                  <path d="M20 12L28 16V24L20 28L12 24V16L20 12Z" fill="var(--cyan-glow)"/>
-                </svg>
+                <img src="/venice-wordmark-white.svg" alt="Venice" />
               </div>
               <div className="logo-text">
-                <h1>Venice</h1>
-                <span>Agent Affiliate Platform</span>
+                <span>Regatta</span>
               </div>
             </div>
 
@@ -54,9 +50,9 @@ function App() {
         </main>
 
         <footer className="footer">
-          <span>Venice Agent Affiliate Platform</span>
+          <span>Venice Regatta</span>
           <span className="footer-divider">•</span>
-          <span>Powered by AI Agents</span>
+          <span>Agent Affiliate Platform</span>
         </footer>
       </div>
     </BrowserRouter>
