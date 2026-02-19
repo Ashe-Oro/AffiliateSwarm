@@ -1,47 +1,22 @@
 /* ===================================
    Venice Regatta Dashboard
-   Venice Brand Guidelines Theme
+   Venice Brand Light Theme
    =================================== */
 
 .app {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  background: var(--bg-deep);
 }
 
-/* Background - subtle depth with Sea Dark tones */
+/* Background - clean, minimal */
 .bg-grid {
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(18, 93, 163, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 93, 163, 0.02) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 .bg-glow {
-  position: fixed;
-  width: 700px;
-  height: 700px;
-  border-radius: 50%;
-  filter: blur(140px);
-  opacity: 0.35;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-glow-1 {
-  top: -300px;
-  right: -200px;
-  background: radial-gradient(circle, rgba(14, 41, 66, 0.6) 0%, transparent 70%);
-}
-
-.bg-glow-2 {
-  bottom: -300px;
-  left: -200px;
-  background: radial-gradient(circle, rgba(18, 93, 163, 0.08) 0%, transparent 70%);
+  display: none;
 }
 
 /* Header */
@@ -49,13 +24,13 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(6, 10, 16, 0.85);
-  backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .header-content {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-md) var(--space-xl);
   display: flex;
@@ -72,7 +47,7 @@
 }
 
 .logo-icon {
-  height: 32px;
+  height: 28px;
 }
 
 .logo-icon img {
@@ -81,20 +56,20 @@
 }
 
 .logo-text span {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.18em;
   padding-left: var(--space-md);
-  border-left: 1px solid var(--text-muted);
+  border-left: 1px solid var(--border-medium);
 }
 
 /* Navigation */
 .nav {
   display: flex;
   gap: 2px;
-  background: var(--bg-deep);
+  background: var(--bg-elevated);
   padding: 3px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
@@ -108,16 +83,16 @@
   text-decoration: none;
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .nav-link:hover {
-  color: var(--text-secondary);
-  background: var(--bg-elevated);
+  color: var(--text-primary);
+  background: var(--bg-hover);
 }
 
 .nav-link.active {
-  background: var(--ui-accent);
+  background: var(--text-primary);
   color: #ffffff;
 }
 
@@ -138,14 +113,13 @@
   background: var(--color-success);
   border-radius: 50%;
   animation: pulse-glow 2.5s ease-in-out infinite;
-  box-shadow: 0 0 8px var(--color-success);
 }
 
 /* Main Content */
 .main {
   position: relative;
   z-index: 1;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-2xl) var(--space-xl);
 }
@@ -153,9 +127,39 @@
 /* Join Page */
 .join-page {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 60vh;
+  gap: var(--space-2xl);
+}
+
+.join-hero {
+  text-align: center;
+}
+
+.join-hero-icon {
+  width: 48px;
+  height: auto;
+  margin-bottom: var(--space-lg);
+}
+
+.join-hero-title {
+  font-size: 2.75rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: var(--space-sm);
+}
+
+.join-hero-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
 }
 
 /* Dashboard Page */
@@ -173,9 +177,10 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
-/* Venetian Red accent line at top of onboarding card - brand pop */
+/* Venetian Red accent line at top - brand pop */
 .onboarding-card::before {
   content: '';
   position: absolute;
@@ -201,7 +206,7 @@
 /* Mode Toggle */
 .mode-toggle {
   display: flex;
-  background: var(--bg-deep);
+  background: var(--bg-elevated);
   border-radius: var(--radius-md);
   padding: 3px;
   margin-bottom: var(--space-lg);
@@ -224,17 +229,17 @@
 }
 
 .mode-btn:hover {
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .mode-btn.active {
-  background: var(--ui-accent);
+  background: var(--text-primary);
   color: #ffffff;
 }
 
 /* Command Box */
 .command-box {
-  background: var(--bg-deep);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   padding: var(--space-md) var(--space-lg);
@@ -246,13 +251,13 @@
 
 .command-box:hover {
   border-color: var(--ui-accent-border);
-  background: var(--bg-elevated);
+  background: var(--bg-hover);
 }
 
 .command-box code {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
-  color: var(--sea-light);
+  color: var(--sea-dark);
   word-break: break-word;
   overflow-wrap: break-word;
   line-height: 1.6;
@@ -289,7 +294,7 @@
 }
 
 .step-num {
-  color: var(--ui-accent-light);
+  color: var(--ui-accent);
   font-weight: 600;
   margin-right: var(--space-xs);
   font-family: var(--font-mono);
@@ -332,17 +337,18 @@
   position: relative;
   overflow: hidden;
   transition: all 0.25s ease;
+  box-shadow: var(--shadow-card);
 }
 
 .stat-card:hover {
   border-color: var(--border-medium);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-deep);
 }
 
 .stat-card.active {
   border-color: var(--ui-accent-border);
-  background: linear-gradient(170deg, var(--bg-surface) 0%, rgba(18, 93, 163, 0.06) 100%);
+  background: linear-gradient(170deg, #ffffff 0%, rgba(18, 93, 163, 0.03) 100%);
 }
 
 .stat-icon {
@@ -360,7 +366,7 @@
 }
 
 .stat-card.active .stat-value {
-  color: var(--sea-light);
+  color: var(--ui-accent);
 }
 
 .stat-label {
@@ -375,7 +381,7 @@
 .stat-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(18, 93, 163, 0.08) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 0%, rgba(18, 93, 163, 0.04) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -385,8 +391,8 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-lg);
-  background: rgba(229, 77, 77, 0.08);
-  border: 1px solid rgba(229, 77, 77, 0.2);
+  background: rgba(212, 57, 57, 0.06);
+  border: 1px solid rgba(212, 57, 57, 0.15);
   border-radius: var(--radius-md);
   color: var(--color-error);
   margin-bottom: var(--space-xl);
@@ -431,6 +437,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
+  box-shadow: var(--shadow-card);
 }
 
 .agents-table-container {
@@ -451,7 +458,7 @@
   font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-medium);
   font-family: var(--font-mono);
 }
 
@@ -467,7 +474,7 @@
 }
 
 .agents-table tbody tr:hover {
-  background: var(--bg-hover);
+  background: var(--bg-elevated);
 }
 
 .agents-table tbody tr.selected {
@@ -505,7 +512,7 @@
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   padding: var(--space-xs) var(--space-sm);
-  background: var(--bg-deep);
+  background: var(--bg-elevated);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   border: 1px solid var(--border-subtle);
@@ -516,7 +523,7 @@
   align-items: center;
   gap: 6px;
   padding: var(--space-xs) var(--space-sm);
-  background: rgba(143, 163, 184, 0.06);
+  background: var(--bg-elevated);
   border-radius: 100px;
   font-size: 0.6875rem;
   font-weight: 500;
@@ -528,22 +535,19 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--text-tertiary);
+  background: var(--text-muted);
 }
 
 .status-active .status-indicator {
   background: var(--color-success);
-  box-shadow: 0 0 6px var(--color-success);
 }
 
 .status-pending .status-indicator {
   background: var(--color-warning);
-  box-shadow: 0 0 6px var(--color-warning);
 }
 
 .status-suspended .status-indicator {
   background: var(--color-error);
-  box-shadow: 0 0 6px var(--color-error);
 }
 
 .time-cell {
@@ -573,6 +577,7 @@
   max-height: 600px;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--shadow-card);
 }
 
 .activity-feed {
@@ -619,9 +624,9 @@
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   padding: 2px 6px;
-  background: var(--bg-deep);
+  background: var(--bg-hover);
   border-radius: var(--radius-sm);
-  color: var(--ui-accent-light);
+  color: var(--ui-accent);
   border: 1px solid var(--border-subtle);
 }
 
@@ -636,8 +641,8 @@
 .activity-platform {
   font-size: 0.625rem;
   padding: 2px 6px;
-  background: var(--sea-dark);
-  color: var(--sea-light);
+  background: var(--ui-accent-subtle);
+  color: var(--ui-accent);
   border-radius: var(--radius-sm);
   text-transform: uppercase;
   font-family: var(--font-mono);
@@ -662,7 +667,7 @@
 .footer {
   position: relative;
   z-index: 1;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-2xl) var(--space-xl);
   display: flex;
@@ -677,8 +682,8 @@
 }
 
 .footer-divider {
-  opacity: 0.3;
   color: var(--venetian-red);
+  opacity: 0.5;
 }
 
 /* Agent Name Link */
@@ -689,7 +694,7 @@
 }
 
 .agent-name-link:hover strong {
-  color: var(--ui-accent-light);
+  color: var(--ui-accent);
 }
 
 /* Agent Page */
@@ -711,7 +716,7 @@
 }
 
 .back-link:hover {
-  color: var(--ui-accent-light);
+  color: var(--ui-accent);
 }
 
 .back-link::before {
@@ -730,9 +735,10 @@
   margin-bottom: var(--space-2xl);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
-/* Venetian Red brand accent stripe on agent header */
+/* Venetian Red brand accent stripe */
 .agent-header::after {
   content: '';
   position: absolute;

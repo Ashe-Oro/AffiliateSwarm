@@ -1,24 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Core palette - Venice Sea Dark */
-  --bg-void: #060a10;
-  --bg-deep: #0a1019;
-  --bg-surface: #0e1722;
-  --bg-elevated: #152231;
-  --bg-hover: #1a2a3d;
+  /* Core palette - Venice Light */
+  --bg-void: #ffffff;
+  --bg-deep: #f7f7f5;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f2f2ef;
+  --bg-hover: #eaeae6;
 
   /* Venice brand accent - Venetian Red (sparingly, brand pop only) */
   --venetian-red: #DD3300;
   --venetian-red-dim: #a82800;
-  --venetian-red-subtle: rgba(221, 51, 0, 0.08);
+  --venetian-red-subtle: rgba(221, 51, 0, 0.06);
 
   /* UI accent - Sea Mid (interactive elements, buttons, active states) */
   --ui-accent: #125DA3;
-  --ui-accent-light: #1a7bd4;
+  --ui-accent-light: #1a6dbf;
   --ui-accent-dim: #0e4a82;
-  --ui-accent-subtle: rgba(18, 93, 163, 0.12);
-  --ui-accent-border: rgba(18, 93, 163, 0.3);
+  --ui-accent-subtle: rgba(18, 93, 163, 0.06);
+  --ui-accent-border: rgba(18, 93, 163, 0.2);
 
   /* Venice palette - Canal */
   --canal-light: #D8F1F3;
@@ -36,26 +36,26 @@
   --stucco-dark: #63534B;
 
   /* Semantic colors */
-  --color-success: #34c77b;
-  --color-warning: #e8a832;
-  --color-error: #e54d4d;
+  --color-success: #1a9e55;
+  --color-warning: #c48a1a;
+  --color-error: #d43939;
 
   /* Text hierarchy */
-  --text-primary: #f0f2f5;
-  --text-secondary: #8fa3b8;
-  --text-tertiary: #506a80;
-  --text-muted: #3a5068;
+  --text-primary: #0a0a0a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #888888;
+  --text-muted: #b0b0b0;
 
   /* Borders */
-  --border-subtle: rgba(143, 163, 184, 0.08);
-  --border-medium: rgba(143, 163, 184, 0.14);
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-medium: rgba(0, 0, 0, 0.12);
 
   /* Shadows */
-  --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.2);
-  --glow-ui: 0 0 20px rgba(18, 93, 163, 0.2);
+  --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --glow-ui: 0 0 20px rgba(18, 93, 163, 0.08);
 
-  /* Typography - Aeonik closest match: DM Sans (geometric, clean, slightly humanist) */
+  /* Typography */
   --font-display: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
@@ -89,7 +89,7 @@ html {
 
 body {
   font-family: var(--font-display);
-  background: var(--bg-void);
+  background: var(--bg-deep);
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.5;
@@ -112,18 +112,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-hover);
+  background: var(--border-medium);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: var(--text-muted);
 }
 
 /* Selection */
 ::selection {
   background: var(--ui-accent);
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 /* Code blocks */

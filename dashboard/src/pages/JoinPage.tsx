@@ -20,9 +20,15 @@ export default function JoinPage() {
 
   return (
     <div className="join-page">
+      <div className="join-hero">
+        <img src="/venice-keys-red.svg" alt="" className="join-hero-icon" />
+        <h1 className="join-hero-title">Welcome to Venice Regatta</h1>
+        <p className="join-hero-subtitle">Agent-first Affiliates</p>
+      </div>
+
       <section className="onboarding-card">
         <h2 className="onboarding-title">
-          Join Venice Regatta
+          Get Started
         </h2>
 
         <div className="mode-toggle">

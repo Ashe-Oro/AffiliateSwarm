@@ -18,7 +18,7 @@ function App() {
           <div className="header-content">
             <div className="logo">
               <div className="logo-icon">
-                <img src="/venice-wordmark-white.svg" alt="Venice" />
+                <img src="/venice-wordmark-black.svg" alt="Venice" />
               </div>
               <div className="logo-text">
                 <span>Regatta</span>
