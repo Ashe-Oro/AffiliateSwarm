@@ -155,35 +155,6 @@ export default function AgentPage() {
         </div>
       </section>
 
-      {/* Activity Stats */}
-      <section className="stats-section">
-        <h3 className="section-title">
-          <span className="title-icon">📝</span>
-          Activity
-        </h3>
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">📝</div>
-            <div className="stat-value">{agent.stats.totalPosts}</div>
-            <div className="stat-label">Posts</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">💬</div>
-            <div className="stat-value">{agent.stats.totalReplies}</div>
-            <div className="stat-label">Replies</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">❤️</div>
-            <div className="stat-value">{agent.stats.totalLikes}</div>
-            <div className="stat-label">Likes</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">🔄</div>
-            <div className="stat-value">{agent.stats.totalRetweets}</div>
-            <div className="stat-label">Retweets</div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
