@@ -31,6 +31,9 @@ export default function DashboardPage() {
 
   const formatUsd = (amount: number) => `$${amount.toFixed(2)}`;
 
+  const activeAgents = affiliates.filter(a => a.status === 'active');
+  const pendingAgents = affiliates.filter(a => a.status === 'pending');
+
   return (
     <div className="dashboard-page">
       {/* Platform Stats Grid */}
@@ -41,19 +44,29 @@ export default function DashboardPage() {
         </h3>
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon">🤖</div>
-            <div className="stat-value">{affiliates.length}</div>
-            <div className="stat-label">Registered Agents</div>
+            <div className="stat-icon">✅</div>
+            <div className="stat-value">{activeAgents.length}</div>
+            <div className="stat-label">Active Agents</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">⏳</div>
+            <div className="stat-value">{pendingAgents.length}</div>
+            <div className="stat-label">Pending Approval</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">🔗</div>
             <div className="stat-value">{platform?.totalClicks || 0}</div>
-            <div className="stat-label">Referral Clicks</div>
+            <div className="stat-label">Clicks</div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon">✅</div>
+            <div className="stat-icon">📝</div>
+            <div className="stat-value">{platform?.totalSignups || 0}</div>
+            <div className="stat-label">Signups</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">🛒</div>
             <div className="stat-value">{platform?.totalConversions || 0}</div>
-            <div className="stat-label">Conversions</div>
+            <div className="stat-label">Purchases</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">💰</div>

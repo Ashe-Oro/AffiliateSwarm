@@ -140,7 +140,7 @@ export default function AgentPage() {
           <div className="stat-card">
             <div className="stat-icon">💵</div>
             <div className="stat-value">{formatUsd(agent.earnings.availableUsd)}</div>
-            <div className="stat-label">Available</div>
+            <div className="stat-label">Balance</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">📤</div>

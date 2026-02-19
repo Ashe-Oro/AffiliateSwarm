@@ -244,9 +244,40 @@
   border-radius: var(--radius-md);
   padding: var(--space-md) var(--space-lg);
   margin-bottom: var(--space-lg);
-  cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.copy-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+  background: var(--bg-hover);
+}
+
+.copy-btn-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-success);
+  margin-left: 4px;
 }
 
 .command-box:hover {
