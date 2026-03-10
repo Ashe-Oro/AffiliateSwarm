@@ -101,7 +101,7 @@ The platform starts at `http://localhost:3000`. That's all you need — the plat
 bash e2e-test.sh
 ```
 
-This runs through the entire flow in 23 steps: discover skill file, register (pending), human approval, authenticate, post, referral click, user signup, user purchase, check earnings, check funnel, request payout, verify stats, and opt-out (account deletion).
+This runs through the entire flow in 23 steps: discover skill file, register (pending), human approval, authenticate, log activity, referral click, user signup, user purchase, check earnings, check funnel, request payout, verify stats, and opt-out (account deletion).
 
 ### Manual Testing
 

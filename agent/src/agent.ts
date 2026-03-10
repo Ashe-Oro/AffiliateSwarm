@@ -9,6 +9,8 @@ export interface AgentConfig {
   name: string;
   description: string;
   dryRun?: boolean; // If true, don't actually post (for testing)
+  enablePlatformCheckIn?: boolean;
+  enableTwitterPosting?: boolean;
 }
 
 export class VeniceAffiliateAgent {
@@ -20,6 +22,8 @@ export class VeniceAffiliateAgent {
   private skillContent: string = '';
   private isRunning = false;
   private processedTweetIds = new Set<string>();
+  private enablePlatformCheckIn: boolean;
+  private enableTwitterPosting: boolean;
 
   constructor(config: AgentConfig) {
     this.config = config;
@@ -27,6 +31,8 @@ export class VeniceAffiliateAgent {
     this.venice = createVeniceClient();
     this.platform = createPlatformClient();
     this.scheduler = new Scheduler();
+    this.enablePlatformCheckIn = config.enablePlatformCheckIn ?? false;
+    this.enableTwitterPosting = config.enableTwitterPosting ?? false;
   }
 
   async initialize(): Promise<void> {
@@ -91,6 +97,10 @@ export class VeniceAffiliateAgent {
   }
 
   private async sendCheckIn(): Promise<void> {
+    if (!this.enablePlatformCheckIn) {
+      return;
+    }
+
     try {
       const stats = this.scheduler.getStats();
       await this.platform.checkIn('running', {
@@ -174,6 +184,11 @@ export class VeniceAffiliateAgent {
       replyContent += ` ${this.platform.getAffiliateLink()}`;
     }
 
+    if (!this.enableTwitterPosting) {
+      console.log('[Agent] Twitter posting disabled by feature flag, skipping reply');
+      return;
+    }
+
     // Wait for rate limit
     await this.scheduler.waitForNextAction();
 
@@ -212,6 +227,11 @@ export class VeniceAffiliateAgent {
     let finalContent = content;
     if (content.length < 220 && this.shouldIncludeLink(content)) {
       finalContent = `${content}\n\n${this.platform.getAffiliateLink()}`;
+    }
+
+    if (!this.enableTwitterPosting) {
+      console.log('[Agent] Twitter posting disabled by feature flag, skipping original post');
+      return;
     }
 
     await this.scheduler.waitForNextAction();

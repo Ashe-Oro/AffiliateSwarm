@@ -5,12 +5,23 @@ import { createAgent } from './agent';
 dotenv.config();
 
 async function main() {
+  const enablePlatformCheckIn = process.env.ENABLE_PLATFORM_CHECKIN === 'true';
+  const enableTwitterPosting = process.env.ENABLE_TWITTER_POSTING === 'true';
+
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║     Venice.AI Affiliate Agent                             ║
 ║     Starting up...                                        ║
 ╚═══════════════════════════════════════════════════════════╝
   `);
+
+  if (!enablePlatformCheckIn) {
+    console.log('[Main] Platform check-in endpoint disabled by feature flag');
+  }
+
+  if (!enableTwitterPosting) {
+    console.log('[Main] Twitter posting disabled by feature flag');
+  }
 
   // Check for Venice API key (optional in stub mode)
   if (!process.env.VENICE_API_KEY) {
@@ -24,6 +35,8 @@ async function main() {
       process.env.AGENT_DESCRIPTION ||
       'AI agent promoting Venice.AI products on Twitter',
     dryRun: process.env.DRY_RUN === 'true',
+    enablePlatformCheckIn,
+    enableTwitterPosting,
   });
 
   // Handle graceful shutdown

@@ -122,12 +122,12 @@ RESPONSE=$(curl -s "$BASE_URL/api/me" -H "Authorization: Bearer vnice_bogus_key"
 check "Invalid key returns 401" "$RESPONSE" '"error":"Invalid API key"'
 echo ""
 
-# ─── Step 10: Agent logs a simulated post ───────────────────────
-bold "Step 10: Agent logs a simulated post"
+# ─── Step 10: Agent logs generic activity ───────────────────────
+bold "Step 10: Agent logs generic activity"
 RESPONSE=$(curl -s -X POST "$BASE_URL/api/activity" \
   -H "Content-Type: application/json" \
   -H "$AUTH_HEADER" \
-  -d "{\"type\": \"post\", \"platform\": \"twitter\", \"content\": \"Privacy in AI matters. Check out Venice.AI https://venice.ai/?ref=$AFFILIATE_ID\"}")
+  -d '{"type": "search", "platform": "other", "content": "privacy-first ai inference providers"}')
 check "Activity logged" "$RESPONSE" '"success":true'
 echo ""
 

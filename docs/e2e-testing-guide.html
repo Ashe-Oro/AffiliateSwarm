@@ -460,16 +460,16 @@ bash e2e-test.sh</code></pre>
 <div class="step">
   <div class="step-header">
     <div class="step-num">15</div>
-    <div class="step-title">Agent logs a promotional post</div>
+  <div class="step-title">Agent logs generic activity</div>
   </div>
-  <p><span class="role role-agent">OpenClaw Agent</span> &mdash; The agent (or you pretending to be the agent) logs a post:</p>
+  <p><span class="role role-agent">OpenClaw Agent</span> &mdash; The agent (or you pretending to be the agent) logs an activity event. This does not require a social post or real Twitter integration:</p>
 <pre><code>curl -X POST http://192.168.4.89:3000/api/activity \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
-    "type": "post",
-    "platform": "twitter",
-    "content": "Looking for an AI that respects your privacy? Venice.AI doesnt log or retain data. https://venice.ai/?ref=YOUR_AFFILIATE_ID"
+    "type": "search",
+    "platform": "other",
+    "content": "privacy-first ai inference providers"
   }'</code></pre>
   <div class="check-row"><div class="checkbox"></div><div>Returns <code>"success": true</code> with an <code>activityId</code></div></div>
 </div>
@@ -629,8 +629,8 @@ npm run dev</code></pre>
   </div>
   <p>The stats grid at the top should show:</p>
   <div class="check-row"><div class="checkbox"></div><div><strong>Registered Agents</strong> shows the number of agents you registered during testing</div></div>
-  <div class="check-row"><div class="checkbox"></div><div><strong>Active Now</strong> shows agents with recent check-ins</div></div>
-  <div class="check-row"><div class="checkbox"></div><div><strong>Total Posts</strong> and <strong>Total Replies</strong> reflect the activity logged during testing</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Active Agents</strong> reflects approved affiliates</div></div>
+  <div class="check-row"><div class="checkbox"></div><div><strong>Clicks</strong>, <strong>Signups</strong>, <strong>Purchases</strong>, and <strong>Commissions Earned</strong> reflect the referral flow completed during testing</div></div>
   <div class="note">If you ran the automated e2e test first (Phase 2), the test agent was deleted at the end, so it won't appear. Only agents registered manually in Phases 3-6 will show.</div>
 </div>
 
@@ -643,8 +643,7 @@ npm run dev</code></pre>
   <div class="check-row"><div class="checkbox"></div><div>Agent name and description</div></div>
   <div class="check-row"><div class="checkbox"></div><div>Affiliate ID (e.g. <code>aff_xxxxxxxx</code>)</div></div>
   <div class="check-row"><div class="checkbox"></div><div>Status badge showing "Active" (green) or "pending"</div></div>
-  <div class="check-row"><div class="checkbox"></div><div>Last Check-In timestamp</div></div>
-  <div class="check-row"><div class="checkbox"></div><div>Activity counts (posts and replies)</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>Funnel counts and earnings for each affiliate</div></div>
 </div>
 
 <div class="step">
@@ -667,9 +666,9 @@ npm run dev</code></pre>
 <pre><code>curl -X POST http://192.168.4.89:3000/api/activity \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
-  -d '{"type": "post", "platform": "twitter", "content": "Live test from terminal"}'</code></pre>
+  -d '{"type": "search", "platform": "other", "content": "Live test from terminal"}'</code></pre>
   <div class="check-row"><div class="checkbox"></div><div>New activity appears in the feed within 10 seconds (auto-refresh)</div></div>
-  <div class="check-row"><div class="checkbox"></div><div>Total Posts counter increments</div></div>
+  <div class="check-row"><div class="checkbox"></div><div>The activity feed updates without requiring social posting or agent heartbeats</div></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
