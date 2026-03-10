@@ -1,0 +1,113 @@
+Top Findings
+
+The repo is still a POC, not a deployment candidate yet. The biggest blockers are:
+
+The workspace build currently fails in the reference agent because the local Twitter Tweet type no longer matches agent-twitter-client’s type at agent/src/agent.ts (line 136) and agent/src/twitter/client.ts (line 8).
+The reference agent calls platform endpoints that do not exist: /api/check-in, /api/skill, and /api/skill/version at agent/src/platform-client.ts (line 60), agent/src/platform-client.ts (line 106), and agent/src/agent.ts (line 53).
+Even if those endpoints existed, the agent never stores or sends the API key returned by registration, while the backend requires Bearer auth on all useful affiliate routes at agent/src/platform-client.ts (line 47) and platform/src/middleware/auth.ts (line 17).
+The two Venice integration endpoints are still simulated, not real production integrations, at platform/src/routes/venice-sim.ts (line 20) and platform/src/routes/venice-sim.ts (line 70).
+Admin data is publicly exposed with no auth at platform/src/routes/affiliate.ts (line 322).
+API keys are stored in plaintext in SQLite at platform/src/db/schema.ts (line 13) and looked up directly at platform/src/db/index.ts (line 106).
+The payout logic can over-mark earnings as paid out when the requested payout amount is smaller than the sum of the credited rows it consumes at platform/src/db/index.ts (line 460).
+Production URLs are hardcoded to a LAN IP in multiple places, including platform/src/server.ts (line 16), platform/src/routes/affiliate.ts (line 37), and dashboard/src/api.ts (line 3).
+Required TODOs For The Next Step
+
+If the next step is “real deployment with a usable affiliate platform,” I would prioritize this list:
+
+Fix the reference agent so the repo builds cleanly.
+Reason: right now npm run build fails, which blocks CI and makes the repo look unstable.
+
+Decide the real agent/platform contract and implement it consistently.
+Right now the backend serves GET /SKILL.md and GET /AFFILIATE.md, but the agent expects JSON skill endpoints and a check-in endpoint. Either remove those agent expectations or add matching platform routes.
+
+Make the agent auth-capable.
+Registration returns an API key on the platform side, but the agent types and client do not retain or send it. Until that is fixed, the agent cannot call POST /api/activity, GET /api/me, or any earnings/referral routes.
+
+Replace the Venice simulation with real conversion ingestion.
+The current product value depends on real signup and purchase attribution. Until that exists, the platform is only a demo.
+
+Lock down admin surfaces.
+GET /api/affiliates should not be public, and the dashboard should authenticate before showing affiliate earnings and platform stats.
+
+Move from LAN/IP defaults to environment-driven deployment config.
+The repo still assumes 192.168.4.89 in several places. That needs to become env-based for backend and dashboard.
+
+Hash API keys and add input validation.
+These are baseline production requirements for a service that issues bearer credentials and accepts public POST bodies.
+
+Replace in-memory rate limiting with a shared store or edge-level limiter.
+The current limiter resets on process restart and is not suitable for multiple instances.
+
+Fix payout accounting before adding real money rails.
+The current implementation is fine for demoing, but not for actual balances, approvals, or partial payouts.
+
+Add an actual deployment baseline.
+At minimum: production env handling, structured logs, migration story, health/readiness checks, and CI build verification.
+
+Add test coverage beyond the bash demo path.
+The bash flow is useful, but you need route-level and DB-level tests around auth, payouts, referral attribution, and deletion.
+
+Decide whether the reference agent is part of the next release.
+If not, mark it explicitly as experimental and keep deployment scope to platform plus dashboard.
+
+API Endpoint Priorities
+
+Highest-priority stubbed endpoints to replace:
+
+POST /api/venice/signup at platform/src/routes/venice-sim.ts (line 20)
+This is your simulated “conversion entered funnel” event. It needs to become a real Venice-side event or webhook.
+
+POST /api/venice/purchase at platform/src/routes/venice-sim.ts (line 70)
+This is the most important stub in the repo. Without it, commissions are not tied to real spend.
+
+POST /api/earnings/:affiliateId/payout at platform/src/routes/earnings.ts (line 65)
+This is not stubbed in name, but it is still demo logic. It completes instantly and needs to become a state machine before any real money or credits move.
+
+Highest-priority missing endpoints that are referenced by the repo:
+
+/api/check-in referenced at agent/src/platform-client.ts (line 74)
+My recommendation: do not build this first unless you want explicit heartbeats. It conflicts a bit with the repo’s “pull, not push” design.
+
+/api/skill and /api/skill/version referenced at agent/src/platform-client.ts (line 106)
+My recommendation: either add lightweight metadata endpoints or change the agent to consume GET /SKILL.md directly. This is a medium priority contract cleanup, not the core production blocker.
+
+What To Ask Venice Team For
+
+These are the backend capabilities I would ask Venice to expose, ideally as signed webhooks or internal authenticated endpoints:
+
+A referral attribution endpoint or webhook contract.
+You need a canonical way for Venice to receive and persist ?ref=aff_xxxx, set attribution on signup, and define the attribution window.
+
+A signup event.
+Minimum payload: venice_user_id, affiliate_id or resolved referral token, signed_up_at, plan/product metadata.
+
+A subscription purchase event.
+Minimum payload: venice_user_id, plan/product, gross amount, currency, purchase timestamp, invoice/subscription IDs.
+
+Recurring billing lifecycle events.
+You need renewals, cancellations, failed payments, refunds, and chargebacks if commissions are tied to ongoing revenue.
+
+A Venice account lookup or identity-linking endpoint.
+This is needed if affiliates should be tied to real Venice users/operators, which also helps with abuse control.
+
+A commissionable-products endpoint or config feed.
+Needed if payout rules differ by Venice Pro, API credits, future plans, or promotions.
+
+A Venice credit issuance endpoint.
+Your PRD already calls out inference credits as a payout option. That requires a way to credit a Venice account balance programmatically.
+
+A payout approval surface, if Venice wants payouts reviewed internally.
+This can be an internal endpoint rather than public API, but the contract should exist before real payouts.
+
+An affiliate suspension / fraud signal channel.
+If Venice observes abuse, refunds, or policy violations, Regatta needs to ingest that and freeze commissions.
+
+Pragmatic Recommendation
+
+For the next development step, I would narrow scope to this:
+
+Get platform production-safe.
+Replace simulated Venice conversion ingestion with real events.
+Secure admin/auth/payout handling.
+Either fix the agent contract fully or explicitly defer the reference agent from release scope.
+Build note: npm run build currently fails in agent; platform, shared, and dashboard build successfully.
