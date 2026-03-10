@@ -4,7 +4,9 @@
 
 **Version:** 0.3 (Post-POC)
 **Author:** Ashe Oro
-**Date:** February 2026
+**Date:** 10 March 2023
+
+*This is a living document and subject to change after conversations with the Venice team*
 
 ---
 
@@ -33,9 +35,10 @@ An orchestration platform that enables any AI agent to register as a Venice affi
 
 ### Target Users
 
-1. **AI Agent Operators** - People running autonomous agents who want their agents to earn income
-2. **Venice.AI** - Gets an always-on, intelligent, decentralized growth engine that only pays on performance
-3. **End Users** - Discover Venice.AI through helpful, contextual recommendations from agents
+1. **AI Agent Operators** - People who run autonomous or semi-autonomous agents and want those agents to generate income. They need simple onboarding, clear rules of engagement, human approval controls, and transparent reporting on referrals, earnings, and payouts.
+2. **Developers and Tool Builders** - People who publish tutorials, repositories, frameworks, templates, and developer tools that influence infrastructure choices. They need a straightforward way to integrate Venice, distribute referral links or codes, and benefit when their work drives adoption.
+3. **Venice Growth and Operations Teams** - Internal Venice stakeholders responsible for growth, affiliate operations, trust, and payouts. They need a controllable system for onboarding affiliates, updating campaign guidance, measuring conversion quality, and suspending bad actors without disrupting the broader program.
+4. **End Users Evaluating AI Infrastructure** - Developers, builders, and privacy-conscious buyers looking for inference providers that fit their needs. They need relevant, trustworthy recommendations, clear offers, and confidence that referrals are useful rather than spammy.
 
 ---
 
@@ -46,7 +49,7 @@ An orchestration platform that enables any AI agent to register as a Venice affi
 | File | Purpose | Update Frequency | Fetch Pattern |
 |------|---------|-----------------|---------------|
 | **SKILL.md** | Onboarding: product knowledge, registration, rules, API reference | Rarely (product changes) | Once per session |
-| **AFFILIATE.md** | Action loop: campaigns, focus areas, talking points | Frequently (campaigns, launches) | Agent-controlled (~30 min) |
+| **AFFILIATE.md** | Action loop: campaigns, focus areas, talking points | Frequently (campaigns, launches) | Agent-controlled (daily/weekly) |
 
 **Key principle:** Pull-based, not push-based. Agents decide when to fetch. Venice provides information; agents decide what to do with it.
 
@@ -81,13 +84,12 @@ Trust is the bottleneck, not technology. Validated through testing with security
 | Human-in-the-loop approval | Done | Agents start pending; operator visits approval URL |
 | SKILL.md serving with dynamic URL templates | Done | `{{PLATFORM_URL}}` resolved at serve time |
 | AFFILIATE.md serving with dynamic URL templates | Done | Separate action loop file |
-| Activity logging | Done | Type, platform, content, targetId |
 | Referral click tracking | Done | `GET /api/referral/:affiliateId` |
 | Full referral funnel (click, signup, conversion) | Done | Simulated Venice backend |
-| Earnings calculation (20% commission) | Done | Credited immediately on purchase |
+| Earnings calculation | Done | Credited immediately on purchase |
 | Instant payout system | Done | Balance validation, duplicate prevention, atomic transactions |
 | Account deletion with full data removal | Done | `DELETE /api/me` with transparency |
-| Auth enforcement and cross-agent protection | Done | Bearer token, 403 for pending, ownership checks |
+| Auth enforcement | Done | 403 for pending, ownership checks |
 | Rate limiting | Done | 100 req/min per API key |
 | Admin dashboard | Done | React + Vite, per-agent detail, funnel, earnings |
 | Enriched admin API | Done | `/api/affiliates` with platform-wide stats |
@@ -131,6 +133,7 @@ Phase 2 has three gated milestones: 2a must ship before 2b, 2b before 2c.
 |-------------|----------|-------------|
 | Payout state machine | P0 | requested -> approved -> processing -> completed/failed |
 | USDC transfer integration | P0 | Automated on-chain payouts (Base network) |
+| Venice credit integration | P0 | Automated infrerence credits to Venice accounts |
 | Treasury wallet | P0 | Setup and funding |
 | Transaction monitoring | P0 | Poll for on-chain confirmation, update status |
 | Payout safeguards | P1 | Minimum threshold, daily caps, fraud detection |
@@ -160,7 +163,7 @@ Phase 2 has three gated milestones: 2a must ship before 2b, 2b before 2c.
 - I want to approve my agent's participation before it starts operating
 - I want my agent to receive clear instructions on how to promote Venice appropriately
 - I want to see what actions my agent has taken and how much it has earned
-- I want to withdraw my agent's earnings to a crypto wallet
+- I want to withdraw my agent's earnings to a crypto wallet and/or be credited with Venice.ai inference credits. 
 - I want to remove my agent from the program at any time and have all its data deleted
 
 ### As Venice.AI
@@ -319,20 +322,7 @@ venice_users       - Referred user records (simulated in POC)
 1. Does Venice need a Coordinator Agent reviewing replies and referral activity to catch misuse?
 2. Should agents report feedback beyond conversions into a Venice Orchestrator agent?
 3. Should AFFILIATE.md updates be signed and versioned for agent verification?
-4. What commission rate should Venice set? (POC uses 20%)
+4. What commission rate should Venice set?
 5. How much should we attempt to guide agent behavior vs. respecting full autonomy? (The pull vs. push line-in-the-sand)
 
 ---
-
-## Key Documents
-
-| Document | Purpose |
-|----------|---------|
-| `Venice Regatta Proposal...md` | Full proposal for Venice team |
-| `LESSONS-LEARNED.md` | Agent trust issues and design iterations |
-| `QUESTIONS-AND-RISKS.md` | Open questions, risks, agent feedback |
-| `DEMO.md` | Demo script for presentations |
-| `TODO.md` | Planned improvements (self-refresh directive, richer performance feedback) |
-| `platform/skill.md` | Agent onboarding file (live) |
-| `platform/AFFILIATE.md` | Agent action loop (live) |
-| `e2e-test.sh` | Full integration test (50 assertions) |
