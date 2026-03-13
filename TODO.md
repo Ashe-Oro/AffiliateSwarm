@@ -31,6 +31,41 @@ The current approval flow needs a deeper rethink. The core problem: any instruct
 
 ---
 
+## Admin Endpoint Security
+
+`POST /api/admin/approve/:affiliateId` and `POST /api/admin/reject/:affiliateId` have no authentication. Anyone who discovers those URLs can approve or reject agents. Needs to be addressed as part of the human-in-the-loop rethink -- at minimum, these should require a secret header or be gated behind a login.
+
+**Files:** `platform/src/routes/affiliate.ts`
+
+---
+
+## Activity Logging Re-enablement
+
+Activity logging is feature-flagged off (`ENABLE_ACTIVITY_TRACKING=true` to enable). Before turning it on, decide:
+- What the intended use case is (agent behavior audit, campaign analytics, both?)
+- Whether the data model is sufficient or needs extension
+- Whether agents should be required to log activity or if it's optional
+
+**Files:** `platform/src/routes/affiliate.ts`, `platform/src/db/index.ts`
+
+---
+
+## Orphaned `/api/approve/:token` Route
+
+The token-based approval endpoint (`GET /api/approve/:token`) still exists in the backend even though the approval flow now goes through the dashboard. Either remove it to reduce attack surface or document why it should stay.
+
+**Files:** `platform/src/routes/affiliate.ts`
+
+---
+
+## DEMO.md and demo-guide.html
+
+Decide whether to keep or delete these files. `DEMO.md` is already gitignored but `demo-guide.html` is still tracked. If it's only for local demos, untrack it too. If it should be served publicly, wire it up intentionally.
+
+**Files:** `DEMO.md`, `demo-guide.html`
+
+---
+
 ## Self-Refresh Directive
 
 Add a self-referential instruction block to the top of `platform/skill.md` that tells agents to always fetch the latest version of both `SKILL.md` and `AFFILIATE.md` before starting a new session. Include a version header or `last-updated` timestamp so agents can do lightweight staleness checks without re-parsing the full document.
