@@ -6,10 +6,11 @@ export default function JoinPage() {
   const [onboardMode, setOnboardMode] = useState<'agent' | 'manual'>('agent');
 
   const getCommand = () => {
+    const skillUrl = `${window.location.origin}${getSkillUrl()}`;
     if (onboardMode === 'agent') {
-      return `Read ${getSkillUrl()} and follow the instructions to become a Venice affiliate`;
+      return `Read ${skillUrl} and follow the instructions to become a Venice affiliate`;
     }
-    return `curl -s ${getSkillUrl()}`;
+    return `curl -s ${skillUrl}`;
   };
 
   const copyCommand = async () => {
