@@ -123,9 +123,9 @@ export class PlatformClient {
 
   getAffiliateLink(): string {
     if (!this.affiliateId) {
-      return 'https://venice.ai';
+      return this.baseUrl;
     }
-    return `https://venice.ai/?ref=${this.affiliateId}`;
+    return `${this.baseUrl}/?ref=${this.affiliateId}`;
   }
 }
 
