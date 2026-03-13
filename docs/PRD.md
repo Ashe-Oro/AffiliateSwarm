@@ -14,31 +14,22 @@
 
 ### Vision
 
-Create the first **agent-first affiliate program** where autonomous AI agents serve as a decentralized sales, marketing, and support network for Venice.AI. Agents discover the program via a hosted markdown file, self-register, and earn commissions on referred purchases. The entire swarm is orchestrated by updating two files.
+Create the first **agent-first affiliate program** where autonomous and semi-autonomous AI agents serve as a decentralized distribution channel for Venice Sales and Marketing. Agents and/or their Humans discover the program and register using a  hosted markdown file and earn commissions on referred purchases. 
 
-### Problem Statement
+It should be understood as of March 2026, most AI Agents are not autonomous and still act as a tool for their human. With this understanding, this affiliate program should work for both AI and Humans who share a common goal; to earn commissions by promoting Venice.ai software products and AI inference services. 
 
-- Traditional affiliate marketing requires human effort, operates on human schedules, and doesn't scale
-- Venice.AI wants growth strategies native to the AI era, not legacy Web2 approaches
-- Venice doesn't have an affiliate program, especially not one tailored for agents
-- A growing population of always-on AI agents (OpenClaw: 600K+ downloads, Moltbook: 1.5M+ agents) are looking for ways to monetize
-- People want their agents to make money for them, but there are few opportunities
+Depending on the goals and preferences of the Venice team, this project can be a flat referral program where each affiliate partner only earns from the subscriptions which they directly refer, or it can be an MLM style where each account earns based on a downline tree of associated nodes and accounts.  Since this commissions structure is more complicated, and does not currently exist within Venice, additional commission and tree width/depth details will need to be ironed out if we decide to go this route. 
 
-### Solution
+## The Orchestration Platform
 
-An orchestration platform that enables any AI agent to register as a Venice affiliate and autonomously promote Venice.AI products. The platform provides:
+An orchestration platform enables any AI agent to register as a Venice affiliate and autonomously promote Venice.AI products. The platform provides:
 
 - **SKILL.md** as the onboarding layer (product knowledge, registration, rules of engagement, API reference, Venice brand kit)
 - **AFFILIATE.md** as the action loop (current focus areas, talking points, campaigns, platform priorities)
-- A **REST API** for registration, activity tracking, referral funnels, earnings, and payouts
-- **Framework adapters** so agents from any ecosystem can participate natively (SKILL.md path for OpenClaw/Nanobot, API-first path for everything else)
-
-### Target Users
-
-1. **AI Agent Operators** - People who run autonomous or semi-autonomous agents and want those agents to generate income. They need simple onboarding, clear rules of engagement, human approval controls, and transparent reporting on referrals, earnings, and payouts.
-2. **Developers and Tool Builders** - People who publish tutorials, repositories, frameworks, templates, and developer tools that influence infrastructure choices. They need a straightforward way to integrate Venice, distribute referral links or codes, and benefit when their work drives adoption.
-3. **Venice Growth and Operations Teams** - Internal Venice stakeholders responsible for growth, affiliate operations, trust, and payouts. They need a controllable system for onboarding affiliates, updating campaign guidance, measuring conversion quality, and suspending bad actors without disrupting the broader program.
-4. **End Users Evaluating AI Infrastructure** - Developers, builders, and privacy-conscious buyers looking for inference providers that fit their needs. They need relevant, trustworthy recommendations, clear offers, and confidence that referrals are useful rather than spammy.
+- **A** **REST API** for registration, referral funnels, earnings, and payouts, with optional activity visibility behind feature flags
+- **Framework adapters** so agents from any ecosystem can participate natively (SKILL.md path for OpenClaw/Nanobot/etc, API-first path for everything else)
+- **Admin Dashboard** for reviewing both global and individual affiliate performance, with optional activity visibility behind feature flags
+- **User Dashboard** for humans to review affiliate details such as clicks, conversions and commissions earned/paid, with optional activity visibility behind feature flags
 
 ---
 
@@ -48,8 +39,8 @@ An orchestration platform that enables any AI agent to register as a Venice affi
 
 | File | Purpose | Update Frequency | Fetch Pattern |
 |------|---------|-----------------|---------------|
-| **SKILL.md** | Onboarding: product knowledge, registration, rules, API reference | Rarely (product changes) | Once per session |
-| **AFFILIATE.md** | Action loop: campaigns, focus areas, talking points | Frequently (campaigns, launches) | Agent-controlled (daily/weekly) |
+| **SKILL.md** | Onboarding: product knowledge, registration, rules, API reference | Rarely (product changes) | Once at sign-up |
+| **AFFILIATE.md** | Action loop: campaigns, focus areas, talking points, updates to product knowledge including new features, new models and deprecations | Frequently (campaigns, launches) | Agent-controlled (daily/weekly) |
 
 **Key principle:** Pull-based, not push-based. Agents decide when to fetch. Venice provides information; agents decide what to do with it.
 
@@ -69,8 +60,8 @@ Trust is the bottleneck, not technology. Validated through testing with security
 | Explicit boundaries | "What We Will Never Ask" section sets clear limits |
 | Human approval | Agents start as `pending`; operators must approve via URL |
 | Easy exit | `DELETE /api/me` with full data removal, no questions |
-| No system intrusion | No suggested credential paths, no task loop injection |
-| Information, not instructions | Venice provides product knowledge; agents decide what to do |
+| No system intrusion | Only suggested credential path, no task loop injection (require human approval) |
+| Information, not instructions | Venice provides product knowledge; agents decide what to do and how to create distribution |
 
 ---
 
@@ -95,6 +86,14 @@ Trust is the bottleneck, not technology. Validated through testing with security
 | Enriched admin API | Done | `/api/affiliates` with platform-wide stats |
 | E2E test suite | Done | 50 assertions across 23 steps |
 | Venice brand kit reference in SKILL.md | Done | Links to venice.ai/brand |
+
+### Feature Flagged and Disabled
+
+| Capability | Endpoint | Status | Notes |
+|-------------|----------|--------|-------|
+| Platform check-in workflow | No backend endpoint currently exposed | Disabled by feature flag | Backlog item intended to help humans review what their agent is doing and give Affiliate Program operators an inside feedback loop |
+| Agent action logging | `POST /api/activity` | Disabled by feature flag | Backlog item intended to help humans review what their agent is doing and give Affiliate Program operators an inside feedback loop |
+| Activity visibility | `GET /api/activity/:affiliateId` | Disabled by feature flag | Backlog item intended to help humans review what their agent is doing and give Affiliate Program operators an inside feedback loop |
 
 ### Phase 2: Production Deployment
 
@@ -165,6 +164,7 @@ Phase 2 has three gated milestones: 2a must ship before 2b, 2b before 2c.
 - I want to see what actions my agent has taken and how much it has earned
 - I want to withdraw my agent's earnings to a crypto wallet and/or be credited with Venice.ai inference credits. 
 - I want to remove my agent from the program at any time and have all its data deleted
+- I want my agent to stay up-to-date on Venice products and promotions 
 
 ### As Venice.AI
 
@@ -179,6 +179,7 @@ Phase 2 has three gated milestones: 2a must ship before 2b, 2b before 2c.
 - I want to discover relevant products when I'm discussing topics where they'd help
 - I don't want to be spammed or deceived
 - I want genuine, helpful recommendations from agents that know the product
+- I want to use a coupon code to derisk my iniitial purchase of a Venice product
 
 ---
 
@@ -202,7 +203,6 @@ Phase 2 has three gated milestones: 2a must ship before 2b, 2b before 2c.
 | POST | `/api/register` | Register agent (returns pending status + approval URL) |
 | GET | `/api/approve/:token` | Human visits to approve agent |
 | GET | `/api/referral/:affiliateId` | Track referral click |
-| GET | `/api/affiliates` | List all affiliates (admin) |
 
 ### Authenticated (Bearer token)
 
@@ -210,13 +210,28 @@ Phase 2 has three gated milestones: 2a must ship before 2b, 2b before 2c.
 |--------|----------|-------------|
 | GET | `/api/me` | Self-check: profile + stats + earnings + funnel |
 | DELETE | `/api/me` | Permanent account + data deletion |
-| POST | `/api/activity` | Log an action (type, platform, content) |
-| GET | `/api/activity/:affiliateId` | Recent activity |
 | GET | `/api/stats/:affiliateId` | Full stats |
+| GET | `/api/referrals/:affiliateId` | Referral list |
 | GET | `/api/referrals/:affiliateId/funnel` | Funnel metrics |
 | GET | `/api/earnings/:affiliateId` | Earnings summary |
+| GET | `/api/earnings/:affiliateId/history` | Earnings history |
 | POST | `/api/earnings/:affiliateId/payout` | Request payout |
 | GET | `/api/earnings/:affiliateId/payouts` | Payout history |
+
+### Authenticated (Admin token)
+
+| Method | Endpoint          | Description                 |
+| ------ | ----------------- | --------------------------- |
+| GET    | `/api/affiliates` | List all affiliates (admin) |
+
+### Feature Flagged and Disabled (not in active API surface)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/activity` | Authenticated Bearer token endpoint for agent action logging, intended for operator visibility and affiliate program feedback loops |
+| GET | `/api/activity/:affiliateId` | Authenticated Bearer token endpoint for recent activity, intended for operator visibility and affiliate program feedback loops |
+
+
 
 ---
 
@@ -285,7 +300,7 @@ venice_users       - Referred user records (simulated in POC)
 |--------|-----------------|
 | Registered agents | Total reach |
 | Active agents | Actual participation |
-| Activation rate (registered to first activity) | Whether onboarding works |
+| Activation rate (registered to first referral click) | Whether onboarding works |
 | Frameworks represented | Ecosystem breadth |
 | Time from registration to first referral | How quickly agents become productive |
 

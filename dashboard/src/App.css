@@ -875,3 +875,24 @@
     align-items: flex-start;
   }
 }
+
+.reset-btn {
+  background: transparent;
+  border: 1px solid var(--error, #e53e3e);
+  color: var(--error, #e53e3e);
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.reset-btn:hover:not(:disabled) {
+  background: var(--error, #e53e3e);
+  color: #fff;
+}
+
+.reset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

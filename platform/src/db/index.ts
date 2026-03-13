@@ -1,4 +1,5 @@
-import { initializeDatabase } from './schema';
+import fs from 'fs';
+import { initializeDatabase, DB_PATH } from './schema';
 import type { Database } from 'better-sqlite3';
 import type {
   AffiliateAgent,
@@ -19,6 +20,17 @@ export function getDatabase(): Database {
     db = initializeDatabase();
   }
   return db;
+}
+
+export function resetDatabase(): void {
+  if (db) {
+    db.close();
+    db = undefined as unknown as Database;
+  }
+  if (fs.existsSync(DB_PATH)) {
+    fs.unlinkSync(DB_PATH);
+  }
+  db = initializeDatabase();
 }
 
 // Affiliate operations

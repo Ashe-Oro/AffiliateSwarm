@@ -10,7 +10,7 @@
     "dashboard"
   ],
   "scripts": {
-    "dev": "npm run dev:platform & npm run dev:agent",
+    "dev": "npm run dev:platform & npm run dev:dashboard",
     "dev:platform": "npm run dev --workspace=platform",
     "dev:agent": "npm run dev --workspace=agent",
     "dev:dashboard": "npm run dev --workspace=dashboard",

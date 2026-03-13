@@ -22,6 +22,7 @@ import type {
 } from '../types';
 
 const router = Router();
+const ENABLE_ACTIVITY_TRACKING = process.env.ENABLE_ACTIVITY_TRACKING === 'true';
 
 // Generate a Venice API key: vnice_ + 32 hex chars
 function generateApiKey(): string {
@@ -35,6 +36,14 @@ function generateApprovalToken(): string {
 
 // Platform URL for approval links (from env or default)
 const PLATFORM_URL = process.env.PLATFORM_URL || 'http://192.168.4.89:3000';
+
+function respondActivityTrackingDisabled(res: Response): void {
+  res.status(404).json({
+    success: false,
+    error: 'Activity tracking is disabled',
+    hint: 'This backlog feature is currently disabled. It is intended to help humans review agent behavior and give affiliate program operators a feedback loop.',
+  });
+}
 
 // ─── PUBLIC: Registration (no auth required) ──────────────────────
 
@@ -219,6 +228,11 @@ router.delete('/me', requireAuth, (req: Request, res: Response) => {
 
 // POST /api/activity — log activity
 router.post('/activity', requireAuth, (req: Request, res: Response) => {
+  if (!ENABLE_ACTIVITY_TRACKING) {
+    respondActivityTrackingDisabled(res);
+    return;
+  }
+
   const affiliate = req.affiliate!;
   const body = req.body as ActivityRequest;
 
@@ -294,6 +308,11 @@ router.get('/stats/:affiliateId', requireAuth, (req: Request, res: Response) => 
 
 // GET /api/activity/:affiliateId — get recent activity (must be own account)
 router.get('/activity/:affiliateId', requireAuth, (req: Request, res: Response) => {
+  if (!ENABLE_ACTIVITY_TRACKING) {
+    respondActivityTrackingDisabled(res);
+    return;
+  }
+
   const affiliate = req.affiliate!;
   const { affiliateId } = req.params;
   const limit = parseInt(req.query.limit as string) || 50;

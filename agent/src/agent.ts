@@ -10,6 +10,7 @@ export interface AgentConfig {
   description: string;
   dryRun?: boolean; // If true, don't actually post (for testing)
   enablePlatformCheckIn?: boolean;
+  enablePlatformActivityLogging?: boolean;
   enableTwitterPosting?: boolean;
 }
 
@@ -23,6 +24,7 @@ export class VeniceAffiliateAgent {
   private isRunning = false;
   private processedTweetIds = new Set<string>();
   private enablePlatformCheckIn: boolean;
+  private enablePlatformActivityLogging: boolean;
   private enableTwitterPosting: boolean;
 
   constructor(config: AgentConfig) {
@@ -32,6 +34,7 @@ export class VeniceAffiliateAgent {
     this.platform = createPlatformClient();
     this.scheduler = new Scheduler();
     this.enablePlatformCheckIn = config.enablePlatformCheckIn ?? false;
+    this.enablePlatformActivityLogging = config.enablePlatformActivityLogging ?? false;
     this.enableTwitterPosting = config.enableTwitterPosting ?? false;
   }
 
@@ -124,6 +127,24 @@ export class VeniceAffiliateAgent {
     }
   }
 
+  private async logPlatformActivity(
+    type: 'post' | 'reply' | 'like' | 'retweet' | 'search',
+    platform: 'twitter' | 'discord' | 'other',
+    content?: string,
+    targetId?: string,
+    metadata?: Record<string, unknown>
+  ): Promise<void> {
+    if (!this.enablePlatformActivityLogging) {
+      return;
+    }
+
+    try {
+      await this.platform.logActivity(type, platform, content, targetId, metadata);
+    } catch (error) {
+      console.error('[Agent] Activity log failed:', error);
+    }
+  }
+
   private async searchAndEngage(): Promise<void> {
     if (!this.scheduler.canReply()) {
       console.log('[Agent] Reply limit reached, skipping search...');
@@ -135,7 +156,7 @@ export class VeniceAffiliateAgent {
     console.log(`[Agent] Searching for: "${query}"`);
 
     // Log search activity
-    await this.platform.logActivity('search', 'twitter', query);
+    await this.logPlatformActivity('search', 'twitter', query);
 
     const tweets = await this.twitter.searchTweets(query, 10);
 
@@ -199,7 +220,7 @@ export class VeniceAffiliateAgent {
       const result = await this.twitter.replyToTweet(tweetId, replyContent);
       if (result.success) {
         this.scheduler.recordReply();
-        await this.platform.logActivity(
+        await this.logPlatformActivity(
           'reply',
           'twitter',
           replyContent,
@@ -242,7 +263,7 @@ export class VeniceAffiliateAgent {
       const result = await this.twitter.postTweet(finalContent);
       if (result.success) {
         this.scheduler.recordPost();
-        await this.platform.logActivity('post', 'twitter', finalContent);
+        await this.logPlatformActivity('post', 'twitter', finalContent);
       }
     }
   }

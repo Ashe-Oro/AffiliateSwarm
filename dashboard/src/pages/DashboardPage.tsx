@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchAffiliatesData } from '../api';
+import { fetchAffiliatesData, resetDatabase } from '../api';
 import type { AffiliateAgent, PlatformStats } from '../types';
 
 export default function DashboardPage() {
@@ -8,6 +8,7 @@ export default function DashboardPage() {
   const [platform, setPlatform] = useState<PlatformStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -29,6 +30,19 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [loadData]);
 
+  const handleReset = async () => {
+    if (!confirm('Reset the database? This will delete all affiliates, referrals, and earnings.')) return;
+    setResetting(true);
+    try {
+      await resetDatabase();
+      await loadData();
+    } catch {
+      setError('Database reset failed.');
+    } finally {
+      setResetting(false);
+    }
+  };
+
   const formatUsd = (amount: number) => `$${amount.toFixed(2)}`;
 
   const activeAgents = affiliates.filter(a => a.status === 'active');
@@ -38,10 +52,19 @@ export default function DashboardPage() {
     <div className="dashboard-page">
       {/* Platform Stats Grid */}
       <section className="stats-section">
-        <h3 className="section-title">
-          <span className="title-icon">📈</span>
-          Network Stats
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 className="section-title">
+            <span className="title-icon">📈</span>
+            Network Stats
+          </h3>
+          <button
+            onClick={handleReset}
+            disabled={resetting}
+            className="reset-btn"
+          >
+            {resetting ? 'Resetting...' : 'Reset Database'}
+          </button>
+        </div>
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon">✅</div>

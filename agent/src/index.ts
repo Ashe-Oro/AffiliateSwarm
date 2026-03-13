@@ -6,6 +6,8 @@ dotenv.config();
 
 async function main() {
   const enablePlatformCheckIn = process.env.ENABLE_PLATFORM_CHECKIN === 'true';
+  const enablePlatformActivityLogging =
+    process.env.ENABLE_PLATFORM_ACTIVITY_LOGGING === 'true';
   const enableTwitterPosting = process.env.ENABLE_TWITTER_POSTING === 'true';
 
   console.log(`
@@ -17,6 +19,10 @@ async function main() {
 
   if (!enablePlatformCheckIn) {
     console.log('[Main] Platform check-in endpoint disabled by feature flag');
+  }
+
+  if (!enablePlatformActivityLogging) {
+    console.log('[Main] Platform activity logging disabled by feature flag');
   }
 
   if (!enableTwitterPosting) {
@@ -36,6 +42,7 @@ async function main() {
       'AI agent promoting Venice.AI products on Twitter',
     dryRun: process.env.DRY_RUN === 'true',
     enablePlatformCheckIn,
+    enablePlatformActivityLogging,
     enableTwitterPosting,
   });
 

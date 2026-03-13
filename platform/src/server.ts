@@ -8,12 +8,14 @@ import referralRoutes from './routes/referrals';
 import veniceSimRoutes from './routes/venice-sim';
 import earningsRoutes from './routes/earnings';
 import { rateLimit } from './middleware/rate-limit';
+import { resetDatabase } from './db';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const PLATFORM_URL = process.env.PLATFORM_URL || 'http://192.168.4.89:3000';
+const ENABLE_ACTIVITY_TRACKING = process.env.ENABLE_ACTIVITY_TRACKING === 'true';
 
 // Ensure data directory exists
 const dataDir = path.join(__dirname, '../data');
@@ -66,6 +68,18 @@ app.get('/AFFILIATE.md', (_req, res) => {
   }
 });
 
+// Admin: reset database
+app.post('/api/admin/reset', (_req, res) => {
+  try {
+    resetDatabase();
+    console.log('[Admin] Database reset');
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Admin] Database reset failed:', error);
+    res.status(500).json({ success: false, error: 'Reset failed' });
+  }
+});
+
 // Health check
 app.get('/health', (_req, res) => {
   res.json({
@@ -98,8 +112,12 @@ app.get('/', (_req, res) => {
       },
       authenticated: {
         me: 'GET /api/me (self-check: profile + stats + earnings + funnel)',
-        logActivity: 'POST /api/activity',
-        activityHistory: 'GET /api/activity/:affiliateId',
+        ...(ENABLE_ACTIVITY_TRACKING
+          ? {
+              logActivity: 'POST /api/activity',
+              activityHistory: 'GET /api/activity/:affiliateId',
+            }
+          : {}),
         stats: 'GET /api/stats/:affiliateId',
         referrals: 'GET /api/referrals/:affiliateId',
         referralFunnel: 'GET /api/referrals/:affiliateId/funnel',
@@ -115,6 +133,15 @@ app.get('/', (_req, res) => {
     },
   });
 });
+
+// In production, serve the dashboard static files
+if (process.env.NODE_ENV === 'production') {
+  const dashboardDist = path.join(__dirname, '../../dashboard/dist');
+  app.use(express.static(dashboardDist));
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(dashboardDist, 'index.html'));
+  });
+}
 
 // Error handler
 app.use(
