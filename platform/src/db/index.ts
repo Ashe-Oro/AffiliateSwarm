@@ -77,6 +77,23 @@ export function getAffiliateByApprovalToken(token: string): AffiliateAgent | nul
   return row || null;
 }
 
+export function approveAffiliateById(id: string): boolean {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+  const stmt = db.prepare(`
+    UPDATE affiliates
+    SET status = 'active', approved_at = ?, approval_token = NULL
+    WHERE id = ? AND status = 'pending'
+  `);
+  return stmt.run(now, id).changes > 0;
+}
+
+export function rejectAffiliate(id: string): boolean {
+  const db = getDatabase();
+  const stmt = db.prepare(`DELETE FROM affiliates WHERE id = ? AND status = 'pending'`);
+  return stmt.run(id).changes > 0;
+}
+
 export function approveAffiliate(token: string): AffiliateAgent | null {
   const db = getDatabase();
   const now = new Date().toISOString();

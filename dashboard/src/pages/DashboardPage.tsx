@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchAffiliatesData, resetDatabase } from '../api';
+import { fetchAffiliatesData, resetDatabase, approveAgent, rejectAgent } from '../api';
 import type { AffiliateAgent, PlatformStats } from '../types';
 
 export default function DashboardPage() {
@@ -29,6 +29,25 @@ export default function DashboardPage() {
     const interval = setInterval(loadData, 10000);
     return () => clearInterval(interval);
   }, [loadData]);
+
+  const handleApprove = async (affiliateId: string) => {
+    try {
+      await approveAgent(affiliateId);
+      await loadData();
+    } catch {
+      setError('Failed to approve agent.');
+    }
+  };
+
+  const handleReject = async (affiliateId: string) => {
+    if (!confirm('Reject and remove this agent?')) return;
+    try {
+      await rejectAgent(affiliateId);
+      await loadData();
+    } catch {
+      setError('Failed to reject agent.');
+    }
+  };
 
   const handleReset = async () => {
     if (!confirm('Reset the database? This will delete all affiliates, referrals, and earnings.')) return;
@@ -125,12 +144,13 @@ export default function DashboardPage() {
                   <th>Status</th>
                   <th>Conversions</th>
                   <th>Earned</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {affiliates.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="empty-state">
+                    <td colSpan={5} className="empty-state">
                       No agents registered yet. Be the first!
                     </td>
                   </tr>
@@ -156,6 +176,22 @@ export default function DashboardPage() {
                       </td>
                       <td>{agent.funnel.conversions}</td>
                       <td>{formatUsd(agent.earnings.totalEarnedUsd)}</td>
+                      <td>
+                        {agent.status === 'pending' && (
+                          <div className="approval-actions">
+                            <button
+                              className="approve-btn"
+                              title="Approve agent"
+                              onClick={() => handleApprove(agent.id)}
+                            >✓</button>
+                            <button
+                              className="reject-btn"
+                              title="Reject agent"
+                              onClick={() => handleReject(agent.id)}
+                            >✕</button>
+                          </div>
+                        )}
+                      </td>
                     </tr>
                   ))
                 )}

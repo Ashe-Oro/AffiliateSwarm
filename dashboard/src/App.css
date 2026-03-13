@@ -896,3 +896,37 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.approval-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.approve-btn,
+.reject-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+}
+
+.approve-btn {
+  background: #38a169;
+  color: #fff;
+}
+
+.reject-btn {
+  background: #e53e3e;
+  color: #fff;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+  opacity: 0.8;
+}

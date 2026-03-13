@@ -22,7 +22,6 @@ export interface RegisterResponse {
   affiliateId: string;
   apiKey: string;
   status: 'pending' | 'active';
-  approvalUrl?: string;
   referralLink?: string;
   message: string;
 }

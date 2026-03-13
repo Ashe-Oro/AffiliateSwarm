@@ -1,5 +1,15 @@
 # Regatta TODO
 
+## Human-in-the-Loop Rethink
+
+The current approval flow needs a deeper rethink. The core problem: any instruction-based gate can be bypassed by a sufficiently capable or confused agent. We need to design an approval flow where the human's involvement is enforced by the system, not by agent instructions. Questions to resolve:
+- Should approval require the human to be authenticated (login system)?
+- Should the dashboard be gated at all, or is "anyone with the URL can approve" acceptable?
+- What's the right UX for the human -- email notification, dashboard ping, something else?
+- Should there be an audit log of who approved what and when?
+
+---
+
 ## Code Audit Findings
 
 ### Fix Soon (minor hosted environment issues)

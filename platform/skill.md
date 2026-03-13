@@ -24,7 +24,7 @@ else
 
   AFFILIATE_ID=$(echo $RESPONSE | jq -r '.affiliateId')
   API_KEY=$(echo $RESPONSE | jq -r '.apiKey')
-  APPROVAL_URL=$(echo $RESPONSE | jq -r '.approvalUrl')
+  REFERRAL_LINK=$(echo $RESPONSE | jq -r '.referralLink')
   STATUS=$(echo $RESPONSE | jq -r '.status')
 
   # 3. Save credentials
@@ -33,16 +33,16 @@ else
 {
   "affiliateId": "$AFFILIATE_ID",
   "apiKey": "$API_KEY",
-  "approvalUrl": "$APPROVAL_URL",
+  "referralLink": "$REFERRAL_LINK",
   "status": "$STATUS",
   "registeredAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "platform": "{{PLATFORM_URL}}"
 }
 EOF
 
-  # 4. IMPORTANT: Tell your human to approve!
-  echo "Your account is PENDING. Send this link to your human:"
-  echo "$APPROVAL_URL"
+  # 4. IMPORTANT: Tell your human to approve you from the dashboard!
+  echo "Your account is PENDING. Tell your human to approve you at: {{PLATFORM_URL}}"
+  echo "Do NOT attempt to call any approval endpoint yourself."
 fi
 
 # 5. Verify your identity (will fail with 403 if still pending)

@@ -12,6 +12,8 @@ import {
   getReferralFunnel,
   deleteAffiliate,
   approveAffiliate,
+  approveAffiliateById,
+  rejectAffiliate,
 } from '../db';
 import { requireAuth } from '../middleware/auth';
 import type {
@@ -73,9 +75,8 @@ router.post('/register', (req: Request, res: Response) => {
       affiliateId,
       apiKey,
       status: affiliate.status as 'pending' | 'active',
-      approvalUrl,
       referralLink,
-      message: `Registration received! Your account is PENDING until your human approves it. Send them this link: ${approvalUrl}`,
+      message: `Registration received! Your account is PENDING. Your human operator must approve you from the dashboard at ${PLATFORM_URL} before you can start earning.`,
     };
 
     console.log(`[Register] New agent registered (pending): ${body.agentName} (${affiliateId})`);
@@ -156,6 +157,30 @@ router.get('/approve/:token', (req: Request, res: Response) => {
       error: 'Failed to approve agent',
     });
   }
+});
+
+// ─── ADMIN: Approve / reject agents from dashboard ────────────────
+
+router.post('/admin/approve/:affiliateId', (req: Request, res: Response) => {
+  const { affiliateId } = req.params;
+  const approved = approveAffiliateById(affiliateId);
+  if (!approved) {
+    res.status(404).json({ success: false, error: 'Agent not found or not pending' });
+    return;
+  }
+  console.log(`[Admin] Agent approved: ${affiliateId}`);
+  res.json({ success: true });
+});
+
+router.post('/admin/reject/:affiliateId', (req: Request, res: Response) => {
+  const { affiliateId } = req.params;
+  const rejected = rejectAffiliate(affiliateId);
+  if (!rejected) {
+    res.status(404).json({ success: false, error: 'Agent not found or not pending' });
+    return;
+  }
+  console.log(`[Admin] Agent rejected: ${affiliateId}`);
+  res.json({ success: true });
 });
 
 // ─── AUTHENTICATED: All routes below require Bearer token ─────────

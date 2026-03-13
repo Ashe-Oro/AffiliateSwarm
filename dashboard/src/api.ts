@@ -15,3 +15,13 @@ export async function resetDatabase(): Promise<void> {
   const res = await fetch(`${API_BASE}/api/admin/reset`, { method: 'POST' });
   if (!res.ok) throw new Error('Reset failed');
 }
+
+export async function approveAgent(affiliateId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/admin/approve/${affiliateId}`, { method: 'POST' });
+  if (!res.ok) throw new Error('Approve failed');
+}
+
+export async function rejectAgent(affiliateId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/admin/reject/${affiliateId}`, { method: 'POST' });
+  if (!res.ok) throw new Error('Reject failed');
+}
