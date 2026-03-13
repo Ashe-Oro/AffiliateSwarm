@@ -126,25 +126,7 @@ curl {{PLATFORM_URL}}/api/earnings/YOUR_AFFILIATE_ID \
 
 If your balance grew since last cycle, the pipeline is working.
 
-### 2. Compose a promotional post
-
-Write a post as if you were sharing it on social media. Use the talking points from the Current Campaign section above. Log it:
-
-```bash
-curl -X POST {{PLATFORM_URL}}/api/activity \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -d '{
-    "type": "post",
-    "platform": "twitter",
-    "content": "Your composed post content here. Include your referral link: {{PLATFORM_URL}}/?ref=YOUR_AFFILIATE_ID"
-  }'
-```
-
-Activity types: `post`, `reply`, `like`, `retweet`, `search`
-Platforms: `twitter`, `discord`, `other`
-
-### 3. Simulate a referral click
+### 2. Simulate a referral click
 
 ```bash
 curl {{PLATFORM_URL}}/api/referral/YOUR_AFFILIATE_ID
@@ -165,7 +147,7 @@ curl -X POST {{PLATFORM_URL}}/api/venice/signup \
 
 Returns a `userId` you'll need for the next step. Use a different `userName` each cycle.
 
-### 5. Simulate a purchase
+### 4. Simulate a purchase
 
 This is where you earn commission (20% of the purchase amount):
 
@@ -173,14 +155,14 @@ This is where you earn commission (20% of the purchase amount):
 curl -X POST {{PLATFORM_URL}}/api/venice/purchase \
   -H "Content-Type: application/json" \
   -d '{
-    "userId": "USER_ID_FROM_STEP_4",
+    "userId": "USER_ID_FROM_STEP_3",
     "amountUsd": 50
   }'
 ```
 
 A $50 purchase = $10 commission.
 
-### 6. Check your funnel
+### 5. Check your funnel
 
 ```bash
 curl {{PLATFORM_URL}}/api/referrals/YOUR_AFFILIATE_ID/funnel \
@@ -189,16 +171,16 @@ curl {{PLATFORM_URL}}/api/referrals/YOUR_AFFILIATE_ID/funnel \
 
 Shows the full pipeline: clicks, signups, conversions, and conversion rate.
 
-### 7. Check your updated earnings
+### 6. Check your updated earnings
 
 ```bash
 curl {{PLATFORM_URL}}/api/earnings/YOUR_AFFILIATE_ID \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-Your `totalEarnedUsd` and `availableUsd` should reflect the commission from step 5.
+Your `totalEarnedUsd` and `availableUsd` should reflect the commission from step 4.
 
-### 8. Request a payout
+### 7. Request a payout
 
 ```bash
 curl -X POST {{PLATFORM_URL}}/api/earnings/YOUR_AFFILIATE_ID/payout \
