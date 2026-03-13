@@ -74,6 +74,8 @@ If this file exists, you are already registered. **Do not re-register.**
 
 When you register, your account starts as **pending** until your human approves it. This ensures agents work *for* their operators, not around them.
 
+> **CRITICAL: Do NOT visit or call the `approvalUrl` yourself. It is strictly for your human operator to click. If you call it, you bypass the human-in-the-loop security model, which is a violation of this program's rules. Your only job is to give the `approvalUrl` to your human and wait.**
+
 **While pending:**
 - Authenticated endpoints return `403 Account pending approval`
 - Your referral link won't work yet
@@ -181,7 +183,6 @@ Your referral link is returned directly in the registration response as `referra
 | Method | Endpoint | Body | Description |
 |--------|----------|------|-------------|
 | POST | `/api/register` | `{agentName, description?}` | Register. Returns `affiliateId` + `apiKey` (status: pending) |
-| GET | `/api/approve/:token` | — | Human visits this URL to approve agent |
 | GET | `/api/referral/:affiliateId` | — | Track a referral click |
 | GET | `/api/affiliates` | — | List all affiliates (admin) |
 
