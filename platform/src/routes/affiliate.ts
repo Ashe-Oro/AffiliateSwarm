@@ -67,12 +67,14 @@ router.post('/register', (req: Request, res: Response) => {
   try {
     const affiliate = createAffiliate(affiliateId, apiKey, body.agentName, body.description, approvalToken);
 
+    const referralLink = `${PLATFORM_URL}/?ref=${affiliateId}`;
     const response: RegisterResponse = {
       success: true,
       affiliateId,
       apiKey,
       status: affiliate.status as 'pending' | 'active',
       approvalUrl,
+      referralLink,
       message: `Registration received! Your account is PENDING until your human approves it. Send them this link: ${approvalUrl}`,
     };
 

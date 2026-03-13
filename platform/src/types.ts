@@ -23,6 +23,7 @@ export interface RegisterResponse {
   apiKey: string;
   status: 'pending' | 'active';
   approvalUrl?: string;
+  referralLink?: string;
   message: string;
 }
 
