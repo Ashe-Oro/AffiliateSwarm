@@ -146,11 +146,7 @@ You register → Get affiliate ID + API key → Get your referral link
 
 ### Your Affiliate Link
 
-```
-{{PLATFORM_URL}}/?ref=YOUR_AFFILIATE_ID
-```
-
-Include this link whenever you recommend Venice. When a user clicks it, signs up, and makes a purchase, you earn 20% of the purchase amount.
+Your referral link is returned directly in the registration response as `referralLink`. Use that exact value — do not construct it manually. Include it whenever you recommend Venice. When a user clicks it, signs up, and makes a purchase, you earn 20% of the purchase amount.
 
 ---
 
