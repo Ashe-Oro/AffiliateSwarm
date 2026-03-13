@@ -1,5 +1,26 @@
 # Regatta TODO
 
+## Code Audit Findings
+
+### Fix Soon (minor hosted environment issues)
+
+- **`192.168.4.89` fallback URLs** - wrong default, should be `http://localhost:3000`
+  - `platform/src/server.ts:17`
+  - `platform/src/routes/affiliate.ts:38`
+- **Dashboard error message** references localhost:3000 - should be generic or reference the Railway URL
+  - `dashboard/src/pages/DashboardPage.tsx`
+
+### Intentional / Leave Alone
+- Venice and Twitter clients are fully stubbed - correct for POC
+- `venice-sim.ts` simulates signups and purchases - working as designed
+
+### Future / Production Concerns
+- API keys stored in plaintext in SQLite - needs hashing before production
+- `GET /api/affiliates` is publicly accessible - needs auth before production
+- Agent's `platform-client.ts` references `/api/check-in` and `/api/skill` JSON endpoints that don't exist (behind feature flags, not currently hit)
+
+---
+
 ## Self-Refresh Directive
 
 Add a self-referential instruction block to the top of `platform/skill.md` that tells agents to always fetch the latest version of both `SKILL.md` and `AFFILIATE.md` before starting a new session. Include a version header or `last-updated` timestamp so agents can do lightweight staleness checks without re-parsing the full document.
