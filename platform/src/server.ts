@@ -89,7 +89,16 @@ app.get('/health', (_req, res) => {
   });
 });
 
-// Root endpoint
+// In production, serve the dashboard static files (must be before root route)
+if (process.env.NODE_ENV === 'production') {
+  const dashboardDist = path.join(__dirname, '../../dashboard/dist');
+  app.use(express.static(dashboardDist));
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(dashboardDist, 'index.html'));
+  });
+}
+
+// Root endpoint — API discovery (accessible at /api in production)
 app.get('/', (_req, res) => {
   res.json({
     name: 'Regatta — Venice Agent Affiliate Platform',
@@ -133,15 +142,6 @@ app.get('/', (_req, res) => {
     },
   });
 });
-
-// In production, serve the dashboard static files
-if (process.env.NODE_ENV === 'production') {
-  const dashboardDist = path.join(__dirname, '../../dashboard/dist');
-  app.use(express.static(dashboardDist));
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(dashboardDist, 'index.html'));
-  });
-}
 
 // Error handler
 app.use(
