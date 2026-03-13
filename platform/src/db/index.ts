@@ -27,8 +27,8 @@ export function resetDatabase(): void {
     db.close();
     db = undefined as unknown as Database;
   }
-  if (fs.existsSync(DB_PATH)) {
-    fs.unlinkSync(DB_PATH);
+  for (const file of [DB_PATH, `${DB_PATH}-wal`, `${DB_PATH}-shm`]) {
+    if (fs.existsSync(file)) fs.unlinkSync(file);
   }
   db = initializeDatabase();
 }
