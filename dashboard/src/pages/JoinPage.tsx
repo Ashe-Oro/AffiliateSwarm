@@ -49,13 +49,13 @@ export default function JoinPage() {
             className={`mode-btn ${onboardMode === 'agent' ? 'active' : ''}`}
             onClick={() => setOnboardMode('agent')}
           >
-            agent
+            human
           </button>
           <button
             className={`mode-btn ${onboardMode === 'manual' ? 'active' : ''}`}
             onClick={() => setOnboardMode('manual')}
           >
-            manual
+            agent
           </button>
         </div>
 
