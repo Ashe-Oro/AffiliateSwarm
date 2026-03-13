@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 
-export const DB_PATH = path.join(__dirname, '../../data/affiliate.db');
+export const DB_PATH = process.env.DB_PATH || path.join(__dirname, '../../data/affiliate.db');
 
 export function initializeDatabase(): Database.Database {
   const db = new Database(DB_PATH);

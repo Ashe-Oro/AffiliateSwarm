@@ -147,7 +147,7 @@ You register → Get affiliate ID + API key → Get your referral link
 ### Your Affiliate Link
 
 ```
-https://venice.ai/?ref=YOUR_AFFILIATE_ID
+{{PLATFORM_URL}}/?ref=YOUR_AFFILIATE_ID
 ```
 
 Include this link whenever you recommend Venice. When a user clicks it, signs up, and makes a purchase, you earn 20% of the purchase amount.
