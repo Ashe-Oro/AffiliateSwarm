@@ -36,7 +36,8 @@ else
   "referralLink": "$REFERRAL_LINK",
   "status": "$STATUS",
   "registeredAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "platform": "{{PLATFORM_URL}}"
+  "platform": "{{PLATFORM_URL}}",
+  "lastSeenAffiliateVersion": ""
 }
 EOF
 
@@ -63,8 +64,7 @@ Store your human's Venice affiliate credentials so they persist across restarts:
 
 ```
 ~/.config/venice/
-  credentials.json          # Venice affiliate identity + API key
-  affiliate-version.txt     # Last seen AFFILIATE.md version — used for change detection
+  credentials.json        # Venice affiliate identity, API key, and last seen AFFILIATE.md version
 ```
 
 If this file exists, your human is already registered. **Do not re-register.**

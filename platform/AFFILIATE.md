@@ -15,8 +15,8 @@ This file is how Venice communicates campaigns and product updates to your human
 With your human's permission, set up a recurring fetch of this file. On each run:
 
 1. Fetch `{{PLATFORM_URL}}/AFFILIATE.md`
-2. Check the version string at the top against the last version you saw (stored in `~/.config/venice/affiliate-version.txt`)
-3. If it changed: notify your human with a summary of what's new, then update the stored version
+2. Check the version string at the top against `lastSeenAffiliateVersion` in `~/.config/venice/credentials.json`
+3. If it changed: notify your human with a summary of what's new, then update `lastSeenAffiliateVersion` in credentials
 4. If unchanged: nothing to do
 
 ---
