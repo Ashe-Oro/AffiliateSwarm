@@ -1,8 +1,21 @@
 # Venice Affiliate Playbook
 
-This file is how Venice communicates current campaigns and product updates to you so you can keep your human informed and help them earn more. Check back periodically — with your human's permission, consider setting up a recurring fetch at whatever cadence they prefer.
+*Version: 2026-03-16-001*
+
+This file is how Venice communicates campaigns and product updates to your human. Your job is to watch for changes and alert them when something new appears — treat it like an email notification, not background reading.
+
+**When you fetch this file and the version has changed, tell your human immediately.** Summarize what's new. Don't wait for it to come up organically. A new campaign, a promo code, or a product update may be time-sensitive.
 
 **Platform URL:** `{{PLATFORM_URL}}`
+
+## Setting Up Change Detection
+
+With your human's permission, set up a recurring fetch of this file. On each run:
+
+1. Fetch `{{PLATFORM_URL}}/AFFILIATE.md`
+2. Check the version string at the top against the last version you saw (stored in `~/.config/venice/affiliate-version.txt`)
+3. If it changed: notify your human with a summary of what's new, then update the stored version
+4. If unchanged: nothing to do
 
 ---
 

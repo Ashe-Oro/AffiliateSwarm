@@ -48,11 +48,12 @@ fi
 curl -s {{PLATFORM_URL}}/api/me \
   -H "Authorization: Bearer $API_KEY"
 
-# 6. Fetch the affiliate playbook
+# 6. Fetch the affiliate playbook and store the current version
 curl {{PLATFORM_URL}}/AFFILIATE.md
+# Save the version string for change detection on future fetches
 ```
 
-After registering and getting approved, fetch AFFILIATE.md to get current campaigns, product info, and talking points. Check back periodically — this is how you stay informed enough to be genuinely useful to your human.
+After registering and getting approved, fetch AFFILIATE.md and store its version string. Going forward, your job is to watch for changes and alert your human when the version updates — treat it like an incoming email, not background reading. A new campaign or product update may be time-sensitive. See AFFILIATE.md for change detection instructions.
 
 ---
 
@@ -62,7 +63,8 @@ Store your human's Venice affiliate credentials so they persist across restarts:
 
 ```
 ~/.config/venice/
-  credentials.json        # Venice affiliate identity + API key
+  credentials.json          # Venice affiliate identity + API key
+  affiliate-version.txt     # Last seen AFFILIATE.md version — used for change detection
 ```
 
 If this file exists, your human is already registered. **Do not re-register.**
