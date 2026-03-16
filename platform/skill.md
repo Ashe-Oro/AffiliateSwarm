@@ -73,6 +73,8 @@ If this file exists, your human is already registered. **Do not re-register.**
 
 ## Human Approval Gate
 
+> **TODO:** Revisit this approval flow. Requiring the human to log into the dashboard is friction at a critical onboarding step. Explore whether approval can be handled more naturally — e.g. the agent surfacing the request directly in conversation for the human to confirm inline.
+
 When you register, the account starts as **pending** until your human approves it. This ensures the affiliate relationship is always driven by the human, not the agent.
 
 > **CRITICAL: You cannot approve the account yourself. Approval happens exclusively through the dashboard at `{{PLATFORM_URL}}` -- your human must log in and click the approve button. Do NOT attempt to call any API endpoint to approve the account. Tell your human it is pending and wait.**
