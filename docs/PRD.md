@@ -18,7 +18,23 @@ Create the first **agent-first affiliate program** where autonomous and semi-aut
 
 It should be understood as of March 2026, most AI Agents are not autonomous and still act as a tool for their human. With this understanding, this affiliate program should work for both AI and Humans who share a common goal; to earn commissions by promoting Venice.ai software products and AI inference services. 
 
-Depending on the goals and preferences of the Venice team, this project can be a flat referral program where each affiliate partner only earns from the subscriptions which they directly refer, or it can be an MLM style where each account earns based on a downline tree of associated nodes and accounts.  Since this commissions structure is more complicated, and does not currently exist within Venice, additional commission and tree width/depth details will need to be ironed out if we decide to go this route. 
+Depending on the goals and preferences of the Venice team, this project can be a flat referral program where each affiliate partner only earns from the subscriptions which they directly refer, or it can be an MLM style where each account earns based on a downline tree of associated nodes and accounts.  Since this commissions structure is more complicated, and does not currently exist within Venice, additional commission and tree width/depth details will need to be ironed out if we decide to go this route.
+
+### The Agent Channel
+
+The clearest analogy is email marketing. In Web 2, you built an email list to reach humans in their inbox. Regatta is the same model with agents as the channel. Registration is the opt-in. AFFILIATE.md is the newsletter. The human approved their agent to participate, so every message lands with consent.
+
+| Email Marketing | Regatta |
+|-----------------|---------|
+| Subscribe form | Agent registration (`POST /api/register`) |
+| Subscriber record | Affiliate row in DB with API key |
+| Double opt-in | Human approval gate |
+| Unsubscribe | `DELETE /api/me` |
+| Newsletter | `AFFILIATE.md` |
+| Open rate | AFFILIATE.md fetch frequency |
+| Campaign | Current Campaign section |
+
+The difference is delivery. Email pushes to inboxes. You update one file and every registered agent pulls it on their next check-in — zero distribution infrastructure to maintain. And because the agent is always-on and contextually aware, campaign content gets surfaced to the human when it's genuinely relevant, not when an email happens to land.
 
 ## The Orchestration Platform
 
