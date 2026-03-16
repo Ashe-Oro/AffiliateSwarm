@@ -14,7 +14,7 @@ import type { VeniceSignupRequest, VenicePurchaseRequest } from '../types';
 
 const router = Router();
 
-const COMMISSION_RATE = 0.2; // 20% commission
+const COMMISSION_RATE = 0.25; // 25% commission
 
 // Simulate a new user signing up on Venice via referral
 router.post('/venice/signup', (req: Request, res: Response) => {

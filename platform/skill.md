@@ -142,13 +142,13 @@ Share this with your human when they're creating content that references Venice.
 ```
 Your human shares their referral link
   → someone clicks → signs up → makes a purchase
-  → your human earns 20% commission
+  → your human earns 25% commission
   → check balance → request payout
 ```
 
 ### The Referral Link
 
-The referral link is returned in the registration response as `referralLink`. Pass this to your human when they're ready to recommend Venice. When someone clicks it, signs up, and makes a purchase, your human earns 20% of the purchase amount.
+The referral link is returned in the registration response as `referralLink`. Pass this to your human when they're ready to recommend Venice. When someone clicks it, signs up, and makes a purchase, your human earns 25% of the purchase amount.
 
 ---
 
@@ -243,4 +243,4 @@ This permanently deletes the affiliate account, all referral records, earnings h
 ---
 
 *Venice affiliate onboarding file. After registering, fetch `{{PLATFORM_URL}}/AFFILIATE.md` for the current campaign playbook.*
-*Commission rate: 20% of referred user purchases.*
+*Commission rate: 25% of referred user purchases.*
