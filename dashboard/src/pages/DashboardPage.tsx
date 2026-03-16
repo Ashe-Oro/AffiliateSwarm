@@ -1,9 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  adminLogin,
-  setSessionToken,
-  hasSessionToken,
   fetchAffiliatesData,
   resetDatabase,
   approveAgent,
@@ -12,54 +9,7 @@ import {
 } from '../api';
 import type { AffiliateAgent, PlatformStats, ApprovalLogEntry } from '../types';
 
-function LoginForm({ onLogin }: { onLogin: () => void }) {
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      const { token } = await adminLogin(password);
-      setSessionToken(token);
-      onLogin();
-    } catch {
-      setError('Invalid password.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2 className="login-title">Admin Login</h2>
-        <p className="login-subtitle">Enter the admin password to access the dashboard.</p>
-        <div className="login-field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Admin password"
-            autoFocus
-            required
-          />
-        </div>
-        {error && <div className="error-banner"><span className="error-icon">⚠️</span>{error}</div>}
-        <button type="submit" className="login-btn" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-    </div>
-  );
-}
-
 export default function DashboardPage() {
-  const [authenticated, setAuthenticated] = useState(hasSessionToken());
   const [affiliates, setAffiliates] = useState<AffiliateAgent[]>([]);
   const [platform, setPlatform] = useState<PlatformStats | null>(null);
   const [approvalLog, setApprovalLog] = useState<ApprovalLogEntry[]>([]);
@@ -78,12 +28,7 @@ export default function DashboardPage() {
       setApprovalLog(logEntries);
       setError(null);
     } catch (e: unknown) {
-      if (e instanceof Error && e.message === 'Unauthorized') {
-        setAuthenticated(false);
-        setSessionToken('');
-      } else {
-        setError('Failed to connect to platform API. Make sure the server is running on localhost:3000');
-      }
+      setError('Failed to connect to platform API. Make sure the server is running on localhost:3000');
       console.error(e);
     } finally {
       setLoading(false);
@@ -91,11 +36,10 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!authenticated) return;
     loadData();
     const interval = setInterval(loadData, 10000);
     return () => clearInterval(interval);
-  }, [authenticated, loadData]);
+  }, [loadData]);
 
   const handleApprove = async (affiliateId: string) => {
     try {
@@ -130,10 +74,6 @@ export default function DashboardPage() {
   };
 
   const formatUsd = (amount: number) => `$${amount.toFixed(2)}`;
-
-  if (!authenticated) {
-    return <LoginForm onLogin={() => { setAuthenticated(true); setLoading(true); }} />;
-  }
 
   const activeAgents = affiliates.filter(a => a.status === 'active');
   const pendingAgents = affiliates.filter(a => a.status === 'pending');
