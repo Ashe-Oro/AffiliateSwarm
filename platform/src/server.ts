@@ -8,7 +8,8 @@ import referralRoutes from './routes/referrals';
 import veniceSimRoutes from './routes/venice-sim';
 import earningsRoutes from './routes/earnings';
 import { rateLimit } from './middleware/rate-limit';
-import { resetDatabase } from './db';
+import { requireAdminAuth, createAdminSession } from './middleware/auth';
+import { resetDatabase, getApprovalLog } from './db';
 
 dotenv.config();
 
@@ -68,8 +69,46 @@ app.get('/AFFILIATE.md', (_req, res) => {
   }
 });
 
+// Admin: login -- exchange ADMIN_SECRET password for a short-lived session token
+app.post('/api/admin/login', (req, res) => {
+  const adminSecret = process.env.ADMIN_SECRET;
+
+  if (!adminSecret) {
+    console.error('[AdminLogin] ADMIN_SECRET env var is not set');
+    res.status(503).json({
+      success: false,
+      error: 'Admin authentication is not configured',
+      hint: 'Set the ADMIN_SECRET environment variable on the server.',
+    });
+    return;
+  }
+
+  const { password } = req.body as { password?: string };
+
+  if (!password || password !== adminSecret) {
+    res.status(401).json({ success: false, error: 'Invalid password' });
+    return;
+  }
+
+  const session = createAdminSession();
+  console.log('[AdminLogin] New admin session created');
+  res.json({ success: true, token: session.token, expiresAt: session.expiresAt });
+});
+
+// Admin: approval audit log
+app.get('/api/admin/approval-log', requireAdminAuth, (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit as string) || 100, 500);
+    const entries = getApprovalLog(limit);
+    res.json({ success: true, entries });
+  } catch (error) {
+    console.error('[AdminApprovalLog] Error:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch approval log' });
+  }
+});
+
 // Admin: reset database
-app.post('/api/admin/reset', (_req, res) => {
+app.post('/api/admin/reset', requireAdminAuth, (_req, res) => {
   try {
     resetDatabase();
     console.log('[Admin] Database reset');
@@ -117,7 +156,7 @@ app.get('/', (_req, res) => {
       public: {
         register: 'POST /api/register → returns affiliateId + apiKey',
         referralClick: 'GET /api/referral/:affiliateId (tracks clicks)',
-        affiliates: 'GET /api/affiliates (admin listing)',
+        affiliates: 'GET /api/affiliates (admin listing — requires session token)',
       },
       authenticated: {
         me: 'GET /api/me (self-check: profile + stats + earnings + funnel)',

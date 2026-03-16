@@ -3,6 +3,24 @@
 # Exercises the complete flow: discover → register → authenticate → operate → refer → earn → payout
 
 BASE_URL="${PLATFORM_URL:-http://192.168.4.89:3000}"
+ADMIN_SECRET="${ADMIN_SECRET:-}"
+ADMIN_SESSION_TOKEN=""
+
+# Obtain an admin session token via POST /api/admin/login
+admin_login() {
+  if [ -z "$ADMIN_SECRET" ]; then
+    return
+  fi
+  local response
+  response=$(curl -s -X POST "$BASE_URL/api/admin/login" \
+    -H "Content-Type: application/json" \
+    -d "{\"password\": \"$ADMIN_SECRET\"}")
+  ADMIN_SESSION_TOKEN=$(echo "$response" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+}
+
+admin_auth_header() {
+  echo "Authorization: Bearer $ADMIN_SESSION_TOKEN"
+}
 PASS=0
 FAIL=0
 
@@ -62,7 +80,7 @@ echo ""
 # ─── Step 3: Agent discovers AFFILIATE.md ───────────────
 bold "Step 3: Agent discovers AFFILIATE.md"
 RESPONSE=$(curl -s "$BASE_URL/AFFILIATE.md")
-check "Venice affiliate file contains title" "$RESPONSE" "Venice Affiliate Updates"
+check "Venice affiliate file contains title" "$RESPONSE" "Venice Affiliate Playbook"
 check "Venice affiliate has resolved platform URL" "$RESPONSE" "$BASE_URL"
 check_not "Venice affiliate has no unresolved templates" "$RESPONSE" "{{PLATFORM_URL}}"
 echo ""
@@ -81,12 +99,9 @@ RESPONSE=$(curl -s -X POST "$BASE_URL/api/register" \
   -d '{"agentName": "e2e-test-agent", "description": "End-to-end test agent"}')
 check "Registration succeeds" "$RESPONSE" '"success":true'
 check "Registration returns pending status" "$RESPONSE" '"status":"pending"'
-check "Registration returns approval URL" "$RESPONSE" '"approvalUrl":'
 
 AFFILIATE_ID=$(echo "$RESPONSE" | grep -o '"affiliateId":"[^"]*"' | cut -d'"' -f4)
 API_KEY=$(echo "$RESPONSE" | grep -o '"apiKey":"[^"]*"' | cut -d'"' -f4)
-APPROVAL_URL=$(echo "$RESPONSE" | grep -o '"approvalUrl":"[^"]*"' | cut -d'"' -f4)
-APPROVAL_TOKEN=$(echo "$APPROVAL_URL" | grep -o 'approve_[^"]*')
 echo "  Affiliate ID: $AFFILIATE_ID"
 echo "  API Key: ${API_KEY:0:12}..."
 echo ""
@@ -100,10 +115,11 @@ check "Pending agent gets 403" "$RESPONSE" '"error":"Account pending approval"'
 echo ""
 
 # ─── Step 7: Human approves the agent ──────────────────────────
-bold "Step 7: Human approves the agent via approval URL"
-RESPONSE=$(curl -s "$BASE_URL/api/approve/$APPROVAL_TOKEN")
-check "Approval page shows success" "$RESPONSE" "Agent Approved"
-check "Approval page shows agent name" "$RESPONSE" "e2e-test-agent"
+bold "Step 7: Human approves the agent via admin dashboard endpoint"
+admin_login
+RESPONSE=$(curl -s -X POST "$BASE_URL/api/admin/approve/$AFFILIATE_ID" \
+  -H "$(admin_auth_header)")
+check "Admin approval succeeds" "$RESPONSE" '"success":true'
 echo ""
 
 # ─── Step 8: Agent verifies identity via /api/me ───────────────
@@ -122,13 +138,13 @@ RESPONSE=$(curl -s "$BASE_URL/api/me" -H "Authorization: Bearer vnice_bogus_key"
 check "Invalid key returns 401" "$RESPONSE" '"error":"Invalid API key"'
 echo ""
 
-# ─── Step 10: Agent logs generic activity ───────────────────────
+# ─── Step 10: Agent logs generic activity (disabled) ───────────────────────
 bold "Step 10: Agent logs generic activity"
 RESPONSE=$(curl -s -X POST "$BASE_URL/api/activity" \
   -H "Content-Type: application/json" \
   -H "$AUTH_HEADER" \
   -d '{"type": "search", "platform": "other", "content": "privacy-first ai inference providers"}')
-check "Activity logged" "$RESPONSE" '"success":true'
+check "Activity tracking disabled response" "$RESPONSE" '"error":"Activity tracking is disabled"'
 echo ""
 
 # ─── Step 11: A user clicks the referral link ──────────────────
@@ -218,7 +234,7 @@ echo ""
 
 # ─── Step 21: Admin dashboard endpoint returns enriched data ────
 bold "Step 21: Admin dashboard endpoint returns enriched data"
-RESPONSE=$(curl -s "$BASE_URL/api/affiliates")
+RESPONSE=$(curl -s "$BASE_URL/api/affiliates" -H "$(admin_auth_header)")
 check "Affiliates endpoint returns stats" "$RESPONSE" '"stats":'
 check "Affiliates endpoint returns funnel" "$RESPONSE" '"funnel":'
 check "Affiliates endpoint returns earnings" "$RESPONSE" '"earnings":'

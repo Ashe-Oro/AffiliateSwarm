@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import {
   createAffiliate,
-  getAffiliate,
   getAllAffiliates,
   logActivity,
   getAffiliateStats,
@@ -11,11 +10,11 @@ import {
   getAffiliateEarnings,
   getReferralFunnel,
   deleteAffiliate,
-  approveAffiliate,
   approveAffiliateById,
   rejectAffiliate,
+  logApprovalAction,
 } from '../db';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, requireAdminAuth } from '../middleware/auth';
 import type {
   RegisterRequest,
   RegisterResponse,
@@ -31,12 +30,7 @@ function generateApiKey(): string {
   return `vnice_${crypto.randomBytes(16).toString('hex')}`;
 }
 
-// Generate an approval token: approve_ + 32 hex chars
-function generateApprovalToken(): string {
-  return `approve_${crypto.randomBytes(16).toString('hex')}`;
-}
-
-// Platform URL for approval links (from env or default)
+// Platform URL for referral links (from env or default)
 const PLATFORM_URL = process.env.PLATFORM_URL || 'http://192.168.4.89:3000';
 
 function respondActivityTrackingDisabled(res: Response): void {
@@ -63,11 +57,9 @@ router.post('/register', (req: Request, res: Response) => {
 
   const affiliateId = `aff_${uuidv4().slice(0, 8)}`;
   const apiKey = generateApiKey();
-  const approvalToken = generateApprovalToken();
-  const approvalUrl = `${PLATFORM_URL}/api/approve/${approvalToken}`;
 
   try {
-    const affiliate = createAffiliate(affiliateId, apiKey, body.agentName, body.description, approvalToken);
+    const affiliate = createAffiliate(affiliateId, apiKey, body.agentName, body.description);
 
     const referralLink = `${PLATFORM_URL}/?ref=${affiliateId}`;
     const response: RegisterResponse = {
@@ -91,94 +83,28 @@ router.post('/register', (req: Request, res: Response) => {
   }
 });
 
-// ─── PUBLIC: Human approves agent registration ──────────────────────
-
-router.get('/approve/:token', (req: Request, res: Response) => {
-  const { token } = req.params;
-
-  try {
-    const affiliate = approveAffiliate(token);
-
-    if (affiliate) {
-      console.log(`[Approve] Agent approved by human: ${affiliate.name} (${affiliate.id})`);
-
-      // Return a simple HTML page for the human
-      res.type('text/html').send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Agent Approved — Venice Affiliate Program</title>
-  <style>
-    body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-    .success { background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 20px; }
-    h1 { color: #155724; margin-top: 0; }
-    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-  </style>
-</head>
-<body>
-  <div class="success">
-    <h1>✓ Agent Approved</h1>
-    <p><strong>${affiliate.name}</strong> is now an active Venice affiliate.</p>
-    <p>Affiliate ID: <code>${affiliate.id}</code></p>
-    <p>The agent can now use its API key to access all authenticated endpoints.</p>
-  </div>
-  <p style="margin-top: 20px; color: #666;">
-    You can close this page. The agent will detect its active status on the next API call.
-  </p>
-</body>
-</html>
-      `);
-    } else {
-      res.status(404).type('text/html').send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Invalid or Expired Link — Venice Affiliate Program</title>
-  <style>
-    body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-    .error { background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; }
-    h1 { color: #721c24; margin-top: 0; }
-  </style>
-</head>
-<body>
-  <div class="error">
-    <h1>Invalid or Expired Link</h1>
-    <p>This approval link is invalid, has already been used, or has expired.</p>
-    <p>If your agent needs to register again, have it call <code>POST /api/register</code>.</p>
-  </div>
-</body>
-</html>
-      `);
-    }
-  } catch (error) {
-    console.error('[Approve] Error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to approve agent',
-    });
-  }
-});
-
 // ─── ADMIN: Approve / reject agents from dashboard ────────────────
 
-router.post('/admin/approve/:affiliateId', (req: Request, res: Response) => {
+router.post('/admin/approve/:affiliateId', requireAdminAuth, (req: Request, res: Response) => {
   const { affiliateId } = req.params;
   const approved = approveAffiliateById(affiliateId);
   if (!approved) {
     res.status(404).json({ success: false, error: 'Agent not found or not pending' });
     return;
   }
+  logApprovalAction(affiliateId, 'approved');
   console.log(`[Admin] Agent approved: ${affiliateId}`);
   res.json({ success: true });
 });
 
-router.post('/admin/reject/:affiliateId', (req: Request, res: Response) => {
+router.post('/admin/reject/:affiliateId', requireAdminAuth, (req: Request, res: Response) => {
   const { affiliateId } = req.params;
   const rejected = rejectAffiliate(affiliateId);
   if (!rejected) {
     res.status(404).json({ success: false, error: 'Agent not found or not pending' });
     return;
   }
+  logApprovalAction(affiliateId, 'rejected');
   console.log(`[Admin] Agent rejected: ${affiliateId}`);
   res.json({ success: true });
 });
@@ -365,8 +291,8 @@ router.get('/activity/:affiliateId', requireAuth, (req: Request, res: Response) 
   }
 });
 
-// GET /api/affiliates — list all affiliates with stats (admin, no auth for now)
-router.get('/affiliates', (_req: Request, res: Response) => {
+// GET /api/affiliates — list all affiliates with stats (admin only)
+router.get('/affiliates', requireAdminAuth, (_req: Request, res: Response) => {
   try {
     const affiliates = getAllAffiliates();
 

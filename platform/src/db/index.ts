@@ -1,4 +1,5 @@
 import fs from 'fs';
+import bcrypt from 'bcryptjs';
 import { initializeDatabase, DB_PATH } from './schema';
 import type { Database } from 'better-sqlite3';
 import type {
@@ -33,6 +34,9 @@ export function resetDatabase(): void {
   db = initializeDatabase();
 }
 
+// Prefix length used for fast SQL lookup of hashed API keys
+const API_KEY_PREFIX_LEN = 12;
+
 // Affiliate operations
 export function createAffiliate(
   id: string,
@@ -44,15 +48,19 @@ export function createAffiliate(
   const db = getDatabase();
   const now = new Date().toISOString();
 
-  // If approval token provided, start as pending; otherwise active (for backwards compat)
-  const status = approvalToken ? 'pending' : 'active';
+  // All new registrations start as pending and must be approved via the dashboard.
+  const status = 'pending';
+
+  // Hash the API key; store only the prefix in api_key for fast lookup
+  const apiKeyHash = bcrypt.hashSync(apiKey, 10);
+  const apiKeyPrefix = apiKey.slice(0, API_KEY_PREFIX_LEN);
 
   const stmt = db.prepare(`
-    INSERT INTO affiliates (id, api_key, name, description, registered_at, status, approval_token)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO affiliates (id, api_key, api_key_hash, name, description, registered_at, status, approval_token)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  stmt.run(id, apiKey, name, description || null, now, status, approvalToken || null);
+  stmt.run(id, apiKeyPrefix, apiKeyHash, name, description || null, now, status, approvalToken || null);
 
   return {
     id,
@@ -134,14 +142,38 @@ export function getAffiliate(id: string): AffiliateAgent | null {
 
 export function getAffiliateByApiKey(apiKey: string): AffiliateAgent | null {
   const db = getDatabase();
+
+  // Candidates are rows whose api_key matches either the full plaintext (legacy)
+  // or the prefix (new hashed registrations).
+  const prefix = apiKey.slice(0, API_KEY_PREFIX_LEN);
   const stmt = db.prepare(`
-    SELECT id, api_key as apiKey, name, description, registered_at as registeredAt,
+    SELECT id, api_key as apiKey, api_key_hash as apiKeyHash,
+           name, description, registered_at as registeredAt,
            status, approval_token as approvalToken, approved_at as approvedAt
-    FROM affiliates WHERE api_key = ?
+    FROM affiliates
+    WHERE api_key = ? OR api_key = ?
   `);
 
-  const row = stmt.get(apiKey) as AffiliateAgent | undefined;
-  return row || null;
+  const candidates = stmt.all(apiKey, prefix) as Array<AffiliateAgent & { apiKeyHash: string | null }>;
+
+  for (const row of candidates) {
+    if (row.apiKeyHash) {
+      // New hashed registration: bcrypt verify
+      if (bcrypt.compareSync(apiKey, row.apiKeyHash)) {
+        const { apiKeyHash: _, ...affiliate } = row;
+        return affiliate;
+      }
+    } else {
+      // Legacy plaintext key: direct match (migration path)
+      if (row.apiKey === apiKey) {
+        console.warn(`[Auth] Affiliate ${row.id} still uses a plaintext API key — re-registration recommended.`);
+        const { apiKeyHash: _, ...affiliate } = row;
+        return affiliate;
+      }
+    }
+  }
+
+  return null;
 }
 
 export function getAllAffiliates(): AffiliateAgent[] {
@@ -518,6 +550,38 @@ export function getPayouts(affiliateId: string, limit = 50): Payout[] {
     ORDER BY requested_at DESC LIMIT ?
   `);
   return stmt.all(affiliateId, limit) as Payout[];
+}
+
+// ─── Approval audit log ─────────────────────────────────────────
+
+export interface ApprovalLogEntry {
+  id: number;
+  affiliateId: string;
+  action: 'approved' | 'rejected';
+  actorNote: string | null;
+  createdAt: string;
+}
+
+export function logApprovalAction(
+  affiliateId: string,
+  action: 'approved' | 'rejected',
+  actorNote?: string
+): void {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+  db.prepare(
+    `INSERT INTO approval_log (affiliate_id, action, actor_note, created_at) VALUES (?, ?, ?, ?)`
+  ).run(affiliateId, action, actorNote || null, now);
+}
+
+export function getApprovalLog(limit = 100): ApprovalLogEntry[] {
+  const db = getDatabase();
+  return db
+    .prepare(
+      `SELECT id, affiliate_id as affiliateId, action, actor_note as actorNote, created_at as createdAt
+       FROM approval_log ORDER BY created_at DESC LIMIT ?`
+    )
+    .all(limit) as ApprovalLogEntry[];
 }
 
 // ─── Account deletion ────────────────────────────────────────────

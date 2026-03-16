@@ -35,6 +35,13 @@ export function initializeDatabase(): Database.Database {
     // Column already exists, ignore
   }
 
+  // Add api_key_hash column for bcrypt-hashed keys (migration for existing DBs)
+  try {
+    db.exec(`ALTER TABLE affiliates ADD COLUMN api_key_hash TEXT`);
+  } catch {
+    // Column already exists, ignore
+  }
+
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_affiliates_api_key
     ON affiliates(api_key)
@@ -139,6 +146,22 @@ export function initializeDatabase(): Database.Database {
       total_spent_usd REAL NOT NULL DEFAULT 0,
       FOREIGN KEY (referral_id) REFERENCES referrals(id)
     )
+  `);
+
+  // Approval audit log table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS approval_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      affiliate_id TEXT NOT NULL,
+      action TEXT NOT NULL,
+      actor_note TEXT,
+      created_at TEXT NOT NULL
+    )
+  `);
+
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_approval_log_affiliate
+    ON approval_log(affiliate_id)
   `);
 
   return db;

@@ -1,23 +1,89 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchAffiliatesData, resetDatabase, approveAgent, rejectAgent } from '../api';
-import type { AffiliateAgent, PlatformStats } from '../types';
+import {
+  adminLogin,
+  setSessionToken,
+  hasSessionToken,
+  fetchAffiliatesData,
+  resetDatabase,
+  approveAgent,
+  rejectAgent,
+  fetchApprovalLog,
+} from '../api';
+import type { AffiliateAgent, PlatformStats, ApprovalLogEntry } from '../types';
+
+function LoginForm({ onLogin }: { onLogin: () => void }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const { token } = await adminLogin(password);
+      setSessionToken(token);
+      onLogin();
+    } catch {
+      setError('Invalid password.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2 className="login-title">Admin Login</h2>
+        <p className="login-subtitle">Enter the admin password to access the dashboard.</p>
+        <div className="login-field">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Admin password"
+            autoFocus
+            required
+          />
+        </div>
+        {error && <div className="error-banner"><span className="error-icon">⚠️</span>{error}</div>}
+        <button type="submit" className="login-btn" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
+  const [authenticated, setAuthenticated] = useState(hasSessionToken());
   const [affiliates, setAffiliates] = useState<AffiliateAgent[]>([]);
   const [platform, setPlatform] = useState<PlatformStats | null>(null);
+  const [approvalLog, setApprovalLog] = useState<ApprovalLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
-      const data = await fetchAffiliatesData();
-      setAffiliates(data.affiliates);
-      setPlatform(data.platform);
+      const [affiliatesData, logEntries] = await Promise.all([
+        fetchAffiliatesData(),
+        fetchApprovalLog(),
+      ]);
+      setAffiliates(affiliatesData.affiliates);
+      setPlatform(affiliatesData.platform);
+      setApprovalLog(logEntries);
       setError(null);
-    } catch (e) {
-      setError('Failed to connect to platform API. Make sure the server is running on localhost:3000');
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message === 'Unauthorized') {
+        setAuthenticated(false);
+        setSessionToken('');
+      } else {
+        setError('Failed to connect to platform API. Make sure the server is running on localhost:3000');
+      }
       console.error(e);
     } finally {
       setLoading(false);
@@ -25,10 +91,11 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    if (!authenticated) return;
     loadData();
     const interval = setInterval(loadData, 10000);
     return () => clearInterval(interval);
-  }, [loadData]);
+  }, [authenticated, loadData]);
 
   const handleApprove = async (affiliateId: string) => {
     try {
@@ -63,6 +130,10 @@ export default function DashboardPage() {
   };
 
   const formatUsd = (amount: number) => `$${amount.toFixed(2)}`;
+
+  if (!authenticated) {
+    return <LoginForm onLogin={() => { setAuthenticated(true); setLoading(true); }} />;
+  }
 
   const activeAgents = affiliates.filter(a => a.status === 'active');
   const pendingAgents = affiliates.filter(a => a.status === 'pending');
@@ -131,74 +202,118 @@ export default function DashboardPage() {
           <span>Connecting to platform...</span>
         </div>
       ) : (
-        <section className="agents-section">
-          <h3 className="section-title">
-            <span className="title-icon">👥</span>
-            Registered Agents
-          </h3>
-          <div className="agents-table-container">
-            <table className="agents-table">
-              <thead>
-                <tr>
-                  <th>Agent</th>
-                  <th>Status</th>
-                  <th>Conversions</th>
-                  <th>Earned</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {affiliates.length === 0 ? (
+        <>
+          <section className="agents-section">
+            <h3 className="section-title">
+              <span className="title-icon">👥</span>
+              Registered Agents
+            </h3>
+            <div className="agents-table-container">
+              <table className="agents-table">
+                <thead>
                   <tr>
-                    <td colSpan={5} className="empty-state">
-                      No agents registered yet. Be the first!
-                    </td>
+                    <th>Agent</th>
+                    <th>Status</th>
+                    <th>Conversions</th>
+                    <th>Earned</th>
+                    <th>Actions</th>
                   </tr>
-                ) : (
-                  affiliates.map((agent) => (
-                    <tr key={agent.id}>
-                      <td>
-                        <Link to={`/agent/${agent.id}`} className="agent-name-link">
-                          <div className="agent-name">
-                            <span className="agent-avatar">🤖</span>
-                            <div>
-                              <strong>{agent.name}</strong>
-                              <span className="agent-desc">{agent.id}</span>
-                            </div>
-                          </div>
-                        </Link>
-                      </td>
-                      <td>
-                        <span className={`status-badge status-${agent.status}`}>
-                          <span className="status-indicator" />
-                          {agent.status}
-                        </span>
-                      </td>
-                      <td>{agent.funnel.conversions}</td>
-                      <td>{formatUsd(agent.earnings.totalEarnedUsd)}</td>
-                      <td>
-                        {agent.status === 'pending' && (
-                          <div className="approval-actions">
-                            <button
-                              className="approve-btn"
-                              title="Approve agent"
-                              onClick={() => handleApprove(agent.id)}
-                            >✓</button>
-                            <button
-                              className="reject-btn"
-                              title="Reject agent"
-                              onClick={() => handleReject(agent.id)}
-                            >✕</button>
-                          </div>
-                        )}
+                </thead>
+                <tbody>
+                  {affiliates.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="empty-state">
+                        No agents registered yet. Be the first!
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
+                  ) : (
+                    affiliates.map((agent) => (
+                      <tr key={agent.id}>
+                        <td>
+                          <Link to={`/agent/${agent.id}`} className="agent-name-link">
+                            <div className="agent-name">
+                              <span className="agent-avatar">🤖</span>
+                              <div>
+                                <strong>{agent.name}</strong>
+                                <span className="agent-desc">{agent.id}</span>
+                              </div>
+                            </div>
+                          </Link>
+                        </td>
+                        <td>
+                          <span className={`status-badge status-${agent.status}`}>
+                            <span className="status-indicator" />
+                            {agent.status}
+                          </span>
+                        </td>
+                        <td>{agent.funnel.conversions}</td>
+                        <td>{formatUsd(agent.earnings.totalEarnedUsd)}</td>
+                        <td>
+                          {agent.status === 'pending' && (
+                            <div className="approval-actions">
+                              <button
+                                className="approve-btn"
+                                title="Approve agent"
+                                onClick={() => handleApprove(agent.id)}
+                              >✓</button>
+                              <button
+                                className="reject-btn"
+                                title="Reject agent"
+                                onClick={() => handleReject(agent.id)}
+                              >✕</button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section className="agents-section" style={{ marginTop: '2rem' }}>
+            <h3 className="section-title">
+              <span className="title-icon">📋</span>
+              Approval Log
+            </h3>
+            <div className="agents-table-container">
+              <table className="agents-table">
+                <thead>
+                  <tr>
+                    <th>Affiliate ID</th>
+                    <th>Action</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {approvalLog.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="empty-state">No approval actions recorded yet.</td>
+                    </tr>
+                  ) : (
+                    approvalLog.map((entry) => (
+                      <tr key={entry.id}>
+                        <td>
+                          <Link to={`/agent/${entry.affiliateId}`} className="agent-name-link">
+                            {entry.affiliateId}
+                          </Link>
+                        </td>
+                        <td>
+                          <span className={`status-badge status-${entry.action === 'approved' ? 'active' : 'suspended'}`}>
+                            <span className="status-indicator" />
+                            {entry.action}
+                          </span>
+                        </td>
+                        <td>{new Date(entry.createdAt).toLocaleString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </>
       )}
     </div>
   );

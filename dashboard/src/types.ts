@@ -48,6 +48,14 @@ export interface AffiliatesResponse {
   platform: PlatformStats;
 }
 
+export interface ApprovalLogEntry {
+  id: number;
+  affiliateId: string;
+  action: 'approved' | 'rejected';
+  actorNote: string | null;
+  createdAt: string;
+}
+
 export interface ActivityLog {
   id?: number;
   affiliateId: string;
