@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { fetchAffiliatesData } from '../api';
+import { fetchAffiliatesData, simClick, simSignup, simPurchase } from '../api';
 import type { AffiliateAgent } from '../types';
 
 export default function AgentPage() {
@@ -32,6 +32,24 @@ export default function AgentPage() {
     const interval = setInterval(loadData, 10000);
     return () => clearInterval(interval);
   }, [loadData]);
+
+  const [simLoading, setSimLoading] = useState<string | null>(null);
+  const [simMessage, setSimMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [purchaseAmount, setPurchaseAmount] = useState(50);
+
+  const runSim = async (label: string, fn: () => Promise<void>) => {
+    setSimLoading(label);
+    setSimMessage(null);
+    try {
+      await fn();
+      setSimMessage({ type: 'success', text: `${label} registered.` });
+      await loadData();
+    } catch (e) {
+      setSimMessage({ type: 'error', text: `${label} failed.` });
+    } finally {
+      setSimLoading(null);
+    }
+  };
 
   const formatUsd = (amount: number) => `$${amount.toFixed(2)}`;
   const formatRate = (rate: number) => `${(rate * 100).toFixed(1)}%`;
@@ -152,6 +170,56 @@ export default function AgentPage() {
             <div className="stat-value">{formatUsd(agent.earnings.pendingPayoutUsd)}</div>
             <div className="stat-label">Pending Payout</div>
           </div>
+        </div>
+      </section>
+
+      {/* Simulate Activity */}
+      <section className="agents-section" style={{ marginTop: '2rem' }}>
+        <h3 className="section-title">
+          <span className="title-icon">🧪</span>
+          Simulate Activity
+        </h3>
+        <div className="sim-panel">
+          <div className="sim-actions">
+            <button
+              className="sim-btn"
+              disabled={!!simLoading}
+              onClick={() => runSim('Click', () => simClick(agent.id))}
+            >
+              {simLoading === 'Click' ? 'Registering...' : 'Register Click'}
+            </button>
+            <button
+              className="sim-btn"
+              disabled={!!simLoading}
+              onClick={() => runSim('Signup', () => simSignup(agent.id).then(() => {}))}
+            >
+              {simLoading === 'Signup' ? 'Registering...' : 'Register Signup'}
+            </button>
+            <div className="sim-purchase">
+              <span className="sim-purchase-label">$</span>
+              <input
+                className="sim-amount"
+                type="number"
+                min={1}
+                value={purchaseAmount}
+                onChange={e => setPurchaseAmount(Number(e.target.value))}
+                disabled={!!simLoading}
+              />
+              <button
+                className="sim-btn sim-btn-purchase"
+                disabled={!!simLoading}
+                onClick={() => runSim('Purchase', () => simPurchase(agent.id, purchaseAmount))}
+              >
+                {simLoading === 'Purchase' ? 'Registering...' : 'Register Purchase'}
+              </button>
+            </div>
+          </div>
+          {simMessage && (
+            <div className={`sim-message sim-message-${simMessage.type}`}>
+              {simMessage.text}
+            </div>
+          )}
+          <p className="sim-note">Purchase also registers a signup. Stats refresh automatically.</p>
         </div>
       </section>
 

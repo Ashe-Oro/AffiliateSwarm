@@ -931,3 +931,103 @@
   opacity: 0.8;
 }
 
+/* ─── Simulate Activity panel ─────────────────────────────────── */
+.sim-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sim-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.sim-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1.1rem;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.sim-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--ui-accent-border);
+}
+
+.sim-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sim-btn-purchase {
+  background: var(--ui-accent, #125da3);
+  border-color: var(--ui-accent, #125da3);
+  color: #fff;
+}
+
+.sim-btn-purchase:hover:not(:disabled) {
+  opacity: 0.88;
+  background: var(--ui-accent, #125da3);
+}
+
+.sim-purchase {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sim-purchase-label {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+}
+
+.sim-amount {
+  width: 72px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.6rem;
+  text-align: right;
+}
+
+.sim-amount:disabled {
+  opacity: 0.5;
+}
+
+.sim-message {
+  font-size: 0.8125rem;
+  font-family: var(--font-mono);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+}
+
+.sim-message-success {
+  background: rgba(56, 161, 105, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(56, 161, 105, 0.2);
+}
+
+.sim-message-error {
+  background: rgba(212, 57, 57, 0.08);
+  color: var(--color-error);
+  border: 1px solid rgba(212, 57, 57, 0.15);
+}
+
+.sim-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+  font-family: var(--font-mono);
+}
+

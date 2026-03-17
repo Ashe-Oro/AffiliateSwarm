@@ -34,3 +34,32 @@ export async function fetchApprovalLog(): Promise<ApprovalLogEntry[]> {
   const data = await res.json();
   return data.entries as ApprovalLogEntry[];
 }
+
+// ─── Simulation ────────────────────────────────────────────────────
+
+export async function simClick(affiliateId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/referral/${affiliateId}`);
+  if (!res.ok) throw new Error('Failed to register click');
+}
+
+export async function simSignup(affiliateId: string): Promise<{ userId: string }> {
+  const userName = `test-user-${Date.now()}`;
+  const res = await fetch(`${API_BASE}/api/venice/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ referralCode: affiliateId, userName }),
+  });
+  if (!res.ok) throw new Error('Failed to register signup');
+  const data = await res.json();
+  return { userId: data.userId };
+}
+
+export async function simPurchase(affiliateId: string, amountUsd: number): Promise<void> {
+  const { userId } = await simSignup(affiliateId);
+  const res = await fetch(`${API_BASE}/api/venice/purchase`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, amountUsd }),
+  });
+  if (!res.ok) throw new Error('Failed to register purchase');
+}
