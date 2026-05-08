@@ -1,0 +1,27 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${REGATTA_APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://regatta:regatta_dev@postgres:5432/regatta?schema=public
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+      ENABLE_TEST_ROUTES: "1"
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_SHORT_URL: ${NEXT_PUBLIC_SHORT_URL:-http://localhost:3000}
+      HMAC_ENCRYPTION_KEY: ${HMAC_ENCRYPTION_KEY:-local-dev-key}
+      ADMIN_SECRET: ${ADMIN_SECRET:-local-admin-secret}
+      ALLOW_DB_RESET: "true"
+      ALLOW_MOCK_CDP: ${ALLOW_MOCK_CDP:-1}
+      CRON_SECRET: ${CRON_SECRET:-local-cron-secret}
+      REGATTA_REFERRAL_SECRET: ${REGATTA_REFERRAL_SECRET:-local-referral-secret}

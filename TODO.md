@@ -1,86 +1,92 @@
-# Regatta TODO
+# TODOs from Agent Testing Workflows
 
-## Human-in-the-Loop Rethink
+## Skill File / Onboarding Fixes
 
-The current approval flow needs a deeper rethink. The core problem: any instruction-based gate can be bypassed by a sufficiently capable or confused agent. We need to design an approval flow where the human's involvement is enforced by the system, not by agent instructions. Questions to resolve:
-- Should approval require the human to be authenticated (login system)?
-- Should the dashboard be gated at all, or is "anyone with the URL can approve" acceptable?
-- What's the right UX for the human -- email notification, dashboard ping, something else?
-- Should there be an audit log of who approved what and when?
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 1 | Remove `[your product]` variable from skill file | A | |
+| 2 | Standardize onboarding questions for campaign setup | A | |
+| 3 | Clarify partner/referral code in advertiser onboarding | | |
+| 4 | Block actions until email verification | O | DONE |
+| 5 | Fix: agent must save a local copy of skill.md | A | |
+| 6 | Review Affiliate and Advertiser welcome emails | A | |
 
----
+## Campaign & Dashboard UX
 
-## Code Audit Findings
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 7 | Campaign activate button should show error message when not funded | O | DONE |
+| 8 | Gate campaign activation until tracking handshake is confirmed | O | DONE |
+| 9 | Configurable payout holding period (chargeback protection) | O | DONE |
+| 10 | Affiliate enrollment lifecycle on dashboard | O | DONE |
+| 11 | Admin API endpoints and dashboard actions | O | DONE |
+| 12 | GET /api/v1/leads scoped to authenticated agent | O | DONE |
 
-### Fix Soon (minor hosted environment issues)
+## Email & Verification
 
-- **`192.168.4.89` fallback URLs** - wrong default, should be `http://localhost:3000`
-  - `platform/src/server.ts:17`
-  - `platform/src/routes/affiliate.ts:38`
-- **Dashboard error message** references localhost:3000 - should be generic or reference the Railway URL
-  - `dashboard/src/pages/DashboardPage.tsx`
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 13 | Fix email ordering — welcome email after verification only | O | DONE |
 
-### Intentional / Leave Alone
-- Venice and Twitter clients are fully stubbed - correct for POC
-- `venice-sim.ts` simulates signups and purchases - working as designed
+## Agent Behavior / Skill File
 
-### Future / Production Concerns
-- API keys stored in plaintext in SQLite - needs hashing before production
-- `GET /api/affiliates` is publicly accessible - needs auth before production
-- Agent's `platform-client.ts` references `/api/check-in` and `/api/skill` JSON endpoints that don't exist (behind feature flags, not currently hit)
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 14 | Make daily check-in setup more prominent in skill file | A | |
+| 15 | Skill file: note compensation model is CPA-only for now | A | |
+| 16 | Fix skill file: mention $10 minimum deposit | A | |
+| 17 | Clarify Regatta's redirect model in skill file | A | |
+| 18 | Refactor skill system: role-scoped directories | A | |
 
----
+## Payouts & Financials
 
-## Admin Endpoint Security
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 19 | $19 vs $20 payout discrepancy | O | CLOSED — platform fee removed, affiliates receive full payout |
+| 20 | Clarify PLATFORM_CREDIT payout method | O | DONE — means "keep balance on platform", auto-completes |
+| 21 | 30-day holding period for payouts (configurable) | O | DONE (merged with #9) |
+| 22 | Payout mechanism — cron for matured holds, PLATFORM_CREDIT handler | O | DONE |
+| 23 | Allow canceling payout requests | O | DONE |
+| 24 | Re-enable USDC payments for funding | O | DEFERRED — needs on-chain monitoring infra |
+| 25 | Re-architect funding: account-level wallet instead of per-campaign escrow | O | DONE |
 
-`POST /api/admin/approve/:affiliateId` and `POST /api/admin/reject/:affiliateId` have no authentication. Anyone who discovers those URLs can approve or reject agents. Needs to be addressed as part of the human-in-the-loop rethink -- at minimum, these should require a secret header or be gated behind a login.
+## Error Handling
 
-**Files:** `platform/src/routes/affiliate.ts`
-
----
-
-## Activity Logging Re-enablement
-
-Activity logging is feature-flagged off (`ENABLE_ACTIVITY_TRACKING=true` to enable). Before turning it on, decide:
-- What the intended use case is (agent behavior audit, campaign analytics, both?)
-- Whether the data model is sufficient or needs extension
-- Whether agents should be required to log activity or if it's optional
-
-**Files:** `platform/src/routes/affiliate.ts`, `platform/src/db/index.ts`
-
----
-
-## Orphaned `/api/approve/:token` Route
-
-The token-based approval endpoint (`GET /api/approve/:token`) still exists in the backend even though the approval flow now goes through the dashboard. Either remove it to reduce attack surface or document why it should stay.
-
-**Files:** `platform/src/routes/affiliate.ts`
-
----
-
-## DEMO.md and demo-guide.html
-
-Decide whether to keep or delete these files. `DEMO.md` is already gitignored but `demo-guide.html` is still tracked. If it's only for local demos, untrack it too. If it should be served publicly, wire it up intentionally.
-
-**Files:** `DEMO.md`, `demo-guide.html`
+| # | Task | Owner | Status |
+|---|------|-------|--------|
+| 26 | Handle wrong-role actions | O | CLOSED — role guards already in place |
+| 27 | Validate Ethereum addresses | O | CLOSED — already implemented |
+| 28 | Check balance before payout | O | CLOSED — already implemented |
 
 ---
 
-## Self-Refresh Directive
+## Summary of Changes
 
-Add a self-referential instruction block to the top of `platform/skill.md` that tells agents to always fetch the latest version of both `SKILL.md` and `AFFILIATE.md` before starting a new session. Include a version header or `last-updated` timestamp so agents can do lightweight staleness checks without re-parsing the full document.
+### Phase 1 — Quick Fixes
+- **#13**: Onboarding email now sends only after email verification (verify-email route)
+- **#12**: `GET /api/v1/leads` and dashboard leads route scoped to authenticated agent
+- **#7**: Campaign activate error display improved with styled error banner
+- **#19, #26, #27, #28**: Closed (by design / already implemented)
 
-**Files:** `platform/skill.md`, `platform/AFFILIATE.md`
+### Phase 2 — Security Gates
+- **#4**: `requireEmailVerified()` middleware blocks: campaign creation, Stripe deposits, campaign applications
+- **#8**: `trackingConfirmedAt` field on Campaign; new `POST /confirm-tracking` endpoint; activation gated on it
 
-## Richer Performance Feedback
+### Phase 3 — Payout Infrastructure
+- **#9/#21**: `holdingPeriodDays` on Campaign (default 30); `PENDING_RELEASE` hold status with `releaseAt`; `processMaturedHolds()` cron function
+- **#23**: `cancelPayout()` function + `POST /api/v1/payouts/:id/cancel` route
+- **#22**: Cron route `POST /api/cron/process-holds`; PLATFORM_CREDIT auto-completes
 
-Enhance the `/api/me` endpoint (or add `/api/me/insights`) to return actionable analytics that help agents optimize their strategy:
+### Phase 4 — Dashboard UX
+- **#10**: Affiliate campaigns page shows all enrollment statuses (PENDING, APPROVED, REJECTED, REVOKED)
+- **#11**: Admin API endpoints for suspend/activate agents + process/reject payouts; dashboard pages enhanced with action buttons
 
-- **Channel attribution** - which platforms (Twitter, Discord, etc.) are driving the most clicks and conversions
-- **Content-type performance** - avg clicks generated per activity type (post, reply, thread) so agents learn what formats work
-- **Time-based patterns** - best-performing hours and conversion trends vs. prior period
-- **Relative ranking** - agent's rank/percentile among active agents (ties into Agent Hunger Games concept)
+### Phase 6 — Funding Model Re-architecture
+- **#25**: `StripeCheckoutSession.campaignId` now optional; deposits go to wallet; `allocateBudget()` moves funds wallet→escrow; deposit form defaults to "Account balance"
 
-The goal is to give agents a feedback loop through data so they can reason about what's working each time they check in, since they can't learn across sessions on their own.
-
-**Files:** `platform/src/routes/affiliate.ts`, `platform/src/db/index.ts`
+### Schema Changes (migration needed)
+- `Campaign.holdingPeriodDays Int @default(30)`
+- `Campaign.trackingConfirmedAt DateTime?`
+- `EscrowHold.releaseAt DateTime?`
+- `HoldStatus.PENDING_RELEASE` enum value
+- `StripeCheckoutSession.campaignId` now optional

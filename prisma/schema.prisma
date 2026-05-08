@@ -1,0 +1,1149 @@
+// =============================================================================
+// Regatta — Agent-First Affiliate Marketing Marketplace
+// Prisma Schema (PostgreSQL)
+// =============================================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum AgentType {
+  ADVERTISER
+  AFFILIATE
+  DUAL
+}
+
+enum AgentStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum AccountGate {
+  PENDING
+  FUNDED
+  LIVE
+}
+
+enum VerificationLevel {
+  UNVERIFIED
+  EMAIL_VERIFIED
+  IDENTITY_VERIFIED
+}
+
+enum CredentialStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum RateLimitTier {
+  FREE
+  STANDARD
+  ELEVATED
+  PREMIUM
+  ENTERPRISE
+}
+
+enum CampaignStatus {
+  DRAFT
+  PENDING_ESCROW
+  ACTIVE
+  PAUSED
+  BUDGET_EXHAUSTED
+  COMPLETED
+  CANCELLED
+}
+
+enum CompensationModelType {
+  CPL
+  CPA
+  CPC
+  REV_SHARE
+}
+
+enum EnrollmentPolicy {
+  OPEN
+  APPROVAL_REQUIRED
+  INVITE_ONLY
+}
+
+enum EnrollmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REVOKED
+}
+
+enum LeadStatus {
+  SUBMITTED
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+  EXPIRED
+  DISPUTED
+}
+
+enum ConversionStatus {
+  TRACKED
+  VERIFIED
+  REJECTED
+  ATTRIBUTED
+}
+
+enum ActionType {
+  PURCHASE
+  SIGNUP
+  INSTALL
+  SUBSCRIPTION
+  CUSTOM
+}
+
+enum VerifierType {
+  AUTOMATED
+  MANUAL
+  THIRD_PARTY
+}
+
+enum VerificationOutcome {
+  PASSED
+  FAILED
+  NEEDS_REVIEW
+}
+
+enum WalletStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum EscrowStatus {
+  FUNDED
+  PARTIALLY_RELEASED
+  FULLY_RELEASED
+  REFUNDED
+  CLOSED
+}
+
+enum HoldStatus {
+  HELD
+  PENDING_RELEASE   // verified but waiting for holding period to elapse
+  RELEASED
+  REFUNDED
+  EXPIRED
+}
+
+enum LedgerEntryType {
+  DEPOSIT
+  ESCROW_HOLD
+  ESCROW_RELEASE
+  PAYOUT
+  REFUND
+  FEE
+  ADJUSTMENT
+  CHAIN_DEPOSIT
+  CHAIN_PAYOUT
+  STRIPE_DEPOSIT
+}
+
+enum StripePaymentMethod {
+  CARD
+  ACH
+}
+
+enum StripeCheckoutStatus {
+  PENDING
+  PENDING_PAYMENT
+  COMPLETED
+  EXPIRED
+  FAILED
+}
+
+enum WalletType {
+  CUSTODIAL
+  BYOW
+}
+
+enum ChainTransactionStatus {
+  PENDING_SUBMISSION
+  SUBMITTED
+  CONFIRMED
+  FAILED
+}
+
+enum AccountType {
+  WALLET
+  ESCROW
+  PLATFORM_REVENUE
+  PLATFORM_RESERVE
+  EXTERNAL // onchain/offchain counterparty outside Regatta (e.g. source of a USDC deposit, destination of a payout)
+}
+
+enum PayoutMethod {
+  BANK_TRANSFER
+  CRYPTO
+  PLATFORM_CREDIT
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TrustTier {
+  NEW
+  VERIFIED
+  TRUSTED
+  PREMIUM
+}
+
+enum FraudFlagType {
+  VELOCITY_ANOMALY
+  DUPLICATE_PATTERN
+  GEO_MISMATCH
+  BOT_SIGNATURE
+  PAYMENT_FRAUD
+  DATA_INCONSISTENCY
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum InvestigationStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED_CLEAN
+  RESOLVED_FRAUD
+}
+
+enum SessionStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+enum ReferralStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
+}
+
+enum NotificationCategory {
+  CAMPAIGNS
+  APPLICATIONS
+  LEADS
+  TRACKING
+  EARNINGS
+  PAYOUTS
+}
+
+// =============================================================================
+// USER ACCOUNTS
+// =============================================================================
+
+model UserAccount {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique @db.VarChar(255)
+  passwordHash  String    @db.VarChar(255)
+  displayName   String    @db.VarChar(255)
+  tosAcceptedAt DateTime?
+  tosVersion    String?   @db.VarChar(32)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  agents     Agent[]
+  sessions   UserSession[]
+  loginCodes LoginCode[]
+
+  @@map("user_accounts")
+}
+
+model UserSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user UserAccount @relation(fields: [userId], references: [id])
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("user_sessions")
+}
+
+model LoginCode {
+  id        String   @id @default(uuid()) @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  userId    String   @db.Uuid
+  agentId   String   @db.Uuid
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user  UserAccount @relation(fields: [userId], references: [id])
+  agent Agent       @relation(fields: [agentId], references: [id])
+
+  @@index([code])
+  @@index([expiresAt])
+  @@map("login_codes")
+}
+
+// =============================================================================
+// 1. AGENT REGISTRY
+// =============================================================================
+
+model Agent {
+  id                String            @id @default(uuid()) @db.Uuid
+  type              AgentType
+  displayName       String            @db.VarChar(255)
+  ownerAccountId    String            @db.Uuid
+  ownerUserId       String?           @db.Uuid
+  description       String?           @db.Text
+  websiteUrl        String?           @db.VarChar(2048)
+  contactEndpoint   String?           @db.VarChar(2048)
+  logoUrl           String?           @db.VarChar(2048)
+  status            AgentStatus       @default(PENDING_VERIFICATION)
+  verificationLevel VerificationLevel @default(UNVERIFIED)
+  accountGate              AccountGate       @default(PENDING)
+  email                    String?           @db.VarChar(255)
+  emailVerifyToken         String?           @db.VarChar(255)
+  emailVerifyTokenExpiresAt DateTime?
+
+  // Email outcome tracking — populated by agent.service.ts on every send
+  // attempt. `*SentAt` = last successful send, `*LastAttemptAt` = any attempt
+  // (success or failure), `*LastError` = message from the most recent failure
+  // (cleared on success). Read by the admin agent detail page, the agent
+  // self-serve dashboard, and the Phase 3 sweep job.
+  verificationEmailSentAt        DateTime?
+  verificationEmailLastError     String?   @db.Text
+  verificationEmailLastAttemptAt DateTime?
+  onboardingEmailSentAt          DateTime?
+  onboardingEmailLastError       String?   @db.Text
+  onboardingEmailLastAttemptAt   DateTime?
+  capabilities      String[]          // e.g. ["CAMPAIGN_CREATE", "LEAD_SUBMIT"]
+  metadata          Json?             // ipAllowlist, webhookUrl, mcpEndpoint, sdkVersion
+
+  // Affiliate profile (optional, prompted at registration for AFFILIATE agents)
+  audienceSize      Int?              // estimated monthly reach (visitors, followers, subscribers)
+  channels          String[]          // promotion channels: "blog", "twitter", "youtube", "email"
+  contentType       String?           @db.VarChar(100) // primary content type: "review", "tutorial", "social_post"
+  relevantUrls      String[]          // portfolio, social profiles, blog URLs
+  audienceGeo       String?           @db.VarChar(2)   // primary audience geo (ISO alpha-2)
+  deletedAt         DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Relations
+  ownerUser             UserAccount?         @relation(fields: [ownerUserId], references: [id])
+  credentials           ApiCredential[]
+  campaignsAsAdvertiser Campaign[]           @relation("AdvertiserCampaigns")
+  enrollments           AffiliateEnrollment[]
+  wallet                Wallet?
+  leads                 Lead[]
+  conversions           ConversionEvent[]
+  reputation            AgentReputation?
+  fraudInvestigations   FraudInvestigation[]
+  ratingsGiven          PeerRating[]         @relation("RatingsGiven")
+  ratingsReceived       PeerRating[]         @relation("RatingsReceived")
+  escrowHolds           EscrowHold[]
+  payoutRequests        PayoutRequest[]
+  apiSessions           ApiSession[]
+  requestLogs           RequestLog[]
+  rateLimitBuckets      RateLimitBucket[]
+  webhooks              WebhookEndpoint[]
+  clickEvents           ClickEvent[]
+  referralsAsAffiliate  Referral[]           @relation("AffiliateReferrals")
+  referralsConfirmed    Referral[]           @relation("ConfirmerReferrals")
+  loginCodes            LoginCode[]
+  notifications         Notification[]
+
+  @@index([type])
+  @@index([status])
+  @@index([ownerAccountId])
+  @@index([ownerUserId])
+  @@index([type, status])
+  @@unique([email])
+  @@index([deletedAt])
+  @@map("agents")
+}
+
+model ApiCredential {
+  id           String           @id @default(uuid()) @db.Uuid
+  agentId      String           @db.Uuid
+  apiKeyHash   String           @unique @db.VarChar(255) // bcrypt hash of the API key
+  apiKeyPrefix String           @db.VarChar(20)          // first 8 chars for identification
+  hmacSecret   String           @db.VarChar(512)         // AES-256-GCM encrypted
+  label        String           @db.VarChar(255)
+  scopes       String[]                                  // ["campaigns:read", "leads:write", ...]
+  rateLimitTier RateLimitTier   @default(FREE)
+  status       CredentialStatus @default(ACTIVE)
+  expiresAt    DateTime?
+  lastUsedAt   DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  agent       Agent        @relation(fields: [agentId], references: [id])
+  apiSessions ApiSession[]
+
+  @@index([agentId])
+  @@index([status])
+  @@index([apiKeyPrefix])
+  @@map("api_credentials")
+}
+
+// =============================================================================
+// 2. CAMPAIGN MANAGEMENT
+// =============================================================================
+
+model Campaign {
+  id                   String               @id @default(uuid()) @db.Uuid
+  advertiserId         String               @db.Uuid
+  name                 String               @db.VarChar(255)
+  description          String?              @db.Text
+  status               CampaignStatus       @default(DRAFT)
+  compensationModel    CompensationModelType
+  payoutPerUnitCents   Int?                 // fixed payout per conversion in cents (CPL/CPA/CPC)
+  payoutPercentage     Int?                 // integer percentage 1-100 of revenueCents, REV_SHARE only
+  currency             String               @default("USD") @db.VarChar(3)
+  budgetCents          Int                  // total budget in cents
+  budgetSpentCents     Int                  @default(0)
+  dailyCapCount        Int?                 // max leads/conversions per day; null = unlimited
+  dailyCapCents        Int?                 // max spend per day in cents; null = unlimited
+  geoTargets           String[]             // ISO-3166-1 alpha-2 codes
+  categories           String[]             // category slugs
+  landingUrl           String?              @db.VarChar(2048)
+  productUrl           String?              @db.VarChar(2048) // main product website (distinct from landingUrl)
+  conversionAction     String?              @db.VarChar(100)  // e.g. "paid_subscription", "free_signup", "purchase"
+  productDescription   String?              @db.Text          // product info for affiliates
+  brandAssets          Json?                                   // logo URL, brand colors, guidelines
+  buyerIncentiveType   String?              @db.VarChar(20)   // PERCENTAGE_OFF, FIXED_AMOUNT_OFF, FREE_TRIAL, CUSTOM
+  buyerIncentiveValue  String?              @db.VarChar(255)  // raw value: "20" (%), "1000" (cents), "30" (days), or free text
+  buyerIncentiveLabel  String?              @db.VarChar(255)  // human-readable: "20% off first month"
+  buyerCouponCode      String?              @db.VarChar(100)  // promo code passed to advertiser: "REGATTA20"
+  enrollmentPolicy     EnrollmentPolicy     @default(APPROVAL_REQUIRED)
+  requiresVerification Boolean              @default(true)
+  leadRequirements     Json?                // required fields, validation rules, dedup window
+  targetingCriteria    Json?                // detailed targeting beyond geo/categories
+  holdingPeriodDays    Int                  @default(30)   // payout holding period (chargeback protection)
+  refSeed              String?              @db.VarChar(64) // 32-byte hex; used to derive per-affiliate tracking codes (HD-wallet style)
+  testTrackingCode     String?              @unique @db.VarChar(16) // 8-char CONFIRM ref — advertiser fires postback with this to prove integration
+  trackingConfirmedAt  DateTime?            // set when advertiser fires a valid test postback
+  startsAt             DateTime?
+  endsAt               DateTime?
+  deletedAt            DateTime?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  // Relations
+  advertiser    Agent                 @relation("AdvertiserCampaigns", fields: [advertiserId], references: [id])
+  enrollments   AffiliateEnrollment[]
+  leads         Lead[]
+  conversions   ConversionEvent[]
+  escrowAccount    EscrowAccount?
+  peerRatings      PeerRating[]
+  clickEvents      ClickEvent[]
+  referrals        Referral[]
+  stripeCheckouts  StripeCheckoutSession[]
+
+  @@index([advertiserId])
+  @@index([status])
+  @@index([compensationModel])
+  @@index([status, compensationModel])
+  @@index([categories], type: Gin)
+  @@index([geoTargets], type: Gin)
+  @@index([startsAt, endsAt])
+  @@index([deletedAt])
+  @@index([createdAt])
+  @@map("campaigns")
+}
+
+model AffiliateEnrollment {
+  id           String           @id @default(uuid()) @db.Uuid
+  campaignId   String           @db.Uuid
+  affiliateId  String           @db.Uuid
+  status       EnrollmentStatus @default(PENDING)
+  trackingCode String?          @unique @db.VarChar(64) // issued on approval
+  customTerms  Json?            // compensation overrides
+  pitch        String?          @db.Text
+  enrolledAt   DateTime         @default(now())
+  approvedAt   DateTime?
+  rejectedAt   DateTime?
+  revokedAt    DateTime?
+  revokeReason String?          @db.Text
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+  affiliate Agent    @relation(fields: [affiliateId], references: [id])
+
+  @@unique([campaignId, affiliateId]) // one enrollment per affiliate per campaign
+  @@index([affiliateId])
+  @@index([status])
+  @@index([campaignId, status])
+  @@map("affiliate_enrollments")
+}
+
+// =============================================================================
+// 3. LEAD / CONVERSION TRACKING
+// =============================================================================
+
+model Lead {
+  id                 String       @id @default(uuid()) @db.Uuid
+  campaignId         String       @db.Uuid
+  affiliateId        String       @db.Uuid
+  status             LeadStatus   @default(SUBMITTED)
+  externalId         String?      @db.VarChar(255) // affiliate's internal reference
+  trackingCode       String?      @db.VarChar(64)
+  leadData           Json?        // flexible field data submitted by affiliate
+  ipAddress          String?      @db.VarChar(45)  // IPv4 or IPv6
+  userAgent          String?      @db.Text
+  geo                String?      @db.VarChar(2)   // ISO country code
+  fingerprintHash    String?      @db.VarChar(64)  // SHA-256 for dedup
+  qualityScore       Int?         // 0-100
+  qualitySignals     Json?        // detailed quality breakdown
+  rejectionReason    String?      @db.Text
+  disputeReason      String?      @db.Text
+  payoutCents        Int?         // payout amount locked at submission time
+  currency           String       @default("USD") @db.VarChar(3)
+  submittedAt        DateTime     @default(now())
+  verifiedAt         DateTime?
+  rejectedAt         DateTime?
+  expiredAt          DateTime?
+  disputedAt         DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  // Relations
+  campaign          Campaign          @relation(fields: [campaignId], references: [id])
+  affiliate         Agent             @relation(fields: [affiliateId], references: [id])
+  conversions       ConversionEvent[]
+  verificationTasks VerificationTask[]
+  escrowHold        EscrowHold?
+  clickEvents       ClickEvent[]
+  referral          Referral?
+
+  @@index([campaignId, status])
+  @@index([affiliateId, status])
+  @@index([campaignId, affiliateId])
+  @@index([status])
+  @@index([fingerprintHash])
+  @@index([externalId])
+  @@index([campaignId, fingerprintHash]) // dedup lookup
+  @@index([submittedAt])
+  @@index([campaignId, submittedAt])     // time-range queries per campaign
+  @@index([status, submittedAt])         // pending leads aging
+  @@index([affiliateId, submittedAt])   // affiliate dashboard time queries
+  @@map("leads")
+}
+
+model ConversionEvent {
+  id              String           @id @default(uuid()) @db.Uuid
+  leadId          String           @db.Uuid
+  campaignId      String           @db.Uuid
+  affiliateId     String           @db.Uuid
+  actionType      ActionType
+  conversionData  Json?            // orderId, transactionAmount, custom attributes
+  revenueCents    Int?             // revenue amount in cents (for RevShare)
+  currency        String           @default("USD") @db.VarChar(3)
+  payoutCents     Int?             // computed affiliate payout in cents
+  status          ConversionStatus @default(TRACKED)
+  occurredAt      DateTime         @default(now())
+  verifiedAt      DateTime?
+  rejectedAt      DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Relations
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+  affiliate Agent    @relation(fields: [affiliateId], references: [id])
+
+  @@index([leadId])
+  @@index([campaignId, status])
+  @@index([affiliateId, status])
+  @@index([campaignId, occurredAt])
+  @@index([status])
+  @@index([occurredAt])
+  @@map("conversion_events")
+}
+
+model VerificationTask {
+  id            String              @id @default(uuid()) @db.Uuid
+  leadId        String              @db.Uuid
+  verifierType  VerifierType
+  checks        Json?               // array of { checkType, passed, details }
+  outcome       VerificationOutcome?
+  startedAt     DateTime            @default(now())
+  completedAt   DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  // Relations
+  lead Lead @relation(fields: [leadId], references: [id])
+
+  @@index([leadId])
+  @@index([outcome])
+  @@index([leadId, outcome])
+  @@map("verification_tasks")
+}
+
+// =============================================================================
+// 4. ESCROW & PAYMENTS
+// =============================================================================
+
+model Wallet {
+  id                  String       @id @default(uuid()) @db.Uuid
+  agentId             String       @unique @db.Uuid
+  currency            String       @default("USD") @db.VarChar(3)
+  availableCents      Int          @default(0)
+  heldCents           Int          @default(0) // in escrow
+  pendingPayoutCents  Int          @default(0)
+  status              WalletStatus @default(ACTIVE)
+  walletType          WalletType?
+  chainAddress        String?      @db.VarChar(42) // agent's Base address
+  hdDerivationIndex   Int?         // HD path index, custodial only
+  depositAddress      String?      @db.VarChar(42) // unique deposit address assigned to this agent
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  // Relations
+  agent              Agent                  @relation(fields: [agentId], references: [id])
+  payoutRequests     PayoutRequest[]
+  chainTransactions  ChainTransaction[]
+  stripeCheckouts    StripeCheckoutSession[]
+
+  @@index([status])
+  @@index([chainAddress])
+  @@index([depositAddress])
+  @@map("wallets")
+}
+
+model EscrowAccount {
+  id              String       @id @default(uuid()) @db.Uuid
+  campaignId      String       @unique @db.Uuid
+  advertiserId    String       @db.Uuid
+  totalDepositedCents Int      @default(0)
+  totalReleasedCents  Int      @default(0)
+  totalRefundedCents  Int      @default(0)
+  currentBalanceCents Int      @default(0)
+  currency        String       @default("USD") @db.VarChar(3)
+  status          EscrowStatus @default(FUNDED)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  campaign Campaign     @relation(fields: [campaignId], references: [id])
+  holds    EscrowHold[]
+
+  @@index([advertiserId])
+  @@index([status])
+  @@map("escrow_accounts")
+}
+
+model EscrowHold {
+  id          String     @id @default(uuid()) @db.Uuid
+  escrowId    String     @db.Uuid
+  leadId      String     @unique @db.Uuid // one hold per lead
+  affiliateId String     @db.Uuid
+  amountCents Int
+  currency    String     @default("USD") @db.VarChar(3)
+  status      HoldStatus @default(HELD)
+  heldAt      DateTime   @default(now())
+  releaseAt   DateTime?              // when this hold becomes releasable (holding period)
+  releasedAt  DateTime?
+  refundedAt  DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  escrowAccount EscrowAccount @relation(fields: [escrowId], references: [id])
+  lead          Lead          @relation(fields: [leadId], references: [id])
+  affiliate     Agent         @relation(fields: [affiliateId], references: [id])
+
+  @@index([escrowId, status])
+  @@index([affiliateId])
+  @@index([status])
+  @@index([status, releaseAt])  // for cron: find matured PENDING_RELEASE holds
+  @@map("escrow_holds")
+}
+
+model LedgerEntry {
+  id                String          @id @default(uuid()) @db.Uuid
+  transactionId     String          @db.Uuid // groups related debit/credit entries
+  debitAccountType  AccountType
+  debitAccountId    String?         @db.Uuid // null when counterparty is EXTERNAL (no internal account row)
+  creditAccountType AccountType
+  creditAccountId   String?         @db.Uuid // null when counterparty is EXTERNAL (no internal account row)
+  amountCents       Int
+  currency          String          @default("USD") @db.VarChar(3)
+  entryType         LedgerEntryType
+  referenceType     String?         @db.VarChar(50) // CAMPAIGN, LEAD, CONVERSION, PAYOUT, DEPOSIT
+  referenceId       String?         @db.Uuid
+  memo              String?         @db.Text
+  createdAt         DateTime        @default(now()) // append-only, no updatedAt
+
+  @@index([transactionId])
+  @@index([debitAccountId])
+  @@index([creditAccountId])
+  @@index([entryType])
+  @@index([referenceType, referenceId])
+  @@index([createdAt])
+  @@index([debitAccountId, createdAt])
+  @@index([creditAccountId, createdAt])
+  @@map("ledger_entries")
+}
+
+model PayoutRequest {
+  id            String       @id @default(uuid()) @db.Uuid
+  affiliateId   String       @db.Uuid
+  walletId      String       @db.Uuid
+  amountCents   Int
+  currency      String       @default("USD") @db.VarChar(3)
+  method        PayoutMethod
+  destination   Json         // encrypted payout details (account info)
+  status        PayoutStatus @default(PENDING)
+  failureReason String?      @db.Text
+  requestedAt   DateTime     @default(now())
+  processedAt   DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  affiliate        Agent             @relation(fields: [affiliateId], references: [id])
+  wallet           Wallet            @relation(fields: [walletId], references: [id])
+  chainTransaction ChainTransaction?
+
+  @@index([affiliateId, status])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("payout_requests")
+}
+
+model ChainTransaction {
+  id              String                 @id @default(uuid()) @db.Uuid
+  walletId        String?                @db.Uuid
+  payoutRequestId String?                @unique @db.Uuid
+  direction       String                 @db.VarChar(10) // INBOUND / OUTBOUND
+  txHash          String?                @unique @db.VarChar(66)
+  userOpHash      String?                @unique @db.VarChar(66)
+  idempotencyKey  String?                @unique @db.VarChar(128)
+  fromAddress     String?                @db.VarChar(42)
+  toAddress       String?                @db.VarChar(42)
+  amountUsdc      BigInt                 // 6-decimal base units
+  amountCents     Int
+  chainId         Int                    @default(8453)
+  status          ChainTransactionStatus
+  blockNumber     BigInt?
+  gasUsedWei      BigInt?
+  errorMessage    String?                @db.Text
+  confirmedAt     DateTime?
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  // Relations
+  wallet        Wallet?        @relation(fields: [walletId], references: [id])
+  payoutRequest PayoutRequest? @relation(fields: [payoutRequestId], references: [id])
+
+  @@index([txHash])
+  @@index([userOpHash])
+  @@index([walletId, direction])
+  @@index([status])
+  @@index([payoutRequestId])
+  @@map("chain_transactions")
+}
+
+model StripeCheckoutSession {
+  id                    String               @id @default(uuid()) @db.Uuid
+  walletId              String               @db.Uuid
+  agentId               String               @db.Uuid
+  campaignId            String?              @db.Uuid       // optional: deposits can go to wallet without a campaign
+  stripeSessionId       String               @unique
+  stripePaymentIntentId String?              @unique
+  paymentMethod         StripePaymentMethod
+  requestedAmountCents  Int
+  feeCents              Int                  @default(0)
+  netAmountCents        Int
+  status                StripeCheckoutStatus @default(PENDING)
+  stripeStatus          String?
+  completedAt           DateTime?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  wallet   Wallet   @relation(fields: [walletId], references: [id])
+  campaign Campaign? @relation(fields: [campaignId], references: [id])
+
+  @@index([agentId])
+  @@index([status])
+  @@index([campaignId])
+  @@map("stripe_checkout_sessions")
+}
+
+// =============================================================================
+// 5. REPUTATION SYSTEM
+// =============================================================================
+
+model AgentReputation {
+  id                 String    @id @default(uuid()) @db.Uuid
+  agentId            String    @unique @db.Uuid
+  trustTier          TrustTier @default(NEW)
+  overallScore       Float     @default(0) // 0.0 - 100.0
+  dimensionScores    Json?     // { leadQuality, paymentReliability, responseTime, ... }
+  totalLeadsSubmitted  Int     @default(0)
+  totalLeadsVerified   Int     @default(0)
+  totalLeadsRejected   Int     @default(0)
+  totalConversions     Int     @default(0)
+  fraudFlagCount       Int     @default(0)
+  reputationHistory    Json?   // recent events array
+  lastRecalculatedAt   DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id])
+
+  @@index([trustTier])
+  @@index([overallScore])
+  @@index([trustTier, overallScore])
+  @@map("agent_reputations")
+}
+
+model FraudInvestigation {
+  id            String              @id @default(uuid()) @db.Uuid
+  agentId       String              @db.Uuid
+  triggerEvent  String              @db.Text
+  triggerType   FraudFlagType
+  severity      Severity
+  signals       Json?               // array of { signalType, confidence, evidence }
+  status        InvestigationStatus @default(OPEN)
+  resolution    Json?               // { outcome, actionsTaken, resolvedBy }
+  openedAt      DateTime            @default(now())
+  resolvedAt    DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id])
+
+  @@index([agentId])
+  @@index([status])
+  @@index([agentId, status])
+  @@index([severity])
+  @@index([openedAt])
+  @@map("fraud_investigations")
+}
+
+model PeerRating {
+  id          String   @id @default(uuid()) @db.Uuid
+  fromAgentId String   @db.Uuid
+  toAgentId   String   @db.Uuid
+  campaignId  String   @db.Uuid
+  score       Int      // 1-5
+  dimensions  Json?    // { leadQuality: 5, communication: 4, reliability: 5 }
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  fromAgent Agent    @relation("RatingsGiven", fields: [fromAgentId], references: [id])
+  toAgent   Agent    @relation("RatingsReceived", fields: [toAgentId], references: [id])
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([fromAgentId, toAgentId, campaignId]) // one rating per pair per campaign
+  @@index([toAgentId])
+  @@index([campaignId])
+  @@index([toAgentId, createdAt])
+  @@map("peer_ratings")
+}
+
+// =============================================================================
+// TRACKING & ATTRIBUTION
+// =============================================================================
+
+model ClickEvent {
+  id              String    @id @default(uuid()) @db.Uuid
+  trackingCode    String    @db.VarChar(64)
+  campaignId      String    @db.Uuid
+  affiliateId     String    @db.Uuid
+  ipAddress       String?   @db.VarChar(45)
+  userAgent       String?   @db.Text
+  referer         String?   @db.VarChar(2048)
+  geo             String?   @db.VarChar(2)
+  clickedAt       DateTime  @default(now())
+  convertedLeadId String?   @db.Uuid
+
+  // Relations
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+  affiliate Agent   @relation(fields: [affiliateId], references: [id])
+  lead      Lead?   @relation(fields: [convertedLeadId], references: [id])
+
+  @@index([trackingCode])
+  @@index([campaignId, clickedAt])
+  @@index([affiliateId, clickedAt])    // affiliate dashboard click queries
+  @@index([campaignId, affiliateId])  // per-affiliate campaign stats
+  @@map("click_events")
+}
+
+model Referral {
+  id                 String         @id @default(uuid()) @db.Uuid
+  affiliateId        String         @db.Uuid
+  campaignId         String         @db.Uuid
+  token              String         @unique @db.VarChar(512)
+  status             ReferralStatus @default(PENDING)
+  metadata           Json?
+  expiresAt          DateTime
+  confirmedAt        DateTime?
+  confirmedByAgentId String?        @db.Uuid
+  leadId             String?        @unique @db.Uuid
+
+  // Relations
+  affiliate   Agent    @relation("AffiliateReferrals", fields: [affiliateId], references: [id])
+  confirmedBy Agent?   @relation("ConfirmerReferrals", fields: [confirmedByAgentId], references: [id])
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+
+  @@index([affiliateId])
+  @@index([campaignId])
+  @@index([status])
+  @@map("referrals")
+}
+
+// =============================================================================
+// PARTNER / META-AFFILIATE PROGRAM
+// =============================================================================
+
+model Partner {
+  id                String   @id @default(uuid()) @db.Uuid
+  displayName       String   @db.VarChar(255)
+  email             String   @unique @db.VarChar(255)
+  referralCode      String   @unique @db.VarChar(32) // short code like "MATT" or "LENNY"
+  revenueShareBps   Int      @default(50) // basis points of conversion volume (e.g., 50 = 0.5%)
+  totalEarnedCents  Int      @default(0)
+  pendingCents      Int      @default(0)
+  paidOutCents      Int      @default(0)
+  websiteUrl        String?  @db.VarChar(2048)
+  bio               String?  @db.Text
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  referredAgents PartnerReferral[]
+
+  @@index([referralCode])
+  @@index([active])
+  @@map("partners")
+}
+
+model PartnerReferral {
+  id           String   @id @default(uuid()) @db.Uuid
+  partnerId    String   @db.Uuid
+  agentId      String   @unique @db.Uuid // each agent can only be referred once
+  agentType    AgentType
+  createdAt    DateTime @default(now())
+
+  partner Partner @relation(fields: [partnerId], references: [id])
+
+  @@index([partnerId])
+  @@index([agentId])
+  @@map("partner_referrals")
+}
+
+// =============================================================================
+// 6. DOMAIN EVENTS (append-only event log)
+// =============================================================================
+
+model DomainEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  aggregateType String   @db.VarChar(50)  // Agent, Campaign, Lead, etc.
+  aggregateId   String   @db.Uuid
+  eventType     String   @db.VarChar(100) // e.g. "LeadSubmitted", "EscrowReleased"
+  payload       Json                      // full event data
+  version       Int                       // aggregate version for ordering
+  publishedAt   DateTime?                 // null until dispatched to subscribers
+  createdAt     DateTime @default(now())
+
+  @@index([aggregateType, aggregateId])
+  @@index([eventType])
+  @@index([aggregateType, aggregateId, version])
+  @@index([createdAt])
+  @@index([publishedAt])
+  @@map("domain_events")
+}
+
+// =============================================================================
+// 7. MCP / API GATEWAY
+// =============================================================================
+
+model ApiSession {
+  id              String        @id @default(uuid()) @db.Uuid
+  agentId         String        @db.Uuid
+  credentialId    String        @db.Uuid
+  status          SessionStatus @default(ACTIVE)
+  scopes          String[]
+  ipAddress       String?       @db.VarChar(45)
+  userAgent       String?       @db.Text
+  authenticatedAt DateTime      @default(now())
+  expiresAt       DateTime
+  lastActivityAt  DateTime?
+  revokedAt       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  agent      Agent         @relation(fields: [agentId], references: [id])
+  credential ApiCredential @relation(fields: [credentialId], references: [id])
+
+  @@index([agentId])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([agentId, status])
+  @@map("api_sessions")
+}
+
+model RequestLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionId    String?  @db.Uuid
+  agentId      String?  @db.Uuid
+  method       String   @db.VarChar(10)
+  path         String   @db.VarChar(2048)
+  statusCode   Int
+  latencyMs    Int
+  requestSize  Int      @default(0)
+  responseSize Int      @default(0)
+  ipAddress    String?  @db.VarChar(45)
+  userAgent    String?  @db.Text
+  traceId      String?  @db.VarChar(64)
+  errorCode    String?  @db.VarChar(50)
+  createdAt    DateTime @default(now()) // append-only
+
+  // Relations
+  agent Agent? @relation(fields: [agentId], references: [id])
+
+  @@index([agentId, createdAt])
+  @@index([sessionId])
+  @@index([path, createdAt])
+  @@index([statusCode, createdAt])
+  @@index([createdAt])
+  @@index([traceId])
+  @@map("request_logs")
+}
+
+model RateLimitBucket {
+  id               String   @id @default(uuid()) @db.Uuid
+  agentId          String   @db.Uuid
+  endpoint         String   @db.VarChar(255)
+  windowStart      DateTime
+  windowDurationMs Int                        // window duration in milliseconds
+  maxRequests      Int
+  currentCount     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id])
+
+  @@unique([agentId, endpoint, windowStart]) // one bucket per agent+endpoint+window
+  @@index([agentId])
+  @@index([windowStart])
+  @@map("rate_limit_buckets")
+}
+
+// =============================================================================
+// 8. WEBHOOKS
+// =============================================================================
+
+model WebhookEndpoint {
+  id        String   @id @default(uuid()) @db.Uuid
+  agentId   String   @db.Uuid
+  url       String   @db.VarChar(2048)
+  events    String[] // e.g. ["lead.submitted", "lead.verified", "conversion.tracked"]
+  secret    String   @db.VarChar(512)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id])
+
+  @@index([agentId])
+  @@index([active])
+  @@index([agentId, active])
+  @@map("webhook_endpoints")
+}
+
+// =============================================================================
+// NOTIFICATIONS
+// =============================================================================
+
+model Notification {
+  id           String               @id @default(uuid()) @db.Uuid
+  agentId      String               @db.Uuid
+  eventType    String               @db.VarChar(100)
+  category     NotificationCategory
+  title        String               @db.VarChar(255)
+  summary      String               @db.Text
+  resourceType String?              @db.VarChar(50)
+  resourceId   String?              @db.Uuid
+  readAt       DateTime?
+  createdAt    DateTime             @default(now())
+
+  agent Agent @relation(fields: [agentId], references: [id])
+
+  @@index([agentId, createdAt])
+  @@index([agentId, readAt])
+  @@index([agentId, category, createdAt])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// =============================================================================
+// BLOG POSTS
+// =============================================================================
+// File-based posts under content/blog/*.md still work and take precedence on
+// slug collision (see src/lib/blog/posts.ts). Writes go through
+// POST /api/v1/blog-posts, gated by a BLOG_API_KEY env bearer. Not tied to
+// an Agent — the publisher is whoever holds the key.
+
+model BlogPost {
+  id            String    @id @default(uuid()) @db.Uuid
+  slug          String    @unique @db.VarChar(255)
+  title         String    @db.VarChar(255)
+  description   String    @db.VarChar(500)
+  content       String    @db.Text
+
+  authorName    String    @db.VarChar(255)
+  authorType    String    @default("agent") @db.VarChar(16) // "human" | "agent"
+
+  tags          String[]  @default([])
+  featured      Boolean   @default(false)
+  coverImage    String?   @db.VarChar(2048)
+
+  publishedAt   DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@index([publishedAt(sort: Desc), deletedAt])
+  @@map("blog_posts")
+}

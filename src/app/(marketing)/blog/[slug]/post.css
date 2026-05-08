@@ -1,0 +1,194 @@
+/* Regatta-branded long-form typography. Scoped to .regatta-prose so it
+   doesn't leak into the rest of the app. */
+
+.regatta-prose {
+  color: var(--v2-text-secondary);
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.75;
+  max-width: 68ch;
+}
+
+.regatta-prose > * + * {
+  margin-top: 1.4em;
+}
+
+.regatta-prose h2,
+.regatta-prose h3,
+.regatta-prose h4 {
+  color: var(--v2-text);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  scroll-margin-top: 5rem;
+}
+
+.regatta-prose h2 {
+  font-size: 1.75rem;
+  margin-top: 2.4em;
+  padding-top: 0.2em;
+  position: relative;
+}
+.regatta-prose h2::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--v2-accent);
+  border-radius: 1px;
+  margin-bottom: 0.9rem;
+}
+
+.regatta-prose h3 {
+  font-size: 1.35rem;
+  margin-top: 2em;
+}
+
+.regatta-prose h4 {
+  font-size: 1.125rem;
+  margin-top: 1.8em;
+}
+
+.regatta-prose p {
+  color: var(--v2-text-secondary);
+}
+
+.regatta-prose strong {
+  color: var(--v2-text);
+  font-weight: 600;
+}
+
+.regatta-prose em {
+  color: var(--v2-text);
+  font-style: italic;
+}
+
+.regatta-prose a {
+  color: var(--v2-accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 181, 71, 0.35);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: all 0.15s ease;
+}
+.regatta-prose a:hover {
+  color: var(--v2-accent-hover);
+  text-decoration-color: var(--v2-accent-hover);
+}
+
+.regatta-prose ul,
+.regatta-prose ol {
+  padding-left: 1.4em;
+}
+.regatta-prose ul { list-style: disc; }
+.regatta-prose ol { list-style: decimal; }
+.regatta-prose li {
+  margin-top: 0.6em;
+}
+.regatta-prose li::marker {
+  color: var(--v2-accent);
+}
+
+.regatta-prose blockquote {
+  border-left: 2px solid var(--v2-accent);
+  padding: 0.4em 1.2em;
+  margin-left: 0;
+  color: var(--v2-text);
+  font-style: italic;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 181, 71, 0.06),
+    transparent 60%
+  );
+  border-radius: 0 8px 8px 0;
+}
+.regatta-prose blockquote p {
+  color: var(--v2-text);
+}
+
+.regatta-prose code {
+  background: var(--v2-code-bg);
+  color: var(--v2-accent-light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  border: 1px solid var(--v2-border-subtle);
+}
+
+.regatta-prose pre {
+  background: var(--v2-code-bg);
+  border: 1px solid var(--v2-border-light);
+  border-radius: 10px;
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: var(--v2-code-text);
+}
+.regatta-prose pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+  font-size: 1em;
+}
+
+.regatta-prose hr {
+  border: none;
+  border-top: 1px dashed var(--v2-border);
+  margin: 2.5em 0;
+}
+
+.regatta-prose img {
+  border-radius: 12px;
+  border: 1px solid var(--v2-border-light);
+}
+
+.regatta-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  border: 1px solid var(--v2-border-light);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.regatta-prose th {
+  background: var(--v2-bg-elevated);
+  color: var(--v2-text);
+  text-align: left;
+  padding: 0.7em 0.9em;
+  font-weight: 600;
+  border-bottom: 1px solid var(--v2-border-light);
+}
+.regatta-prose td {
+  padding: 0.7em 0.9em;
+  border-bottom: 1px solid var(--v2-border-subtle);
+  color: var(--v2-text-secondary);
+}
+.regatta-prose tr:last-child td {
+  border-bottom: none;
+}
+
+/* Autolinked heading anchors */
+.regatta-prose .heading-anchor {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--v2-accent);
+  text-decoration: none;
+  font-weight: 400;
+  transition: opacity 0.15s ease;
+}
+.regatta-prose .heading-anchor::before {
+  content: "#";
+}
+.regatta-prose h2:hover .heading-anchor,
+.regatta-prose h3:hover .heading-anchor,
+.regatta-prose h4:hover .heading-anchor {
+  opacity: 1;
+}
+
+/* GFM task list checkboxes */
+.regatta-prose input[type="checkbox"] {
+  accent-color: var(--v2-accent);
+  margin-right: 0.4em;
+}

@@ -1,0 +1,42 @@
+# =============================================================================
+# Regatta — Local development services
+# =============================================================================
+# Usage:
+#   docker compose up -d        # start services
+#   docker compose down -v      # stop and remove volumes
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "${REGATTA_POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: regatta
+      POSTGRES_PASSWORD: regatta_dev
+      POSTGRES_DB: regatta
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U regatta"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REGATTA_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  redisdata:

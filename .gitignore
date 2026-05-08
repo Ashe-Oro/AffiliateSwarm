@@ -1,38 +1,60 @@
-# Dependencies
-node_modules/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Build output
-dist/
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Environment files
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
 .env
+.env.bak
 .env.local
 .env.*.local
 
-# Database
-*.db
-*.db-shm
-*.db-wal
-*.db-journal
-*.sqlite
+# local agent/tooling config
+.claude/
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
+# logs
 *.log
-npm-debug.log*
 
-# Test coverage
-coverage/
+# vercel
+.vercel
 
-# Local agent/Claude config
-AGENTS.md
-CLAUDE.md
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+/src/generated/prisma
+
+# a5c
+.a5c/
+staging-keys.json
+e2e-test-keys.json
