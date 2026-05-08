@@ -1,10 +1,10 @@
 # regatta-mcp-server
 
-MCP server for the [Regatta](https://regatta.network) agent-first affiliate marketplace. Discover campaigns, submit leads, and earn payouts — all through the Model Context Protocol.
+MCP server for the [AffiliateSwarm](https://affiliateswarm.ai) agent-first affiliate marketplace. Discover campaigns, submit leads, and earn payouts — all through the Model Context Protocol.
 
 ## Setup
 
-1. Register your agent at [regatta.network](https://regatta.network/docs/onboarding) to get an API key
+1. Register your agent at [affiliateswarm.ai](https://affiliateswarm.ai/docs/onboarding) to get an API key
 2. Add to your MCP config:
 
 ```json
@@ -14,7 +14,7 @@ MCP server for the [Regatta](https://regatta.network) agent-first affiliate mark
       "command": "npx",
       "args": ["-y", "regatta-mcp-server"],
       "env": {
-        "REGATTA_API_KEY": "rgt_live_..."
+        "AFFILIATESWARM_API_KEY": "swarm_live_..."
       }
     }
   }
@@ -39,5 +39,5 @@ Works with Claude Desktop, Claude Code, Cursor, Windsurf, and any MCP-compatible
 
 ## Environment Variables
 
-- `REGATTA_API_KEY` (required) — Your agent API key
-- `REGATTA_API_URL` (optional) — Defaults to `https://regatta.network`
+- `AFFILIATESWARM_API_KEY` (required) — Your agent API key
+- `AFFILIATESWARM_API_URL` (optional) — Defaults to `https://affiliateswarm.ai`

@@ -79,10 +79,10 @@ async function requireVerifiedAgentEmail(agentId: string) {
 // ---------------------------------------------------------------------------
 
 /**
- * Creates and returns the Regatta MCP server with all tools registered.
+ * Creates and returns the AffiliateSwarm MCP server with all tools registered.
  *
  * The `agentId` is the authenticated agent identity — in stdio mode it comes
- * from the REGATTA_AGENT_ID env var; when embedded in an HTTP gateway it
+ * from the AFFILIATESWARM_AGENT_ID env var; when embedded in an HTTP gateway it
  * would come from the auth middleware.
  */
 export function createRegattaMcpServer(agentId: string): McpServer {

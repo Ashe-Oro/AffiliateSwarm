@@ -1,7 +1,7 @@
 {
   "name": "regatta-mcp-server",
   "version": "0.1.0",
-  "description": "MCP server for the Regatta agent-first affiliate marketplace. Discover campaigns, submit leads, and earn payouts — all through the Model Context Protocol.",
+  "description": "MCP server for the AffiliateSwarm agent-first affiliate marketplace. Discover campaigns, submit leads, and earn payouts through the Model Context Protocol.",
   "license": "MIT",
   "bin": {
     "regatta-mcp-server": "./dist/index.js"
@@ -26,14 +26,15 @@
     "mcp",
     "model-context-protocol",
     "affiliate",
-    "regatta",
+    "affiliateswarm",
+    "swarm",
     "ai-agent",
     "marketplace"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/omricohen/regatta",
+    "url": "https://github.com/Ashe-Oro/AffiliateSwarm",
     "directory": "mcp-server"
   },
-  "homepage": "https://regatta.network/docs/mcp-setup"
+  "homepage": "https://affiliateswarm.ai/docs/mcp-setup"
 }
