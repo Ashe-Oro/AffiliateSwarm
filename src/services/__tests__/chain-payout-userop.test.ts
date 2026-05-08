@@ -97,7 +97,7 @@ const mockGetPublicClient = getPublicClient as ReturnType<typeof vi.fn>;
 
 const PLATFORM = {
   address: "0x" + "1".repeat(40),
-  name: "platform-hot",
+  name: "swarm-hot",
   smartAccount: {},
 };
 const DESTINATION = "0x" + "2".repeat(40);

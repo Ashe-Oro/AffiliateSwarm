@@ -36,7 +36,7 @@ describe("CDP wallet accounts", () => {
     const platform = await getPlatformAccount();
     const agent = await getOrCreateAgentAccount(agentId);
 
-    expect(platform.name).toBe("platform-hot");
+    expect(platform.name).toBe("swarm-hot");
     expect(platform.smartAccount.owners[0].name).toBe(
       PLATFORM_HOT_OWNER_ACCOUNT_NAME
     );
@@ -59,7 +59,7 @@ describe("CDP wallet accounts", () => {
       });
     const getOrCreateSmartAccount = vi.fn().mockResolvedValue({
       address: "0x2222222222222222222222222222222222222222",
-      name: "platform-hot",
+      name: "swarm-hot",
       owners: [
         {
           address: "0x1111111111111111111111111111111111111111",
@@ -74,7 +74,7 @@ describe("CDP wallet accounts", () => {
       }),
       cdpSmartAccountNameForAgent: (agentId: string) => agentId.slice(0, 36),
       cdpOwnerNameForSmartAccount: () => "owner-name",
-      PLATFORM_HOT_ACCOUNT_NAME: "platform-hot",
+      PLATFORM_HOT_ACCOUNT_NAME: "swarm-hot",
       PLATFORM_HOT_OWNER_ACCOUNT_NAME: "owner-name",
     }));
 
@@ -83,7 +83,7 @@ describe("CDP wallet accounts", () => {
     await expect(getPlatformAccount()).rejects.toThrow("temporary CDP failure");
     await expect(getPlatformAccount()).resolves.toMatchObject({
       address: "0x2222222222222222222222222222222222222222",
-      name: "platform-hot",
+      name: "swarm-hot",
     });
     expect(getOrCreateAccount).toHaveBeenCalledTimes(2);
   });
