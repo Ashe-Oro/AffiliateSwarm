@@ -56,13 +56,14 @@ export function cdpSmartAccountNameForAgent(agentId: string): string {
   return `agent-${hash.slice(0, 30)}`;
 }
 
-export const PLATFORM_HOT_ACCOUNT_NAME = "platform-hot";
+export const PLATFORM_HOT_ACCOUNT_NAME = "swarm-hot";
 
 /**
- * The platform hot smart account already exists in CDP under this legacy owner.
- * Keep that pairing so we do not strand any USDC already sent to platform-hot.
+ * The platform hot smart account owner. Keep this paired with
+ * PLATFORM_HOT_ACCOUNT_NAME; CDP validates that the supplied owner owns an
+ * existing smart account with the same name.
  */
-export const PLATFORM_HOT_OWNER_ACCOUNT_NAME = "regatta-owner";
+export const PLATFORM_HOT_OWNER_ACCOUNT_NAME = "swarm-owner";
 
 /**
  * CDP allows a given owner EOA to own only one smart account. Derive a stable,

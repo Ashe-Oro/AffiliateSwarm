@@ -82,7 +82,7 @@ describe("getCdp", () => {
     const { getCdp } = await import("../cdp");
     const cdp = getCdp();
 
-    const owner = await cdp.evm.getOrCreateAccount({ name: "regatta-owner" });
+    const owner = await cdp.evm.getOrCreateAccount({ name: "swarm-owner" });
     const a = await cdp.evm.getOrCreateSmartAccount({ name: "agent-x", owner });
     const b = await cdp.evm.getOrCreateSmartAccount({ name: "agent-x", owner });
 
@@ -141,7 +141,8 @@ describe("getCdp", () => {
   });
 
   it("derives stable CDP-valid owner names for smart accounts", async () => {
-    const { cdpOwnerNameForSmartAccount } = await import("../cdp");
+    const { cdpOwnerNameForSmartAccount, PLATFORM_HOT_OWNER_ACCOUNT_NAME } =
+      await import("../cdp");
 
     const ownerName = cdpOwnerNameForSmartAccount(
       "6f20c031-d804-4f46-af4f-6b7fd0c6e605"
@@ -152,7 +153,7 @@ describe("getCdp", () => {
     expect(ownerName).toBe(
       cdpOwnerNameForSmartAccount("6f20c031-d804-4f46-af4f-6b7fd0c6e605")
     );
-    expect(ownerName).not.toBe(cdpOwnerNameForSmartAccount("platform-hot"));
+    expect(ownerName).not.toBe(PLATFORM_HOT_OWNER_ACCOUNT_NAME);
   });
 
   it("mock sendUserOperation throws loudly", async () => {

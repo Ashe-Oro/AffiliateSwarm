@@ -18,8 +18,8 @@ import {
 //     one smart account per owner.
 //   - Each agent gets a v2 hashed smart account name, plus a deterministic
 //     owner EOA name derived from that smart account name.
-//   - Platform hot wallet keeps the existing smart account name "platform-hot"
-//     and its legacy owner "regatta-owner" so existing funds remain reachable.
+//   - Platform hot wallet has a stable smart account name and dedicated owner;
+//     keep these paired so CDP can reopen the same smart account safely.
 //   - All sends go through sendUserOperation with a paymaster URL on mainnet
 //     (Coinbase auto-sponsors on Sepolia), so no smart account ever needs ETH.
 // ---------------------------------------------------------------------------
