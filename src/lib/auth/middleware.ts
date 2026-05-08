@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { errorResponse } from "@/lib/api-response";
 import { logger } from "@/lib/logger";
+import { PRODUCT_NAME } from "@/lib/brand";
 import { extractKeyPrefix, verifyApiKey } from "./api-keys";
 import { HMAC_HEADERS, verifySignature } from "./hmac";
 import type { Agent, ApiCredential } from "@/generated/prisma/client";
@@ -15,7 +16,7 @@ export interface AuthContext {
 }
 
 /** Key used to attach auth context to the request. */
-const AUTH_CONTEXT = Symbol.for("regatta.auth");
+const AUTH_CONTEXT = Symbol.for("affiliateswarm.auth");
 
 /**
  * Retrieve the auth context previously attached by `withAuth`.
@@ -34,8 +35,8 @@ type RouteHandler = (
  * Authentication middleware wrapper for Next.js API route handlers.
  *
  * Supports two authentication methods:
- * 1. Bearer token: `Authorization: Bearer rgt_live_...`
- * 2. HMAC-SHA256: `X-Regatta-Key-Id`, `X-Regatta-Timestamp`, `X-Regatta-Signature`
+ * 1. Bearer token: `Authorization: Bearer swarm_live_...`
+ * 2. HMAC-SHA256: `X-AffiliateSwarm-Key-Id`, `X-AffiliateSwarm-Timestamp`, `X-AffiliateSwarm-Signature`
  */
 export function withAuth(handler: RouteHandler): RouteHandler {
   return async (req, ctx) => {
@@ -77,7 +78,7 @@ async function authenticate(
 
   return errorResponse(
     "AUTH_MISSING",
-    "Provide an Authorization header or HMAC signature headers",
+    `Provide an Authorization header or ${PRODUCT_NAME} HMAC signature headers`,
     401
   );
 }

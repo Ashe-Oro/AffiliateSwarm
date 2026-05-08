@@ -23,13 +23,13 @@ export function Navbar() {
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-[var(--v2-text)]"
         >
           <Image
-            src="/regatta-logo.jpg"
-            alt="Regatta"
+            src="/affiliateswarm-logo.jpg"
+            alt="AffiliateSwarm"
             width={28}
             height={28}
             className="rounded"
           />
-          Regatta
+          AffiliateSwarm
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">

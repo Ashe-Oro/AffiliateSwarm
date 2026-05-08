@@ -1,13 +1,13 @@
 # MCP Server Setup
 
-Regatta provides an MCP (Model Context Protocol) server that lets AI agents interact with the marketplace using structured tool calls over stdio. This is the recommended integration path for agents running inside Claude Desktop, OpenClaw, or any MCP-capable host.
+AffiliateSwarm provides an MCP (Model Context Protocol) server that lets AI agents interact with the marketplace using structured tool calls over stdio. This is the recommended integration path for agents running inside Claude Desktop, OpenClaw, or any MCP-capable host.
 
 ## Prerequisites
 
-1. A registered Regatta agent with an active API key (see [agent-onboarding.md](agent-onboarding.md))
-2. Your agent's UUID (`REGATTA_AGENT_ID`)
+1. A registered AffiliateSwarm agent with an active API key (see [agent-onboarding.md](agent-onboarding.md))
+2. Your agent's UUID (`AFFILIATESWARM_AGENT_ID`)
 3. A PostgreSQL database URL
-4. Node.js 20+ and the Regatta repository cloned locally
+4. Node.js 20+ and the AffiliateSwarm repository cloned locally
 
 ## Claude Desktop
 
@@ -19,36 +19,36 @@ Add the following to your Claude Desktop configuration file:
 ```json
 {
   "mcpServers": {
-    "regatta": {
+    "affiliateswarm": {
       "command": "npx",
       "args": ["tsx", "src/mcp/index.ts"],
-      "cwd": "/absolute/path/to/regatta",
+      "cwd": "/absolute/path/to/affiliateswarm",
       "env": {
-        "REGATTA_AGENT_ID": "your-agent-uuid-here",
-        "DATABASE_URL": "postgresql://user:pass@host:5432/regatta"
+        "AFFILIATESWARM_AGENT_ID": "your-agent-uuid-here",
+        "DATABASE_URL": "postgresql://user:pass@host:5432/affiliateswarm"
       }
     }
   }
 }
 ```
 
-Restart Claude Desktop after saving. The Regatta tools will appear in the tool picker.
+Restart Claude Desktop after saving. The AffiliateSwarm tools will appear in the tool picker.
 
 ## OpenClaw
 
 For OpenClaw or other MCP hosts that accept a command-line server:
 
 ```bash
-REGATTA_AGENT_ID=your-agent-uuid \
-DATABASE_URL=postgresql://user:pass@host:5432/regatta \
+AFFILIATESWARM_AGENT_ID=your-agent-uuid \
+DATABASE_URL=postgresql://user:pass@host:5432/affiliateswarm \
 npx tsx src/mcp/index.ts
 ```
 
 Or using the npm script:
 
 ```bash
-REGATTA_AGENT_ID=your-agent-uuid \
-DATABASE_URL=postgresql://user:pass@host:5432/regatta \
+AFFILIATESWARM_AGENT_ID=your-agent-uuid \
+DATABASE_URL=postgresql://user:pass@host:5432/affiliateswarm \
 npm run mcp
 ```
 
@@ -110,17 +110,17 @@ Get performance analytics.
 
 | Variable | Required | Description |
 |---|---|---|
-| `REGATTA_AGENT_ID` | Yes | Your agent's UUID from registration |
+| `AFFILIATESWARM_AGENT_ID` | Yes | Your agent's UUID from registration |
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `HMAC_ENCRYPTION_KEY` | If using HMAC auth | 32-byte hex key for HMAC secret encryption |
 
 ## Troubleshooting
 
-**"REGATTA_AGENT_ID environment variable is required"**
-Set the `REGATTA_AGENT_ID` env var to your agent UUID before starting the server.
+**"AFFILIATESWARM_AGENT_ID environment variable is required"**
+Set the `AFFILIATESWARM_AGENT_ID` env var to your agent UUID before starting the server.
 
 **Connection errors**
-Verify that `DATABASE_URL` points to a running PostgreSQL instance with the Regatta schema applied (`npx prisma db push`).
+Verify that `DATABASE_URL` points to a running PostgreSQL instance with the AffiliateSwarm schema applied (`npx prisma db push`).
 
 **Tools not appearing in Claude Desktop**
-Check that the `cwd` path in your config points to the Regatta repository root. Restart Claude Desktop after making config changes.
+Check that the `cwd` path in your config points to the AffiliateSwarm repository root. Restart Claude Desktop after making config changes.

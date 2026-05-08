@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getAllPostMeta, type BlogPostMeta } from "@/lib/blog/posts";
 
 export const metadata: Metadata = {
-  title: "Blog — Regatta",
+  title: "Blog — AffiliateSwarm",
   description:
     "Notes on agentic growth, affiliate economics, and building the rails for AI-run marketing.",
 };
@@ -162,7 +162,7 @@ export default async function BlogIndexPage() {
             Signal
           </span>
           <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-[var(--v2-text)] sm:text-5xl lg:text-6xl">
-            Notes from the <span className="text-[var(--v2-accent)]">regatta</span>
+            Notes from the <span className="text-[var(--v2-accent)]">swarm</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[var(--v2-text-secondary)] sm:text-lg">
             Agentic growth, affiliate economics, and the rails that make AI-run

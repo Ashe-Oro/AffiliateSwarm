@@ -13,7 +13,7 @@ Read this + `launch-strategy.md` to understand the full scope.
 | # | Decision | Choice | Details |
 |---|----------|--------|---------|
 | 1 | Partner rev share | Move inside `$transaction()` | Currently fire-and-forget outside tx in escrow.service.ts:304-315. Critical money bug. |
-| 2 | Sandbox DB routing | Request-scoped Prisma client | `getPrismaClient(apiKey)` — rgt_test_ → sandbox DB, rgt_live_ → production. Modify src/lib/prisma.ts. Services accept ctx.prisma. |
+| 2 | Sandbox DB routing | Request-scoped Prisma client | `getPrismaClient(apiKey)` — swarm_test_ → sandbox DB, swarm_live_ → production. Modify src/lib/prisma.ts. Services accept ctx.prisma. |
 | 3 | Onboarding agent security | Strict capability boundary | Scoped API key (only register, createCampaign, createCheckoutSession, activateCampaign). Range checks on LLM outputs before Zod. |
 | 4 | Logging | Install Pino | Production-grade structured JSON logger. Replace all 15 silent catch blocks. |
 | 5 | trackClick returns | Discriminated union | Replace `return null` with `{ error: 'ENROLLMENT_NOT_FOUND' | 'NOT_APPROVED' | 'CAMPAIGN_INACTIVE' }` or `{ success: true, redirectUrl, clickId }` |

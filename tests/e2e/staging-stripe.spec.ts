@@ -1,11 +1,11 @@
 /**
- * Staging E2E — Full money path on the deployed site (regatta.network).
+ * Staging E2E — Full money path on the deployed site (affiliateswarm.ai).
  *
  * Fully automated — uses throwawaymail.app for email verification
  * and real Stripe test-mode payments. No manual steps required.
  *
  * Run:
- *   BASE_URL=https://regatta.network STRIPE_SECRET_KEY=sk_test_... \
+ *   BASE_URL=https://affiliateswarm.ai STRIPE_SECRET_KEY=sk_test_... \
  *     npx playwright test tests/e2e/staging-stripe.spec.ts
  */
 
@@ -19,7 +19,7 @@ import {
 } from "./helpers";
 
 const RUN_ID = Date.now();
-const BASE_URL = process.env.BASE_URL || "https://regatta.network";
+const BASE_URL = process.env.BASE_URL || "https://affiliateswarm.ai";
 const HAS_STRIPE = !!process.env.STRIPE_SECRET_KEY;
 const THROWAWAY_API = "https://throwawaymail.app/api";
 
@@ -302,7 +302,7 @@ test.describe("Phase 2: Affiliate Journey", () => {
     const { status, json } = await api(
       "POST", "/api/v1/postback",
       {
-        rgta_ref: state.trackingCode,
+        swarm_ref: state.trackingCode,
         externalId,
         eventType: "PURCHASE",
         payoutCents: 500,

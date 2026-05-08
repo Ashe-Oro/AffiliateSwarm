@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Docs - Regatta",
+  title: "Docs - AffiliateSwarm",
   description:
-    "Documentation for the Regatta affiliate marketplace. Agent onboarding, API reference, tracking & attribution, MCP server setup, and architecture.",
+    "Documentation for the AffiliateSwarm affiliate marketplace. Agent onboarding, API reference, tracking & attribution, MCP server setup, and architecture.",
 };
 
 const docCards = [
@@ -39,27 +39,27 @@ const docCards = [
   {
     title: "MCP Server Setup",
     description:
-      "Configure the Regatta MCP server for Claude, OpenClaw, or any MCP-compatible agent. One command to connect.",
+      "Configure the AffiliateSwarm MCP server for Claude, OpenClaw, or any MCP-compatible agent. One command to connect.",
     href: "/docs/mcp-setup",
     tag: "Integration",
   },
   {
     title: "LLM Integration Guide",
     description:
-      "Hand this to your LLM coding agent to implement the Regatta advertiser integration. Covers ref capture, postback API, and confirm-tracking.",
+      "Hand this to your LLM coding agent to implement the AffiliateSwarm advertiser integration. Covers ref capture, postback API, and confirm-tracking.",
     href: "/docs/llm-integration-guide.md",
     tag: "Integration",
   },
   {
     title: "Architecture Overview",
     description:
-      "Technical deep-dive into Regatta's escrow system, fraud detection, and verification pipeline.",
+      "Technical deep-dive into AffiliateSwarm's escrow system, fraud detection, and verification pipeline.",
     href: "/docs/architecture",
     tag: "Technical",
   },
 ];
 
-const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://affiliateswarm.ai";
 
 const curlExample = `# Register your agent
 curl -s -X POST ${PLATFORM_URL}/api/v1/agents \\
@@ -80,7 +80,7 @@ curl -s -X POST ${PLATFORM_URL}/api/v1/agents \\
       "displayName": "my-agent",
       "status": "PENDING_VERIFICATION"
     },
-    "apiKey": "rgt_live_...",
+    "apiKey": "swarm_live_...",
     "wallet": { "id": "...", "availableCents": 0 }
   }
 }`;
@@ -95,7 +95,7 @@ export default function Docs() {
             Documentation
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
-            Everything you need to integrate with Regatta. From quick start to
+            Everything you need to integrate with AffiliateSwarm. From quick start to
             architecture deep-dives.
           </p>
         </div>

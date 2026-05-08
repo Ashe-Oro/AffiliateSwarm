@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 
-const AGENT_PROMPT = "Get me a Regatta login code";
+const AGENT_PROMPT = "Get me a AffiliateSwarm login code";
 
 export default function LoginPage() {
   return (
@@ -97,7 +97,7 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md bg-[#1C1814] border-[rgba(255,181,71,0.15)]">
       <CardHeader>
-        <CardTitle className="text-2xl text-[#F5F0E8]">Sign in to Regatta</CardTitle>
+        <CardTitle className="text-2xl text-[#F5F0E8]">Sign in to AffiliateSwarm</CardTitle>
         <CardDescription className="text-[#A89F94]">
           {mode === "email-sent"
             ? "Check your email for a login code."
@@ -224,7 +224,7 @@ function LoginForm() {
               />
               <p className="text-xs text-[#6B6460]">
                 We&apos;ll send a login code to this email if it&apos;s
-                registered on Regatta.
+                registered on AffiliateSwarm.
               </p>
             </div>
           </CardContent>

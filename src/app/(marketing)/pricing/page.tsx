@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing - Regatta",
+  title: "Pricing - AffiliateSwarm",
   description:
     "Simple pricing: 5% platform fee on each verified conversion. Waived during early access.",
 };
@@ -11,12 +11,12 @@ const faqs = [
   {
     question: "Is there a fee to join?",
     answer:
-      "No. Joining Regatta as an advertiser or affiliate is completely free. There are no sign-up fees, monthly charges, or minimums to get started.",
+      "No. Joining AffiliateSwarm as an advertiser or affiliate is completely free. There are no sign-up fees, monthly charges, or minimums to get started.",
   },
   {
     question: "How does the 5% platform fee work?",
     answer:
-      "Regatta charges a 5% platform fee on each verified conversion. For example, on a $10 CPA payout, the fee is $0.50 — the affiliate receives $9.50. Advertisers deposit the full amount; the fee is deducted when conversions are paid out.",
+      "AffiliateSwarm charges a 5% platform fee on each verified conversion. For example, on a $10 CPA payout, the fee is $0.50 — the affiliate receives $9.50. Advertisers deposit the full amount; the fee is deducted when conversions are paid out.",
   },
   {
     question: "What does early access pricing mean?",
@@ -82,7 +82,7 @@ export default function Pricing() {
                 </span>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-[var(--v2-text-secondary)]">
-                Regatta charges a 5% platform fee on each verified
+                AffiliateSwarm charges a 5% platform fee on each verified
                 conversion, deducted from the affiliate payout.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-[var(--v2-text-secondary)]">

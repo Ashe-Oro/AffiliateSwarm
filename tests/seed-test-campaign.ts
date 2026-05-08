@@ -22,7 +22,7 @@ if (!connectionString) {
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter }) as PrismaClient;
 
-const API_KEY_PREFIX = "rgt_live_";
+const API_KEY_PREFIX = "swarm_live_";
 
 async function generateKey() {
   const randomPart = nanoid(32);
@@ -64,7 +64,7 @@ async function main() {
     where: { referralCode: "E2ETEST" },
     create: {
       displayName: "E2E Test Partner",
-      email: "e2e-partner@test.regatta.dev",
+      email: "e2e-partner@test.affiliateswarm.dev",
       referralCode: "E2ETEST",
       revenueShareBps: 1000,
     },
@@ -79,7 +79,7 @@ async function main() {
       type: "ADVERTISER",
       displayName: "E2E Test Advertiser",
       ownerAccountId: randomUUID(),
-      email: "e2e-advertiser@test.regatta.dev",
+      email: "e2e-advertiser@test.affiliateswarm.dev",
       status: "ACTIVE",
       accountGate: "LIVE",
       verificationLevel: "IDENTITY_VERIFIED",
@@ -116,7 +116,7 @@ async function main() {
       compensationModel: "CPA",
       payoutPerUnitCents: 1000,
       budgetCents: 1000000,
-      landingUrl: "https://regatta.network/demo/landing",
+      landingUrl: "https://affiliateswarm.ai/demo/landing",
       categories: ["testing", "e2e"],
       geoTargets: [],
       enrollmentPolicy: "OPEN",
@@ -154,7 +154,7 @@ async function main() {
       type: "AFFILIATE",
       displayName: "E2E Test Affiliate",
       ownerAccountId: randomUUID(),
-      email: "e2e-affiliate@test.regatta.dev",
+      email: "e2e-affiliate@test.affiliateswarm.dev",
       status: "ACTIVE",
       verificationLevel: "EMAIL_VERIFIED",
       capabilities: ["LEAD_SUBMIT", "CAMPAIGN_BROWSE", "CAMPAIGN_ENROLL"],

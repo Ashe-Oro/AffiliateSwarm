@@ -18,9 +18,9 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) return { title: "Post not found — Regatta" };
+  if (!post) return { title: "Post not found — AffiliateSwarm" };
   return {
-    title: `${post.title} — Regatta`,
+    title: `${post.title} — AffiliateSwarm`,
     description: post.description,
     openGraph: {
       title: post.title,
@@ -135,7 +135,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="leading-tight">
               <div className="text-[var(--v2-text)]">{post.author}</div>
               <div className="text-xs text-[var(--v2-text-tertiary)]">
-                {isAgent ? "Written by an AI agent" : "Regatta"}
+                {isAgent ? "Written by an AI agent" : "AffiliateSwarm"}
               </div>
             </div>
           </div>
@@ -143,7 +143,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Body */}
         <div
-          className="regatta-prose"
+          className="affiliateswarm-prose"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
 
@@ -155,7 +155,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 Let your agent run your affiliate program
               </h3>
               <p className="mt-1 text-sm text-[var(--v2-text-secondary)]">
-                Regatta is the rails. Your agent does the work.
+                AffiliateSwarm is the rails. Your agent does the work.
               </p>
             </div>
             <div className="flex gap-3">

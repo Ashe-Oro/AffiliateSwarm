@@ -65,10 +65,10 @@ test.describe("Phase 1: Advertiser Onboarding", () => {
     state.advertiser = await registerAgent(
       `Journey Advertiser ${RUN_ID}`,
       "ADVERTISER",
-      `journey-adv-${RUN_ID}@test.regatta.dev`
+      `journey-adv-${RUN_ID}@test.affiliateswarm.dev`
     );
     expect(state.advertiser.agentId).toBeTruthy();
-    expect(state.advertiser.apiKey).toMatch(/^rgt_live_/);
+    expect(state.advertiser.apiKey).toMatch(/^swarm_live_/);
 
     // Verify email (required before creating campaigns)
     await verifyAgentEmail(state.advertiser.agentId);
@@ -188,7 +188,7 @@ test.describe("Phase 2: Affiliate Onboarding", () => {
     state.affiliate = await registerAgent(
       `Journey Affiliate ${RUN_ID}`,
       "AFFILIATE",
-      `journey-aff-${RUN_ID}@test.regatta.dev`,
+      `journey-aff-${RUN_ID}@test.affiliateswarm.dev`,
       {
         profile: {
           audienceSize: 50000,
@@ -272,18 +272,18 @@ test.describe("Phase 2: Affiliate Onboarding", () => {
 
 test.describe("Phase 3: Tracking & Conversion", () => {
   test("3.1 tracking link points directly at advertiser landing URL with promo code", async () => {
-    // Direct-ref model: no Regatta redirect. Link is `<landingUrl>?rgta_ref=<code>&promo=<coupon>`.
+    // Direct-ref model: no AffiliateSwarm redirect. Link is `<landingUrl>?swarm_ref=<code>&promo=<coupon>`.
     const result = await followTrackingLink(state.trackingCode!);
     expect(result.status).toBe(200);
     expect(result.ref).toBe(state.trackingCode);
-    expect(result.location).toContain(`rgta_ref=${state.trackingCode}`);
+    expect(result.location).toContain(`swarm_ref=${state.trackingCode}`);
     expect(result.location).toContain("promo=JOURNEY20");
 
     state.postbackRef = result.ref!;
   });
 
   test("3.2 tracking link works end-to-end in browser", async ({ page }) => {
-    // Browser-level: user lands on advertiser page with rgta_ref in query string.
+    // Browser-level: user lands on advertiser page with swarm_ref in query string.
     const result = await followTrackingLinkInBrowser(page, state.trackingCode!);
     expect(result.ref).toBe(state.trackingCode);
   });
@@ -438,7 +438,7 @@ test.describe("Phase 5: Analytics & Dashboard", () => {
 
 test.describe("Phase 6: Error Handling", () => {
   test("6.1 unauthenticated request returns 401", async () => {
-    const { status } = await api("GET", "/api/v1/me", undefined, "rgt_live_invalid_xxx");
+    const { status } = await api("GET", "/api/v1/me", undefined, "swarm_live_invalid_xxx");
     expect(status).toBe(401);
   });
 
@@ -447,7 +447,7 @@ test.describe("Phase 6: Error Handling", () => {
     const unverified = await registerAgent(
       `Unverified Affiliate ${RUN_ID}`,
       "AFFILIATE",
-      `unverified-${RUN_ID}@test.regatta.dev`
+      `unverified-${RUN_ID}@test.affiliateswarm.dev`
     );
 
     const { status, json } = await api(
@@ -475,7 +475,7 @@ test.describe("Phase 6: Error Handling", () => {
   test("6.4 postback with unknown ref returns error", async () => {
     const { status } = await api(
       "POST", "/api/v1/postback",
-      { rgta_ref: "nonexistent_code", externalId: "test", eventType: "PURCHASE" },
+      { swarm_ref: "nonexistent_code", externalId: "test", eventType: "PURCHASE" },
       state.advertiser!.apiKey
     );
     expect([400, 404]).toContain(status);

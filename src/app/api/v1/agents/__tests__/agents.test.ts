@@ -153,7 +153,7 @@ describe("POST /api/v1/agents", () => {
     expect(json.success).toBe(true);
     expect(json.data.agent.id).toBe("agent-1");
     expect(json.data.agent.type).toBe("ADVERTISER");
-    expect(json.data.apiKey).toMatch(/^rgt_live_/);
+    expect(json.data.apiKey).toMatch(/^swarm_live_/);
     expect(json.data.wallet.id).toBe("wallet-1");
     expect(sendVerificationEmail).toHaveBeenCalledWith(
       VALID_REGISTRATION.email,
@@ -272,7 +272,7 @@ describe("GET /api/v1/agents", () => {
   });
 
   it("returns 401 with an invalid bearer token", async () => {
-    // extractKeyPrefix returns null for keys without rgt_live_ prefix
+    // extractKeyPrefix returns null for keys without swarm_live_ prefix
     const req = buildRequest("GET", "/api/v1/agents", undefined, {
       authorization: "Bearer invalid_key_no_prefix",
     });

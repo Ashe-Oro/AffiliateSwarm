@@ -162,7 +162,7 @@ test.describe("REV_SHARE campaign lifecycle", () => {
       "POST",
       "/api/v1/postback",
       {
-        rgta_ref: trackingCode,
+        swarm_ref: trackingCode,
         externalId: `missing-revenue-${Date.now()}`,
         eventType: "PURCHASE",
       },

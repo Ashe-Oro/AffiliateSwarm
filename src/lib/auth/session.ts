@@ -1,10 +1,10 @@
 import { randomBytes } from "crypto";
 import { NextRequest } from "next/server";
+import { SESSION_COOKIE } from "@/lib/brand";
 import { prisma } from "@/lib/prisma";
 import type { UserAccount } from "@/generated/prisma/client";
 
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-const SESSION_COOKIE = "regatta_session";
 
 export interface SessionData {
   userId: string;

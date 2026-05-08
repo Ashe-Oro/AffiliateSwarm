@@ -215,7 +215,7 @@ describe("CreateCampaignSchema", () => {
       buyerIncentiveType: "PERCENTAGE_OFF",
       buyerIncentiveValue: "20",
       buyerIncentiveLabel: "20% off your first month",
-      buyerCouponCode: "REGATTA20",
+      buyerCouponCode: "SWARM20",
     });
     expect(result.success).toBe(true);
   });
@@ -284,7 +284,7 @@ describe("CreateCampaignSchema", () => {
   it("accepts buyerCouponCode with letters, numbers, underscore, hyphen", () => {
     const result = CreateCampaignSchema.safeParse({
       ...validInput,
-      buyerCouponCode: "REGATTA_20-OFF",
+      buyerCouponCode: "SWARM_20-OFF",
     });
     expect(result.success).toBe(true);
   });

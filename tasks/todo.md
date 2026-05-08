@@ -9,7 +9,7 @@
 
 ## Review
 
-- Worktree created at `/Users/ashe/Projects/regatta-affiliate-lead-reversal`
+- Worktree created at `/Users/ashe/Projects/swarm-affiliate-lead-reversal`
 - Feature branch created: `feat/affiliate-lead-reversal-copy`
 - Affiliate dashboard now renders `DISPUTED` leads as `reversed` on affiliate-facing screens
 - Affiliate earnings view now explains that payout statuses apply only to withdrawal requests

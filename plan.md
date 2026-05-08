@@ -1,8 +1,8 @@
-# Regatta: Complete the Platform
+# AffiliateSwarm: Complete the Platform
 
 ## Context
 
-Regatta has ~95% of the foundation built (schema, services, routes, tests, UI) but the critical wiring between services is missing. The result: campaigns can't be activated, leads can't be paid, reputation never updates, webhooks never fire, and the SDK points to wrong endpoints. The platform looks complete but doesn't actually work end-to-end.
+AffiliateSwarm has ~95% of the foundation built (schema, services, routes, tests, UI) but the critical wiring between services is missing. The result: campaigns can't be activated, leads can't be paid, reputation never updates, webhooks never fire, and the SDK points to wrong endpoints. The platform looks complete but doesn't actually work end-to-end.
 
 ## What's Broken
 

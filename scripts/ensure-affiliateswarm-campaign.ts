@@ -1,8 +1,8 @@
 /**
- * Ensure the "Grow Regatta" campaign exists in the database.
+ * Ensure the "Grow AffiliateSwarm" campaign exists in the database.
  * Safe to run multiple times — skips if already present.
  *
- * Usage: npx tsx scripts/ensure-regatta-campaign.ts
+ * Usage: npx tsx scripts/ensure-affiliateswarm-campaign.ts
  */
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
@@ -17,13 +17,13 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter }) as PrismaClient;
 
 async function main() {
-  // Check if Regatta agent already exists
+  // Check if AffiliateSwarm agent already exists
   const existing = await prisma.agent.findFirst({
-    where: { displayName: "Regatta", deletedAt: null },
+    where: { displayName: "AffiliateSwarm", deletedAt: null },
   });
 
   if (existing) {
-    console.log(`Regatta agent already exists (${existing.id})`);
+    console.log(`AffiliateSwarm agent already exists (${existing.id})`);
 
     // Check if campaign exists
     const campaign = await prisma.campaign.findFirst({
@@ -35,22 +35,22 @@ async function main() {
       return;
     }
 
-    console.log("Creating campaign for existing Regatta agent...");
+    console.log("Creating campaign for existing AffiliateSwarm agent...");
     await createCampaign(existing.id);
     return;
   }
 
-  console.log("Creating Regatta advertiser agent...");
+  console.log("Creating AffiliateSwarm advertiser agent...");
 
-  const regatta = await prisma.agent.create({
+  const affiliateSwarm = await prisma.agent.create({
     data: {
       type: "ADVERTISER",
-      displayName: "Regatta",
+      displayName: "AffiliateSwarm",
       ownerAccountId: crypto.randomUUID(),
       description:
-        "Regatta — the affiliate marketplace for AI agents. Earn by referring advertisers and affiliates to the platform.",
-      websiteUrl: "https://regatta.network",
-      logoUrl: "https://regatta.network/logo.png",
+        "AffiliateSwarm — the affiliate marketplace for AI agents. Earn by referring advertisers and affiliates to the platform.",
+      websiteUrl: "https://affiliateswarm.ai",
+      logoUrl: "https://affiliateswarm.ai/logo.png",
       status: "ACTIVE",
       accountGate: "LIVE",
       verificationLevel: "IDENTITY_VERIFIED",
@@ -59,29 +59,29 @@ async function main() {
   });
 
   await prisma.wallet.create({
-    data: { agentId: regatta.id },
+    data: { agentId: affiliateSwarm.id },
   });
 
   await prisma.agentReputation.create({
     data: {
-      agentId: regatta.id,
+      agentId: affiliateSwarm.id,
       trustTier: "PREMIUM",
       overallScore: 100.0,
       lastRecalculatedAt: new Date(),
     },
   });
 
-  await createCampaign(regatta.id);
-  console.log(`Done. Regatta agent ID: ${regatta.id}`);
+  await createCampaign(affiliateSwarm.id);
+  console.log(`Done. AffiliateSwarm agent ID: ${affiliateSwarm.id}`);
 }
 
 async function createCampaign(advertiserId: string) {
   const campaign = await prisma.campaign.create({
     data: {
       advertiserId,
-      name: "Grow Regatta — Refer Advertisers & Affiliates",
+      name: "Grow AffiliateSwarm — Refer Advertisers & Affiliates",
       description:
-        "Earn commissions by referring new advertisers and affiliates to Regatta. When someone you refer signs up and generates revenue on the platform, you earn a share. This is Regatta's own referral campaign — help us grow the network.",
+        "Earn commissions by referring new advertisers and affiliates to AffiliateSwarm. When someone you refer signs up and generates revenue on the platform, you earn a share. This is AffiliateSwarm's own referral campaign — help us grow the network.",
       status: "ACTIVE",
       compensationModel: "REV_SHARE",
       payoutPercentage: 10, // 10% rev share
@@ -90,7 +90,7 @@ async function createCampaign(advertiserId: string) {
       budgetSpentCents: 0,
       geoTargets: [],
       categories: ["affiliate-network", "ai-agents", "referral"],
-      landingUrl: "https://regatta.network/partners",
+      landingUrl: "https://affiliateswarm.ai/partners",
       enrollmentPolicy: "OPEN",
       requiresVerification: false,
     },

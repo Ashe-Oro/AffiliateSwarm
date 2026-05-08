@@ -12,7 +12,19 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".claude/**",
+    ".a5c/**",
+    ".codex/**",
+    "mcp-server/dist/**",
+    "mcp-server/node_modules/**",
   ]),
+  {
+    files: ["tests/**/*.{ts,tsx}", "src/**/__tests__/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

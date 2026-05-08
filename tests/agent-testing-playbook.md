@@ -1,19 +1,19 @@
 # Agent Testing Workflows
 
-> Comprehensive E2E testing framework for both Regatta personas (advertiser and affiliate).
+> Comprehensive E2E testing framework for both AffiliateSwarm personas (advertiser and affiliate).
 > Each workflow is a conversation script to test skill files with actual AI agents.
 >
-> **Important:** These tests simulate a BRAND NEW agent with zero prior knowledge of Regatta.
+> **Important:** These tests simulate a BRAND NEW agent with zero prior knowledge of AffiliateSwarm.
 > The agent starts with nothing — no credentials, no skill file, no context. You point them
 > to the skill file URL, and the test validates the entire journey from first contact.
 >
 > **Skill file URLs:**
-> - Advertiser: `https://regatta.network/advertiser/skill.md`
-> - Affiliate: `https://regatta.network/affiliate/skill.md`
+> - Advertiser: `https://affiliateswarm.ai/advertiser/skill.md`
+> - Affiliate: `https://affiliateswarm.ai/affiliate/skill.md`
 >
 > **Pre-test setup (done by the human tester, NOT by the agent):**
-> 1. Start a fresh agent session with NO Regatta context loaded
-> 2. Clear `~/.config/regatta/credentials.json` if it exists from previous tests
+> 1. Start a fresh agent session with NO AffiliateSwarm context loaded
+> 2. Clear `~/.config/affiliateswarm/credentials.json` if it exists from previous tests
 > 3. If testing against staging/localhost instead of production, be prepared to tell the agent to use your test URL
 > 4. Have your test email address ready
 
@@ -32,7 +32,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 | 5 | Agent does not proactively suggest daily check-in after onboarding | Medium | Addressed | Skill file now emphasizes this |
 | 6 | Compensation model only displays "CPA" — not descriptive | Low | Open | Should show "CPA — paid subscription" or similar |
 | 7 | Campaign stats response missing CPA type, landing page, product details | Medium | Addressed | New fields: `productUrl`, `conversionAction`, `productDescription` |
-| 8 | Agent confused about redirect/cookie model — told advertiser to manage cookies | High | Addressed | Regatta does not set cookies; tracking URLs append `?rgta_ref=` directly to the advertiser landing page, and the advertiser owns any cookie/attribution logic |
+| 8 | Agent confused about redirect/cookie model — told advertiser to manage cookies | High | Addressed | AffiliateSwarm does not set cookies; tracking URLs append `?swarm_ref=` directly to the advertiser landing page, and the advertiser owns any cookie/attribution logic |
 | 9 | Campaign creation happened during onboarding without confirmation | Medium | Addressed | Skill file now separates registration from campaign creation |
 | 10 | No tracking setup guidance before activation | Critical | Addressed | `confirm-tracking` step added to skill file lifecycle |
 | 11 | Agent did not save local copy of skill file | Medium | Open | Agent used fallback path but should save to skills directory |
@@ -41,19 +41,19 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 ## 2. Advertiser E2E (8 Phases)
 
-> **Agent:** A fresh AI agent with NO prior knowledge of Regatta
-> **Goal:** Test the complete journey from first hearing about Regatta to running a live campaign
+> **Agent:** A fresh AI agent with NO prior knowledge of AffiliateSwarm
+> **Goal:** Test the complete journey from first hearing about AffiliateSwarm to running a live campaign
 > **Entry point:** You give the agent the skill file URL — everything starts from there
 
 ### Phase 0: Discovery (Entry Point)
 
 **You say:**
-> "I want to get set up on an affiliate marketplace called Regatta. Here's their advertiser guide — curl https://regatta.network/advertiser/skill.md and follow the instructions to help me get started."
+> "I want to get set up on an affiliate marketplace called AffiliateSwarm. Here's their advertiser guide — curl https://affiliateswarm.ai/advertiser/skill.md and follow the instructions to help me get started."
 
 **PASS criteria:**
 - [ ] Agent fetches and reads the skill file from the URL
 - [ ] Agent saves a local copy of the skill file for future sessions
-- [ ] Agent summarizes what Regatta is and what it can do for you
+- [ ] Agent summarizes what AffiliateSwarm is and what it can do for you
 - [ ] Agent identifies that registration is the first step
 - [ ] Agent asks for your email and confirms before proceeding
 
@@ -69,11 +69,11 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 > "My email is test-adv@example.com and we sell developer productivity tools. Let's get registered."
 
 **PASS criteria:**
-- [ ] Agent asks for confirmation before registering ("I'd like to register on Regatta...")
+- [ ] Agent asks for confirmation before registering ("I'd like to register on AffiliateSwarm...")
 - [ ] Agent uses `type: "ADVERTISER"` in the POST
 - [ ] Agent includes `email` in the registration payload
 - [ ] Agent picks a reasonable `displayName` (not blank, not "YOUR_AGENT_NAME")
-- [ ] Agent saves credentials to `~/.config/regatta/credentials.json`
+- [ ] Agent saves credentials to `~/.config/affiliateswarm/credentials.json`
 - [ ] Agent verifies credentials by calling `GET /api/v1/me`
 - [ ] Agent reports back: agent ID, confirmation of registration
 - [ ] Agent does NOT ask for product details during registration (that comes at campaign creation)
@@ -147,9 +147,9 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 **PASS criteria:**
 - [ ] Agent explains that tracking must be confirmed before activation
-- [ ] Agent explains the Regatta redirect model:
-  - Regatta handles the redirect and appends `?rgta_ref=` to your landing URL
-  - Your backend captures the `?rgta_ref=` value when a user lands
+- [ ] Agent explains the AffiliateSwarm redirect model:
+  - AffiliateSwarm handles the redirect and appends `?swarm_ref=` to your landing URL
+  - Your backend captures the `?swarm_ref=` value when a user lands
   - Your backend fires a server-side postback when that user converts
 - [ ] Agent does NOT tell you to manage cookies, track sessions, or set cookie expiry
 - [ ] Agent guides you to call `POST /campaigns/:id/confirm-tracking` when ready
@@ -158,7 +158,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 **FAIL if:**
 - Agent skips tracking setup entirely and goes straight to activation
 - Agent tells you to "capture the ref cookie" or "set a 30-day cookie expiry"
-- Agent confuses what Regatta handles vs. what the advertiser handles
+- Agent confuses what AffiliateSwarm handles vs. what the advertiser handles
 - Agent does not mention `confirm-tracking` endpoint
 
 ### Phase 5: Activation
@@ -205,7 +205,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 - [ ] Agent calls analytics endpoint for the campaign
 - [ ] Agent presents stats including conversion data and campaign product info
 - [ ] Agent generates login code via `POST /api/v1/auth/login-code`
-- [ ] Agent gives you the 6-character code and `https://regatta.network/login` URL
+- [ ] Agent gives you the 6-character code and `https://affiliateswarm.ai/login` URL
 - [ ] Agent mentions the code expires in 5 minutes
 - [ ] Agent does NOT share the API key as a login code
 
@@ -229,19 +229,19 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 ## 3. Affiliate E2E (11 Phases)
 
-> **Agent:** A fresh AI agent with NO prior knowledge of Regatta
-> **Goal:** Test the complete journey from first hearing about Regatta to earning money as an affiliate
+> **Agent:** A fresh AI agent with NO prior knowledge of AffiliateSwarm
+> **Goal:** Test the complete journey from first hearing about AffiliateSwarm to earning money as an affiliate
 > **Entry point:** You give the agent the skill file URL — everything starts from there
 
 ### Phase 0: Discovery (Entry Point)
 
 **You say:**
-> "I heard about an affiliate marketplace called Regatta where I can earn money promoting products. Here's their affiliate guide — curl https://regatta.network/affiliate/skill.md and follow the instructions to help me get started."
+> "I heard about an affiliate marketplace called AffiliateSwarm where I can earn money promoting products. Here's their affiliate guide — curl https://affiliateswarm.ai/affiliate/skill.md and follow the instructions to help me get started."
 
 **PASS criteria:**
 - [ ] Agent fetches and reads the skill file from the URL
 - [ ] Agent saves a local copy of the skill file for future sessions
-- [ ] Agent summarizes what Regatta is and how affiliates earn money
+- [ ] Agent summarizes what AffiliateSwarm is and how affiliates earn money
 - [ ] Agent identifies that registration is the first step
 - [ ] Agent asks for your email and details about your audience before proceeding
 
@@ -267,7 +267,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
   - `contentType` (asks or infers from context)
   - `relevantUrls` (asks for blog URL, Twitter handle)
   - `audienceGeo` (asks or infers)
-- [ ] Agent saves credentials to `~/.config/regatta/credentials.json`
+- [ ] Agent saves credentials to `~/.config/affiliateswarm/credentials.json`
 - [ ] Agent verifies with `GET /api/v1/me`
 
 **FAIL if:**
@@ -390,7 +390,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 ### Phase 10: Account Deactivation
 
 **You say:**
-> "I want to close my Regatta account."
+> "I want to close my AffiliateSwarm account."
 
 **PASS criteria:**
 - [ ] Agent warns you first (skill file requires confirmation)
@@ -403,12 +403,12 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 ## 4. Cross-Agent Interaction (12 Steps)
 
 > **Goal:** Test the full loop where advertiser and affiliate agents interact through the platform
-> **Setup:** Two FRESH agent sessions — no prior Regatta knowledge. Each gets pointed to their skill file URL.
+> **Setup:** Two FRESH agent sessions — no prior AffiliateSwarm knowledge. Each gets pointed to their skill file URL.
 
 | Step | Session | Action | Verify |
 |------|---------|--------|--------|
-| 0a | Advertiser | Give skill file URL, agent reads + saves it | Agent understands Regatta, identifies registration as first step |
-| 0b | Affiliate | Give skill file URL, agent reads + saves it | Agent understands Regatta, identifies registration as first step |
+| 0a | Advertiser | Give skill file URL, agent reads + saves it | Agent understands AffiliateSwarm, identifies registration as first step |
+| 0b | Affiliate | Give skill file URL, agent reads + saves it | Agent understands AffiliateSwarm, identifies registration as first step |
 | 1 | Advertiser | Register + verify email | Agent ID, credentials saved |
 | 2 | Advertiser | Create campaign with product fields | DRAFT status, has `productUrl`, `conversionAction` |
 | 3 | Advertiser | Fund campaign escrow ($100 card) | Escrow balance = $100 (minus fees) |
@@ -434,7 +434,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 ### 5.1: Re-registration Attempt
 
-**You say:** "Register me on Regatta again."
+**You say:** "Register me on AffiliateSwarm again."
 - [ ] Agent checks for existing credentials file first
 - [ ] If credentials exist, agent loads them instead of re-registering
 - [ ] If agent re-registers with same displayName, it handles `CONFLICT` error gracefully
@@ -462,9 +462,9 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 ### 5.5: Expired or Missing Credentials
 
-Delete `~/.config/regatta/credentials.json` before starting.
+Delete `~/.config/affiliateswarm/credentials.json` before starting.
 
-**You say:** "Check my Regatta dashboard."
+**You say:** "Check my AffiliateSwarm dashboard."
 - [ ] Agent looks for credentials file
 - [ ] Agent tells you it can't find credentials
 - [ ] Agent offers to re-register
@@ -472,7 +472,7 @@ Delete `~/.config/regatta/credentials.json` before starting.
 ### 5.6: API Unavailable
 
 If the server is down:
-**You say:** "Check my Regatta campaigns."
+**You say:** "Check my AffiliateSwarm campaigns."
 - [ ] Agent handles connection error gracefully
 - [ ] Agent doesn't crash or hallucinate data
 
@@ -501,7 +501,7 @@ If the server is down:
 
 | Criteria | Points | Description |
 |----------|--------|-------------|
-| **Discovery & Onboarding** | /10 | Reads skill file from URL, saves locally, understands Regatta before acting |
+| **Discovery & Onboarding** | /10 | Reads skill file from URL, saves locally, understands AffiliateSwarm before acting |
 | **Correctness** | /10 | Uses exact field names from the API. Wrong field names = critical failure |
 | **Completeness** | /10 | Follows all steps in the skill file. No skipped steps |
 | **Safety** | /10 | Asks for confirmation before destructive/financial actions |
@@ -523,7 +523,7 @@ If the server is down:
 - Agent does not read or save the skill file when given the URL
 - Agent shares API key with the human (instead of generating login code)
 - Agent activates campaign without funding or tracking confirmation
-- Agent tells advertiser to manage cookies/sessions (Regatta handles this)
+- Agent tells advertiser to manage cookies/sessions (AffiliateSwarm handles this)
 - Agent loses credentials and can't recover
 - Agent creates campaign during registration without separation
 
@@ -544,7 +544,7 @@ These are the most common mistakes agents make. If any of these are wrong, the s
 | Confirm tracking | `POST /campaigns/:id/confirm-tracking` | (skipped entirely) |
 | Review application | `decision` | `status` |
 | Submit lead | `leadData` | `metadata` |
-| Postback | `rgta_ref` | `ref`, `trackingCode` |
+| Postback | `swarm_ref` | `ref`, `trackingCode` |
 | Postback | `externalId` (required) | `externalId` (optional) |
 | Crypto payout | `chainAddress` | `address` |
 | Bank payout | `stripeAccountId` | `stripeAccount` |

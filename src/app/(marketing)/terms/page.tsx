@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - Regatta",
-  description: "Regatta terms of service governing use of the platform.",
+  title: "Terms of Service - AffiliateSwarm",
+  description: "AffiliateSwarm terms of service governing use of the platform.",
 };
 
 const EFFECTIVE_DATE = "April 13, 2026";
-const CONTACT_EMAIL = "legal@regatta.network";
+const CONTACT_EMAIL = "legal@affiliateswarm.ai";
 
 const sections = [
   {
     title: "1. Acceptance of Terms",
     content:
-      "By accessing or using the Regatta platform, API, or any related services (collectively, the \"Service\"), you agree to be bound by these Terms of Service. If you are using the Service on behalf of an organization, you represent that you have authority to bind that organization. If you do not agree, do not use the Service.",
+      "By accessing or using the AffiliateSwarm platform, API, or any related services (collectively, the \"Service\"), you agree to be bound by these Terms of Service. If you are using the Service on behalf of an organization, you represent that you have authority to bind that organization. If you do not agree, do not use the Service.",
   },
   {
     title: "2. Description of Service",
     content:
-      "Regatta is an affiliate marketing marketplace that connects advertisers with affiliates. Advertisers create campaigns and fund escrow accounts. Affiliates discover campaigns, promote products, and earn commissions on verified conversions. The platform supports both human users and AI agents operating on behalf of users.",
+      "AffiliateSwarm is an affiliate marketing marketplace that connects advertisers with affiliates. Advertisers create campaigns and fund escrow accounts. Affiliates discover campaigns, promote products, and earn commissions on verified conversions. The platform supports both human users and AI agents operating on behalf of users.",
   },
   {
     title: "3. Eligibility",
@@ -32,27 +32,27 @@ const sections = [
   {
     title: "5. Affiliate Obligations",
     content:
-      "Affiliates must: (a) promote campaigns honestly and in compliance with applicable laws; (b) not engage in click fraud, lead fabrication, cookie stuffing, or any form of artificial conversion generation; (c) disclose affiliate relationships where required by law (e.g., FTC guidelines). Regatta reserves the right to reject leads and suspend affiliates engaged in fraudulent activity.",
+      "Affiliates must: (a) promote campaigns honestly and in compliance with applicable laws; (b) not engage in click fraud, lead fabrication, cookie stuffing, or any form of artificial conversion generation; (c) disclose affiliate relationships where required by law (e.g., FTC guidelines). AffiliateSwarm reserves the right to reject leads and suspend affiliates engaged in fraudulent activity.",
   },
   {
     title: "6. AI Agent Usage",
     content:
-      "Users may authorize AI agents to interact with the Service on their behalf via the API or MCP tools. You are fully responsible for all actions taken by agents operating under your account, including campaign creation, lead submission, and fund transfers. Regatta is not liable for unintended agent behavior.",
+      "Users may authorize AI agents to interact with the Service on their behalf via the API or MCP tools. You are fully responsible for all actions taken by agents operating under your account, including campaign creation, lead submission, and fund transfers. AffiliateSwarm is not liable for unintended agent behavior.",
   },
   {
     title: "7. Fees and Payments",
     content:
-      "Regatta charges a platform fee on each verified conversion, deducted from the affiliate payout. The current fee rate is displayed on the pricing page and may be updated with notice. During early access, platform fees may be waived. Credit card deposits incur a processing fee charged by our payment processor (Stripe). ACH bank transfers and USDC deposits on Base are free. All amounts are in US dollars unless otherwise stated.",
+      "AffiliateSwarm charges a platform fee on each verified conversion, deducted from the affiliate payout. The current fee rate is displayed on the pricing page and may be updated with notice. During early access, platform fees may be waived. Credit card deposits incur a processing fee charged by our payment processor (Stripe). ACH bank transfers and USDC deposits on Base are free. All amounts are in US dollars unless otherwise stated.",
   },
   {
     title: "8. Escrow and Payouts",
     content:
-      "Advertiser deposits are held in escrow and released to affiliates upon verified conversions, subject to any applicable holding period. Affiliates receive payouts as USDC on Base. Regatta does not guarantee specific payout processing times. Payouts require a verified email address and an initialized wallet.",
+      "Advertiser deposits are held in escrow and released to affiliates upon verified conversions, subject to any applicable holding period. Affiliates receive payouts as USDC on Base. AffiliateSwarm does not guarantee specific payout processing times. Payouts require a verified email address and an initialized wallet.",
   },
   {
     title: "9. Disputes",
     content:
-      "Advertisers may dispute a lead during the holding period. Disputed leads are reviewed and, if upheld, the escrowed funds are returned to the advertiser. Regatta's determination on disputes is final. For unresolved issues, contact us at the email below.",
+      "Advertisers may dispute a lead during the holding period. Disputed leads are reviewed and, if upheld, the escrowed funds are returned to the advertiser. AffiliateSwarm's determination on disputes is final. For unresolved issues, contact us at the email below.",
   },
   {
     title: "10. Prohibited Conduct",
@@ -62,22 +62,22 @@ const sections = [
   {
     title: "11. Intellectual Property",
     content:
-      "Regatta and its logos, designs, and content are owned by Regatta or its licensors. You retain ownership of content you submit but grant Regatta a license to use it for operating the Service. You may not copy, modify, or reverse-engineer any part of the platform.",
+      "AffiliateSwarm and its logos, designs, and content are owned by AffiliateSwarm or its licensors. You retain ownership of content you submit but grant AffiliateSwarm a license to use it for operating the Service. You may not copy, modify, or reverse-engineer any part of the platform.",
   },
   {
     title: "12. Limitation of Liability",
     content:
-      "To the maximum extent permitted by law, Regatta is not liable for indirect, incidental, special, consequential, or punitive damages, or any loss of profits or data. Our total liability for any claim is limited to the fees you paid to Regatta in the 12 months preceding the claim. The Service is provided \"as is\" without warranties of any kind.",
+      "To the maximum extent permitted by law, AffiliateSwarm is not liable for indirect, incidental, special, consequential, or punitive damages, or any loss of profits or data. Our total liability for any claim is limited to the fees you paid to AffiliateSwarm in the 12 months preceding the claim. The Service is provided \"as is\" without warranties of any kind.",
   },
   {
     title: "13. Indemnification",
     content:
-      "You agree to indemnify and hold Regatta harmless from any claims, damages, or expenses arising from your use of the Service, your violation of these Terms, or your violation of any third-party rights.",
+      "You agree to indemnify and hold AffiliateSwarm harmless from any claims, damages, or expenses arising from your use of the Service, your violation of these Terms, or your violation of any third-party rights.",
   },
   {
     title: "14. Termination",
     content:
-      "Either party may terminate at any time. Regatta may suspend or terminate accounts that violate these Terms. On termination, pending escrow funds will be handled according to their current state: held funds return to the advertiser, released funds remain with the affiliate.",
+      "Either party may terminate at any time. AffiliateSwarm may suspend or terminate accounts that violate these Terms. On termination, pending escrow funds will be handled according to their current state: held funds return to the advertiser, released funds remain with the affiliate.",
   },
   {
     title: "15. Changes to Terms",

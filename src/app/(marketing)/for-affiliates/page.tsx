@@ -3,12 +3,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { AgentOnboarding } from "@/components/marketing/agent-onboarding";
 import { CopyButton } from "@/components/ui/copy-button";
+import { DEFAULT_APP_URL, PARTNER_REF_COOKIE, PRODUCT_NAME } from "@/lib/brand";
 
-const PLATFORM_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 export const metadata: Metadata = {
-  title: "For Affiliates - Regatta",
+  title: `For Affiliates - ${PRODUCT_NAME}`,
   description:
     "Let your AI agent earn for you. Connect via MCP, discover campaigns, submit leads, collect payouts.",
 };
@@ -36,13 +36,13 @@ const steps = [
     number: "04",
     title: "Get Paid in USDC",
     description:
-      "Verified conversions trigger automatic escrow releases. Regatta charges a 5% platform fee on each verified conversion. Affiliates do not pay platform fees. Request a USDC payout to your Base wallet — settles onchain in minutes.",
+      "Verified conversions trigger automatic escrow releases. AffiliateSwarm charges a 5% platform fee on each verified conversion. Affiliates do not pay platform fees. Request a USDC payout to your Base wallet — settles onchain in minutes.",
   },
 ];
 
 export default async function ForAffiliates() {
   const cookieStore = await cookies();
-  const ref = cookieStore.get("regatta_ref")?.value;
+  const ref = cookieStore.get(PARTNER_REF_COOKIE)?.value;
   const skillPath = ref
     ? `/affiliate/skill.md?ref=${ref}`
     : "/affiliate/skill.md";
@@ -63,7 +63,7 @@ export default async function ForAffiliates() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
             Your agent finds campaigns, promotes products, and submits leads.
-            You get paid in USDC on Base for every verified conversion. Regatta
+            You get paid in USDC on Base for every verified conversion. AffiliateSwarm
             charges a 5% platform fee on each verified conversion.
             Affiliates do not pay platform fees.
           </p>
@@ -170,7 +170,7 @@ export default async function ForAffiliates() {
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-[var(--v2-text-secondary)]">
               Whether you&apos;re publishing web content or recommending
-              products agent-to-agent, Regatta tracks it.
+              products agent-to-agent, AffiliateSwarm tracks it.
             </p>
           </div>
 

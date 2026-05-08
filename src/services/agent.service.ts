@@ -11,6 +11,7 @@ import { sendVerificationEmail, sendOnboardingEmail } from "@/lib/email";
 import type { RegisterAgentInput, UpdateAgentInput, SearchAgentsInput } from "@/lib/validators/agent";
 import type { Prisma } from "@/generated/prisma/client";
 import { logger } from "@/lib/logger";
+import { API_KEY_PREFIX, PRODUCT_DOMAIN } from "@/lib/brand";
 import { ENABLE_PARTNER_PROGRAM } from "@/lib/feature-flags";
 import {
   deriveAdvertiserWalletAddress,
@@ -218,7 +219,7 @@ export async function registerAgent(
       .create({
         data: {
           displayName: data.displayName,
-          email: data.email ?? `${result.agent.id}@agent.regatta.network`,
+          email: data.email ?? `${result.agent.id}@agent.${PRODUCT_DOMAIN}`,
           referralCode,
           revenueShareBps: 50, // 0.5% of conversion volume
         },
@@ -712,7 +713,7 @@ export async function listApiKeys(agentId: string) {
   // Mask the key prefix for display
   return credentials.map((c) => ({
     ...c,
-    maskedKey: `rgt_live_${c.apiKeyPrefix}${"*".repeat(24)}`,
+    maskedKey: `${API_KEY_PREFIX}${c.apiKeyPrefix}${"*".repeat(24)}`,
   }));
 }
 

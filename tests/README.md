@@ -1,4 +1,4 @@
-# Regatta Testing Harnesses
+# AffiliateSwarm Testing Harnesses
 
 > Last updated: 2026-04-02
 
@@ -172,7 +172,7 @@ npm run test:e2e:ui    # interactive Playwright dashboard (great for debugging)
 ```bash
 npx tsx tests/seed-test-campaign.ts   # one-time setup
 npx tsx tests/e2e-test.ts             # default: localhost:3099
-npx tsx tests/e2e-test.ts https://regatta.network  # against production
+npx tsx tests/e2e-test.ts https://affiliateswarm.ai  # against production
 ```
 
 **What it covers (13 sections, ~25 tests):** Skill files, referral links, auth, campaign discovery, affiliate enrollment, click tracking, postback conversions, earnings, partner revenue share, analytics, new agent registration, login codes, error handling.
@@ -228,7 +228,7 @@ Comprehensive curl-based test scripts for manual verification. Useful when you n
 
 **When to use:**
 - Debugging a specific API endpoint
-- Testing against production (`regatta.network`)
+- Testing against production (`affiliateswarm.ai`)
 - Verifying a single fix without running the full suite
 - Onboarding — understanding how the API works
 
@@ -236,7 +236,7 @@ Comprehensive curl-based test scripts for manual verification. Useful when you n
 
 ## 7. Browser UI QA (Claude Preview Tool)
 
-**What it is:** Claude autonomously launches a browser against your local Regatta deployment (or Vercel preview URL) and visually tests the web app. This replaces the need for a human to manually click through every dashboard page — Claude does it using the Preview tool built into Claude Code.
+**What it is:** Claude autonomously launches a browser against your local AffiliateSwarm deployment (or Vercel preview URL) and visually tests the web app. This replaces the need for a human to manually click through every dashboard page — Claude does it using the Preview tool built into Claude Code.
 
 **What Claude does:**
 1. Spins up a browser pointed at your local deployment (e.g., `http://localhost:3000`)
@@ -248,7 +248,7 @@ Comprehensive curl-based test scripts for manual verification. Useful when you n
 7. Tests interactions (fills forms, clicks buttons, checks error states)
 8. Reports pass/fail against the checklist
 
-This is what we did earlier today — Claude logged into both the advertiser and affiliate dashboards on the locally-served Regatta instance, walked through the PR #73 UI checklist, and verified each page rendered correctly with real data.
+This is what we did earlier today — Claude logged into both the advertiser and affiliate dashboards on the locally-served AffiliateSwarm instance, walked through the PR #73 UI checklist, and verified each page rendered correctly with real data.
 
 **Checklists:**
 - `tests/ui-qa-checklist.md` — Full UI QA checklist (222 lines, covers every dashboard page)
@@ -256,12 +256,12 @@ This is what we did earlier today — Claude logged into both the advertiser and
 
 **How to trigger:**
 Ask Claude to test the UI against a running instance. Example:
-> "Regatta is running on localhost:3000. Please walk through the PR #73 test plan and check each dashboard page."
+> "AffiliateSwarm is running on localhost:3000. Please walk through the PR #73 test plan and check each dashboard page."
 
 **How to run manually (if preferred):**
 Open the app in a browser and walk through `tests/ui-qa-checklist.md`.
 
-**Prerequisites:** A running Regatta instance (local Docker on `:3000` or a Vercel preview URL) with test data seeded. For local: `npm run redeploy:local` to ensure Docker is up.
+**Prerequisites:** A running AffiliateSwarm instance (local Docker on `:3000` or a Vercel preview URL) with test data seeded. For local: `npm run redeploy:local` to ensure Docker is up.
 
 **Full checklist:** `tests/ui-qa-checklist.md` (222 lines)
 
@@ -302,7 +302,7 @@ Open the app in a browser and walk through `tests/ui-qa-checklist.md`.
 
 ## 8. Agent Testing Playbook (AI Conversation Scripts + Browser)
 
-**What it is:** Structured conversation scripts that test how AI agents interact with Regatta's skill files. Originally designed for a human tester to walk through manually with a fresh AI agent, but Claude can now execute significant portions of this autonomously — using the Preview tool to test the UI flows (login, dashboard navigation, form submissions) and API calls to validate the backend behavior.
+**What it is:** Structured conversation scripts that test how AI agents interact with AffiliateSwarm's skill files. Originally designed for a human tester to walk through manually with a fresh AI agent, but Claude can now execute significant portions of this autonomously — using the Preview tool to test the UI flows (login, dashboard navigation, form submissions) and API calls to validate the backend behavior.
 
 The playbook tests two things:
 1. **Skill file quality** — Are the instructions clear enough for an AI agent to follow correctly?
@@ -315,7 +315,7 @@ The playbook tests two things:
 ### Advertiser E2E (8 Phases)
 | Phase | What's Tested |
 |-------|--------------|
-| 0. Discovery | Agent reads skill file from URL, saves locally, understands Regatta |
+| 0. Discovery | Agent reads skill file from URL, saves locally, understands AffiliateSwarm |
 | 1. Registration | Correct fields, no premature campaign creation, credentials saved |
 | 2. Campaign Creation | Separate from registration, new product fields included, confirmation before creating |
 | 3. Funding | Mentions $10 minimum, correct payment method field, full Stripe URL |
@@ -346,7 +346,7 @@ Re-registration, wrong-role actions, invalid destinations, insufficient balance,
 **Known Issues Tracker:** The playbook includes 12 known issues discovered during testing (e.g., `[your product]` placeholder in welcome email, silent activation failures).
 
 **When to run:**
-- After any changes to `skills/regatta-advertiser/SKILL.md` or `skills/regatta-affiliate/SKILL.md`
+- After any changes to `skills/swarm-advertiser/SKILL.md` or `skills/swarm-affiliate/SKILL.md`
 - After adding/changing API endpoints that agents interact with
 - After changing field names in request/response schemas
 - Periodically (monthly) to check for regression as the platform evolves
@@ -358,9 +358,9 @@ Re-registration, wrong-role actions, invalid destinations, insufficient balance,
 ### Docker (`docker-compose.yml` + `docker-compose.app.yml`)
 
 **Services:**
-- **postgres:16-alpine** — database (port `$REGATTA_POSTGRES_PORT`, default 5432)
+- **postgres:16-alpine** — database (port `$AFFILIATESWARM_POSTGRES_PORT`, default 5432)
 - **redis:7-alpine** — cache (port 6379)
-- **app** (overlay) — Next.js production build (port `$REGATTA_APP_PORT`, default 3000)
+- **app** (overlay) — Next.js production build (port `$AFFILIATESWARM_APP_PORT`, default 3000)
 
 The app container runs with `ENABLE_TEST_ROUTES=1`, which exposes `/api/test/*` endpoints used by smoke tests and E2E (e.g., `/api/test/verify-email` for bypassing real email verification).
 
@@ -449,7 +449,7 @@ Most E2E testing now runs automatically via GitHub Actions on PRs. You only need
 | Just changed service logic | `npm test` |
 | Changed an API route | `npm run smoke:local` |
 | Changed Stripe integration | `STRIPE_SECRET_KEY=sk_test_... npx playwright test full-journey` |
-| Quick check against production | `npx tsx tests/e2e-test.ts https://regatta.network` |
+| Quick check against production | `npx tsx tests/e2e-test.ts https://affiliateswarm.ai` |
 | Debugging a single endpoint | Copy the relevant curl from `tests/manual-test-scripts.md` |
 | Docker seems broken | `npm run redeploy:local && npm run smoke:local` |
 | Changed dashboard UI visually | Ask Claude to test via Preview tool, or walk `tests/ui-qa-checklist.md` manually |

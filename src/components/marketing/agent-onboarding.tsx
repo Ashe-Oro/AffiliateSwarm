@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AgentPromptBox } from "@/components/marketing/agent-prompt-box";
 
 const PLATFORM_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+  process.env.NEXT_PUBLIC_APP_URL || "https://affiliateswarm.ai";
 
 type AgentRole = "affiliate" | "advertiser";
 
@@ -21,7 +21,7 @@ const miniFlowByRole: Record<
     {
       num: "2",
       title: "Agent signs up",
-      desc: "Your agent registers on Regatta, saves its credentials, and connects to the marketplace.",
+      desc: "Your agent registers on AffiliateSwarm, saves its credentials, and connects to the marketplace.",
     },
     {
       num: "3",
@@ -38,7 +38,7 @@ const miniFlowByRole: Record<
     {
       num: "2",
       title: "Agent signs up",
-      desc: "Your agent registers on Regatta, saves its credentials, and connects to the marketplace.",
+      desc: "Your agent registers on AffiliateSwarm, saves its credentials, and connects to the marketplace.",
     },
     {
       num: "3",
@@ -61,7 +61,7 @@ export function AgentOnboarding({
 }: AgentOnboardingProps) {
   const [selectedRole, setSelectedRole] = useState<AgentRole>("affiliate");
   const role = lockedRole ?? selectedRole;
-  const promptText = `Please visit ${PLATFORM_URL}${role === "affiliate" ? affiliateSkillPath : advertiserSkillPath} and follow the instructions to join Regatta.`;
+  const promptText = `Please visit ${PLATFORM_URL}${role === "affiliate" ? affiliateSkillPath : advertiserSkillPath} and follow the instructions to join AffiliateSwarm.`;
   const miniFlow = miniFlowByRole[role];
 
   return (
@@ -77,7 +77,7 @@ export function AgentOnboarding({
         />
 
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-2 relative z-10">
-          Send Your AI Agent to Regatta
+          Send Your AI Agent to AffiliateSwarm
         </h2>
         <p className="text-center text-[var(--v2-text-secondary)] text-sm md:text-base mb-8 relative z-10">
           Paste this into a chat with your AI agent to get started.

@@ -190,16 +190,16 @@ async function main() {
     `Created reputation records: ${advertiserReputation.trustTier} (advertiser), ${affiliateReputation.trustTier} (affiliate)`
   );
 
-  // ── Regatta's own advertiser account ──
-  const regatta = await prisma.agent.create({
+  // ── AffiliateSwarm's own advertiser account ──
+  const affiliateSwarm = await prisma.agent.create({
     data: {
       type: "ADVERTISER",
-      displayName: "Regatta",
+      displayName: "AffiliateSwarm",
       ownerAccountId: "00000000-0000-0000-0000-000000000003",
       description:
-        "Regatta — the affiliate marketplace for AI agents. Earn by referring advertisers and affiliates to the platform.",
-      websiteUrl: "https://regatta.network",
-      logoUrl: "https://regatta.network/logo.png",
+        "AffiliateSwarm — the affiliate marketplace for AI agents. Earn by referring advertisers and affiliates to the platform.",
+      websiteUrl: "https://affiliateswarm.ai",
+      logoUrl: "https://affiliateswarm.ai/logo.png",
       status: "ACTIVE",
       accountGate: "LIVE",
       verificationLevel: "IDENTITY_VERIFIED",
@@ -209,7 +209,7 @@ async function main() {
 
   await prisma.wallet.create({
     data: {
-      agentId: regatta.id,
+      agentId: affiliateSwarm.id,
       currency: "USD",
       availableCents: 0,
       heldCents: 0,
@@ -220,7 +220,7 @@ async function main() {
 
   await prisma.agentReputation.create({
     data: {
-      agentId: regatta.id,
+      agentId: affiliateSwarm.id,
       trustTier: "PREMIUM",
       overallScore: 100.0,
       totalLeadsSubmitted: 0,
@@ -232,13 +232,13 @@ async function main() {
     },
   });
 
-  // Regatta's "Grow Regatta" campaign — affiliates earn for referring new users
-  const regattaCampaign = await prisma.campaign.create({
+  // AffiliateSwarm's "Grow AffiliateSwarm" campaign — affiliates earn for referring new users
+  const affiliateSwarmCampaign = await prisma.campaign.create({
     data: {
-      advertiserId: regatta.id,
-      name: "Grow Regatta — Refer Advertisers & Affiliates",
+      advertiserId: affiliateSwarm.id,
+      name: "Grow AffiliateSwarm — Refer Advertisers & Affiliates",
       description:
-        "Earn commissions by referring new advertisers and affiliates to Regatta. When someone you refer signs up and generates revenue on the platform, you earn a share. This is Regatta's own referral campaign — help us grow the network.",
+        "Earn commissions by referring new advertisers and affiliates to AffiliateSwarm. When someone you refer signs up and generates revenue on the platform, you earn a share. This is AffiliateSwarm's own referral campaign — help us grow the network.",
       status: "ACTIVE",
       compensationModel: "REV_SHARE",
       payoutPercentage: 10, // 10% revenue share
@@ -247,24 +247,24 @@ async function main() {
       budgetSpentCents: 0,
       geoTargets: [],
       categories: ["affiliate-network", "ai-agents", "referral"],
-      landingUrl: "https://regatta.network/partners",
+      landingUrl: "https://affiliateswarm.ai/partners",
       enrollmentPolicy: "OPEN",
       requiresVerification: false,
     },
   });
 
-  // Create escrow for the Regatta campaign
+  // Create escrow for the AffiliateSwarm campaign
   await prisma.escrowAccount.create({
     data: {
-      campaignId: regattaCampaign.id,
-      advertiserId: regatta.id,
+      campaignId: affiliateSwarmCampaign.id,
+      advertiserId: affiliateSwarm.id,
       totalDepositedCents: 10000000,
       currentBalanceCents: 10000000,
       status: "FUNDED",
     },
   });
 
-  console.log(`Created Regatta advertiser + "Grow Regatta" campaign`);
+  console.log(`Created AffiliateSwarm advertiser + "Grow AffiliateSwarm" campaign`);
 
   console.log("\nSeed completed successfully!");
   console.log({

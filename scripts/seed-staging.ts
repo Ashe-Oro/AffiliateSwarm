@@ -18,7 +18,7 @@ if (!connectionString) {
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter }) as PrismaClient;
 
-const API_KEY_PREFIX = "rgt_live_";
+const API_KEY_PREFIX = "swarm_live_";
 
 async function generateKey() {
   const { nanoid } = await import("nanoid");

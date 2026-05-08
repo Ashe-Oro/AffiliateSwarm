@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
  * GET /api/test/mock-landing — Test-only: mock advertiser landing page.
  *
  * In E2E tests, campaigns set their landingUrl to this endpoint.
- * When Regatta's tracking redirect sends a user here with ?rgta_ref=CODE,
+ * When AffiliateSwarm's tracking redirect sends a user here with ?swarm_ref=CODE,
  * this page captures the value and returns a simple HTML page simulating
  * an advertiser's website.
  *
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Not available in production" }, { status: 404 });
   }
 
-  const rgtaRef = req.nextUrl.searchParams.get("rgta_ref");
+  const swarmRef = req.nextUrl.searchParams.get("swarm_ref");
 
   // Return a simple HTML page that shows the tracking code and a "Buy Now" button.
   // The value is also available as a data attribute for Playwright to extract.
@@ -25,11 +25,11 @@ export async function GET(req: NextRequest) {
 <body>
   <h1>Mock Advertiser Product Page</h1>
   <p>This is a test landing page for E2E automated testing.</p>
-  ${rgtaRef ? `<p data-testid="rgta-ref-code">Tracking rgta_ref: <code id="rgta-ref">${rgtaRef}</code></p>` : '<p>No rgta_ref parameter received.</p>'}
+  ${swarmRef ? `<p data-testid="swarm-ref-code">Tracking swarm_ref: <code id="swarm-ref">${swarmRef}</code></p>` : '<p>No swarm_ref parameter received.</p>'}
   <button data-testid="buy-button">Buy Now</button>
   <script>
-    // Store rgta_ref in sessionStorage so it persists across page navigation
-    ${rgtaRef ? `sessionStorage.setItem('rgta_ref', '${rgtaRef}');` : ''}
+    // Store swarm_ref in sessionStorage so it persists across page navigation
+    ${swarmRef ? `sessionStorage.setItem('swarm_ref', '${swarmRef}');` : ''}
   </script>
 </body>
 </html>`;

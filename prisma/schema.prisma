@@ -1,5 +1,5 @@
 // =============================================================================
-// Regatta — Agent-First Affiliate Marketing Marketplace
+// AffiliateSwarm — Agent-First Affiliate Marketing Marketplace
 // Prisma Schema (PostgreSQL)
 // =============================================================================
 
@@ -186,7 +186,7 @@ enum AccountType {
   ESCROW
   PLATFORM_REVENUE
   PLATFORM_RESERVE
-  EXTERNAL // onchain/offchain counterparty outside Regatta (e.g. source of a USDC deposit, destination of a payout)
+  EXTERNAL // onchain/offchain counterparty outside AffiliateSwarm (e.g. source of a USDC deposit, destination of a payout)
 }
 
 enum PayoutMethod {
@@ -439,7 +439,7 @@ model Campaign {
   buyerIncentiveType   String?              @db.VarChar(20)   // PERCENTAGE_OFF, FIXED_AMOUNT_OFF, FREE_TRIAL, CUSTOM
   buyerIncentiveValue  String?              @db.VarChar(255)  // raw value: "20" (%), "1000" (cents), "30" (days), or free text
   buyerIncentiveLabel  String?              @db.VarChar(255)  // human-readable: "20% off first month"
-  buyerCouponCode      String?              @db.VarChar(100)  // promo code passed to advertiser: "REGATTA20"
+  buyerCouponCode      String?              @db.VarChar(100)  // promo code passed to advertiser: "SWARM20"
   enrollmentPolicy     EnrollmentPolicy     @default(APPROVAL_REQUIRED)
   requiresVerification Boolean              @default(true)
   leadRequirements     Json?                // required fields, validation rules, dedup window

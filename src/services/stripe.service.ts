@@ -229,7 +229,7 @@ export async function processAchPayout(payoutRequestId: string) {
       amount: payout.amountCents,
       currency: "usd",
       destination: destination.stripeAccountId as string,
-      description: `Regatta affiliate payout ${payout.id}`,
+      description: `AffiliateSwarm affiliate payout ${payout.id}`,
       metadata: {
         payoutRequestId: payout.id,
         affiliateId: payout.affiliateId,
@@ -282,13 +282,14 @@ export async function processAchPayout(payoutRequestId: string) {
     });
 
     return { success: true, transferId: transfer.id };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const failureReason = err instanceof Error ? err.message : "Unknown error";
     // Mark failed
     await prisma.payoutRequest.update({
       where: { id: payoutRequestId },
       data: {
         status: "FAILED",
-        failureReason: err.message ?? "Unknown error",
+        failureReason,
       },
     });
 
@@ -307,11 +308,11 @@ export async function processAchPayout(payoutRequestId: string) {
         payoutRequestId,
         affiliateId: payout.affiliateId,
         amountCents: payout.amountCents,
-        reason: err.message ?? "Unknown error",
+        reason: failureReason,
       },
     });
 
-    return { success: false, error: err.message };
+    return { success: false, error: failureReason };
   }
 }
 

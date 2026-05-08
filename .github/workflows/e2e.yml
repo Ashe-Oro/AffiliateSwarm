@@ -77,13 +77,13 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: regatta
-          POSTGRES_PASSWORD: regatta_dev
-          POSTGRES_DB: regatta
+          POSTGRES_USER: affiliateswarm
+          POSTGRES_PASSWORD: affiliateswarm_dev
+          POSTGRES_DB: affiliateswarm
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U regatta"
+          --health-cmd "pg_isready -U affiliateswarm"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -118,7 +118,7 @@ jobs:
       - name: Run database migrations
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: postgresql://regatta:regatta_dev@localhost:5432/regatta?schema=public
+          DATABASE_URL: postgresql://affiliateswarm:affiliateswarm_dev@localhost:5432/affiliateswarm?schema=public
 
       - name: Run E2E tests
         run: |
@@ -128,7 +128,7 @@ jobs:
             npx playwright test tests/e2e/full-lifecycle.spec.ts
           fi
         env:
-          DATABASE_URL: postgresql://regatta:regatta_dev@localhost:5432/regatta?schema=public
+          DATABASE_URL: postgresql://affiliateswarm:affiliateswarm_dev@localhost:5432/affiliateswarm?schema=public
           REDIS_URL: redis://localhost:6379
           BASE_URL: http://localhost:3099
           NEXT_PUBLIC_APP_URL: http://localhost:3099

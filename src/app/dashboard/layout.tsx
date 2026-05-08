@@ -35,8 +35,8 @@ export default async function DashboardLayout({
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold tracking-tight"
           >
-            <Image src="/regatta-logo.jpg" alt="Regatta" width={24} height={24} className="rounded" />
-            Regatta
+            <Image src="/affiliateswarm-logo.jpg" alt="AffiliateSwarm" width={24} height={24} className="rounded" />
+            AffiliateSwarm
           </Link>
           <RoleTag role="advertiser" className="ml-2" />
         </div>

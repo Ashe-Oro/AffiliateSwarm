@@ -348,7 +348,7 @@ export default function CreateCampaignPage() {
                       id="buyerCouponCode"
                       value={buyerCouponCode}
                       onChange={(e) => setBuyerCouponCode(e.target.value)}
-                      placeholder="REGATTA20"
+                      placeholder="SWARM20"
                     />
                     <p className="text-xs text-muted-foreground">
                       This code will be appended to affiliate tracking URLs as{" "}

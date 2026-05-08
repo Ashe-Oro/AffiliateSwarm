@@ -4,22 +4,22 @@ import { buildAgentIntegrationPrompt } from "../agent-integration-prompt";
 describe("buildAgentIntegrationPrompt", () => {
   const base = {
     testTrackingCode: "M4TSbpS8",
-    postbackUrl: "https://regatta.network/api/v1/postback",
-    llmGuideUrl: "https://regatta.network/docs/llm-integration-guide.md",
+    postbackUrl: "https://affiliateswarm.ai/api/v1/postback",
+    llmGuideUrl: "https://affiliateswarm.ai/docs/llm-integration-guide.md",
   };
 
   it("embeds the test tracking code, endpoint, and guide URL", () => {
     const prompt = buildAgentIntegrationPrompt(base);
     expect(prompt).toContain("M4TSbpS8");
-    expect(prompt).toContain("https://regatta.network/api/v1/postback");
+    expect(prompt).toContain("https://affiliateswarm.ai/api/v1/postback");
     expect(prompt).toContain(
-      "https://regatta.network/docs/llm-integration-guide.md",
+      "https://affiliateswarm.ai/docs/llm-integration-guide.md",
     );
   });
 
-  it("defers to the guide's env-var convention (REGATTA_API_KEY)", () => {
+  it("defers to the guide's env-var convention (AFFILIATESWARM_API_KEY)", () => {
     const prompt = buildAgentIntegrationPrompt(base);
-    expect(prompt).toContain("REGATTA_API_KEY");
+    expect(prompt).toContain("AFFILIATESWARM_API_KEY");
   });
 
   it("instructs the agent NOT to accept an API key pasted in chat", () => {

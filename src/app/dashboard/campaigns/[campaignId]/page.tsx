@@ -99,7 +99,7 @@ export default async function CampaignDetailPage({
     leadStats.map((s) => [s.status, s._count])
   );
 
-  const postbackUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://regatta.network"}/api/v1/postback`;
+  const postbackUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://affiliateswarm.ai"}/api/v1/postback`;
 
   const budgetRemainingCents = Math.max(
     campaign.budgetCents - campaign.budgetSpentCents,

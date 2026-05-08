@@ -1,4 +1,4 @@
-# Regatta Website Mockups - 2026-04-02
+# AffiliateSwarm Website Mockups - 2026-04-02
 
 ## Deliverables
 
@@ -45,7 +45,7 @@ Best fit if:
 Intent:
 
 - Story-driven homepage with strong narrative rhythm.
-- Reframe Regatta as category-defining, not only technical tooling.
+- Reframe AffiliateSwarm as category-defining, not only technical tooling.
 - Put "built for agents and humans" at the center of the narrative frame.
 
 What changed:
@@ -63,7 +63,7 @@ Best fit if:
 Intent:
 
 - Technical confidence and systems-level clarity.
-- Show Regatta as an operational control layer for agent-led growth.
+- Show AffiliateSwarm as an operational control layer for agent-led growth.
 - Clarify shared responsibility between autonomous agents and human operators.
 
 What changed:

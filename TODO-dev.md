@@ -17,10 +17,10 @@ Target: Monday 2026-03-23 — Start automated outreach to advertisers. Goal: 10-
 
 ## Medium Priority
 
-- [ ] **11. Regatta meta-affiliate program** — Build a meta-affiliate system: KOLs/humans sign up as Regatta affiliates, earn % of platform fees from anyone they bring on (either side)
+- [ ] **11. AffiliateSwarm meta-affiliate program** — Build a meta-affiliate system: KOLs/humans sign up as AffiliateSwarm affiliates, earn % of platform fees from anyone they bring on (either side)
 - [ ] **12. Staging environment** — Set up staging with test data (multiple advertisers with campaigns)
 - [ ] **13. End-to-end QA** — Full QA pass on advertiser signup, affiliate signup, click tracking, callbacks, dashboard
 
 ## Distribution / Marketing (post-launch)
 
-- [ ] **14. Publish skill files** — Get Regatta listed on ClawHub, ShopClawMart, MCP directories, GitHub skill-file repos
+- [ ] **14. Publish skill files** — Get AffiliateSwarm listed on ClawHub, ShopClawMart, MCP directories, GitHub skill-file repos

@@ -1,16 +1,16 @@
 # Advertiser Integration: Pixel vs Webhook
 
-This document summarizes the two integration options for advertisers listing campaigns on the Regatta marketplace. It is intended as a handoff document for technical and non-technical stakeholders.
+This document summarizes the two integration options for advertisers listing campaigns on the AffiliateSwarm marketplace. It is intended as a handoff document for technical and non-technical stakeholders.
 
 ---
 
 ## Background
 
-When an affiliate on Regatta refers a user to an advertiser, Regatta needs to know when that referral converts — i.e., when the referred user signs up or makes a purchase. This is how Regatta attributes the commission to the correct affiliate.
+When an affiliate on AffiliateSwarm refers a user to an advertiser, AffiliateSwarm needs to know when that referral converts — i.e., when the referred user signs up or makes a purchase. This is how AffiliateSwarm attributes the commission to the correct affiliate.
 
-Regatta handles the click side: when a user clicks an affiliate's Regatta link, Regatta logs the click and redirects the user to the advertiser's site. The conversion side is where the advertiser is involved.
+AffiliateSwarm handles the click side: when a user clicks an affiliate's AffiliateSwarm link, AffiliateSwarm logs the click and redirects the user to the advertiser's site. The conversion side is where the advertiser is involved.
 
-There are two ways an advertiser can tell Regatta about a conversion.
+There are two ways an advertiser can tell AffiliateSwarm about a conversion.
 
 ---
 
@@ -18,13 +18,13 @@ There are two ways an advertiser can tell Regatta about a conversion.
 
 ### How it works
 
-Regatta provides a small JavaScript snippet. The advertiser pastes it on their order confirmation or post-signup page — the page a user sees after completing a purchase or registration. When that page loads, the script fires automatically and notifies Regatta that a conversion occurred.
+AffiliateSwarm provides a small JavaScript snippet. The advertiser pastes it on their order confirmation or post-signup page — the page a user sees after completing a purchase or registration. When that page loads, the script fires automatically and notifies AffiliateSwarm that a conversion occurred.
 
-The attribution works via a cookie. When a user clicks a Regatta affiliate link, Regatta drops a cookie in their browser storing the affiliate's ID. When the user later completes a purchase and the confirmation page loads, the pixel reads that cookie and tells Regatta which affiliate to credit.
+The attribution works via a cookie. When a user clicks a AffiliateSwarm affiliate link, AffiliateSwarm drops a cookie in their browser storing the affiliate's ID. When the user later completes a purchase and the confirmation page loads, the pixel reads that cookie and tells AffiliateSwarm which affiliate to credit.
 
 ```html
 <!-- Advertiser pastes this on their confirmation page -->
-<script src="https://regatta.network/pixel.js"
+<script src="https://affiliateswarm.ai/pixel.js"
   data-campaign="your-campaign-id"
   data-order-id="{{ order.id }}"
   data-amount="{{ order.total }}">
@@ -51,22 +51,22 @@ The attribution works via a cookie. When a user clicks a Regatta affiliate link,
 
 ### How it works
 
-The advertiser's backend sends an HTTP POST request to a Regatta endpoint when a conversion occurs. The request includes the order details and the affiliate sub-ID that Regatta passed to the advertiser when the user clicked through.
+The advertiser's backend sends an HTTP POST request to a AffiliateSwarm endpoint when a conversion occurs. The request includes the order details and the affiliate sub-ID that AffiliateSwarm passed to the advertiser when the user clicked through.
 
 **How the sub-ID gets to the advertiser:**
 
-When a user clicks a Regatta affiliate link, Regatta appends a unique identifier to the destination URL before redirecting:
+When a user clicks a AffiliateSwarm affiliate link, AffiliateSwarm appends a unique identifier to the destination URL before redirecting:
 
 ```
-User clicks:    regatta.network/r/ashe/venice
-Regatta logs the click, then redirects to:
+User clicks:    affiliateswarm.ai/r/ashe/venice
+AffiliateSwarm logs the click, then redirects to:
                 venice.ai/signup?sub=aff_abc123
 ```
 
-The advertiser stores `aff_abc123` alongside the user record at signup. When the user purchases, the advertiser fires a webhook to Regatta including that sub-ID so Regatta knows which affiliate to credit.
+The advertiser stores `aff_abc123` alongside the user record at signup. When the user purchases, the advertiser fires a webhook to AffiliateSwarm including that sub-ID so AffiliateSwarm knows which affiliate to credit.
 
 ```json
-POST https://regatta.network/api/webhooks/venice
+POST https://affiliateswarm.ai/api/webhooks/venice
 
 {
   "event": "purchase",
@@ -76,9 +76,9 @@ POST https://regatta.network/api/webhooks/venice
 }
 ```
 
-**What Regatta needs to build for this:**
+**What AffiliateSwarm needs to build for this:**
 
-Regatta must host and maintain a dedicated webhook endpoint for each advertiser. This endpoint receives the conversion event, validates it came from a trusted source (via a shared secret or signature), looks up the affiliate by sub-ID, and credits their account. Each advertiser gets their own endpoint and shared secret at onboarding.
+AffiliateSwarm must host and maintain a dedicated webhook endpoint for each advertiser. This endpoint receives the conversion event, validates it came from a trusted source (via a shared secret or signature), looks up the affiliate by sub-ID, and credits their account. Each advertiser gets their own endpoint and shared secret at onboarding.
 
 ### Pros
 
@@ -91,7 +91,7 @@ Regatta must host and maintain a dedicated webhook endpoint for each advertiser.
 
 - Requires backend developer time from the advertiser — typically several hours to a few days
 - Advertiser must store and pass the sub-ID through their purchase flow
-- Regatta must build and maintain a webhook endpoint per advertiser
+- AffiliateSwarm must build and maintain a webhook endpoint per advertiser
 - Higher onboarding friction — not suitable for non-technical advertisers
 
 ---
@@ -105,7 +105,7 @@ Regatta must host and maintain a dedicated webhook endpoint for each advertiser.
 | Privacy / tracking restrictions | Affected | Not affected |
 | Time to integrate | 30 minutes | Several hours |
 | Best for | Most advertisers, fast onboarding | Technical advertisers, high-value campaigns |
-| Regatta build requirement | Host pixel script + conversion endpoint | Build per-advertiser webhook endpoint |
+| AffiliateSwarm build requirement | Host pixel script + conversion endpoint | Build per-advertiser webhook endpoint |
 
 ---
 
@@ -117,4 +117,4 @@ For the first advertiser (Venice), the webhook is the right choice given their t
 
 ---
 
-*Regatta — Agent-Native Affiliate Marketplace*
+*AffiliateSwarm — Agent-Native Affiliate Marketplace*

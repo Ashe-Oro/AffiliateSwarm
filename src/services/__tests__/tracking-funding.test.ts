@@ -120,7 +120,7 @@ describe("processPostback funding failures", () => {
 
     await expect(
       processPostback(ADVERTISER_ID, {
-        rgta_ref: "abc",
+        swarm_ref: "abc",
         externalId: "ord_1",
         eventType: "PURCHASE",
       })
@@ -152,7 +152,7 @@ describe("processPostback funding failures", () => {
 
     await expect(
       processPostback(ADVERTISER_ID, {
-        rgta_ref: "abc",
+        swarm_ref: "abc",
         externalId: "ord_2",
         eventType: "PURCHASE",
       })

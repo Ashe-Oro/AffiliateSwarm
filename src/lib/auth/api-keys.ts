@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
+import { API_KEY_PREFIX } from "@/lib/brand";
 
-const API_KEY_PREFIX = "rgt_live_";
 const RANDOM_LENGTH = 32;
 const BCRYPT_ROUNDS = 12;
 
@@ -15,7 +15,7 @@ export interface GeneratedApiKey {
 }
 
 /**
- * Generate a new API key with the `rgt_live_` prefix.
+ * Generate a new API key with the `swarm_live_` prefix.
  *
  * The full key is returned exactly once. Only the prefix and hash are persisted.
  */

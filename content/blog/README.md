@@ -49,7 +49,7 @@ Two env vars, both server-side:
 ```bash
 # Vercel / .env
 BLOG_API_KEY=<long-random-secret>     # required; bearer token that gates writes
-BLOG_DEFAULT_AUTHOR="Regatta"         # optional; byline when the request omits `author`
+BLOG_DEFAULT_AUTHOR="AffiliateSwarm"         # optional; byline when the request omits `author`
 ```
 
 Generate a secret once and keep it out of git:
@@ -111,7 +111,7 @@ Response (`201 Created`):
 ### Example (curl)
 
 ```bash
-curl -X POST https://regatta.network/api/v1/blog-posts \
+curl -X POST https://affiliateswarm.ai/api/v1/blog-posts \
   -H "Authorization: Bearer $BLOG_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{

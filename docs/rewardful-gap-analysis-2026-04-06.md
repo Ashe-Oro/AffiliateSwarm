@@ -1,97 +1,97 @@
-# Rewardful vs. Regatta Feature Gap Analysis
+# Rewardful vs. AffiliateSwarm Feature Gap Analysis
 
 Date: 2026-04-06
 
 ## Purpose
 
-This document compares Rewardful's publicly documented feature set against Regatta's currently implemented product capabilities. The goal is to help product and engineering identify where Regatta is already differentiated, where it is functionally behind a mature affiliate platform, and which gaps are most important to prioritize.
+This document compares Rewardful's publicly documented feature set against AffiliateSwarm's currently implemented product capabilities. The goal is to help product and engineering identify where AffiliateSwarm is already differentiated, where it is functionally behind a mature affiliate platform, and which gaps are most important to prioritize.
 
 ## Scope and methodology
 
 - Rewardful analysis is based on public marketing pages, pricing pages, feature pages, help content, and developer documentation.
-- Regatta analysis is based on the current repository implementation, including code, docs, dashboard surfaces, API routes, and MCP tooling.
+- AffiliateSwarm analysis is based on the current repository implementation, including code, docs, dashboard surfaces, API routes, and MCP tooling.
 - This is a high-level product capability comparison, not a UI-by-UI teardown.
 - "Yes" means the capability is clearly present.
 - "Partial" means the capability exists in a limited, incomplete, or materially different form.
-- "No" means the capability was not found in public Rewardful materials or in the current Regatta codebase.
+- "No" means the capability was not found in public Rewardful materials or in the current AffiliateSwarm codebase.
 
 ## Executive takeaways
 
 - Rewardful is meaningfully ahead on traditional SaaS affiliate-program operations: billing-platform integrations, recurring commissions, coupon attribution, attribution controls, payout operations, branded program tooling, and merchant admin maturity.
-- Regatta is ahead on agent-native and network-native capabilities: advertiser and affiliate discovery, MCP workflows, escrow-backed incentives, onchain funding, crypto payouts, and reputation-based trust.
-- Regatta's biggest gaps relative to Rewardful are not in the marketplace concept itself, but in the operational maturity needed for a mainstream advertiser affiliate program.
+- AffiliateSwarm is ahead on agent-native and network-native capabilities: advertiser and affiliate discovery, MCP workflows, escrow-backed incentives, onchain funding, crypto payouts, and reputation-based trust.
+- AffiliateSwarm's biggest gaps relative to Rewardful are not in the marketplace concept itself, but in the operational maturity needed for a mainstream advertiser affiliate program.
 - The highest-value gaps are attribution flexibility, recurring commission support, coupon-based promotion, payout operations, and integration ecosystem depth.
 
 ## High-level feature comparison
 
-| Feature                                                    | Rewardful    | Regatta | Notes                                                                                                                                                                                 |
+| Feature                                                    | Rewardful    | AffiliateSwarm | Notes                                                                                                                                                                                 |
 | ---------------------------------------------------------- | ------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Stripe-native affiliate program setup                      | Yes          | Partial | Rewardful is deeply Stripe-native for commission lifecycle handling. Regatta uses Stripe for deposits and funding, not as the core merchant billing source for affiliate commissions. |
-| Paddle integration                                         | Yes          | No      | Rewardful publicly supports Paddle Classic. No Paddle support found in Regatta.                                                                                                       |
-| No-code / quick install setup                              | Yes          | Partial | Rewardful emphasizes fast install. Regatta supports dashboard and API onboarding, but not a simple drop-in merchant setup path.                                                       |
-| Broad third-party integrations ecosystem                   | Yes          | No      | Rewardful has a visible integrations catalog. Regatta currently relies on its own product surfaces plus API and webhooks.                                                             |
+| Stripe-native affiliate program setup                      | Yes          | Partial | Rewardful is deeply Stripe-native for commission lifecycle handling. AffiliateSwarm uses Stripe for deposits and funding, not as the core merchant billing source for affiliate commissions. |
+| Paddle integration                                         | Yes          | No      | Rewardful publicly supports Paddle Classic. No Paddle support found in AffiliateSwarm.                                                                                                       |
+| No-code / quick install setup                              | Yes          | Partial | Rewardful emphasizes fast install. AffiliateSwarm supports dashboard and API onboarding, but not a simple drop-in merchant setup path.                                                       |
+| Broad third-party integrations ecosystem                   | Yes          | No      | Rewardful has a visible integrations catalog. AffiliateSwarm currently relies on its own product surfaces plus API and webhooks.                                                             |
 | Webhooks                                                   | Yes          | Yes     | Both platforms support outbound webhook configuration.                                                                                                                                |
 | REST API                                                   | Yes          | Yes     | Both offer API-driven workflows.                                                                                                                                                      |
-| White-label / custom program extensibility via API         | Yes          | Partial | Rewardful markets white-label flexibility. Regatta has APIs and machine access, but not a clear white-label affiliate-program layer.                                                  |
+| White-label / custom program extensibility via API         | Yes          | Partial | Rewardful markets white-label flexibility. AffiliateSwarm has APIs and machine access, but not a clear white-label affiliate-program layer.                                                  |
 | Affiliate portal/dashboard                                 | Yes          | Yes     | Both provide affiliate-facing dashboards.                                                                                                                                             |
-| Branded affiliate portal                                   | Yes          | No      | Rewardful offers this on higher plans. No equivalent found in Regatta.                                                                                                                |
-| Custom domain for affiliate portal/program                 | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Affiliate signup links / self-serve affiliate registration | Yes          | Partial | Rewardful provides merchant-run signup flows. Regatta supports affiliate registration, but more as network onboarding than branded merchant program signup.                           |
-| Bulk affiliate invites                                     | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Private / invite-only campaigns                            | Yes          | Partial | Regatta models invite-only enrollment, but invite issuance and management appear incomplete.                                                                                          |
-| Affiliate segmentation                                     | Yes          | Partial | Rewardful clearly supports organizing affiliates into different structures. Regatta has campaign policies and discovery filters, but not mature segmentation tooling.                 |
-| Affiliate recruitment tooling                              | Yes          | Yes     | Rewardful has Affiliate Finder. Regatta has advertiser-side affiliate discovery.                                                                                                      |
-| Built-in affiliate marketplace/network discovery           | No / limited | Yes     | Rewardful is not positioned as a marketplace. Regatta is explicitly a network and marketplace.                                                                                        |
+| Branded affiliate portal                                   | Yes          | No      | Rewardful offers this on higher plans. No equivalent found in AffiliateSwarm.                                                                                                                |
+| Custom domain for affiliate portal/program                 | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Affiliate signup links / self-serve affiliate registration | Yes          | Partial | Rewardful provides merchant-run signup flows. AffiliateSwarm supports affiliate registration, but more as network onboarding than branded merchant program signup.                           |
+| Bulk affiliate invites                                     | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Private / invite-only campaigns                            | Yes          | Partial | AffiliateSwarm models invite-only enrollment, but invite issuance and management appear incomplete.                                                                                          |
+| Affiliate segmentation                                     | Yes          | Partial | Rewardful clearly supports organizing affiliates into different structures. AffiliateSwarm has campaign policies and discovery filters, but not mature segmentation tooling.                 |
+| Affiliate recruitment tooling                              | Yes          | Yes     | Rewardful has Affiliate Finder. AffiliateSwarm has advertiser-side affiliate discovery.                                                                                                      |
+| Built-in affiliate marketplace/network discovery           | No / limited | Yes     | Rewardful is not positioned as a marketplace. AffiliateSwarm is explicitly a network and marketplace.                                                                                        |
 | Link-based referral tracking                               | Yes          | Yes     | Both support affiliate tracking links.                                                                                                                                                |
-| Coupon code attribution                                    | Yes          | No      | Strong Rewardful capability. No coupon attribution found in Regatta.                                                                                                                  |
-| Custom coupon codes for affiliates                         | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Direct/branded tracking URLs                               | Yes          | Partial | Regatta supports tracking links, but not clearly merchant-branded direct page tracking.                                                                                               |
-| First-party cookie tracking                                | Yes          | Partial | Rewardful explicitly supports first-party browser attribution. Regatta tracks redirect clicks, but is not built out as a cookie-attribution product.                                  |
-| Configurable cookie duration                               | Yes          | N/A     | Not applicable. Regatta does not set cookies — tracking URLs land the user directly on the advertiser's site. Cookie/attribution windows are the advertiser's responsibility.         |
-| First-touch / last-touch attribution selection             | Yes          | No      | Rewardful supports configurable attribution rules. Not found in Regatta.                                                                                                              |
-| Cross-domain tracking                                      | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Manual attribution / manual sale assignment                | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Multi-touch attribution                                    | No           | No      | Rewardful does not publicly support this. Regatta also does not appear to.                                                                                                            |
+| Coupon code attribution                                    | Yes          | No      | Strong Rewardful capability. No coupon attribution found in AffiliateSwarm.                                                                                                                  |
+| Custom coupon codes for affiliates                         | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Direct/branded tracking URLs                               | Yes          | Partial | AffiliateSwarm supports tracking links, but not clearly merchant-branded direct page tracking.                                                                                               |
+| First-party cookie tracking                                | Yes          | Partial | Rewardful explicitly supports first-party browser attribution. AffiliateSwarm tracks redirect clicks, but is not built out as a cookie-attribution product.                                  |
+| Configurable cookie duration                               | Yes          | N/A     | Not applicable. AffiliateSwarm does not set cookies — tracking URLs land the user directly on the advertiser's site. Cookie/attribution windows are the advertiser's responsibility.         |
+| First-touch / last-touch attribution selection             | Yes          | No      | Rewardful supports configurable attribution rules. Not found in AffiliateSwarm.                                                                                                              |
+| Cross-domain tracking                                      | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Manual attribution / manual sale assignment                | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Multi-touch attribution                                    | No           | No      | Rewardful does not publicly support this. AffiliateSwarm also does not appear to.                                                                                                            |
 | Campaign-based program structure                           | Yes          | Yes     | Both use campaigns as a core unit.                                                                                                                                                    |
 | Multiple campaigns with different payout structures        | Yes          | Yes     | Both support multiple campaigns with distinct terms.                                                                                                                                  |
-| Flexible commission models                                 | Yes          | Yes     | Rewardful supports multiple commission types. Regatta supports CPL, CPA, CPC, and REV_SHARE in the product model.                                                                     |
+| Flexible commission models                                 | Yes          | Yes     | Rewardful supports multiple commission types. AffiliateSwarm supports CPL, CPA, CPC, and REV_SHARE in the product model.                                                                     |
 | One-time commissions                                       | Yes          | Yes     | Both support one-time payout structures.                                                                                                                                              |
-| Recurring subscription commissions                         | Yes          | No      | Rewardful is strong here. Regatta does not appear to support subscription lifecycle commissions.                                                                                      |
-| Tiered commission structures                               | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Variable commissions by plan/product                       | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Double-sided incentives / referral rewards                 | Yes          | No      | Rewardful lists this. No equivalent found in Regatta.                                                                                                                                 |
-| Minimum payout threshold configuration                     | Yes          | Partial | Rewardful clearly supports this. Regatta has payout requests but no clear merchant-configurable threshold feature.                                                                    |
-| Lead submission / lead-gen workflows                       | Partial      | Yes     | Regatta is lead-centric. Rewardful is more sale and subscription oriented.                                                                                                            |
-| Manual lead approval / rejection                           | No / limited | Yes     | Core Regatta workflow. Not a core public Rewardful positioning point.                                                                                                                 |
-| Evidence / proof-of-work on leads                          | No           | Yes     | Regatta supports evidence arrays on lead submissions.                                                                                                                                 |
-| Server-to-server postback attribution                      | Partial      | Yes     | Regatta clearly supports postbacks. Rewardful is more billing-platform native in public positioning.                                                                                  |
-| Agent-to-agent referral tokens                             | No           | Yes     | Regatta-specific differentiator.                                                                                                                                                      |
-| Escrow-backed campaign funding                             | No           | Yes     | Strong Regatta differentiator.                                                                                                                                                        |
-| Wallet system for advertisers/affiliates                   | No           | Yes     | Regatta uses wallet and escrow primitives. Rewardful does not present itself this way.                                                                                                |
-| Stripe card/ACH funding for advertisers                    | No           | Yes     | Regatta supports advertiser funding flows.                                                                                                                                            |
-| Onchain USDC funding/payout rails                          | No           | Yes     | Strong Regatta differentiator.                                                                                                                                                        |
-| Crypto payout requests                                     | No           | Yes     | Regatta supports crypto payout requests.                                                                                                                                              |
-| Managed payout operations                                  | Yes          | Partial | Rewardful offers a mature managed payout product. Regatta supports payout requests and internal processing, but not equivalent global payout operations.                              |
-| PayPal payouts                                             | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Wise payouts                                               | Yes          | No      | Not found in Regatta.                                                                                                                                                                 |
-| Multiple payout methods for affiliates                     | Yes          | Partial | Rewardful offers broader payout options. Regatta supports crypto and bank transfer, but not the same breadth.                                                                         |
-| Multi-currency support                                     | Yes          | No      | Not found clearly in Regatta.                                                                                                                                                         |
-| Tax/KYC/compliance handling for payouts                    | Yes          | No      | Rewardful explicitly covers this in Managed Payouts. Not found in Regatta.                                                                                                            |
-| Refund handling                                            | Yes          | Partial | Rewardful handles refund-aware commissions. Regatta handles rejected leads and escrow refunds, but not broader commerce refund lifecycle logic.                                       |
-| Upgrade/downgrade/cancellation-aware commissions           | Yes          | No      | Rewardful supports this for subscription businesses. Regatta does not appear to.                                                                                                      |
+| Recurring subscription commissions                         | Yes          | No      | Rewardful is strong here. AffiliateSwarm does not appear to support subscription lifecycle commissions.                                                                                      |
+| Tiered commission structures                               | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Variable commissions by plan/product                       | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Double-sided incentives / referral rewards                 | Yes          | No      | Rewardful lists this. No equivalent found in AffiliateSwarm.                                                                                                                                 |
+| Minimum payout threshold configuration                     | Yes          | Partial | Rewardful clearly supports this. AffiliateSwarm has payout requests but no clear merchant-configurable threshold feature.                                                                    |
+| Lead submission / lead-gen workflows                       | Partial      | Yes     | AffiliateSwarm is lead-centric. Rewardful is more sale and subscription oriented.                                                                                                            |
+| Manual lead approval / rejection                           | No / limited | Yes     | Core AffiliateSwarm workflow. Not a core public Rewardful positioning point.                                                                                                                 |
+| Evidence / proof-of-work on leads                          | No           | Yes     | AffiliateSwarm supports evidence arrays on lead submissions.                                                                                                                                 |
+| Server-to-server postback attribution                      | Partial      | Yes     | AffiliateSwarm clearly supports postbacks. Rewardful is more billing-platform native in public positioning.                                                                                  |
+| Agent-to-agent referral tokens                             | No           | Yes     | AffiliateSwarm-specific differentiator.                                                                                                                                                      |
+| Escrow-backed campaign funding                             | No           | Yes     | Strong AffiliateSwarm differentiator.                                                                                                                                                        |
+| Wallet system for advertisers/affiliates                   | No           | Yes     | AffiliateSwarm uses wallet and escrow primitives. Rewardful does not present itself this way.                                                                                                |
+| Stripe card/ACH funding for advertisers                    | No           | Yes     | AffiliateSwarm supports advertiser funding flows.                                                                                                                                            |
+| Onchain USDC funding/payout rails                          | No           | Yes     | Strong AffiliateSwarm differentiator.                                                                                                                                                        |
+| Crypto payout requests                                     | No           | Yes     | AffiliateSwarm supports crypto payout requests.                                                                                                                                              |
+| Managed payout operations                                  | Yes          | Partial | Rewardful offers a mature managed payout product. AffiliateSwarm supports payout requests and internal processing, but not equivalent global payout operations.                              |
+| PayPal payouts                                             | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Wise payouts                                               | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
+| Multiple payout methods for affiliates                     | Yes          | Partial | Rewardful offers broader payout options. AffiliateSwarm supports crypto and bank transfer, but not the same breadth.                                                                         |
+| Multi-currency support                                     | Yes          | No      | Not found clearly in AffiliateSwarm.                                                                                                                                                         |
+| Tax/KYC/compliance handling for payouts                    | Yes          | No      | Rewardful explicitly covers this in Managed Payouts. Not found in AffiliateSwarm.                                                                                                            |
+| Refund handling                                            | Yes          | Partial | Rewardful handles refund-aware commissions. AffiliateSwarm handles rejected leads and escrow refunds, but not broader commerce refund lifecycle logic.                                       |
+| Upgrade/downgrade/cancellation-aware commissions           | Yes          | No      | Rewardful supports this for subscription businesses. AffiliateSwarm does not appear to.                                                                                                      |
 | Fraud detection                                            | Yes          | Yes     | Both have fraud-related capabilities.                                                                                                                                                 |
-| Self-referral fraud detection                              | Yes          | No      | Rewardful explicitly supports this. No equivalent found in Regatta.                                                                                                                   |
-| Reputation / trust tiers                                   | No           | Yes     | Regatta has a real reputation and trust-tier system.                                                                                                                                  |
-| Peer ratings / reviews                                     | No           | Yes     | Regatta supports peer ratings tied to campaigns.                                                                                                                                      |
+| Self-referral fraud detection                              | Yes          | No      | Rewardful explicitly supports this. No equivalent found in AffiliateSwarm.                                                                                                                   |
+| Reputation / trust tiers                                   | No           | Yes     | AffiliateSwarm has a real reputation and trust-tier system.                                                                                                                                  |
+| Peer ratings / reviews                                     | No           | Yes     | AffiliateSwarm supports peer ratings tied to campaigns.                                                                                                                                      |
 | Merchant analytics dashboard                               | Yes          | Yes     | Both provide merchant analytics.                                                                                                                                                      |
 | Affiliate performance analytics                            | Yes          | Yes     | Both provide affiliate-side metrics.                                                                                                                                                  |
 | Campaign-level analytics                                   | Yes          | Yes     | Both support campaign reporting.                                                                                                                                                      |
-| Team member access / multi-user admin                      | Yes          | No      | Rewardful pricing explicitly supports team members. No clear equivalent found in Regatta.                                                                                             |
-| API key management                                         | No / unclear | Yes     | Regatta has explicit scoped API key management.                                                                                                                                       |
-| MCP / agent-native tooling                                 | No           | Yes     | Regatta is far ahead here.                                                                                                                                                            |
-| Marketplace-style campaign discovery for affiliates        | No           | Yes     | Regatta supports affiliate-side campaign discovery as a first-class workflow.                                                                                                         |
-| Advertiser discovery of affiliates                         | Partial      | Yes     | Rewardful's Affiliate Finder is a recruitment tool; Regatta offers advertiser-side affiliate discovery directly in the network.                                                       |
-| Public docs for agent onboarding / machine-readable skills | No           | Yes     | Regatta supports skill-based and MCP-based onboarding for agents.                                                                                                                     |
+| Team member access / multi-user admin                      | Yes          | No      | Rewardful pricing explicitly supports team members. No clear equivalent found in AffiliateSwarm.                                                                                             |
+| API key management                                         | No / unclear | Yes     | AffiliateSwarm has explicit scoped API key management.                                                                                                                                       |
+| MCP / agent-native tooling                                 | No           | Yes     | AffiliateSwarm is far ahead here.                                                                                                                                                            |
+| Marketplace-style campaign discovery for affiliates        | No           | Yes     | AffiliateSwarm supports affiliate-side campaign discovery as a first-class workflow.                                                                                                         |
+| Advertiser discovery of affiliates                         | Partial      | Yes     | Rewardful's Affiliate Finder is a recruitment tool; AffiliateSwarm offers advertiser-side affiliate discovery directly in the network.                                                       |
+| Public docs for agent onboarding / machine-readable skills | No           | Yes     | AffiliateSwarm supports skill-based and MCP-based onboarding for agents.                                                                                                                     |
 
 ## Where Rewardful is ahead
 
@@ -108,9 +108,9 @@ Rewardful is strongest in the operational layer required by conventional SaaS af
 
 These are not just extra features. They reduce operational burden for advertisers and make Rewardful easier to adopt for the kinds of subscription businesses that already expect traditional affiliate tooling.
 
-## Where Regatta is differentiated
+## Where AffiliateSwarm is differentiated
 
-Regatta is not simply a smaller Rewardful. It has real product advantages in areas Rewardful does not appear to target:
+AffiliateSwarm is not simply a smaller Rewardful. It has real product advantages in areas Rewardful does not appear to target:
 
 - agent-native workflows through MCP and API-first automation
 - a true network/marketplace model where advertisers and affiliates discover each other
@@ -123,9 +123,9 @@ Regatta is not simply a smaller Rewardful. It has real product advantages in are
 
 These are meaningful strategic differentiators and should not be treated as secondary to copying Rewardful feature-for-feature.
 
-## Gaps that appear most important for Regatta
+## Gaps that appear most important for AffiliateSwarm
 
-The most material gaps are the ones that block Regatta from competing for mainstream advertiser programs, especially SaaS merchants accustomed to mature affiliate tooling.
+The most material gaps are the ones that block AffiliateSwarm from competing for mainstream advertiser programs, especially SaaS merchants accustomed to mature affiliate tooling.
 
 ### 1. Attribution and tracking maturity
 
@@ -148,7 +148,7 @@ Why this matters:
 
 ### 2. Subscription and recurring commission support
 
-Rewardful is built for subscription businesses. Regatta currently looks much stronger for leads, conversions, and escrowed one-time payout events than for SaaS recurring revenue sharing.
+Rewardful is built for subscription businesses. AffiliateSwarm currently looks much stronger for leads, conversions, and escrowed one-time payout events than for SaaS recurring revenue sharing.
 
 Main gaps:
 
@@ -160,11 +160,11 @@ Main gaps:
 Why this matters:
 
 - many mature affiliate programs are fundamentally subscription affiliate programs
-- without recurring commission support, Regatta is harder to position as a direct alternative for SaaS companies
+- without recurring commission support, AffiliateSwarm is harder to position as a direct alternative for SaaS companies
 
 ### 3. Payout operations and financial admin maturity
 
-Regatta has strong internal wallet and escrow primitives, but Rewardful is ahead in real-world payout operations.
+AffiliateSwarm has strong internal wallet and escrow primitives, but Rewardful is ahead in real-world payout operations.
 
 Main gaps:
 
@@ -200,7 +200,7 @@ Why this matters:
 
 ### 5. Integration ecosystem depth
 
-Rewardful benefits from meeting customers where they already work. Regatta is still much more self-contained.
+Rewardful benefits from meeting customers where they already work. AffiliateSwarm is still much more self-contained.
 
 Main gaps:
 
@@ -216,7 +216,7 @@ Why this matters:
 
 ## Recommended prioritization
 
-If the goal is to improve Regatta's competitiveness against mature affiliate platforms while preserving its differentiated strategy, the most sensible priority order is:
+If the goal is to improve AffiliateSwarm's competitiveness against mature affiliate platforms while preserving its differentiated strategy, the most sensible priority order is:
 
 1. Attribution and tracking maturity
 2. Recurring subscription commission support
@@ -238,19 +238,19 @@ An effective way to think about the roadmap is:
 
 - do not treat Rewardful as the exact product blueprint
 - do treat Rewardful as the benchmark for mature affiliate-program operations
-- preserve Regatta's advantage in agent workflows, escrow, onchain rails, and marketplace dynamics
-- close the operational gaps that would otherwise disqualify Regatta for mainstream advertiser adoption
+- preserve AffiliateSwarm's advantage in agent workflows, escrow, onchain rails, and marketplace dynamics
+- close the operational gaps that would otherwise disqualify AffiliateSwarm for mainstream advertiser adoption
 
-In practice, that means Regatta likely should evolve into:
+In practice, that means AffiliateSwarm likely should evolve into:
 
 - a modern affiliate network with agent-native workflows and differentiated trust/payment infrastructure
 - plus the operational capabilities advertisers already expect from a mature platform like Rewardful
 
 ## Final gap analysis
 
-Rewardful is ahead where affiliate software becomes operationally boring in the best possible way: installation, attribution control, recurring billing-based commissions, payouts, compliance, and partner-program administration. Regatta is ahead where affiliate software becomes structurally novel: agent-native workflows, marketplace discovery, escrow, onchain rails, and machine-oriented trust systems.
+Rewardful is ahead where affiliate software becomes operationally boring in the best possible way: installation, attribution control, recurring billing-based commissions, payouts, compliance, and partner-program administration. AffiliateSwarm is ahead where affiliate software becomes structurally novel: agent-native workflows, marketplace discovery, escrow, onchain rails, and machine-oriented trust systems.
 
-The key product question is therefore not whether Regatta should become more like Rewardful across the board. The more useful question is which Rewardful capabilities are required to remove adoption blockers for the kinds of advertisers Regatta wants to win.
+The key product question is therefore not whether AffiliateSwarm should become more like Rewardful across the board. The more useful question is which Rewardful capabilities are required to remove adoption blockers for the kinds of advertisers AffiliateSwarm wants to win.
 
 Based on the current product, the most important gaps to close are:
 
@@ -260,25 +260,25 @@ Based on the current product, the most important gaps to close are:
 - merchant-side administration and program configuration depth
 - integrations that reduce implementation overhead
 
-If Regatta closes those gaps while preserving its differentiated network and agent-native model, it can compete more credibly with mature platforms without giving up what makes it unique.
+If AffiliateSwarm closes those gaps while preserving its differentiated network and agent-native model, it can compete more credibly with mature platforms without giving up what makes it unique.
 
 ## Launch readiness checklist
 
-This checklist is meant to answer a practical question: is Regatta ready to launch in a way that can attract initial advertisers and affiliates despite a more mature competitive landscape?
+This checklist is meant to answer a practical question: is AffiliateSwarm ready to launch in a way that can attract initial advertisers and affiliates despite a more mature competitive landscape?
 
 The standard here should not be "feature parity with Rewardful." The standard should be "good enough to win a clear wedge market with strong trust signals and a credible operating model."
 
 ### 1. Positioning and ICP readiness
 
 - [ ] Define one primary launch ICP for advertisers, not multiple broad segments.
-- [ ] Write a clear one-sentence positioning statement that explains why Regatta exists versus conventional affiliate tools.
+- [ ] Write a clear one-sentence positioning statement that explains why AffiliateSwarm exists versus conventional affiliate tools.
 - [ ] Decide whether the first launch motion is primarily for AI-native products, lead-gen programs, crypto-native products, or another narrow segment.
-- [ ] Identify the specific cases where Regatta is better than Rewardful today, rather than eventually.
-- [ ] Remove messaging that implies Regatta is already a full general-purpose replacement for mature affiliate platforms.
+- [ ] Identify the specific cases where AffiliateSwarm is better than Rewardful today, rather than eventually.
+- [ ] Remove messaging that implies AffiliateSwarm is already a full general-purpose replacement for mature affiliate platforms.
 
 Launch bar:
 
-- the team can answer "who is Regatta for first?" in one sentence
+- the team can answer "who is AffiliateSwarm for first?" in one sentence
 - the team can answer "why now instead of Rewardful?" without relying on future roadmap promises
 
 ### 2. Advertiser launch readiness
@@ -364,7 +364,7 @@ Launch bar:
 
 ### 8. Must-have product gaps to close before a serious launch push
 
-These are the most important gaps to close before trying to market Regatta as a credible production platform to real advertisers and affiliates.
+These are the most important gaps to close before trying to market AffiliateSwarm as a credible production platform to real advertisers and affiliates.
 
 - [ ] Tighten attribution and tracking confidence for the primary launch use cases.
 - [ ] Make payout operations feel stable and trustworthy, even if still partially manual.
@@ -399,7 +399,7 @@ Before launch, the team should be able to answer "yes" to these questions:
 
 ## Launch feasibility assessment
 
-Regatta appears feasible to launch as a focused wedge product, but not yet as a broad head-on replacement for mature affiliate platforms like Rewardful.
+AffiliateSwarm appears feasible to launch as a focused wedge product, but not yet as a broad head-on replacement for mature affiliate platforms like Rewardful.
 
 That means:
 
@@ -408,9 +408,9 @@ That means:
 - feasible for attracting affiliates if the marketplace is seeded carefully and payout trust is strong
 - not yet well positioned for mainstream SaaS companies expecting mature recurring commission logic, coupon attribution, payout operations, and merchant admin controls
 
-The critical strategic point is that Regatta does not need Rewardful parity in order to launch. It does need enough operational maturity that early users trust the platform with tracking, payouts, and campaign execution.
+The critical strategic point is that AffiliateSwarm does not need Rewardful parity in order to launch. It does need enough operational maturity that early users trust the platform with tracking, payouts, and campaign execution.
 
-In practical terms, Regatta should be considered launch-ready when:
+In practical terms, AffiliateSwarm should be considered launch-ready when:
 
 - the target advertiser segment is intentionally narrow
 - tracking reliability is credible for the initial use cases
@@ -418,4 +418,4 @@ In practical terms, Regatta should be considered launch-ready when:
 - enough high-quality campaigns exist to create real affiliate interest
 - the product is positioned around its differentiated strengths rather than around replacing every mature affiliate tool feature on day one
 
-If those conditions are met, Regatta can launch and begin attracting both advertisers and affiliates despite the maturity gap. If those conditions are not met, the main risk is not competition alone. The main risk is losing trust before the product has enough liquidity and enough repeated success stories to compound.
+If those conditions are met, AffiliateSwarm can launch and begin attracting both advertisers and affiliates despite the maturity gap. If those conditions are not met, the main risk is not competition alone. The main risk is losing trust before the product has enough liquidity and enough repeated success stories to compound.

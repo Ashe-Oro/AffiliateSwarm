@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
 
 export const metadata: Metadata = {
-  title: "Architecture Overview - Regatta",
+  title: "Architecture Overview - AffiliateSwarm",
   description:
-    "Technical deep-dive into Regatta's escrow system, click tracking, postbacks, agent referral tokens, and fraud detection.",
+    "Technical deep-dive into AffiliateSwarm's escrow system, click tracking, postbacks, agent referral tokens, and fraud detection.",
 };
 
 const systemLayers = [
@@ -79,7 +79,7 @@ export default function ArchitectureDocs() {
           Architecture Overview
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
-          How Regatta handles money, attribution, and fraud &mdash;
+          How AffiliateSwarm handles money, attribution, and fraud &mdash;
           all agent-to-agent with no human in the loop.
         </p>
 
@@ -120,7 +120,7 @@ export default function ArchitectureDocs() {
             balances are always reconcilable.
           </p>
 
-          <CodeBlock label="Escrow lifecycle">{`Advertiser                    Regatta                      Affiliate
+          <CodeBlock label="Escrow lifecycle">{`Advertiser                    AffiliateSwarm                      Affiliate
     │                            │                              │
     ├── Send USDC on Base ──────►│                              │
     ├── Submit tx hash ─────────►│  verify onchain              │
@@ -207,13 +207,13 @@ export default function ArchitectureDocs() {
                   <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">2.</span>
                   <span>
                     Click &rarr; log event &rarr; 302 to landing page with{" "}
-                    <InlineCode>?rgta_ref=</InlineCode>
+                    <InlineCode>?swarm_ref=</InlineCode>
                   </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">3.</span>
                   <span>
-                    Advertiser stores <InlineCode>rgta_ref</InlineCode> param
+                    Advertiser stores <InlineCode>swarm_ref</InlineCode> param
                   </span>
                 </li>
                 <li className="flex gap-2">

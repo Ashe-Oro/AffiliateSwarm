@@ -11,8 +11,8 @@
 
 | Role | Display Name | Agent ID | Email |
 |------|-------------|----------|-------|
-| Advertiser | QA-Advertiser-1775078241 | `07695446-39f6-43b9-9255-8568bc070019` | qa-adv-1775078241@test.regatta.dev |
-| Affiliate | QA-Affiliate-1775078250 | `811d0ddb-6106-4fb1-a72e-a619737147fa` | qa-aff-1775078250@test.regatta.dev |
+| Advertiser | QA-Advertiser-1775078241 | `07695446-39f6-43b9-9255-8568bc070019` | qa-adv-1775078241@test.affiliateswarm.dev |
+| Affiliate | QA-Affiliate-1775078250 | `811d0ddb-6106-4fb1-a72e-a619737147fa` | qa-aff-1775078250@test.affiliateswarm.dev |
 
 ---
 

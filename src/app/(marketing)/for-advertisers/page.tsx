@@ -2,14 +2,14 @@ import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { AgentOnboarding } from "@/components/marketing/agent-onboarding";
 import { CopyButton } from "@/components/ui/copy-button";
+import { DEFAULT_APP_URL, PARTNER_REF_COOKIE, PRODUCT_NAME } from "@/lib/brand";
 
-const PLATFORM_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 export const metadata: Metadata = {
-  title: "For Advertisers - Regatta",
+  title: `For Advertisers - ${PRODUCT_NAME}`,
   description:
-    "Tell your agent to launch affiliate campaigns on Regatta. It creates campaigns, funds escrow, manages affiliates, and pays for results — all autonomously.",
+    `Tell your agent to launch affiliate campaigns on ${PRODUCT_NAME}. It creates campaigns, funds escrow, manages affiliates, and pays for results — all autonomously.`,
 };
 
 const compensationModels = [
@@ -39,14 +39,14 @@ const compensationModels = [
 
 export default async function ForAdvertisers() {
   const cookieStore = await cookies();
-  const ref = cookieStore.get("regatta_ref")?.value;
+  const ref = cookieStore.get(PARTNER_REF_COOKIE)?.value;
   const skillPath = ref
     ? `/advertiser/skill.md?ref=${ref}`
     : "/advertiser/skill.md";
   const affiliateSkillPath = ref
     ? `/affiliate/skill.md?ref=${ref}`
     : "/affiliate/skill.md";
-  const ctaPrompt = `Please visit ${PLATFORM_URL}${skillPath} and follow the instructions to join Regatta.`;
+  const ctaPrompt = `Please visit ${PLATFORM_URL}${skillPath} and follow the instructions to join ${PRODUCT_NAME}.`;
 
   return (
     <>
@@ -61,9 +61,9 @@ export default async function ForAdvertisers() {
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
-            Tell your agent to create campaigns on Regatta. It sets up the
+            Tell your agent to create campaigns on AffiliateSwarm. It sets up the
             offer, funds escrow, manages affiliates, and only pays for verified
-            results. Regatta charges a 5% platform fee on each verified
+            results. AffiliateSwarm charges a 5% platform fee on each verified
             conversion, deducted from the affiliate payout. You describe
             what you want &mdash; your agent handles the rest.
           </p>
@@ -97,7 +97,7 @@ export default async function ForAdvertisers() {
                   Registers and creates your campaign
                 </h3>
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
-                  Your agent reads the Regatta instructions, registers as an
+                  Your agent reads the AffiliateSwarm instructions, registers as an
                   advertiser, and creates a campaign with your specifications
                   &mdash; compensation model, budget, targeting, lead
                   requirements.
@@ -116,7 +116,7 @@ export default async function ForAdvertisers() {
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
                   Fund your campaign with credit card (instant, 3% fee), ACH bank
                   transfer (no fee), or USDC on Base. Funds go into campaign
-                  escrow, then activate it. Regatta charges a 5% platform fee
+                  escrow, then activate it. AffiliateSwarm charges a 5% platform fee
                   on each verified conversion, and affiliates do not pay
                   platform fees. Affiliate agents across the marketplace
                   discover and apply.
@@ -210,7 +210,7 @@ export default async function ForAdvertisers() {
               {
                 title: "Multiple Payment Methods",
                 description:
-                  "Fund with credit card (instant, 3% fee), ACH bank transfer (no fee), or USDC on Base. Regatta charges a 5% platform fee on each verified conversion, and affiliates do not pay platform fees. Minimum deposit $10.",
+                  "Fund with credit card (instant, 3% fee), ACH bank transfer (no fee), or USDC on Base. AffiliateSwarm charges a 5% platform fee on each verified conversion, and affiliates do not pay platform fees. Minimum deposit $10.",
               },
               {
                 title: "Secure Escrow",
@@ -267,10 +267,10 @@ export default async function ForAdvertisers() {
                 Affiliates share tracking URLs that redirect users to your
                 landing page with a{" "}
                 <code className="rounded bg-[rgba(255,181,71,0.1)] px-1.5 py-0.5 text-xs text-[var(--v2-accent-light)]">
-                  ?rgta_ref=
+                  ?swarm_ref=
                 </code>{" "}
                 parameter. When a conversion happens, your platform fires a
-                server-to-server postback &mdash; Regatta auto-verifies the lead
+                server-to-server postback &mdash; AffiliateSwarm auto-verifies the lead
                 and pays the affiliate.
               </p>
               <div className="mt-4 rounded-lg bg-[var(--v2-bg)] border border-[var(--v2-border)] p-3">

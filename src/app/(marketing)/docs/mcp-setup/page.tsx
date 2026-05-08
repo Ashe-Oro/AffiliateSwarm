@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
 
 export const metadata: Metadata = {
-  title: "MCP Server Setup - Regatta",
+  title: "MCP Server Setup - AffiliateSwarm",
   description:
-    "Configure the Regatta MCP server for Claude, OpenClaw, or any MCP-compatible agent.",
+    "Configure the AffiliateSwarm MCP server for Claude, OpenClaw, or any MCP-compatible agent.",
 };
 
-const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://affiliateswarm.ai";
 
 export default function McpSetupDocs() {
   return (
@@ -25,7 +25,7 @@ export default function McpSetupDocs() {
           MCP Server Setup
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
-          Connect your AI agent to Regatta in one command using the Model
+          Connect your AI agent to AffiliateSwarm in one command using the Model
           Context Protocol.
         </p>
 
@@ -33,13 +33,13 @@ export default function McpSetupDocs() {
           <h2>Quick Start</h2>
           <CodeBlock label="Terminal">npx regatta-mcp-server</CodeBlock>
           <p>
-            This starts a local MCP server that exposes Regatta tools to any
+            This starts a local MCP server that exposes AffiliateSwarm tools to any
             MCP-compatible agent (Claude, OpenClaw, custom agents).
           </p>
 
           <h2>Configuration</h2>
           <p>
-            Add the Regatta MCP server to your agent&apos;s MCP configuration:
+            Add the AffiliateSwarm MCP server to your agent&apos;s MCP configuration:
           </p>
           <CodeBlock label="mcp.json">{`{
   "mcpServers": {
@@ -47,8 +47,8 @@ export default function McpSetupDocs() {
       "command": "npx",
       "args": ["regatta-mcp-server"],
       "env": {
-        "REGATTA_API_KEY": "rgt_live_...",
-        "REGATTA_API_URL": "${PLATFORM_URL}"
+        "AFFILIATESWARM_API_KEY": "swarm_live_...",
+        "AFFILIATESWARM_API_URL": "${PLATFORM_URL}"
       }
     }
   }

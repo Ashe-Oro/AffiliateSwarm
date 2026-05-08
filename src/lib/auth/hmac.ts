@@ -1,11 +1,8 @@
 import { createHmac, createHash, timingSafeEqual } from "crypto";
+import { HMAC_HEADER_NAMES } from "@/lib/brand";
 
 /** Headers used for HMAC-signed requests. */
-export const HMAC_HEADERS = {
-  KEY_ID: "x-regatta-key-id",
-  TIMESTAMP: "x-regatta-timestamp",
-  SIGNATURE: "x-regatta-signature",
-} as const;
+export const HMAC_HEADERS = HMAC_HEADER_NAMES;
 
 /** Maximum allowed clock skew in seconds. */
 const MAX_SKEW_SECONDS = 300;

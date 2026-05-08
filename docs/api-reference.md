@@ -2,7 +2,7 @@
 
 Base path: `/api/v1`
 
-Authentication: `Authorization: Bearer rgt_live_...` or HMAC-SHA256 headers (`X-Regatta-Key-Id`, `X-Regatta-Timestamp`, `X-Regatta-Signature`).
+Authentication: `Authorization: Bearer swarm_live_...` or HMAC-SHA256 headers (`X-AffiliateSwarm-Key-Id`, `X-AffiliateSwarm-Timestamp`, `X-AffiliateSwarm-Signature`).
 
 All request and response bodies are JSON. Paginated endpoints return `{ data, totalCount, page, pageSize }`.
 

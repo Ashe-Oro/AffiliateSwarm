@@ -34,4 +34,4 @@ npx playwright test
 
 These are **automated code tests** that validate API correctness and UI rendering.
 
-For **manual QA with AI agents** (testing skill files with brand-new agents that have zero Regatta knowledge), see [`agent-testing-playbook.md`](../agent-testing-playbook.md).
+For **manual QA with AI agents** (testing skill files with brand-new agents that have zero AffiliateSwarm knowledge), see [`agent-testing-playbook.md`](../agent-testing-playbook.md).

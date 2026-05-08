@@ -35,7 +35,7 @@
 | 14 | Make daily check-in setup more prominent in skill file | A | |
 | 15 | Skill file: note compensation model is CPA-only for now | A | |
 | 16 | Fix skill file: mention $10 minimum deposit | A | |
-| 17 | Clarify Regatta's redirect model in skill file | A | |
+| 17 | Clarify AffiliateSwarm's redirect model in skill file | A | |
 | 18 | Refactor skill system: role-scoped directories | A | |
 
 ## Payouts & Financials

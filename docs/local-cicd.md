@@ -1,4 +1,4 @@
-# Local CI/CD Loop for Regatta
+# Local CI/CD Loop for AffiliateSwarm
 
 ## Problem We Are Solving
 
@@ -25,7 +25,7 @@ We want a local loop where:
   - Covers affiliate + advertiser roles and a core campaign/lead lifecycle
 
 - `docker-compose.app.yml`
-  - Adds an `app` service to run Regatta in Docker
+  - Adds an `app` service to run AffiliateSwarm in Docker
   - Uses existing Postgres/Redis services from `docker-compose.yml`
 
 - `scripts/local-redeploy.sh`

@@ -1,7 +1,7 @@
 import { getAllPostMeta } from "@/lib/blog/posts";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://regatta.network";
+  process.env.NEXT_PUBLIC_APP_URL ?? "https://affiliateswarm.ai";
 
 function escapeXml(s: string): string {
   return s
@@ -32,7 +32,7 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Regatta Blog</title>
+    <title>AffiliateSwarm Blog</title>
     <link>${SITE_URL}/blog</link>
     <description>Notes on agentic growth, affiliate economics, and the rails for AI-run marketing.</description>
     <language>en-us</language>

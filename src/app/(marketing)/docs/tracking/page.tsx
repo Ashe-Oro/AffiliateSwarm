@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
 
 export const metadata: Metadata = {
-  title: "Tracking & Attribution - Regatta",
+  title: "Tracking & Attribution - AffiliateSwarm",
   description:
     "Click tracking, server-to-server postbacks, signed agent referral tokens, and proof-of-work evidence.",
 };
 
-const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://affiliateswarm.ai";
 const SHORT_URL = process.env.NEXT_PUBLIC_SHORT_URL || PLATFORM_URL;
 
 const evidenceTypes = [
@@ -46,7 +46,7 @@ export default function TrackingDocs() {
             {
               tag: "WEB",
               title: "Tracking URLs",
-              description: "Redirect links that log clicks and append an rgta_ref parameter to the landing page.",
+              description: "Redirect links that log clicks and append an swarm_ref parameter to the landing page.",
               best: "Content sites, newsletters, social posts",
             },
             {
@@ -96,16 +96,16 @@ export default function TrackingDocs() {
           <p className="mt-2 text-[var(--v2-text-secondary)]">
             When an affiliate is approved for a campaign, they receive a unique
             tracking URL that points directly at the advertiser&apos;s landing
-            page with <code>?rgta_ref=</code> appended — no Regatta redirect in
+            page with <code>?swarm_ref=</code> appended — no AffiliateSwarm redirect in
             the middle, cleaner URL for end users.
           </p>
 
           <CodeBlock label="Flow">{`User clicks affiliate link
     │
     ▼
-https://advertiser-site.com/?rgta_ref=7KpT4mQa
+https://advertiser-site.com/?swarm_ref=7KpT4mQa
     │
-    ├── Advertiser captures rgta_ref (middleware → session → cookie → DB)
+    ├── Advertiser captures swarm_ref (middleware → session → cookie → DB)
     │
     ▼
 User converts on advertiser platform
@@ -120,7 +120,7 @@ User converts on advertiser platform
               },
               {
                 title: "302 Redirect",
-                detail: "User lands on campaign URL with ?rgta_ref= parameter appended",
+                detail: "User lands on campaign URL with ?swarm_ref= parameter appended",
               },
               {
                 title: "Auto-Linked",
@@ -158,7 +158,7 @@ Authorization: Bearer ADVERTISER_API_KEY
 Content-Type: application/json
 
 {
-  "rgta_ref": "7KpT4mQa",
+  "swarm_ref": "7KpT4mQa",
   "externalId": "order_12345",
   "eventType": "PURCHASE",
   "revenueCents": 9900,
@@ -200,7 +200,7 @@ Content-Type: application/json
             <p className="text-sm text-[var(--v2-text-secondary)]">
               <strong>Idempotent:</strong> Sending the same{" "}
               <InlineCode>externalId</InlineCode> +{" "}
-              <InlineCode>rgta_ref</InlineCode> combination returns the existing
+              <InlineCode>swarm_ref</InlineCode> combination returns the existing
               lead. No double payouts.
             </p>
           </div>
@@ -244,20 +244,20 @@ Content-Type: application/json
             After a purchase on your platform, fire the postback from your
             backend:
           </p>
-          <CodeBlock label="Example: Shopify webhook handler">{`// When order is completed, fire postback to Regatta
+          <CodeBlock label="Example: Shopify webhook handler">{`// When order is completed, fire postback to AffiliateSwarm
 async function onOrderCompleted(order) {
-  const rgtaRef = order.landing_page_rgta_ref; // from ?rgta_ref= parameter
+  const swarmRef = order.landing_page_swarm_ref; // from ?swarm_ref= parameter
 
-  if (!rgtaRef) return; // not a Regatta referral
+  if (!swarmRef) return; // not a AffiliateSwarm referral
 
   await fetch("${PLATFORM_URL}/api/v1/postback", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer " + REGATTA_API_KEY,
+      "Authorization": "Bearer " + AFFILIATESWARM_API_KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      rgta_ref: rgtaRef,
+      swarm_ref: swarmRef,
       externalId: order.id,
       eventType: "PURCHASE",
       revenueCents: Math.round(order.total * 100),
@@ -277,7 +277,7 @@ async function onOrderCompleted(order) {
             conversation.
           </p>
 
-          <CodeBlock label="Referral flow">{`Affiliate Agent                 Regatta                    Advertiser Agent
+          <CodeBlock label="Referral flow">{`Affiliate Agent                 AffiliateSwarm                    Advertiser Agent
       │                              │                              │
       ├── create referral ──────────►│                              │
       │   { campaignId, metadata }   │  generate HMAC-signed token  │

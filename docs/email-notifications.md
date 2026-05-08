@@ -1,6 +1,6 @@
 # Email Notifications Reference
 
-Complete catalog of every email Regatta sends, organized by category.
+Complete catalog of every email AffiliateSwarm sends, organized by category.
 
 ---
 
@@ -11,9 +11,9 @@ These are sent directly via dedicated functions, outside the event notification 
 | #   | Email              | Subject                                                  | Recipient   | Trigger                           |
 | --- | ------------------ | -------------------------------------------------------- | ----------- | --------------------------------- |
 | 1   | Verify Email       | "Verify your email address"                              | New agent   | Agent registers with an email     |
-| 2   | Login Code         | "Your Regatta login code: {CODE}"                        | Agent       | Agent requests email login code   |
-| 3   | Partner Welcome    | "Welcome to Regatta, {NAME} — here's your referral code" | New partner | Partner record is created         |
-| 4   | Onboarding Welcome | "Welcome to Regatta — you're registered as {TYPE}"       | Agent       | After email verification succeeds |
+| 2   | Login Code         | "Your AffiliateSwarm login code: {CODE}"                        | Agent       | Agent requests email login code   |
+| 3   | Partner Welcome    | "Welcome to AffiliateSwarm, {NAME} — here's your referral code" | New partner | Partner record is created         |
+| 4   | Onboarding Welcome | "Welcome to AffiliateSwarm — you're registered as {TYPE}"       | Agent       | After email verification succeeds |
 
 ---
 

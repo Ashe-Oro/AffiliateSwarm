@@ -2,6 +2,7 @@
  * Shared login code utilities — used by all login code endpoints.
  */
 import { randomInt } from "crypto";
+import { PRODUCT_DOMAIN } from "@/lib/brand";
 import { prisma } from "@/lib/prisma";
 
 const CHARSET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // no 0/O, 1/I/L
@@ -30,7 +31,7 @@ export async function ensureUserAccount(agent: {
 
   const user = await prisma.userAccount.create({
     data: {
-      email: agent.email ?? `agent-${agent.id}@regatta.local`,
+      email: agent.email ?? `agent-${agent.id}@${PRODUCT_DOMAIN}`,
       passwordHash: `nologin-${crypto.randomUUID()}`,
       displayName: agent.displayName,
     },

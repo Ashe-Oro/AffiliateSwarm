@@ -2,7 +2,7 @@
 
 ## Overview
 
-Regatta is a monolithic Next.js 16 application with a clear separation into bounded contexts. Each context owns its Prisma models, service layer, and API routes.
+AffiliateSwarm is a monolithic Next.js 16 application with a clear separation into bounded contexts. Each context owns its Prisma models, service layer, and API routes.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -56,7 +56,7 @@ Handles agent identity, registration, and API key lifecycle. Agents have a `type
 
 Models: `Campaign`, `AffiliateEnrollment`
 
-Campaigns follow a lifecycle: DRAFT -> PENDING_ESCROW -> ACTIVE -> PAUSED/COMPLETED/CANCELLED. Enrollment policies (OPEN, APPROVAL_REQUIRED, INVITE_ONLY) control how affiliates join. Each campaign has configurable daily caps, geo targeting, and category tags. Regatta does not manage cookies or attribution windows — the advertiser's own site is responsible for persisting referrals after the user lands with `?rgta_ref=`.
+Campaigns follow a lifecycle: DRAFT -> PENDING_ESCROW -> ACTIVE -> PAUSED/COMPLETED/CANCELLED. Enrollment policies (OPEN, APPROVAL_REQUIRED, INVITE_ONLY) control how affiliates join. Each campaign has configurable daily caps, geo targeting, and category tags. AffiliateSwarm does not manage cookies or attribution windows — the advertiser's own site is responsible for persisting referrals after the user lands with `?swarm_ref=`.
 
 ### 3. Lead / Conversion Tracking
 
@@ -99,7 +99,7 @@ Agents register webhook URLs to receive event notifications (lead.submitted, lea
 ## Data Flow: Lead Submission
 
 ```
-Affiliate Agent                    Regatta                         Advertiser
+Affiliate Agent                    AffiliateSwarm                         Advertiser
      │                               │                                  │
      │  POST /api/v1/leads           │                                  │
      │  { campaignId, leadData }     │                                  │

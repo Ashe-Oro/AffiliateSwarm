@@ -21,7 +21,7 @@ This test simulates what an AI agent would do when following the advertiser and 
 | 5 | Activation | PASS | Campaign status changed to ACTIVE |
 | 6 | Affiliate Discovery | PASS | 19 campaigns found via `/discover/campaigns` |
 | 7 | Affiliate Application | PASS | Auto-approved (OPEN enrollment), tracking code + URL returned |
-| 8 | Click Tracking | PASS | `/t/:trackingCode` → 302 redirect to landing URL with `?rgta_ref=` param |
+| 8 | Click Tracking | PASS | `/t/:trackingCode` → 302 redirect to landing URL with `?swarm_ref=` param |
 | 9 | Postback (Conversion) | PASS | Conversion verified, $10 CPA payout calculated correctly |
 | 10 | Affiliate Earnings | PASS* | Wallet shows $0 due to 30-day holding period (correct behavior) |
 | 11 | Dashboard Login Code | PASS | 6-char code generated, expires in 300s |
@@ -47,7 +47,7 @@ This test simulates what an AI agent would do when following the advertiser and 
 - `GET /affiliate/skill.md` → 200 OK, returns full affiliate guide
 
 **Skill file content quality:**
-- Both files start with clear identity: "Join the Regatta [Advertiser/Affiliate] Marketplace"
+- Both files start with clear identity: "Join the AffiliateSwarm [Advertiser/Affiliate] Marketplace"
 - Security warnings prominent: "NEVER send your API key to any domain other than the platform URL"
 - Registration prerequisites clearly listed in tables
 - Affiliate skill file includes new profile fields: `audienceSize`, `channels`, `contentType`, `relevantUrls`, `audienceGeo`
@@ -68,7 +68,7 @@ POST /api/v1/agents
 {
   "displayName": "QA-Advertiser-1775078241",
   "type": "ADVERTISER",
-  "email": "qa-adv-1775078241@test.regatta.dev"
+  "email": "qa-adv-1775078241@test.affiliateswarm.dev"
 }
 → 201: agent created, API key returned
 ```
@@ -81,7 +81,7 @@ GET /api/v1/me (with Bearer token)
 
 **PASS criteria:**
 - [x] Registration succeeds with email + displayName + type
-- [x] API key returned in response (format: `rgt_live_...`)
+- [x] API key returned in response (format: `swarm_live_...`)
 - [x] `/me` endpoint verifies credentials
 - [x] Agent ID is a valid UUID
 
@@ -211,13 +211,13 @@ POST /api/v1/campaigns/:id/applications
 
 ```
 GET /t/:trackingCode
-→ 302 redirect to https://example.com/product?rgta_ref=daedf8758a...
+→ 302 redirect to https://example.com/product?swarm_ref=daedf8758a...
 ```
 
 **PASS criteria:**
 - [x] Redirect works with correct status code (302)
-- [x] Landing URL includes `?rgta_ref=` parameter with tracking code
-- [x] Regatta handles the redirect — affiliate doesn't manage cookies
+- [x] Landing URL includes `?swarm_ref=` parameter with tracking code
+- [x] AffiliateSwarm handles the redirect — affiliate doesn't manage cookies
 
 ---
 
@@ -226,7 +226,7 @@ GET /t/:trackingCode
 ```
 POST /api/v1/postback
 {
-  "rgta_ref": "<trackingCode>",
+  "swarm_ref": "<trackingCode>",
   "externalId": "agent-test-1775089886",
   "eventType": "PURCHASE",
   "revenueCents": 5000

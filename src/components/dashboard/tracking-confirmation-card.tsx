@@ -56,7 +56,7 @@ export function TrackingConfirmationCard({
   // Build absolute guide URL for the agent prompt so the link works regardless
   // of the agent's working context. The card's own doc links stay relative.
   const origin =
-    typeof window !== "undefined" ? window.location.origin : "https://regatta.network";
+    typeof window !== "undefined" ? window.location.origin : "https://affiliateswarm.ai";
   const llmGuideUrl = `${origin}${LLM_GUIDE_PATH}`;
 
   const agentPrompt = buildAgentIntegrationPrompt({
@@ -92,7 +92,7 @@ export function TrackingConfirmationCard({
           <a href={SETTINGS_PATH} className="underline">
             Settings
           </a>{" "}
-          and add it to your backend as <code>REGATTA_API_KEY</code>. Your agent
+          and add it to your backend as <code>AFFILIATESWARM_API_KEY</code>. Your agent
           will handle the rest.
         </p>
 
@@ -131,10 +131,10 @@ export function TrackingConfirmationCard({
           </summary>
           <pre className="mt-2 overflow-x-auto rounded bg-muted p-3 text-xs">
 {`curl -X POST "${postbackUrl}" \\
-  -H "Authorization: Bearer $REGATTA_API_KEY" \\
+  -H "Authorization: Bearer $AFFILIATESWARM_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "rgta_ref": "${testTrackingCode}",
+    "swarm_ref": "${testTrackingCode}",
     "externalId": "confirm-test-001",
     "eventType": "PURCHASE"
   }'`}

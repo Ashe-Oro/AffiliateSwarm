@@ -188,7 +188,7 @@ export function WebhookManagement({ webhooks }: WebhookManagementProps) {
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com/webhooks/regatta"
+              placeholder="https://example.com/webhooks/affiliateswarm"
               required
             />
           </div>

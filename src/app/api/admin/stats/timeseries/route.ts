@@ -5,7 +5,7 @@ import {
 } from "@/services/admin-stats.service";
 
 function requireAdmin(req: NextRequest): boolean {
-  const token = req.cookies.get("regatta_admin_token")?.value;
+  const token = req.cookies.get("affiliateswarm_admin_token")?.value;
   const secret = process.env.ADMIN_SECRET;
   return !!(secret && token && token === secret);
 }

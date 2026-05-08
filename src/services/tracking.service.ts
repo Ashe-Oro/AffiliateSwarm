@@ -13,7 +13,8 @@ import type { PostbackInput, CreateReferralInput, ConfirmReferralInput } from "@
 import type { Prisma } from "@/generated/prisma/client";
 import { logger } from "@/lib/logger";
 
-const REFERRAL_SECRET = process.env.REGATTA_REFERRAL_SECRET || "regatta-dev-secret";
+const REFERRAL_SECRET =
+  process.env.AFFILIATESWARM_REFERRAL_SECRET || "affiliateswarm-dev-secret";
 
 // ---------------------------------------------------------------------------
 // Track Click
@@ -91,12 +92,14 @@ export async function processPostback(
   advertiserId: string,
   data: PostbackInput
 ) {
+  const trackingCode = data.swarm_ref;
+
   // CONFIRM postback path: advertiser fires a test postback with the
   // campaign's testTrackingCode to prove their integration is wired. We
   // don't create a lead, don't require the campaign to be ACTIVE (this
   // is the gate to *becoming* ACTIVE), and flip trackingConfirmedAt.
   const testMatch = await prisma.campaign.findUnique({
-    where: { testTrackingCode: data.rgta_ref },
+    where: { testTrackingCode: trackingCode },
     select: {
       id: true,
       advertiserId: true,
@@ -140,14 +143,14 @@ export async function processPostback(
 
   // Look up enrollment by tracking code
   const enrollment = await prisma.affiliateEnrollment.findUnique({
-    where: { trackingCode: data.rgta_ref },
+    where: { trackingCode },
     include: {
       campaign: true,
     },
   });
 
   if (!enrollment) {
-    throw new NotFoundError("No affiliate enrollment for tracking code", data.rgta_ref);
+    throw new NotFoundError("No affiliate enrollment for tracking code", trackingCode);
   }
 
   if (enrollment.campaign.advertiserId !== advertiserId) {
@@ -200,7 +203,7 @@ export async function processPostback(
       campaignId: enrollment.campaignId,
       affiliateId: enrollment.affiliateId,
       externalId: data.externalId,
-      trackingCode: data.rgta_ref,
+      trackingCode,
       status: "VERIFIED",
       verifiedAt: new Date(),
       payoutCents,
@@ -259,10 +262,10 @@ export async function processPostback(
   // Link any ClickEvent with matching trackingCode
   prisma.clickEvent
     .updateMany({
-      where: { trackingCode: data.rgta_ref, convertedLeadId: null },
+      where: { trackingCode, convertedLeadId: null },
       data: { convertedLeadId: lead.id },
     })
-    .catch((err) => logger.error({ err, trackingCode: data.rgta_ref, leadId: lead.id, action: "link_click_to_lead" }, "Failed to link click event to lead"));
+    .catch((err) => logger.error({ err, trackingCode, leadId: lead.id, action: "link_click_to_lead" }, "Failed to link click event to lead"));
 
   // Recalculate reputation
   try {

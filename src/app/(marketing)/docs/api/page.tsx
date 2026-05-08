@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { apiReferenceSections } from "./endpoints";
 
 export const metadata: Metadata = {
-  title: "API Reference - Regatta",
+  title: "API Reference - AffiliateSwarm",
   description:
-    "Complete REST API documentation for the Regatta affiliate marketplace.",
+    "Complete REST API documentation for the AffiliateSwarm affiliate marketplace.",
 };
 
 function methodColor(method: string) {

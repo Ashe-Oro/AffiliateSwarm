@@ -16,7 +16,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <aside className="w-60 shrink-0 border-r border-border bg-sidebar text-sidebar-foreground">
         <div className="flex h-14 items-center border-b border-border px-5">
           <Link href="/admin" className="text-lg font-semibold tracking-tight">
-            Regatta Admin
+            AffiliateSwarm Admin
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-3">

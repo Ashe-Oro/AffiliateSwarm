@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "==> Regatta local bootstrap starting..."
+echo "==> AffiliateSwarm local bootstrap starting..."
 
 # --- sanity checks ---
 command -v node >/dev/null || { echo "Node is required"; exit 1; }
@@ -10,17 +10,17 @@ command -v docker >/dev/null || { echo "Docker is required"; exit 1; }
 command -v openssl >/dev/null || { echo "openssl is required"; exit 1; }
 command -v lsof >/dev/null || { echo "lsof is required"; exit 1; }
 
-[ -f package.json ] || { echo "Run this from the regatta repo root"; exit 1; }
+[ -f package.json ] || { echo "Run this from the AffiliateSwarm repo root"; exit 1; }
 [ -f prisma/schema.prisma ] || { echo "prisma/schema.prisma not found"; exit 1; }
 
-POSTGRES_PORT="${REGATTA_POSTGRES_PORT:-5432}"
+POSTGRES_PORT="${AFFILIATESWARM_POSTGRES_PORT:-5432}"
 
 if lsof -n -P -iTCP:5432 -sTCP:LISTEN >/dev/null 2>&1; then
-  if docker compose exec -T postgres psql -U regatta -d regatta -c '\\q' >/dev/null 2>&1; then
+  if docker compose exec -T postgres psql -U affiliateswarm -d affiliateswarm -c '\\q' >/dev/null 2>&1; then
     POSTGRES_PORT="5432"
   else
     POSTGRES_PORT="5433"
-    export REGATTA_POSTGRES_PORT="$POSTGRES_PORT"
+    export AFFILIATESWARM_POSTGRES_PORT="$POSTGRES_PORT"
     echo "==> Detected local Postgres on 5432; mapping Docker Postgres to $POSTGRES_PORT"
   fi
 fi
@@ -61,7 +61,7 @@ upsert_env () {
 }
 
 # Minimal required local values
-upsert_env "DATABASE_URL" "postgresql://regatta:regatta_dev@localhost:${POSTGRES_PORT}/regatta?schema=public"
+upsert_env "DATABASE_URL" "postgresql://affiliateswarm:affiliateswarm_dev@localhost:${POSTGRES_PORT}/affiliateswarm?schema=public"
 upsert_env "NEXT_PUBLIC_APP_URL" "http://localhost:3000"
 upsert_env "NEXT_PUBLIC_SHORT_URL" "http://localhost:3000"
 upsert_env "NODE_ENV" "development"
@@ -70,7 +70,7 @@ upsert_env "ADMIN_SECRET" "$(openssl rand -hex 32)"
 upsert_env "CRON_SECRET" "$(openssl rand -hex 32)"
 
 # Optional but useful local defaults
-upsert_env "REGATTA_REFERRAL_SECRET" "regatta-local-referral-secret"
+upsert_env "AFFILIATESWARM_REFERRAL_SECRET" "affiliateswarm-local-referral-secret"
 
 echo "==> Env configured"
 
@@ -83,7 +83,7 @@ echo "==> Starting postgres + redis via docker compose..."
 docker compose up -d postgres redis
 
 echo "==> Waiting for postgres to be ready..."
-until docker compose exec -T postgres pg_isready -U regatta >/dev/null 2>&1; do
+until docker compose exec -T postgres pg_isready -U affiliateswarm >/dev/null 2>&1; do
   sleep 1
 done
 

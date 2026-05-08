@@ -105,7 +105,7 @@ test("1.1 advertiser registers and verifies email", async () => {
   state.advertiser = await registerAgent(
     `USDC Advertiser ${RUN_ID}`,
     "ADVERTISER",
-    `e2e-usdc-adv-${RUN_ID}@test.regatta.dev`
+    `e2e-usdc-adv-${RUN_ID}@test.affiliateswarm.dev`
   );
   await verifyAgentEmail(state.advertiser.agentId);
 });
@@ -218,7 +218,7 @@ test("3.1 affiliate registers with BYOW + external CDP-managed receiving address
   state.affiliate = await registerAgent(
     `USDC Affiliate ${RUN_ID}`,
     "AFFILIATE",
-    `e2e-usdc-aff-${RUN_ID}@test.regatta.dev`,
+    `e2e-usdc-aff-${RUN_ID}@test.affiliateswarm.dev`,
     {
       profile: {
         audienceSize: 5_000,

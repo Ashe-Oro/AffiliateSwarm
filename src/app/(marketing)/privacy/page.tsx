@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Regatta",
-  description: "Regatta privacy policy describing how we collect, use, and protect your data.",
+  title: "Privacy Policy - AffiliateSwarm",
+  description: "AffiliateSwarm privacy policy describing how we collect, use, and protect your data.",
 };
 
 const EFFECTIVE_DATE = "April 13, 2026";
-const CONTACT_EMAIL = "privacy@regatta.network";
+const CONTACT_EMAIL = "privacy@affiliateswarm.ai";
 
 const sections = [
   {

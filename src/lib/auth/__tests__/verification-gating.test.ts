@@ -8,7 +8,7 @@ vi.mock("@/lib/auth/middleware", () => ({
 vi.mock("@/lib/auth/session", () => ({
   getSessionFromRequest: vi.fn(),
   validateSession: vi.fn(),
-  SESSION_COOKIE: "regatta_session",
+  SESSION_COOKIE: "affiliateswarm_session",
 }));
 
 vi.mock("@/lib/prisma", () => ({
