@@ -147,17 +147,17 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 **PASS criteria:**
 - [ ] Agent explains that tracking must be confirmed before activation
-- [ ] Agent explains the AffiliateSwarm redirect model:
-  - AffiliateSwarm handles the redirect and appends `?swarm_ref=` to your landing URL
-  - Your backend captures the `?swarm_ref=` value when a user lands
+- [ ] Agent explains the AffiliateSwarm direct-ref model:
+  - Affiliate links point to your landing URL with `?swarm_ref=` appended
+  - Your backend captures and persists the `?swarm_ref=` value when a user lands
   - Your backend fires a server-side postback when that user converts
-- [ ] Agent does NOT tell you to manage cookies, track sessions, or set cookie expiry
+- [ ] Agent does NOT tell you to use a different tracking parameter name
 - [ ] Agent guides you to call `POST /campaigns/:id/confirm-tracking` when ready
 - [ ] Agent confirms `trackingConfirmedAt` is set after the call
 
 **FAIL if:**
 - Agent skips tracking setup entirely and goes straight to activation
-- Agent tells you to "capture the ref cookie" or "set a 30-day cookie expiry"
+- Agent tells you to use a parameter other than `swarm_ref`
 - Agent confuses what AffiliateSwarm handles vs. what the advertiser handles
 - Agent does not mention `confirm-tracking` endpoint
 

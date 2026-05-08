@@ -1,6 +1,6 @@
 # PR #73 Test Plan — API-UI Functional Sync
 
-**Preview URL:** https://regatta-git-api-ui-functional-sync-companoids.vercel.app
+**Preview URL:** Set to the current AffiliateSwarm preview URL before running.
 **Branch:** `API-UI-functional-sync`
 **Issues:** #56–#71
 

@@ -2,7 +2,7 @@
 
 **Test Date:** 2026-04-01
 **Environment:** Docker local deployment on `localhost:3000` (proxied via Claude Preview)
-**Branch:** `master` (post-merge of PR #84)
+**Branch:** `main` (post-merge of PR #84)
 **Tester:** Claude Code (automated browser testing)
 
 ---
@@ -211,7 +211,7 @@
 
 ## Test Environment Notes
 
-- Docker containers: `regatta-app-1`, `regatta-postgres-1`, `regatta-redis-1`
+- Docker containers: `affiliateswarm-app-1`, `affiliateswarm-postgres-1`, `affiliateswarm-redis-1`
 - Preview proxy: Claude Preview tool → Node.js HTTP proxy → Docker on port 3000
 - Test accounts created via `POST /api/v1/agents` API, then email verified and capabilities set via direct DB update
 - Login via `POST /api/v1/auth/login-code` → 6-character code → `/login` form

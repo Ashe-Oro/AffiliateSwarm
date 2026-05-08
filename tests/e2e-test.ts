@@ -167,11 +167,11 @@ async function main() {
   // ── 6. Click Tracking ──
   console.log("\n6. Click Tracking\n");
 
-  await test("GET /t/:trackingCode — redirect with ref param", async () => {
-    const res = await fetch(`${BASE_URL}/t/${trackingCode}`, { redirect: "manual" });
-    assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-    const loc = res.headers.get("location") || "";
-    assert(loc.includes(`ref=${trackingCode}`), `Should include ref, got: ${loc}`);
+  await test("GET mock landing with swarm_ref — landing captures tracking code", async () => {
+    const res = await fetch(`${BASE_URL}/api/test/mock-landing?swarm_ref=${trackingCode}`);
+    assert(res.status === 200, `Expected 200, got ${res.status}`);
+    const text = await res.text();
+    assert(text.includes(`id="swarm-ref">${trackingCode}</code>`), "Landing page should render swarm_ref");
   });
 
   // ── 7. Postback (Conversion) ──

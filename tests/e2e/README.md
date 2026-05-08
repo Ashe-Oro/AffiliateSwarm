@@ -10,8 +10,8 @@ Automated end-to-end tests that exercise the full advertiser + affiliate lifecyc
 - No external dependencies beyond the running Next.js server
 
 ### `full-journey.spec.ts` — Realistic path
-- Uses **real Stripe checkout** (test mode, card 4242...) + browser-based tracking redirects
-- Covers everything in full-lifecycle plus: Stripe payment flow, mock landing page redirects, postback callbacks, analytics verification, campaign pause/resume
+- Uses **real Stripe checkout** (test mode, card 4242...) + browser-based direct tracking links
+- Covers everything in full-lifecycle plus: Stripe payment flow, mock landing page capture, postback callbacks, analytics verification, campaign pause/resume
 - Requires `STRIPE_SECRET_KEY` (falls back to direct deposit if not set)
 
 ### `helpers.ts` — Shared utilities

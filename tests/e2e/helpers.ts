@@ -437,8 +437,8 @@ export async function fundCampaignViaStripe(
 // ── Tracking Link Helpers ──────────────────────────────────────────────
 
 /**
- * Follow a tracking link and return the redirect destination + extracted ref.
- * Does NOT follow the redirect (uses manual redirect mode).
+ * Follow the direct-ref tracking URL and return the landing destination +
+ * extracted ref.
  */
 export async function followTrackingLink(trackingCode: string, landingUrl?: string) {
   const target = landingUrl

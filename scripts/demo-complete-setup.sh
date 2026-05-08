@@ -5,6 +5,7 @@
 # Usage: bash scripts/demo-complete-setup.sh
 
 PROD_URL="https://affiliateswarm.ai"
+LANDING_URL="${LANDING_URL:-https://example.com/product}"
 ADV_KEY="swarm_live_6Y0xO9lf1sEqX1zqqaGDdIjzJuV-PYeV"
 ADV_ID="6bc0d50f-0421-4116-905f-7b8bb087151c"
 CAMP_ID="ee8c27b2-afa0-473d-862f-eef6ab90b5f9"
@@ -34,8 +35,12 @@ echo "Tracking Code: $TRACKING_CODE"
 echo ""
 echo "Test the full flow:"
 echo ""
-echo "1. Click this tracking link (logs a click, redirects to demo landing page):"
-echo "   $PROD_URL/t/$TRACKING_CODE"
+echo "1. Open the campaign landing URL with swarm_ref appended:"
+if [[ "$LANDING_URL" == *"?"* ]]; then
+  echo "   ${LANDING_URL}&swarm_ref=$TRACKING_CODE"
+else
+  echo "   ${LANDING_URL}?swarm_ref=$TRACKING_CODE"
+fi
 echo ""
 echo "2. On the landing page, click 'Sign Up' (fires postback to AffiliateSwarm)"
 echo ""

@@ -4,9 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
  * GET /api/test/mock-landing — Test-only: mock advertiser landing page.
  *
  * In E2E tests, campaigns set their landingUrl to this endpoint.
- * When AffiliateSwarm's tracking redirect sends a user here with ?swarm_ref=CODE,
- * this page captures the value and returns a simple HTML page simulating
- * an advertiser's website.
+ * When an affiliate link sends a user here with ?swarm_ref=CODE, this page
+ * captures the value and returns a simple HTML page simulating an advertiser's
+ * website.
  *
  * Only available when NODE_ENV !== "production".
  */

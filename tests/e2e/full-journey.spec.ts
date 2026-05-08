@@ -2,11 +2,11 @@
  * Full Journey E2E — Realistic advertiser + affiliate lifecycle.
  *
  * Unlike full-lifecycle.spec.ts (which uses direct deposits), this test
- * exercises the REAL Stripe checkout flow and tracking redirect chain:
+ * exercises the REAL Stripe checkout flow and direct-ref tracking flow:
  *
  *   Advertiser: register → create campaign → fund via Stripe → confirm tracking → activate
  *   Affiliate:  register with profile → discover → apply → get approved
- *   Tracking:   click tracking link → land on mock page → advertiser fires postback
+ *   Tracking:   click direct `?swarm_ref=` link → land on mock page → advertiser fires postback
  *   Financials: verify escrow deduction, affiliate earnings, payout request
  *
  * Requires:

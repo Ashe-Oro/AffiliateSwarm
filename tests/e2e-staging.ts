@@ -184,11 +184,15 @@ async function main() {
   console.log("\n5. Click Tracking\n");
 
   if (enrollmentTrackingCode) {
-    await test("GET /t/:trackingCode — redirect works", async () => {
-      const res = await fetch(`${BASE_URL}/t/${enrollmentTrackingCode}`, { redirect: "manual" });
-      assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-      const location = res.headers.get("location") || "";
-      assert(location.includes("ref="), `Redirect should include ref param, got: ${location}`);
+    await test("GET mock landing with swarm_ref — landing captures tracking code", async () => {
+      const res = await fetch(`${BASE_URL}/api/test/mock-landing?swarm_ref=${enrollmentTrackingCode}`);
+      if (res.status === 404) {
+        console.log("        SKIP  /api/test/mock-landing is not enabled in this environment");
+        return;
+      }
+      assert(res.status === 200, `Expected 200, got ${res.status}`);
+      const text = await res.text();
+      assert(text.includes(`id="swarm-ref">${enrollmentTrackingCode}</code>`), "Landing page should render swarm_ref");
     });
   }
 

@@ -103,7 +103,7 @@ gh workflow run e2e -f test_file=tests/e2e/full-journey.spec.ts    # run a speci
 
 **CI:** Runs automatically via GitHub Actions (`.github/workflows/e2e.yml`) on:
 - PRs touching `src/`, `prisma/`, `tests/e2e/`, or `playwright.config.ts`
-- Pushes to `master` (post-merge verification)
+- Pushes to `main` (post-merge verification)
 - Manual dispatch via `gh workflow run e2e`
 
 Skips automatically for pure documentation, config, or test result file changes.
@@ -129,7 +129,7 @@ Skips automatically for pure documentation, config, or test result file changes.
 
 ### 3b. Realistic Path — `full-journey.spec.ts`
 
-**What it is:** Same lifecycle but with real Stripe checkout, browser-based tracking redirects, and webhook processing. Closest to production behavior.
+**What it is:** Same lifecycle but with real Stripe checkout, browser-based direct tracking links, and webhook processing. Closest to production behavior.
 
 **Command:**
 ```bash
@@ -138,7 +138,7 @@ STRIPE_SECRET_KEY=sk_test_... npx playwright test full-journey
 
 **Additional coverage beyond fast path:**
 - Real Stripe checkout (test card `4242 4242 4242 4242`)
-- Browser follows tracking redirect chain: click link -> mock landing page -> postback
+- Browser follows the direct tracking URL: click link with `?swarm_ref=` -> mock landing page -> postback
 - Stripe webhook processing for payment confirmation
 - Falls back to direct deposit if `STRIPE_SECRET_KEY` not set
 
@@ -417,12 +417,12 @@ git push ────────────► pre-push hook (LOCAL GATE)
                           ✅ PR checks pass → ready for review
                                     │
                                     ▼
-                              Merge to master
+                              Merge to main
                                     │
                                     ▼
                      GitHub Actions E2E (POST-MERGE — automatic)
                            │
-                           └──► Same Playwright suite re-runs on master
+                           └──► Same Playwright suite re-runs on main
                                 to verify the merge didn't break anything
 ```
 
@@ -433,7 +433,7 @@ git push ────────────► pre-push hook (LOCAL GATE)
 | **1. Post-commit** | Local | Every `git commit` | Docker rebuild | Nothing (async) |
 | **2. Pre-push** | Local | Every `git push` | Unit tests + smoke tests | Push (fails fast) |
 | **3. GitHub Actions** | CI | PR touching `src/`, `prisma/`, `tests/e2e/`, `playwright.config.ts`, `package.json` | Playwright E2E with real Postgres + Redis | Merge (PR check) |
-| **4. Post-merge** | CI | Push to `master` | Same Playwright E2E | Nothing (verification only) |
+| **4. Post-merge** | CI | Push to `main` | Same Playwright E2E | Nothing (verification only) |
 | **Manual dispatch** | CI | `gh workflow run e2e` | Playwright E2E (optionally target a specific test file) | Nothing (on-demand) |
 
 The CI gate (layer 3) only triggers on PRs that touch meaningful code paths — pure documentation or config changes skip E2E to keep CI fast.
@@ -478,7 +478,7 @@ All testing-related files created during this project:
 
 | File | Purpose |
 |------|---------|
-| `tests/README.md` | This file — master reference for all testing harnesses |
+| `tests/README.md` | This file — main reference for all testing harnesses |
 | `tests/manual-test-scripts.md` | Manual curl-based test scripts for advertiser + affiliate journeys |
 | `tests/ui-qa-checklist.md` | Browser UI QA checklist (advertiser + affiliate dashboards) |
 | `tests/agent-testing-playbook.md` | AI agent conversation scripts with scoring rubric |
