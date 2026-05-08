@@ -1,0 +1,24 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sweep",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/process-holds",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/detect-deposits",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/email-retry-sweep",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/process-payouts",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

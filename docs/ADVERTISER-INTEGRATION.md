@@ -103,7 +103,7 @@ Regatta must host and maintain a dedicated webhook endpoint for each advertiser.
 | Advertiser technical requirement | Paste a script tag | Backend developer work |
 | Reliability | Moderate (cookie-dependent) | High (server-to-server) |
 | Privacy / tracking restrictions | Affected | Not affected |
-| Time to integrate | 30 minutes | Several hours to days |
+| Time to integrate | 30 minutes | Several hours |
 | Best for | Most advertisers, fast onboarding | Technical advertisers, high-value campaigns |
 | Regatta build requirement | Host pixel script + conversion endpoint | Build per-advertiser webhook endpoint |
 

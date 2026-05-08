@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "==> pre-push: running unit tests"
+npm test
+
+echo "==> pre-push: running local smoke tests"
+BASE_URL=http://localhost:3000 ./tests/smoke-test-local.sh

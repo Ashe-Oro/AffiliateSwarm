@@ -1,0 +1,39 @@
+{
+  "name": "regatta-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for the Regatta agent-first affiliate marketplace. Discover campaigns, submit leads, and earn payouts — all through the Model Context Protocol.",
+  "license": "MIT",
+  "bin": {
+    "regatta-mcp-server": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "affiliate",
+    "regatta",
+    "ai-agent",
+    "marketplace"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omricohen/regatta",
+    "directory": "mcp-server"
+  },
+  "homepage": "https://regatta.network/docs/mcp-setup"
+}
