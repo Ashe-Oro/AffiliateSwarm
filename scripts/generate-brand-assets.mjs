@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
@@ -158,6 +158,7 @@ async function render(browser, svg, outputPath, width, height, type = "png") {
 
 await mkdir(brandDir, { recursive: true });
 await mkdir(imageDir, { recursive: true });
+await rm(path.join(publicDir, "og-image.jpg"), { force: true });
 
 await writeFile(path.join(publicDir, "favicon.svg"), markSvg(64));
 await writeFile(path.join(brandDir, "affiliateswarm-mark.svg"), markSvg(1024));
@@ -175,7 +176,7 @@ await render(
 await render(
   browser,
   fieldSvg(1200, 630, true),
-  path.join(publicDir, "og-image.jpg"),
+  path.join(publicDir, "og-image-affiliateswarm-20260509.jpg"),
   1200,
   630,
   "jpeg"

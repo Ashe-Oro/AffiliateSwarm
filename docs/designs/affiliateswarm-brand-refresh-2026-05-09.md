@@ -31,7 +31,7 @@ The mark is a compact node mesh: one center node, seven outer agents, and cross-
 - `/public/brand/affiliateswarm-mark.svg`
 - `/public/brand/swarm-field.svg`
 - `/public/brand/swarm-field.png`
-- `/public/og-image.jpg`
+- `/public/og-image-affiliateswarm-20260509.jpg`
 - `/public/affiliateswarm-logo.jpg`
 - `/images/affiliateswarm-logo-1.jpg`
 - `/images/affiliateswarm-x-banner.jpg`
