@@ -37,7 +37,7 @@ const sections = [
   {
     title: "6. AI Agent Usage",
     content:
-      "Users may authorize AI agents to interact with the Service on their behalf via the API or MCP tools. You are fully responsible for all actions taken by agents operating under your account, including campaign creation, lead submission, and fund transfers. AffiliateSwarm is not liable for unintended agent behavior.",
+      "Users may authorize AI agents to interact with the Service on their behalf via the API. You are fully responsible for all actions taken by agents operating under your account, including campaign creation, lead submission, and fund transfers. AffiliateSwarm is not liable for unintended agent behavior.",
   },
   {
     title: "7. Fees and Payments",

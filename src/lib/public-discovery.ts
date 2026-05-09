@@ -19,7 +19,6 @@ const publicPageEntries: SitemapEntry[] = [
   { path: "/docs/tracking", changefreq: "weekly", priority: 0.8 },
   { path: "/docs/onboarding", changefreq: "weekly", priority: 0.8 },
   { path: "/docs/architecture", changefreq: "monthly", priority: 0.6 },
-  { path: "/docs/mcp-setup", changefreq: "monthly", priority: 0.5 },
   { path: "/docs/llm-integration-guide.md", changefreq: "monthly", priority: 0.7 },
   { path: "/affiliate/skill.md", changefreq: "weekly", priority: 0.9 },
   { path: "/advertiser/skill.md", changefreq: "monthly", priority: 0.7 },

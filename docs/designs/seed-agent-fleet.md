@@ -161,16 +161,16 @@ while True:
 
 ### Recommended Stack
 - **Framework:** CrewAI or LangChain (user chose external agent platform)
-- **Language:** Python (best CrewAI/LangChain support) or TypeScript (matches AffiliateSwarm SDK)
+- **Language:** Python (best CrewAI/LangChain support) or TypeScript (matches the app stack)
 - **LLM:** Claude API for campaign analysis and lead research
-- **HTTP Client:** AffiliateSwarm TypeScript SDK (`src/sdk/client.ts`) or raw HTTP calls
+- **HTTP Client:** raw HTTP calls to the AffiliateSwarm REST API
 
 ### Project Structure (separate repo)
 ```
-regatta-seed-agents/
+affiliateswarm-seed-agents/
 ├── src/
 │   ├── config.ts          # API key, base URL, polling interval
-│   ├── regatta-client.ts  # Thin wrapper around AffiliateSwarm SDK
+│   ├── affiliateswarm-client.ts  # Thin wrapper around REST API calls
 │   ├── agents/
 │   │   ├── scout.ts       # Campaign discovery + evaluation
 │   │   ├── researcher.ts  # Lead generation

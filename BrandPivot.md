@@ -43,11 +43,11 @@ This plan assumes AffiliateSwarm is a fresh production deployment:
 - The implementer should create all production secrets from scratch.
 - The implementer may remove or rename legacy custody/account names because there are no old wallets to preserve, but must do that before the first production CDP-funded deployment.
 
-## Explicitly Out Of Scope
+## Explicit MCP Decommission Scope
 
-Ignore MCP package and SDK rebrand work for this migration.
+The initial plan treated MCP package work as out of scope. That is superseded by the later product decision to decommission MCP server onboarding entirely. AffiliateSwarm should use role-specific skill files plus the REST API as the supported agent integration path.
 
-Do not spend time renaming or fixing branding under:
+Remove supported-entry-point behavior under:
 
 ```txt
 mcp-server/**
@@ -55,7 +55,9 @@ src/mcp/**
 src/sdk/**
 ```
 
-Also ignore `regatta-mcp-server`, `@regatta/sdk`, and SDK class/import examples unless they appear in public docs that are otherwise being edited and the stale reference would confuse users.
+Do not publish or promote an MCP server package. Remove active MCP docs, docs routes, scripts, package metadata, and generated package artifacts from the app.
+
+The legacy TypeScript SDK source should also be removed rather than rebranded; agents should integrate through skill files and the REST API.
 
 ## Starting Inventory
 
@@ -65,17 +67,11 @@ Before editing, run a full inventory in the AffiliateSwarm repo:
 rg -n --hidden \
   --glob '!.git/**' \
   --glob '!node_modules/**' \
-  --glob '!mcp-server/**' \
-  --glob '!src/mcp/**' \
-  --glob '!src/sdk/**' \
   -i 'regatta|regatta\.network|REGATTA_|x-regatta|rgt_live_|rgt_test_|rgta_ref|regatta_session|regatta_admin_token|regatta_ref'
 
 find . \
   -path './.git' -prune -o \
   -path './node_modules' -prune -o \
-  -path './mcp-server' -prune -o \
-  -path './src/mcp' -prune -o \
-  -path './src/sdk' -prune -o \
   \( -iname '*regatta*' -o -iname '*Regatta*' \) -print
 ```
 
@@ -90,7 +86,8 @@ Classify every hit into one of these buckets:
 - Seed/demo/test data
 - Historical docs
 - Assets and filenames
-- Ignored MCP/SDK leftovers
+- Removed MCP server leftovers
+- Removed SDK leftovers
 
 ## Recommended Migration Strategy
 
@@ -410,14 +407,14 @@ tests/**
 
 ### Environment Variables
 
-Introduce new env names and remove Regatta fallbacks outside ignored MCP/SDK areas.
+Introduce new env names and remove Regatta fallbacks outside removed MCP server and SDK paths.
 
 Recommended mapping:
 
 ```txt
 REGATTA_API_KEY -> AFFILIATESWARM_API_KEY
 REGATTA_REFERRAL_SECRET -> AFFILIATESWARM_REFERRAL_SECRET
-REGATTA_AGENT_ID -> AFFILIATESWARM_AGENT_ID, only if relevant outside ignored MCP areas
+REGATTA_AGENT_ID -> no supported MCP replacement; use API keys and skill files instead
 REGATTA_POSTGRES_PORT -> AFFILIATESWARM_POSTGRES_PORT
 REGATTA_REDIS_PORT -> AFFILIATESWARM_REDIS_PORT
 REGATTA_APP_PORT -> AFFILIATESWARM_APP_PORT
@@ -751,7 +748,7 @@ Because this is a fresh deployment, generate new values for every secret and do 
 - Generate new Stripe webhook secrets for the AffiliateSwarm endpoint.
 - Generate or configure new Resend/domain credentials for `affiliateswarm.ai`.
 
-Old `REGATTA_*` fallbacks should not be needed outside ignored MCP/SDK areas. Prefer documenting and setting new `AFFILIATESWARM_*` names only.
+Old `REGATTA_*` fallbacks should not be needed outside removed MCP server and SDK paths. Prefer documenting and setting new `AFFILIATESWARM_*` names only.
 
 ### Database Setup Strategy
 
@@ -982,7 +979,6 @@ Update current public docs:
 README.md
 docs/api-reference.md
 docs/agent-onboarding.md
-docs/mcp-setup.md, only if not ignored due MCP scope
 docs/llm-integration-guide.md
 docs/architecture.md
 docs/email-notifications.md
@@ -1098,16 +1094,14 @@ Run final stale-reference checks:
 rg -n --hidden \
   --glob '!.git/**' \
   --glob '!node_modules/**' \
-  --glob '!mcp-server/**' \
-  --glob '!src/mcp/**' \
-  --glob '!src/sdk/**' \
   -i 'regatta|regatta\.network|REGATTA_|x-regatta|rgta_ref|rgt_live_|rgt_test_|regatta_session|regatta_admin_token|regatta_ref|regatta-affiliate|regatta-advertiser|~/.config/regatta'
 ```
 
 Remaining hits should be only:
 
 - Historical docs intentionally preserved
-- Ignored MCP/SDK areas
+- Removed MCP server leftovers
+- Removed SDK leftovers
 - Third-party benchmark/source material that intentionally refers to the old project history
 
 Run a preferred-brand search:
@@ -1135,7 +1129,9 @@ The migration is complete when:
 - API keys mint and validate with `swarm_live_`; sandbox/test examples use `swarm_test_`.
 - HMAC request docs and CORS use `X-AffiliateSwarm-*`, not `X-Regatta-*`.
 - Runtime cookies use `affiliateswarm_session`, `affiliateswarm_admin_token`, and `affiliateswarm_ref`.
-- Env docs use `AFFILIATESWARM_*` names outside ignored MCP/SDK areas.
+- Env docs use `AFFILIATESWARM_*` names outside removed MCP server and SDK paths.
+- MCP server onboarding code, package metadata, active docs, and docs routes are removed.
+- Legacy TypeScript SDK source is removed.
 - Fresh Vercel project is configured for `Ashe-Oro/AffiliateSwarm`.
 - Fresh production database is created and migrated with `npx prisma migrate deploy`.
 - No Regatta production database, domain, CDP wallet, or funds are required for AffiliateSwarm launch.
@@ -1152,7 +1148,7 @@ The migration is complete when:
 - Do not create GitHub issues unless explicitly asked.
 - This is a fresh deployment: do not plan around preserving Regatta production wallets, domain, or database.
 - This is also a fresh user/integration launch: do not preserve legacy Regatta public contracts.
-- Ignore MCP and SDK package rebrands for this pass.
+- Decommission MCP server onboarding and the legacy SDK source for this pass.
 - Use `swarm_ref`, `swarm_live_`, `swarm_test_`, `AFFILIATESWARM_*`, `X-AffiliateSwarm-*`, and `affiliateswarm_*` cookies.
 - The operator will create all production secrets manually; never commit secrets.
 - The most important new names are `AffiliateSwarm`, `affiliateswarm.ai`, `swarm-affiliate`, and `swarm-advertiser`.

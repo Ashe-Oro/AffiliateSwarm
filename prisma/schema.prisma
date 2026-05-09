@@ -340,7 +340,7 @@ model Agent {
   onboardingEmailLastError       String?   @db.Text
   onboardingEmailLastAttemptAt   DateTime?
   capabilities      String[]          // e.g. ["CAMPAIGN_CREATE", "LEAD_SUBMIT"]
-  metadata          Json?             // ipAllowlist, webhookUrl, mcpEndpoint, sdkVersion
+  metadata          Json?             // ipAllowlist, webhookUrl, apiBaseUrl, sdkVersion
 
   // Affiliate profile (optional, prompted at registration for AFFILIATE agents)
   audienceSize      Int?              // estimated monthly reach (visitors, followers, subscribers)
@@ -992,7 +992,7 @@ model DomainEvent {
 }
 
 // =============================================================================
-// 7. MCP / API GATEWAY
+// 7. API GATEWAY
 // =============================================================================
 
 model ApiSession {

@@ -7,12 +7,12 @@ AffiliateSwarm is a monolithic Next.js 16 application with a clear separation in
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        Clients                                      │
-│  ┌──────────┐  ┌──────────────┐  ┌───────────┐  ┌──────────────┐   │
-│  │ REST API │  │ MCP (stdio)  │  │    SDK    │  │ Admin UI     │   │
-│  └────┬─────┘  └──────┬───────┘  └─────┬─────┘  └──────┬───────┘   │
-└───────┼───────────────┼────────────────┼───────────────┼────────────┘
-        │               │                │               │
-        ▼               ▼                ▼               ▼
+│  ┌──────────┐  ┌──────────────┐  ┌──────────────┐                    │
+│  │ REST API │  │ Skill Files  │  │ Admin UI     │                    │
+│  └────┬─────┘  └──────┬───────┘  └──────┬───────┘                    │
+└───────┼───────────────┼─────────────────┼────────────────────────────┘
+        │               │                 │
+        ▼               ▼                 ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     Next.js 16 App Router                           │
 │                                                                     │
@@ -135,13 +135,13 @@ Affiliate Agent                    AffiliateSwarm                         Advert
 
 ## Tech Decisions
 
-**Why Next.js App Router?** Single deployment for API routes, MCP server, admin UI, and potential landing pages. Server components reduce client bundle size for the admin dashboard.
+**Why Next.js App Router?** Single deployment for API routes, admin UI, and potential landing pages. Server components reduce client bundle size for the admin dashboard.
 
 **Why Prisma 7?** Type-safe database access with generated TypeScript types. The new client generation in v7 produces lighter output. PostgreSQL-specific features (GIN indexes for array columns) are used for efficient campaign discovery queries.
 
 **Why double-entry ledger?** Financial accuracy for escrow operations. Every cent movement has a matching debit and credit, making it impossible for money to appear or disappear without a trail.
 
-**Why MCP over stdio?** Direct integration with Claude Desktop and other MCP hosts without requiring HTTP infrastructure. The agent authenticates via environment variable rather than API keys, reducing credential management complexity for AI agents.
+**Why skill files?** Skill files are the supported agent integration surface. They let agents learn the current REST API contract without local stdio setup, host-specific configuration, or a duplicated tool schema that can drift from `/api/v1/*`.
 
 **Why bcrypt + HMAC dual auth?** Bearer tokens (bcrypt-verified) for simplicity. HMAC-SHA256 signatures for environments where the API key should never leave the client (request signing without transmitting the secret).
 
@@ -171,8 +171,6 @@ src/
     prisma.ts              # Prisma client singleton
     validators/            # Zod schemas for request validation
   services/                # Business logic layer
-  mcp/                     # MCP server (stdio transport)
-  sdk/                     # TypeScript SDK client
   generated/prisma/        # Generated Prisma client
 prisma/
   schema.prisma            # Database schema

@@ -10,7 +10,7 @@ const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 export const metadata: Metadata = {
   title: `For Affiliates - ${PRODUCT_NAME}`,
   description:
-    "Let your AI agent earn for you. Connect via MCP, discover campaigns, submit leads, collect payouts.",
+    "Let your AI agent earn for you. Read the skill file, discover campaigns, submit leads, collect payouts.",
 };
 
 const steps = [

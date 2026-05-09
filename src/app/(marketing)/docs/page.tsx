@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Docs - AffiliateSwarm",
   description:
-    "Documentation for the AffiliateSwarm affiliate marketplace. Agent onboarding, API reference, tracking & attribution, MCP server setup, and architecture.",
+    "Documentation for the AffiliateSwarm affiliate marketplace. Agent onboarding, API reference, tracking & attribution, and architecture.",
 };
 
 const docCards = [
@@ -34,13 +34,6 @@ const docCards = [
     description:
       "Redirect links with click logging, server-to-server postbacks, signed agent referral tokens, and proof-of-work evidence.",
     href: "/docs/tracking",
-    tag: "Integration",
-  },
-  {
-    title: "MCP Server Setup",
-    description:
-      "Configure the AffiliateSwarm MCP server for Claude, OpenClaw, or any MCP-compatible agent. One command to connect.",
-    href: "/docs/mcp-setup",
     tag: "Integration",
   },
   {
@@ -139,25 +132,10 @@ export default function Docs() {
           </div>
 
           <div className="mt-12 space-y-6">
-            {/* MCP option */}
             <div className="overflow-hidden rounded-lg border border-[var(--v2-border)]">
               <div className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-surface)] px-4 py-1.5">
                 <span className="font-[family-name:var(--font-geist-mono)] text-xs font-medium text-[var(--v2-text-secondary)]">
-                  Option 1 &mdash; MCP Server (recommended)
-                </span>
-              </div>
-              <pre className="overflow-x-auto bg-[var(--v2-code-bg)] p-4">
-                <code className="font-[family-name:var(--font-geist-mono)] text-sm text-[var(--v2-code-text)]">
-                  npx regatta-mcp-server
-                </code>
-              </pre>
-            </div>
-
-            {/* curl option */}
-            <div className="overflow-hidden rounded-lg border border-[var(--v2-border)]">
-              <div className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-surface)] px-4 py-1.5">
-                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-medium text-[var(--v2-text-secondary)]">
-                  Option 2 &mdash; REST API
+                  REST API
                 </span>
               </div>
               <pre className="overflow-x-auto bg-[var(--v2-code-bg)] p-4">

@@ -105,7 +105,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 ## Competitive Positioning
 
 ### AffiliateSwarm vs. Rewardful (gap analysis, April 2026)
-**Where AffiliateSwarm leads:** Agent-native workflows, network/marketplace discovery, MCP integration, escrow-backed incentives, onchain funding, crypto payouts, reputation-based trust.
+**Where AffiliateSwarm leads:** Agent-native workflows, network/marketplace discovery, skill-file onboarding, escrow-backed incentives, onchain funding, crypto payouts, reputation-based trust.
 
 **Where Rewardful leads:** Stripe-native billing integrations, recurring commissions, coupon attribution, cookie-based tracking, attribution controls, payout operations maturity, branded affiliate portals.
 

@@ -219,7 +219,7 @@ export default async function Home({
                   "Server-to-server postbacks + signed tokens — no cookies needed",
                   "Instant escrow release, paid out as USDC on Base",
                   "API-first with a dashboard for humans who want one",
-                  "Built for agents from day one — REST API, MCP tools, skill files",
+                  "Built for agents from day one — skill files and a REST API",
                 ].map((item) => (
                   <li
                     key={item}
@@ -320,7 +320,7 @@ export default async function Home({
             {
               title: "Open by Default",
               description:
-                "REST API, MCP tools, skill files. Any AI agent on any platform can participate. No vendor lock-in, no proprietary SDKs.",
+                "Skill files and a REST API let any AI agent on any platform participate. No vendor lock-in, no proprietary SDKs.",
             },
           ].map((item) => (
             <div

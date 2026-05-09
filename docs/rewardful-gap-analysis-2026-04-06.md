@@ -9,7 +9,7 @@ This document compares Rewardful's publicly documented feature set against Affil
 ## Scope and methodology
 
 - Rewardful analysis is based on public marketing pages, pricing pages, feature pages, help content, and developer documentation.
-- AffiliateSwarm analysis is based on the current repository implementation, including code, docs, dashboard surfaces, API routes, and MCP tooling.
+- AffiliateSwarm analysis is based on the current repository implementation, including code, docs, dashboard surfaces, API routes, and skill-file tooling.
 - This is a high-level product capability comparison, not a UI-by-UI teardown.
 - "Yes" means the capability is clearly present.
 - "Partial" means the capability exists in a limited, incomplete, or materially different form.
@@ -18,7 +18,7 @@ This document compares Rewardful's publicly documented feature set against Affil
 ## Executive takeaways
 
 - Rewardful is meaningfully ahead on traditional SaaS affiliate-program operations: billing-platform integrations, recurring commissions, coupon attribution, attribution controls, payout operations, branded program tooling, and merchant admin maturity.
-- AffiliateSwarm is ahead on agent-native and network-native capabilities: advertiser and affiliate discovery, MCP workflows, escrow-backed incentives, onchain funding, crypto payouts, and reputation-based trust.
+- AffiliateSwarm is ahead on agent-native and network-native capabilities: advertiser and affiliate discovery, skill-file workflows, escrow-backed incentives, onchain funding, crypto payouts, and reputation-based trust.
 - AffiliateSwarm's biggest gaps relative to Rewardful are not in the marketplace concept itself, but in the operational maturity needed for a mainstream advertiser affiliate program.
 - The highest-value gaps are attribution flexibility, recurring commission support, coupon-based promotion, payout operations, and integration ecosystem depth.
 
@@ -88,10 +88,10 @@ This document compares Rewardful's publicly documented feature set against Affil
 | Campaign-level analytics                                   | Yes          | Yes     | Both support campaign reporting.                                                                                                                                                      |
 | Team member access / multi-user admin                      | Yes          | No      | Rewardful pricing explicitly supports team members. No clear equivalent found in AffiliateSwarm.                                                                                             |
 | API key management                                         | No / unclear | Yes     | AffiliateSwarm has explicit scoped API key management.                                                                                                                                       |
-| MCP / agent-native tooling                                 | No           | Yes     | AffiliateSwarm is far ahead here.                                                                                                                                                            |
+| Skill-file / agent-native tooling                          | No           | Yes     | AffiliateSwarm is far ahead here.                                                                                                                                                            |
 | Marketplace-style campaign discovery for affiliates        | No           | Yes     | AffiliateSwarm supports affiliate-side campaign discovery as a first-class workflow.                                                                                                         |
 | Advertiser discovery of affiliates                         | Partial      | Yes     | Rewardful's Affiliate Finder is a recruitment tool; AffiliateSwarm offers advertiser-side affiliate discovery directly in the network.                                                       |
-| Public docs for agent onboarding / machine-readable skills | No           | Yes     | AffiliateSwarm supports skill-based and MCP-based onboarding for agents.                                                                                                                     |
+| Public docs for agent onboarding / machine-readable skills | No           | Yes     | AffiliateSwarm supports skill-based onboarding for agents.                                                                                                                                   |
 
 ## Where Rewardful is ahead
 
@@ -112,7 +112,7 @@ These are not just extra features. They reduce operational burden for advertiser
 
 AffiliateSwarm is not simply a smaller Rewardful. It has real product advantages in areas Rewardful does not appear to target:
 
-- agent-native workflows through MCP and API-first automation
+- agent-native workflows through skill files and API-first automation
 - a true network/marketplace model where advertisers and affiliates discover each other
 - escrow-backed campaign funding and release logic
 - wallet-based platform economics
