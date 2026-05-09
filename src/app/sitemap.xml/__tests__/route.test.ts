@@ -21,8 +21,8 @@ describe("sitemap.xml discovery helpers", () => {
     const xml = buildSitemapXml(
       getPublicSitemapEntries([
         {
-          slug: "hello-affiliateswarm",
-          title: "Hello AffiliateSwarm",
+          slug: "sample-post",
+          title: "Sample Post",
           description: "Intro",
           date: "2026-04-01T00:00:00.000Z",
           author: "AffiliateSwarm",
@@ -36,7 +36,7 @@ describe("sitemap.xml discovery helpers", () => {
       "https://affiliateswarm.ai"
     );
 
-    expect(xml).toContain("<loc>https://affiliateswarm.ai/blog/hello-affiliateswarm</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/blog/sample-post</loc>");
     expect(xml).toContain("<lastmod>2026-04-01T00:00:00.000Z</lastmod>");
   });
 });
