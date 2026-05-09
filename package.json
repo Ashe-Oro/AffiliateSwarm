@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:e2e:preview-sweep": "playwright test tests/e2e/preview-hot-wallet-sweep.spec.ts",
     "test:e2e:ui": "playwright test --ui",
     "bootstrap:local": "./scripts/bootstrap-local.sh",
     "smoke:local": "./tests/smoke-test-local.sh",

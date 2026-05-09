@@ -506,7 +506,7 @@ export async function getWalletBalance(apiKey: string) {
   }
   return {
     availableCents: json.data.availableCents as number,
-    pendingCents: json.data.pendingCents as number,
+    pendingCents: (json.data.pendingCents ?? json.data.pendingPayoutCents) as number,
   };
 }
 
