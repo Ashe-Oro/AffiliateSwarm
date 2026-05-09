@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { DEFAULT_APP_URL, HMAC_HEADER_DISPLAY_NAMES } from "./src/lib/brand";
 import { HOMEPAGE_LINK_HEADER } from "./src/lib/public-discovery";
 
 const nextConfig: NextConfig = {
@@ -29,7 +30,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network",
+            value: process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL,
           },
           {
             key: "Access-Control-Allow-Methods",
@@ -38,7 +39,7 @@ const nextConfig: NextConfig = {
           {
             key: "Access-Control-Allow-Headers",
             value:
-              "Content-Type, Authorization, X-Regatta-Key-Id, X-Regatta-Timestamp, X-Regatta-Signature",
+              `Content-Type, Authorization, ${HMAC_HEADER_DISPLAY_NAMES.KEY_ID}, ${HMAC_HEADER_DISPLAY_NAMES.TIMESTAMP}, ${HMAC_HEADER_DISPLAY_NAMES.SIGNATURE}`,
           },
           { key: "Access-Control-Max-Age", value: "86400" },
         ],

@@ -15,21 +15,21 @@ describe("GET /.well-known/agent-skills/index.json", () => {
       "https://agentskills.io/schemas/agent-skills-index/v0.2.0.json"
     );
     expect(body.publisher).toEqual({
-      name: "Regatta",
-      url: "https://regatta.network",
+      name: "AffiliateSwarm",
+      url: "https://affiliateswarm.ai",
     });
     expect(body.skills).toHaveLength(2);
 
     expect(body.skills.map((skill: { name: string }) => skill.name)).toEqual([
-      "regatta-affiliate",
-      "regatta-advertiser",
+      "swarm-affiliate",
+      "swarm-advertiser",
     ]);
     expect(body.skills.map((skill: { url: string }) => skill.url)).toEqual([
-      "https://regatta.network/affiliate/skill.md",
-      "https://regatta.network/advertiser/skill.md",
+      "https://affiliateswarm.ai/affiliate/skill.md",
+      "https://affiliateswarm.ai/advertiser/skill.md",
     ]);
     expect(body.skills.map((skill: { url: string }) => skill.url)).not.toContain(
-      "https://regatta.network/skill.md"
+      "https://affiliateswarm.ai/skill.md"
     );
   });
 
@@ -43,13 +43,13 @@ describe("GET /.well-known/agent-skills/index.json", () => {
       ])
     );
 
-    expect(skills["regatta-affiliate"]).toBe(
+    expect(skills["swarm-affiliate"]).toBe(
       sha256Hex(readAgentSkillContent("affiliate"))
     );
-    expect(skills["regatta-advertiser"]).toBe(
+    expect(skills["swarm-advertiser"]).toBe(
       sha256Hex(readAgentSkillContent("advertiser"))
     );
-    expect(skills["regatta-affiliate"]).toMatch(/^[a-f0-9]{64}$/);
-    expect(skills["regatta-advertiser"]).toMatch(/^[a-f0-9]{64}$/);
+    expect(skills["swarm-affiliate"]).toMatch(/^[a-f0-9]{64}$/);
+    expect(skills["swarm-advertiser"]).toMatch(/^[a-f0-9]{64}$/);
   });
 });

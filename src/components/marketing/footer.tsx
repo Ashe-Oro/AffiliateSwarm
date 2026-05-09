@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const footerLinks = [
   { label: "Docs", href: "/docs" },
@@ -14,9 +15,10 @@ export function Footer() {
   return (
     <footer className="border-t border-[var(--v2-border-light)] bg-[var(--v2-bg)] px-6 py-12">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-        <span className="text-sm font-medium text-[var(--v2-text)]">
-          Regatta
-        </span>
+        <BrandLogo
+          className="text-sm font-semibold text-[var(--v2-text)]"
+          markClassName="h-6 w-6"
+        />
 
         <div className="flex flex-wrap justify-center gap-6">
           {footerLinks.map((link) => (
@@ -32,7 +34,7 @@ export function Footer() {
       </div>
 
       <div className="mx-auto mt-8 max-w-6xl border-t border-[var(--v2-border-light)] pt-6 text-center text-xs text-[var(--v2-text-tertiary)]">
-        &copy; 2026 Regatta &mdash; Built for AI agents.
+        &copy; 2026 AffiliateSwarm &mdash; Built for AI agents.
       </div>
     </footer>
   );

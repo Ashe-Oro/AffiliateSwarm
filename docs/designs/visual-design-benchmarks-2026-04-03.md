@@ -137,7 +137,7 @@ Sites analyzed: PartnerStack, impact.com, Awin (ShareASale), CJ, Rakuten Adverti
 
 **1. Single Signature Color + Strategic Accent**
 
-Every strong site commits to ONE dominant brand color and pairs it with a single contrasting accent. PartnerStack owns purple. CJ owns teal. GRIN owns purple+lime. impact.com is the exception with a multi-color gradient, but even that functions as one unified "gradient identity." Sites that try to use too many colors feel generic. Regatta needs one ownable signature color.
+Every strong site commits to ONE dominant brand color and pairs it with a single contrasting accent. PartnerStack owns purple. CJ owns teal. GRIN owns purple+lime. impact.com is the exception with a multi-color gradient, but even that functions as one unified "gradient identity." Sites that try to use too many colors feel generic. AffiliateSwarm needs one ownable signature color.
 
 **2. Dark Mode = Premium + Tech-Forward**
 
@@ -165,13 +165,13 @@ PartnerStack's globe, GRIN's floating dots and video, impact.com's gradient cycl
 
 ---
 
-## Design Brief: Recommendations for Regatta
+## Design Brief: Recommendations for AffiliateSwarm
 
 ### Brand Color System
 
 **Primary recommendation: Deep indigo-violet with electric teal accent**
 
-Rationale: Purple/violet is heavily claimed in this space (PartnerStack, GRIN, Rakuten). Rather than competing, Regatta should own the space between -- a deep indigo that reads as distinct from both PartnerStack's blue-purple and GRIN's bright violet. Pair with an electric teal/cyan accent for CTAs and highlights.
+Rationale: Purple/violet is heavily claimed in this space (PartnerStack, GRIN, Rakuten). Rather than competing, AffiliateSwarm should own the space between -- a deep indigo that reads as distinct from both PartnerStack's blue-purple and GRIN's bright violet. Pair with an electric teal/cyan accent for CTAs and highlights.
 
 Suggested palette:
 
@@ -182,13 +182,13 @@ Suggested palette:
 - **Text primary:** `#E8E6F0` on dark, `#1A1625` on light
 - **Warning/energy:** Warm amber `#FFB547` for stats and highlights
 
-The teal accent creates a natural "maritime" association with "Regatta" while feeling technical and fresh. The indigo is ownable -- no competitor in this space uses it.
+The teal accent creates a natural "maritime" association with "AffiliateSwarm" while feeling technical and fresh. The indigo is ownable -- no competitor in this space uses it.
 
 ### Hero Section
 
 **Pattern: Dark-mode hero with ambient motion + dual-path CTA**
 
-Drawing from GRIN's approach but adapted for Regatta's agent + human positioning:
+Drawing from GRIN's approach but adapted for AffiliateSwarm's agent + human positioning:
 
 - **Dark background** (`#0A0B14`) with subtle radial gradient glow in indigo emanating from center
 - **Animated particles or connection lines** suggesting agent-to-agent network activity (like PartnerStack's globe concept but more abstract -- floating nodes with thin connecting lines that pulse with teal light)
@@ -278,6 +278,6 @@ The affiliate platform design landscape splits into two camps:
 
 2. **Modern challengers** (GRIN, PartnerStack, impact.com): Dark modes, animated heroes, gradient accents, AI messaging. Visually ambitious and memorable.
 
-Regatta should firmly position in camp 2 but push further -- leaning into the dark-mode, agent-first, technically sophisticated aesthetic. The "agent economy" positioning is unique in this space; the design should feel like it belongs to a NEW category, not like a variation on existing affiliate platforms.
+AffiliateSwarm should firmly position in camp 2 but push further -- leaning into the dark-mode, agent-first, technically sophisticated aesthetic. The "agent economy" positioning is unique in this space; the design should feel like it belongs to a NEW category, not like a variation on existing affiliate platforms.
 
-The closest visual reference point is GRIN's dark-mode approach, but adapted with Regatta's indigo+teal palette and more abstract/technical graphics (network visualizations, connection nodes) instead of GRIN's creator-focused imagery.
+The closest visual reference point is GRIN's dark-mode approach, but adapted with AffiliateSwarm's indigo+teal palette and more abstract/technical graphics (network visualizations, connection nodes) instead of GRIN's creator-focused imagery.

@@ -25,6 +25,7 @@ import { CampaignDetailClient } from "@/components/dashboard/campaign-detail-cli
 import { CampaignSettingsPanel } from "@/components/dashboard/campaign-settings-panel";
 import { TrackingConfirmationCard } from "@/components/dashboard/tracking-confirmation-card";
 import { ConversionsTable } from "@/components/dashboard/conversions-table";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 import { listAdvertiserConversions } from "@/services/conversions.service";
 
 const PLATFORM_FEE_RATE = parseFloat(process.env.PLATFORM_FEE_RATE || "0.05");
@@ -99,7 +100,7 @@ export default async function CampaignDetailPage({
     leadStats.map((s) => [s.status, s._count])
   );
 
-  const postbackUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://regatta.network"}/api/v1/postback`;
+  const postbackUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || DEFAULT_APP_URL}/api/v1/postback`;
 
   const budgetRemainingCents = Math.max(
     campaign.budgetCents - campaign.budgetSpentCents,
@@ -128,7 +129,8 @@ export default async function CampaignDetailPage({
           dailyCapCount: campaign.dailyCapCount,
           dailyCapCents: campaign.dailyCapCents,
           requiresVerification: campaign.requiresVerification,
-          trackingConfirmedAt: campaign.trackingConfirmedAt?.toISOString() ?? null,
+          trackingConfirmedAt:
+            campaign.trackingConfirmedAt?.toISOString() ?? null,
           buyerIncentiveType: campaign.buyerIncentiveType,
           buyerIncentiveValue: campaign.buyerIncentiveValue,
           buyerIncentiveLabel: campaign.buyerIncentiveLabel,
@@ -139,7 +141,9 @@ export default async function CampaignDetailPage({
       <TrackingConfirmationCard
         campaignStatus={campaign.status}
         testTrackingCode={campaign.testTrackingCode}
-        trackingConfirmedAt={campaign.trackingConfirmedAt?.toISOString() ?? null}
+        trackingConfirmedAt={
+          campaign.trackingConfirmedAt?.toISOString() ?? null
+        }
         postbackUrl={postbackUrl}
       />
 

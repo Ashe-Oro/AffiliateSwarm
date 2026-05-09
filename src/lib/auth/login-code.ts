@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 const CHARSET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // no 0/O, 1/I/L
 const CODE_LENGTH = 6;
+const PLACEHOLDER_AGENT_EMAIL_DOMAIN = "agents.invalid";
 
 export const CODE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -30,7 +31,8 @@ export async function ensureUserAccount(agent: {
 
   const user = await prisma.userAccount.create({
     data: {
-      email: agent.email ?? `agent-${agent.id}@regatta.local`,
+      email:
+        agent.email ?? `agent-${agent.id}@${PLACEHOLDER_AGENT_EMAIL_DOMAIN}`,
       passwordHash: `nologin-${crypto.randomUUID()}`,
       displayName: agent.displayName,
     },

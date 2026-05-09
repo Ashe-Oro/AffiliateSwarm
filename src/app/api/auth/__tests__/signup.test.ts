@@ -29,7 +29,7 @@ vi.mock("@/lib/auth/password", () => ({
 
 vi.mock("@/lib/auth/session", () => ({
   createSession: vi.fn().mockResolvedValue("session-token"),
-  SESSION_COOKIE: "regatta_session",
+  SESSION_COOKIE: "affiliateswarm_session",
   SESSION_DURATION_MS: 30 * 24 * 60 * 60 * 1000,
 }));
 

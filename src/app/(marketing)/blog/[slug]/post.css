@@ -1,20 +1,20 @@
-/* Regatta-branded long-form typography. Scoped to .regatta-prose so it
+/* AffiliateSwarm-branded long-form typography. Scoped to .affiliateswarm-prose so it
    doesn't leak into the rest of the app. */
 
-.regatta-prose {
+.affiliateswarm-prose {
   color: var(--v2-text-secondary);
   font-size: 1.0625rem; /* 17px */
   line-height: 1.75;
   max-width: 68ch;
 }
 
-.regatta-prose > * + * {
+.affiliateswarm-prose > * + * {
   margin-top: 1.4em;
 }
 
-.regatta-prose h2,
-.regatta-prose h3,
-.regatta-prose h4 {
+.affiliateswarm-prose h2,
+.affiliateswarm-prose h3,
+.affiliateswarm-prose h4 {
   color: var(--v2-text);
   font-weight: 600;
   letter-spacing: -0.015em;
@@ -22,13 +22,13 @@
   scroll-margin-top: 5rem;
 }
 
-.regatta-prose h2 {
+.affiliateswarm-prose h2 {
   font-size: 1.75rem;
   margin-top: 2.4em;
   padding-top: 0.2em;
   position: relative;
 }
-.regatta-prose h2::before {
+.affiliateswarm-prose h2::before {
   content: "";
   display: block;
   width: 28px;
@@ -38,84 +38,90 @@
   margin-bottom: 0.9rem;
 }
 
-.regatta-prose h3 {
+.affiliateswarm-prose h3 {
   font-size: 1.35rem;
   margin-top: 2em;
 }
 
-.regatta-prose h4 {
+.affiliateswarm-prose h4 {
   font-size: 1.125rem;
   margin-top: 1.8em;
 }
 
-.regatta-prose p {
+.affiliateswarm-prose p {
   color: var(--v2-text-secondary);
 }
 
-.regatta-prose strong {
+.affiliateswarm-prose strong {
   color: var(--v2-text);
   font-weight: 600;
 }
 
-.regatta-prose em {
+.affiliateswarm-prose em {
   color: var(--v2-text);
   font-style: italic;
 }
 
-.regatta-prose a {
+.affiliateswarm-prose a {
   color: var(--v2-accent);
   text-decoration: underline;
-  text-decoration-color: rgba(255, 181, 71, 0.35);
+  text-decoration-color: rgba(53, 242, 208, 0.35);
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
   transition: all 0.15s ease;
 }
-.regatta-prose a:hover {
+.affiliateswarm-prose a:hover {
   color: var(--v2-accent-hover);
   text-decoration-color: var(--v2-accent-hover);
 }
 
-.regatta-prose ul,
-.regatta-prose ol {
+.affiliateswarm-prose ul,
+.affiliateswarm-prose ol {
   padding-left: 1.4em;
 }
-.regatta-prose ul { list-style: disc; }
-.regatta-prose ol { list-style: decimal; }
-.regatta-prose li {
+.affiliateswarm-prose ul {
+  list-style: disc;
+}
+.affiliateswarm-prose ol {
+  list-style: decimal;
+}
+.affiliateswarm-prose li {
   margin-top: 0.6em;
 }
-.regatta-prose li::marker {
+.affiliateswarm-prose li::marker {
   color: var(--v2-accent);
 }
 
-.regatta-prose blockquote {
+.affiliateswarm-prose blockquote {
   border-left: 2px solid var(--v2-accent);
   padding: 0.4em 1.2em;
   margin-left: 0;
   color: var(--v2-text);
   font-style: italic;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 181, 71, 0.06),
-    transparent 60%
-  );
+  background: linear-gradient(90deg, rgba(53, 242, 208, 0.06), transparent 60%);
   border-radius: 0 8px 8px 0;
 }
-.regatta-prose blockquote p {
+.affiliateswarm-prose blockquote p {
   color: var(--v2-text);
 }
 
-.regatta-prose code {
+.affiliateswarm-prose code {
   background: var(--v2-code-bg);
   color: var(--v2-accent-light);
   padding: 0.15em 0.4em;
   border-radius: 4px;
   font-size: 0.9em;
-  font-family: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-family: var(
+    --font-geist-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace
+  );
   border: 1px solid var(--v2-border-subtle);
 }
 
-.regatta-prose pre {
+.affiliateswarm-prose pre {
   background: var(--v2-code-bg);
   border: 1px solid var(--v2-border-light);
   border-radius: 10px;
@@ -125,7 +131,7 @@
   line-height: 1.6;
   color: var(--v2-code-text);
 }
-.regatta-prose pre code {
+.affiliateswarm-prose pre code {
   background: transparent;
   color: inherit;
   padding: 0;
@@ -133,18 +139,18 @@
   font-size: 1em;
 }
 
-.regatta-prose hr {
+.affiliateswarm-prose hr {
   border: none;
   border-top: 1px dashed var(--v2-border);
   margin: 2.5em 0;
 }
 
-.regatta-prose img {
+.affiliateswarm-prose img {
   border-radius: 12px;
   border: 1px solid var(--v2-border-light);
 }
 
-.regatta-prose table {
+.affiliateswarm-prose table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95em;
@@ -152,7 +158,7 @@
   border-radius: 8px;
   overflow: hidden;
 }
-.regatta-prose th {
+.affiliateswarm-prose th {
   background: var(--v2-bg-elevated);
   color: var(--v2-text);
   text-align: left;
@@ -160,17 +166,17 @@
   font-weight: 600;
   border-bottom: 1px solid var(--v2-border-light);
 }
-.regatta-prose td {
+.affiliateswarm-prose td {
   padding: 0.7em 0.9em;
   border-bottom: 1px solid var(--v2-border-subtle);
   color: var(--v2-text-secondary);
 }
-.regatta-prose tr:last-child td {
+.affiliateswarm-prose tr:last-child td {
   border-bottom: none;
 }
 
 /* Autolinked heading anchors */
-.regatta-prose .heading-anchor {
+.affiliateswarm-prose .heading-anchor {
   opacity: 0;
   margin-left: 0.4em;
   color: var(--v2-accent);
@@ -178,17 +184,17 @@
   font-weight: 400;
   transition: opacity 0.15s ease;
 }
-.regatta-prose .heading-anchor::before {
+.affiliateswarm-prose .heading-anchor::before {
   content: "#";
 }
-.regatta-prose h2:hover .heading-anchor,
-.regatta-prose h3:hover .heading-anchor,
-.regatta-prose h4:hover .heading-anchor {
+.affiliateswarm-prose h2:hover .heading-anchor,
+.affiliateswarm-prose h3:hover .heading-anchor,
+.affiliateswarm-prose h4:hover .heading-anchor {
   opacity: 1;
 }
 
 /* GFM task list checkboxes */
-.regatta-prose input[type="checkbox"] {
+.affiliateswarm-prose input[type="checkbox"] {
   accent-color: var(--v2-accent);
   margin-right: 0.4em;
 }

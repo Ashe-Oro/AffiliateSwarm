@@ -7,7 +7,7 @@ import { getAllFilePostSlugs } from "@/lib/blog/posts";
 import { AppError } from "@/lib/errors";
 
 const DEFAULT_AUTHOR =
-  process.env.BLOG_DEFAULT_AUTHOR ?? "Regatta";
+  process.env.BLOG_DEFAULT_AUTHOR ?? "AffiliateSwarm";
 
 /**
  * POST /api/v1/blog-posts — Create a blog post.

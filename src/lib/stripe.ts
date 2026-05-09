@@ -24,6 +24,6 @@ function getStripeClient(): Stripe {
 /** Lazy Stripe client — only throws when actually used, not at import time. */
 export const stripe = new Proxy({} as Stripe, {
   get(_target, prop) {
-    return (getStripeClient() as any)[prop];
+    return getStripeClient()[prop as keyof Stripe];
   },
 });

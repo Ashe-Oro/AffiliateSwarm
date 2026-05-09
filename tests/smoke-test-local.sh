@@ -184,7 +184,7 @@ CREDIT_PAYLOAD="{\"agentId\":\"$ADV_AGENT_ID\",\"amountCents\":10000}"
 request "credit-wallet" "200" "POST" "/api/test/credit-wallet" "$CREDIT_PAYLOAD"
 
 # Confirm tracking by firing a test postback with the campaign's testTrackingCode
-CONFIRM_PAYLOAD="{\"ref\":\"$TEST_TRACKING_CODE\",\"externalId\":\"smoke-confirm-$RAND\",\"eventType\":\"PURCHASE\"}"
+CONFIRM_PAYLOAD="{\"swarm_ref\":\"$TEST_TRACKING_CODE\",\"externalId\":\"smoke-confirm-$RAND\",\"eventType\":\"PURCHASE\"}"
 request "confirm-tracking" "200" "POST" "/api/v1/postback" "$CONFIRM_PAYLOAD" "$ADV_KEY"
 request "activate-campaign" "200" "POST" "/api/v1/campaigns/$CAMPAIGN_ID/activate" "{}" "$ADV_KEY"
 

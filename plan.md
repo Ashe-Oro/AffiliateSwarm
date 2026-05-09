@@ -1,8 +1,8 @@
-# Regatta: Complete the Platform
+# AffiliateSwarm: Complete the Platform
 
 ## Context
 
-Regatta has ~95% of the foundation built (schema, services, routes, tests, UI) but the critical wiring between services is missing. The result: campaigns can't be activated, leads can't be paid, reputation never updates, webhooks never fire, and the SDK points to wrong endpoints. The platform looks complete but doesn't actually work end-to-end.
+AffiliateSwarm has ~95% of the foundation built (schema, services, routes, tests, UI) but the critical wiring between services is missing. The result: campaigns can't be activated, leads can't be paid, reputation never updates, and webhooks never fire. The platform looks complete but doesn't actually work end-to-end.
 
 ## What's Broken
 
@@ -15,9 +15,6 @@ Regatta has ~95% of the foundation built (schema, services, routes, tests, UI) b
 ### Side Effects Never Fire
 5. **Reputation never updates** — `reputationService.recalculateReputation()` exists but is never called from any business flow.
 6. **Webhooks never fire** — `webhookService.deliverEvent()` exists but is never called from anywhere.
-
-### SDK Broken
-7. **SDK uses wrong endpoints** — all paths in `src/sdk/client.ts` are wrong (missing `/v1/`, wrong path structures).
 
 ---
 
@@ -58,26 +55,13 @@ Regatta has ~95% of the foundation built (schema, services, routes, tests, UI) b
 - In `submitLead()`: call `webhookService.deliverEvent('lead.submitted', { leadId, campaignId })`
 - Wrap all webhook calls in try/catch so failures don't break the main flow
 
-### Step 5: Fix SDK Client
-**File:** `src/sdk/client.ts`
-
-Fix all endpoint paths to match actual API routes:
-- `register()` → `/api/v1/agents`
-- `discoverCampaigns()` → `/api/v1/discover/campaigns`
-- `applyToCampaign()` → `/api/v1/campaigns/{id}/applications`
-- `createCampaign()` → `/api/v1/campaigns`
-- `submitLead()` → `/api/v1/leads`
-- `checkBalance()` → `/api/v1/wallets/{agentId}` (needs agentId param)
-- `getReputation()` → `/api/v1/reputation/{agentId}`
-- Add `activateCampaign()` method
-
-### Step 6: Update skill.md
+### Step 5: Update skill.md
 **File:** `src/app/skill.md/route.ts`
 
 - Add the activate step to the advertiser flow (create → fund → activate)
 - Make the flow clearer: register → fund wallet → create campaign → deposit to escrow → activate
 
-### Step 7: Verify End-to-End
+### Step 6: Verify End-to-End
 Run the full money loop manually with curl:
 1. Register advertiser agent
 2. Register affiliate agent
@@ -94,7 +78,7 @@ Run the full money loop manually with curl:
 13. Verify reputation was recalculated
 14. Check affiliate wallet balance > 0
 
-### Step 8: Git Commit
+### Step 7: Git Commit
 Stage and commit all changes.
 
 ---
@@ -106,7 +90,6 @@ Stage and commit all changes.
 | `src/services/campaign.service.ts` | Add `activateCampaign()` |
 | `src/app/api/v1/campaigns/[campaignId]/activate/route.ts` | New route |
 | `src/services/lead.service.ts` | Wire escrow hold/release/refund + reputation + webhooks |
-| `src/sdk/client.ts` | Fix all endpoint paths |
 | `src/app/skill.md/route.ts` | Add activate step to docs |
 
 ## Verification

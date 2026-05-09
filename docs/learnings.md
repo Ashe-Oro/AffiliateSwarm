@@ -1,6 +1,6 @@
-# Regatta — Learnings & Decisions Log
+# AffiliateSwarm — Learnings & Decisions Log
 
-A running record of product decisions, pivots, and lessons learned during the development of Regatta. Not a changelog — this captures the *why* behind choices so we can review our thinking later.
+A running record of product decisions, pivots, and lessons learned during the development of AffiliateSwarm. Not a changelog — this captures the *why* behind choices so we can review our thinking later.
 
 ---
 
@@ -8,13 +8,13 @@ A running record of product decisions, pivots, and lessons learned during the de
 
 ### Pivot: Agent-only marketplace to human+agent platform
 **Date:** ~March 2026
-**Context:** Regatta was originally conceived as infrastructure exclusively for AI agent swarms — a marketplace where autonomous agents would discover campaigns, promote products, and earn commissions without any human involvement.
+**Context:** AffiliateSwarm was originally conceived as infrastructure exclusively for AI agent swarms — a marketplace where autonomous agents would discover campaigns, promote products, and earn commissions without any human involvement.
 
 **What changed:** After research and early development, it became clear that the AI agent ecosystem is not yet developed enough to sustain a purely agent-to-agent marketplace. The reality of the current environment is that humans still use agents as tools and as their gateway to services. Agents don't yet operate fully autonomously at scale — they work on behalf of humans who direct them.
 
 **Decision:** Pivot to a hybrid model where both humans and agents can use the platform. Built a full web UI and dashboard for human users, while keeping the API-first architecture so agents remain first-class citizens. The marketing positioning shifted from "built for agent swarms" to "your agent does the work, you see the results."
 
-**Impact:** This unlocked the entire dashboard product line (advertiser dashboard, affiliate dashboard, admin panel), the login/auth flows for human users, and the marketing website. Without this pivot, Regatta would have been waiting for an ecosystem that doesn't exist yet.
+**Impact:** This unlocked the entire dashboard product line (advertiser dashboard, affiliate dashboard, admin panel), the login/auth flows for human users, and the marketing website. Without this pivot, AffiliateSwarm would have been waiting for an ecosystem that doesn't exist yet.
 
 ---
 
@@ -26,7 +26,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 
 **Constraints on copy:** Don't write "always free" or "no fees ever" for advertisers — keep language flexible ("no platform fees" is fine). Affiliate side can be more definitive since no fee is planned there.
 
-**Open issue:** The 5% advertiser platform fee was later added to the codebase and marketing copy. The partners page still references "Regatta's cut" which created a contradiction with the pricing page's "no platform fees" language. Needs a single consistent explanation.
+**Open issue:** The 5% advertiser platform fee was later added to the codebase and marketing copy. The partners page still references "AffiliateSwarm's cut" which created a contradiction with the pricing page's "no platform fees" language. Needs a single consistent explanation.
 
 ---
 
@@ -44,7 +44,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 **Date:** March 2026
 **Context:** Classic marketplace cold-start problem — advertisers won't come without affiliates, affiliates won't come without campaigns.
 
-**Decision:** Build Regatta-operated seed agents (external CrewAI/LangChain platform) that immediately work new campaigns. When an advertiser creates a campaign, seed agents start promoting it within minutes via polling `/discover/campaigns` every 5 min.
+**Decision:** Build AffiliateSwarm-operated seed agents (external CrewAI/LangChain platform) that immediately work new campaigns. When an advertiser creates a campaign, seed agents start promoting it within minutes via polling `/discover/campaigns` every 5 min.
 
 **Key sub-decision:** Seed agent leads get identical treatment to organic affiliate leads — no special flagging. This keeps the marketplace honest and dogfoods our own API.
 
@@ -66,7 +66,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 **Date:** March 2026
 **Context:** Needed to support sandbox/demo mode for agent testing without risking production data.
 
-**Decision:** Request-scoped Prisma client — `getPrismaClient(apiKey)` routes `rgt_test_*` keys to a sandbox DB and `rgt_live_*` keys to production. Separate Postgres database, same schema.
+**Decision:** Request-scoped Prisma client — `getPrismaClient(apiKey)` routes `swarm_test_*` keys to a sandbox DB and `swarm_live_*` keys to production. Separate Postgres database, same schema.
 
 **Why not schema-level isolation:** Zero risk of data mixing. A schema-level approach could leak data through a missed `WHERE` clause. Separate databases make cross-contamination structurally impossible.
 
@@ -104,12 +104,12 @@ A running record of product decisions, pivots, and lessons learned during the de
 
 ## Competitive Positioning
 
-### Regatta vs. Rewardful (gap analysis, April 2026)
-**Where Regatta leads:** Agent-native workflows, network/marketplace discovery, MCP integration, escrow-backed incentives, onchain funding, crypto payouts, reputation-based trust.
+### AffiliateSwarm vs. Rewardful (gap analysis, April 2026)
+**Where AffiliateSwarm leads:** Agent-native workflows, network/marketplace discovery, skill-file onboarding, escrow-backed incentives, onchain funding, crypto payouts, reputation-based trust.
 
 **Where Rewardful leads:** Stripe-native billing integrations, recurring commissions, coupon attribution, cookie-based tracking, attribution controls, payout operations maturity, branded affiliate portals.
 
-**Key takeaway:** Regatta's gaps relative to Rewardful are not in the marketplace concept but in operational maturity for mainstream advertiser affiliate programs. The highest-value gaps to close: attribution flexibility, recurring commissions, coupon-based promotion, payout operations, and integration ecosystem.
+**Key takeaway:** AffiliateSwarm's gaps relative to Rewardful are not in the marketplace concept but in operational maturity for mainstream advertiser affiliate programs. The highest-value gaps to close: attribution flexibility, recurring commissions, coupon-based promotion, payout operations, and integration ecosystem.
 
 ---
 

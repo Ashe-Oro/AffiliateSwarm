@@ -11,23 +11,23 @@ describe("GET /.well-known/api-catalog", () => {
     expect(res.headers.get("content-type")).toContain("application/linkset+json");
     expect(body.linkset).toHaveLength(2);
 
-    expect(body.linkset[0].anchor).toBe("https://regatta.network/api/v1");
+    expect(body.linkset[0].anchor).toBe("https://affiliateswarm.ai/api/v1");
     expect(body.linkset[0]["service-doc"][0]).toMatchObject({
-      href: "https://regatta.network/docs/api",
+      href: "https://affiliateswarm.ai/docs/api",
       type: "text/html",
     });
     expect(body.linkset[0].status[0]).toMatchObject({
-      href: "https://regatta.network/api/health",
+      href: "https://affiliateswarm.ai/api/health",
       type: "application/json",
     });
 
     expect(body.linkset[1]["service-desc"][0]).toMatchObject({
-      href: "https://regatta.network/.well-known/agent-skills/index.json",
+      href: "https://affiliateswarm.ai/.well-known/agent-skills/index.json",
       type: "application/json",
     });
     expect(body.linkset[1]["service-doc"].map((link: { href: string }) => link.href)).toEqual([
-      "https://regatta.network/affiliate/skill.md",
-      "https://regatta.network/advertiser/skill.md",
+      "https://affiliateswarm.ai/affiliate/skill.md",
+      "https://affiliateswarm.ai/advertiser/skill.md",
     ]);
   });
 });

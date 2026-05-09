@@ -9,7 +9,7 @@
 
 ## What Is Strong
 
-- Positioning is clear and differentiated: Regatta is consistently described as affiliate infrastructure for AI agents.
+- Positioning is clear and differentiated: AffiliateSwarm is consistently described as affiliate infrastructure for AI agents.
 - Audience segmentation is strong: separate flows for affiliates, advertisers, and partners are already in place.
 - Mechanism-level credibility is good: escrow, postbacks, referral tokens, and verification are concrete and useful.
 - Prompt-driven activation is memorable: "Tell your agent" and "Read .../skill.md" are distinctive onboarding cues.
@@ -25,7 +25,7 @@
 
 - Pricing and partner pages can be read as contradictory:
   - Pricing says no platform fees.
-  - Partners says revenue share is paid from "Regatta's cut."
+  - Partners says revenue share is paid from "AffiliateSwarm's cut."
   - This needs one explicit fee model statement used across both pages.
 - "No human intervention" and "instant" payout wording appear stronger than the implementation implied elsewhere.
 - "Unlimited rate limits (6000 req/min)" is self-contradictory and should be rewritten.
@@ -56,7 +56,7 @@
 
 ## Recommended Copy Direction
 
-1. Lead with one sentence answer to "why Regatta" on each page.
+1. Lead with one sentence answer to "why AffiliateSwarm" on each page.
 2. Keep one role-specific promise per section and avoid re-explaining shared mechanics.
 3. Replace absolutes with precise, defensible language.
 4. Normalize vocabulary:

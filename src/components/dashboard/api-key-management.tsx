@@ -228,7 +228,7 @@ export function ApiKeyManagement({ credentials }: ApiKeyManagementProps) {
               </h3>
               <p className="text-sm text-muted-foreground">
                 This key has full access for this agent account. Copy and store
-                it now because Regatta will not show the full key again.
+                it now because AffiliateSwarm will not show the full key again.
               </p>
             </div>
 

@@ -11,14 +11,14 @@ import {
 } from "@/lib/auth/api-keys";
 
 describe("generateApiKey", () => {
-  it("produces a key with the rgt_live_ prefix", async () => {
+  it("produces a key with the swarm_live_ prefix", async () => {
     const result = await generateApiKey();
-    expect(result.key).toMatch(/^rgt_live_/);
+    expect(result.key).toMatch(/^swarm_live_/);
   });
 
   it("returns a keyPrefix that is the first 8 chars of the random part", async () => {
     const result = await generateApiKey();
-    const randomPart = result.key.replace("rgt_live_", "");
+    const randomPart = result.key.replace("swarm_live_", "");
     expect(result.keyPrefix).toBe(randomPart.slice(0, 8));
     expect(result.keyPrefix).toHaveLength(8);
   });
@@ -31,18 +31,18 @@ describe("generateApiKey", () => {
 
   it("hash does NOT verify against a different key", async () => {
     const result = await generateApiKey();
-    const matches = await verifyApiKey("rgt_live_wrong_key_value", result.hash);
+    const matches = await verifyApiKey("swarm_live_wrong_key_value", result.hash);
     expect(matches).toBe(false);
   });
 });
 
 describe("extractKeyPrefix", () => {
   it("extracts the 8-char prefix from a valid key", () => {
-    const prefix = extractKeyPrefix("rgt_live_ABCDEFGH_rest_of_key");
+    const prefix = extractKeyPrefix("swarm_live_ABCDEFGH_rest_of_key");
     expect(prefix).toBe("ABCDEFGH");
   });
 
-  it("returns null for a key without the rgt_live_ prefix", () => {
+  it("returns null for a key without the swarm_live_ prefix", () => {
     expect(extractKeyPrefix("invalid_key")).toBeNull();
     expect(extractKeyPrefix("")).toBeNull();
   });

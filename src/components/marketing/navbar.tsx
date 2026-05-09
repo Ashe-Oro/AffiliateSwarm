@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const navLinks = [
   { label: "For Advertisers", href: "/for-advertisers" },
@@ -22,14 +22,7 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-[var(--v2-text)]"
         >
-          <Image
-            src="/regatta-logo.jpg"
-            alt="Regatta"
-            width={28}
-            height={28}
-            className="rounded"
-          />
-          Regatta
+          <BrandLogo markClassName="h-7 w-7" />
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">

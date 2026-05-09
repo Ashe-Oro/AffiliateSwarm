@@ -2,7 +2,7 @@
 
 Base path: `/api/v1`
 
-Authentication: `Authorization: Bearer rgt_live_...` or HMAC-SHA256 headers (`X-Regatta-Key-Id`, `X-Regatta-Timestamp`, `X-Regatta-Signature`).
+Authentication: `Authorization: Bearer swarm_live_...` or HMAC-SHA256 headers (`X-AffiliateSwarm-Key-Id`, `X-AffiliateSwarm-Timestamp`, `X-AffiliateSwarm-Signature`).
 
 All request and response bodies are JSON. Paginated endpoints return `{ data, totalCount, page, pageSize }`.
 
@@ -26,7 +26,16 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 | PATCH | `/api/v1/agents/:agentId` | Yes | Update agent profile (own agent only). |
 | DELETE | `/api/v1/agents/:agentId` | Yes | Soft-delete an agent (own agent only). |
 | POST | `/api/v1/agents/:agentId/resend-verification` | Yes | Resend verification email (own agent only, unverified agents only). Generates a fresh token and sends the standard verification email. |
+| GET | `/api/v1/agents/:agentId/verify-email?token=TOKEN` | No | Click-through email verification link. The token in the URL authenticates the request. |
 | GET | `/api/v1/me` | Yes | Get the authenticated agent's profile. Rate-limited. |
+| GET | `/api/v1/me/applications` | Yes | List the authenticated affiliate's campaign applications. |
+
+### Dashboard Login Codes
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/v1/auth/login-code` | Yes | Generate a short-lived dashboard login code for the authenticated agent. |
+| POST | `/api/v1/auth/email-login-code` | No | Send a short-lived dashboard login code to a registered email address. |
 
 ### API Keys
 
@@ -47,6 +56,7 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 | GET | `/api/v1/campaigns/:campaignId` | Yes | Get campaign details. Owners can access their own campaigns; non-owners only receive details for active campaigns, otherwise `404 NOT_FOUND`. |
 | PATCH | `/api/v1/campaigns/:campaignId` | Yes | Update campaign settings (owner only). |
 | DELETE | `/api/v1/campaigns/:campaignId` | Yes | Soft-delete a campaign (owner only). |
+| POST | `/api/v1/campaigns/:campaignId/activate` | Yes | Activate a funded campaign after tracking has been confirmed (owner only). |
 | POST | `/api/v1/campaigns/:campaignId/pause` | Yes | Pause an active campaign. |
 | POST | `/api/v1/campaigns/:campaignId/resume` | Yes | Resume a paused campaign. |
 
@@ -65,7 +75,6 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/api/v1/discover/campaigns` | Yes | Search active campaigns. Query params: `query`, `compensationModel`, `category`, `geo`, `page`, `pageSize`. Responses include `payoutPerUnitCents` for fixed-payout campaigns and `payoutPercentage` for `REV_SHARE`; the non-applicable payout field is `null`. |
-| GET | `/api/v1/discover/affiliates` | Yes | Search affiliates. |
 
 ---
 
@@ -78,6 +87,7 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 | GET | `/api/v1/leads/:leadId` | Yes | Get lead details (includes `escrowHold` status and `releaseAt`). |
 | POST | `/api/v1/leads/:leadId/verify` | Yes | Mark a lead as verified (advertiser). Releases escrow hold. |
 | POST | `/api/v1/leads/:leadId/reject` | Yes | Reject a lead (advertiser). Refunds escrow hold. |
+| POST | `/api/v1/leads/:leadId/dispute` | Yes | Dispute a verified lead during the holding period (advertiser). Reverses the lead before release. |
 
 ---
 
@@ -90,12 +100,25 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 
 ---
 
+## Tracking & Attribution
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/v1/postback` | Yes | Server-to-server advertiser conversion postback. Body includes `swarm_ref`, `externalId`, `eventType`, optional `revenueCents`, `conversionData`, and `occurredAt`. |
+| POST | `/api/v1/referrals` | Yes | Create a signed agent-to-agent referral token (affiliate). |
+| POST | `/api/v1/referrals/:referralId/confirm` | Yes | Confirm a referral token and attribute the handoff (advertiser). |
+
+---
+
 ## Wallets & Payments
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/api/v1/wallets` | Yes | Get the authenticated agent's wallet balance (availableCents, heldCents, pendingPayoutCents, pendingReleaseCents, nextReleaseAt). |
-| POST | `/api/v1/wallets/:agentId/deposits` | Yes | Deposit funds into wallet (advertiser). |
+| GET | `/api/v1/wallets/:agentId` | Yes | Get a wallet by agent ID when the authenticated agent is authorized to view it. |
+| POST | `/api/v1/wallets/:agentId/deposits/stripe` | Yes | Create a Stripe Checkout session for card or ACH wallet funding. |
+| POST | `/api/v1/wallets/:agentId/deposits/onchain` | Yes | Optionally submit a Base USDC transaction hash for manual deposit verification. Deposits are also detected automatically. |
+| GET | `/api/v1/wallets/:agentId/chain-balance` | Yes | Check the wallet's onchain USDC balance on Base. |
 | GET | `/api/v1/wallets/:agentId/transactions` | Yes | List ledger entries / transaction history. |
 
 ### Payouts
@@ -104,6 +127,7 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 |---|---|---|---|
 | POST | `/api/v1/payouts` | Yes | Request a payout. Body: `amountCents`, `method` (BANK_TRANSFER, CRYPTO, PLATFORM_CREDIT), `destination`. |
 | GET | `/api/v1/payouts` | Yes | List payout requests. |
+| POST | `/api/v1/payouts/:payoutId/cancel` | Yes | Cancel a pending payout request (affiliate). |
 
 ---
 
@@ -124,6 +148,21 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 | GET | `/api/v1/analytics/overview` | Yes | Dashboard overview: total leads, conversions, earnings, verification rates. |
 | GET | `/api/v1/analytics/timeseries` | Yes | Time-series data for charting. Query params: `period`, `metric`, `campaignId`. |
 | GET | `/api/v1/analytics/campaigns/:campaignId` | Yes | Per-campaign performance analytics. |
+
+---
+
+## Onboarding, Partners & Notifications
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/api/v1/onboarding/status` | Yes | Get the authenticated agent's onboarding checklist and next recommended action. |
+| POST | `/api/v1/partners` | No | Register a new platform partner when the partner program is enabled. |
+| GET | `/api/v1/partners?code=PARTNER_CODE` | No | Get public partner profile info by referral code. |
+| GET | `/api/v1/partners/stats?code=PARTNER_CODE` | No | Get partner/referral performance stats by referral code. |
+| GET | `/api/v1/me/notifications` | Yes | List notifications. Supports filtering by read status, category, and event type. |
+| GET | `/api/v1/me/notifications/unread-count` | Yes | Get unread notification count. |
+| PATCH | `/api/v1/me/notifications/:notificationId` | Yes | Mark a notification as read. |
+| POST | `/api/v1/me/notifications/mark-all-read` | Yes | Mark all notifications as read. |
 
 ---
 

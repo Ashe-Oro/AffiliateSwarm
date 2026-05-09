@@ -34,7 +34,7 @@ export function CodeBlock({
  */
 export function InlineCode({ children }: { children: React.ReactNode }) {
   return (
-    <code className="not-prose rounded bg-[rgba(255,181,71,0.1)] px-1.5 py-0.5 font-[family-name:var(--font-geist-mono)] text-sm font-medium text-[var(--v2-accent-light)]">
+    <code className="not-prose rounded bg-[var(--v2-accent-muted)] px-1.5 py-0.5 font-[family-name:var(--font-geist-mono)] text-sm font-medium text-[var(--v2-accent-light)]">
       {children}
     </code>
   );

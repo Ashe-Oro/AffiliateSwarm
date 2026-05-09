@@ -30,7 +30,7 @@ function buildRequest(
   };
 
   if (withAdminAuth) {
-    headers.cookie = `regatta_admin_token=${ADMIN_SECRET}`;
+    headers.cookie = `affiliateswarm_admin_token=${ADMIN_SECRET}`;
   }
 
   return new NextRequest(new URL("http://localhost:3000/api/admin/agents"), {

@@ -34,7 +34,7 @@ function wrap(body: string): string {
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; color: #18181b;">
 ${body}
 <p style="margin-top: 32px; color: #71717a; font-size: 13px;">
-— The Regatta team<br/>
+— The AffiliateSwarm team<br/>
 <a href="${APP_URL}">${APP_URL}</a>
 </p>
 </div>`.trim();
@@ -59,7 +59,7 @@ const RENDERERS: Partial<Record<NotificationEvent["type"], Renderer<any>>> = {
 <h2>New affiliate application</h2>
 <p>Hi ${_recipient.displayName},</p>
 <p><strong>${event.data.affiliateName}</strong> has applied to join your campaign <strong>${event.data.campaignName}</strong>.</p>
-<p>Review the application in your <a href="${APP_URL}/dashboard">Regatta dashboard</a> to approve or reject it.</p>
+<p>Review the application in your <a href="${APP_URL}/dashboard">AffiliateSwarm dashboard</a> to approve or reject it.</p>
     `),
   }),
 
@@ -81,7 +81,7 @@ ${event.data.trackingUrl ? `<p>Your tracking link is ready: <a href="${event.dat
 <p>Hi ${recipient.displayName},</p>
 <p>Your application for <strong>${event.data.campaignName}</strong> was declined.</p>
 ${event.data.reason ? `<p>Reason: ${event.data.reason}</p>` : ""}
-<p>You can continue exploring other campaigns in <a href="${APP_URL}/dashboard">Regatta</a>.</p>
+<p>You can continue exploring other campaigns in <a href="${APP_URL}/dashboard">AffiliateSwarm</a>.</p>
     `),
   }),
 
@@ -295,7 +295,7 @@ ${event.data.reason ? `<p>Reason: ${event.data.reason}</p>` : ""}
     html: wrap(`
 <h2>Earnings available</h2>
 <p>Hi ${recipient.displayName},</p>
-<p><strong>${formatCents(event.data.amountCents)}</strong> from <strong>${event.data.campaignName}</strong> is now available in your Regatta wallet.</p>
+<p><strong>${formatCents(event.data.amountCents)}</strong> from <strong>${event.data.campaignName}</strong> is now available in your AffiliateSwarm wallet.</p>
 <p>You can keep the balance in-platform or <a href="${APP_URL}/dashboard">request a payout</a>.</p>
     `),
   }),

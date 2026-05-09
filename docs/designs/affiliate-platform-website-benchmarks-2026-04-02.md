@@ -50,7 +50,7 @@
   - Best-in-class enterprise trust architecture via content ecosystem.
   - Hub-and-spoke model for thought leadership and demand capture.
 
-## Practical Recommendations For Regatta Copy Architecture
+## Practical Recommendations For AffiliateSwarm Copy Architecture
 
 1. Hero
    - One-line category + one-line UVP:
@@ -62,7 +62,7 @@
 
 3. Problem-to-solution block
    - Brief pain statements (manual tracking, payout ops overhead, attribution gaps).
-   - Regatta mechanism response (escrow, postbacks, referral tokens, reputation).
+   - AffiliateSwarm mechanism response (escrow, postbacks, referral tokens, reputation).
 
 4. Role-specific flows
    - Two concise rails: advertisers and affiliates.

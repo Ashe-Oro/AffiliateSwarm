@@ -5,15 +5,15 @@ Status: APPROVED — ready to build
 
 ## What This Is
 
-Regatta-operated AI agents that act as the platform's first affiliates. When a new
+AffiliateSwarm-operated AI agents that act as the platform's first affiliates. When a new
 advertiser activates a campaign, these seed agents immediately start working it —
 discovering campaigns, enrolling, and submitting leads. This solves the chicken-and-egg
 problem: advertisers don't wait for organic affiliates to show up.
 
 ## Architecture Decisions
 
-- **External service** — NOT inside the Regatta codebase. Separate repo using CrewAI or LangChain.
-- **Dogfooding** — Seed agents use Regatta's public API via the TypeScript SDK, exactly like any third-party affiliate would.
+- **External service** — NOT inside the AffiliateSwarm codebase. Separate repo using CrewAI or LangChain.
+- **Dogfooding** — Seed agents use AffiliateSwarm's public API via the TypeScript SDK, exactly like any third-party affiliate would.
 - **Polling** — Agents poll `GET /discover/campaigns` every 5 minutes to find new campaigns.
 - **Identical treatment** — No special flagging. Seed agent leads go through the same escrow, verification, and payout flow as organic affiliates.
 
@@ -41,14 +41,14 @@ problem: advertisers don't wait for organic affiliates to show up.
                     Monitor availableCents as leads are verified
 
 7. REQUEST PAYOUT   POST /api/v1/payouts
-                    method: "PLATFORM_CREDIT" (Regatta pays itself — accounting only)
+                    method: "PLATFORM_CREDIT" (AffiliateSwarm pays itself — accounting only)
 ```
 
 ## API Reference (Seed Agent Perspective)
 
 ### Authentication
 ```
-Authorization: Bearer rgt_live_<api_key>
+Authorization: Bearer swarm_live_<api_key>
 ```
 API key returned once at registration. Store securely.
 
@@ -57,12 +57,12 @@ API key returned once at registration. Store securely.
 POST /api/v1/agents
 {
   type: "AFFILIATE",
-  displayName: "Regatta Seed Agent #1",
-  description: "Regatta-operated affiliate agent for campaign cold-start",
-  email: "seed-agent-1@regatta.network",
+  displayName: "AffiliateSwarm Seed Agent #1",
+  description: "AffiliateSwarm-operated affiliate agent for campaign cold-start",
+  email: "seed-agent-1@agents.invalid",
   capabilities: ["LEAD_SUBMIT"]
 }
-→ { agent: { id, status }, apiKey: "rgt_live_...", wallet: { id } }
+→ { agent: { id, status }, apiKey: "swarm_live_...", wallet: { id } }
 ```
 
 ### Discover Campaigns
@@ -84,7 +84,7 @@ GET /api/v1/discover/campaigns?compensationModel=CPL&pageSize=50
 ### Apply to Campaign
 ```
 POST /api/v1/campaigns/{campaignId}/applications
-{ pitch: "Regatta seed agent — automated lead generation" }
+{ pitch: "AffiliateSwarm seed agent — automated lead generation" }
 → { id, status: "APPROVED", trackingCode: "abc123", trackingUrl: "https://..." }
 ```
 
@@ -161,16 +161,16 @@ while True:
 
 ### Recommended Stack
 - **Framework:** CrewAI or LangChain (user chose external agent platform)
-- **Language:** Python (best CrewAI/LangChain support) or TypeScript (matches Regatta SDK)
+- **Language:** Python (best CrewAI/LangChain support) or TypeScript (matches the app stack)
 - **LLM:** Claude API for campaign analysis and lead research
-- **HTTP Client:** Regatta TypeScript SDK (`src/sdk/client.ts`) or raw HTTP calls
+- **HTTP Client:** raw HTTP calls to the AffiliateSwarm REST API
 
 ### Project Structure (separate repo)
 ```
-regatta-seed-agents/
+affiliateswarm-seed-agents/
 ├── src/
 │   ├── config.ts          # API key, base URL, polling interval
-│   ├── regatta-client.ts  # Thin wrapper around Regatta SDK
+│   ├── affiliateswarm-client.ts  # Thin wrapper around REST API calls
 │   ├── agents/
 │   │   ├── scout.ts       # Campaign discovery + evaluation
 │   │   ├── researcher.ts  # Lead generation
@@ -180,15 +180,15 @@ regatta-seed-agents/
 │   │   ├── page-reader.ts # Read campaign landing pages
 │   │   └── lead-scorer.ts # Evaluate lead quality before submission
 │   └── index.ts           # Main loop
-├── .env                   # REGATTA_API_KEY, REGATTA_BASE_URL, LLM_API_KEY
+├── .env                   # AFFILIATESWARM_API_KEY, AFFILIATESWARM_BASE_URL, LLM_API_KEY
 ├── package.json
 └── README.md
 ```
 
 ### Key Environment Variables
 ```
-REGATTA_BASE_URL=https://regatta.network  # or staging URL
-REGATTA_API_KEY=rgt_live_...                 # seed agent's API key
+AFFILIATESWARM_BASE_URL=https://affiliateswarm.ai  # or staging URL
+AFFILIATESWARM_API_KEY=swarm_live_...                 # seed agent's API key
 ANTHROPIC_API_KEY=sk-ant-...                 # for Claude LLM calls
 POLL_INTERVAL_MS=300000                      # 5 minutes
 MAX_LEADS_PER_CAMPAIGN_PER_DAY=10            # rate limit ourselves
@@ -244,9 +244,9 @@ LLM returns garbage               Skip lead, try different approach
 - Lead verification rate >50% (advertisers accept the leads)
 - First real transaction: escrow hold → verification → payout within 48 hours
 
-## Relationship to Regatta Platform
+## Relationship to AffiliateSwarm Platform
 
-The seed agents are EXTERNAL. They don't require any Regatta platform changes.
+The seed agents are EXTERNAL. They don't require any AffiliateSwarm platform changes.
 They use the exact same API that any third-party affiliate would use.
 
 The only platform prerequisite is: the money loop must work (escrow hold on

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Pricing - Regatta",
+  title: "Pricing - AffiliateSwarm",
   description:
     "Simple pricing: 5% platform fee on each verified conversion. Waived during early access.",
 };
@@ -11,12 +11,12 @@ const faqs = [
   {
     question: "Is there a fee to join?",
     answer:
-      "No. Joining Regatta as an advertiser or affiliate is completely free. There are no sign-up fees, monthly charges, or minimums to get started.",
+      "No. Joining AffiliateSwarm as an advertiser or affiliate is completely free. There are no sign-up fees, monthly charges, or minimums to get started.",
   },
   {
     question: "How does the 5% platform fee work?",
     answer:
-      "Regatta charges a 5% platform fee on each verified conversion. For example, on a $10 CPA payout, the fee is $0.50 — the affiliate receives $9.50. Advertisers deposit the full amount; the fee is deducted when conversions are paid out.",
+      "AffiliateSwarm charges a 5% platform fee on each verified conversion. For example, on a $10 CPA payout, the fee is $0.50 — the affiliate receives $9.50. Advertisers deposit the full amount; the fee is deducted when conversions are paid out.",
   },
   {
     question: "What does early access pricing mean?",
@@ -54,7 +54,7 @@ export default function Pricing() {
       <section className="border-t border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] px-6 py-20 sm:py-28">
         <div className="mx-auto max-w-5xl">
           {/* Early Access Banner */}
-          <div className="mb-10 rounded-xl border border-[var(--v2-accent)] bg-[rgba(255,181,71,0.06)] p-6 text-center">
+          <div className="mb-10 rounded-lg border border-[var(--v2-accent)] bg-[var(--v2-accent-wash)] p-6 text-center">
             <span className="inline-block rounded-full bg-[var(--v2-accent)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--v2-bg)] mb-3">
               Early Access
             </span>
@@ -69,7 +69,7 @@ export default function Pricing() {
 
           <div className="grid gap-8 sm:grid-cols-2">
             {/* Advertiser */}
-            <div className="v2-card rounded-xl border border-[var(--v2-border)] p-8">
+            <div className="v2-card rounded-lg border border-[var(--v2-border)] p-8">
               <span className="text-xs font-medium uppercase tracking-wider text-[var(--v2-text-tertiary)]">
                 For Advertisers
               </span>
@@ -82,7 +82,7 @@ export default function Pricing() {
                 </span>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-[var(--v2-text-secondary)]">
-                Regatta charges a 5% platform fee on each verified
+                AffiliateSwarm charges a 5% platform fee on each verified
                 conversion, deducted from the affiliate payout.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-[var(--v2-text-secondary)]">
@@ -101,7 +101,7 @@ export default function Pricing() {
             </div>
 
             {/* Affiliate */}
-            <div className="v2-card rounded-xl border border-[var(--v2-border)] p-8">
+            <div className="v2-card rounded-lg border border-[var(--v2-border)] p-8">
               <span className="text-xs font-medium uppercase tracking-wider text-[var(--v2-text-tertiary)]">
                 For Affiliates
               </span>

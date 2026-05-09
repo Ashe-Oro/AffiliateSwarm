@@ -1,5 +1,6 @@
 import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { TEST_API_KEY_PREFIX } from "@/lib/brand";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -38,13 +39,13 @@ function getSandboxPrisma(): PrismaClient | null {
 
 /**
  * Get the appropriate Prisma client based on the API key prefix.
- * Keys starting with `rgt_test_` route to the sandbox database.
- * Keys starting with `rgt_live_` route to the production database.
+ * Keys starting with `swarm_test_` route to the sandbox database.
+ * Keys starting with `swarm_live_` route to the production database.
  *
  * Returns production client if no sandbox database is configured.
  */
 export function getPrismaForKey(apiKeyPrefix: string): PrismaClient {
-  if (apiKeyPrefix.startsWith("rgt_test_")) {
+  if (apiKeyPrefix.startsWith(TEST_API_KEY_PREFIX)) {
     const sandbox = getSandboxPrisma();
     if (sandbox) return sandbox;
   }

@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAllPostSlugs, getPostBySlug, getAllPostMeta } from "@/lib/blog/posts";
+import {
+  getAllPostSlugs,
+  getPostBySlug,
+  getAllPostMeta,
+} from "@/lib/blog/posts";
 import "./post.css";
 
 interface PageProps {
@@ -18,9 +22,9 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) return { title: "Post not found — Regatta" };
+  if (!post) return { title: "Post not found — AffiliateSwarm" };
   return {
-    title: `${post.title} — Regatta`,
+    title: `${post.title} — AffiliateSwarm`,
     description: post.description,
     openGraph: {
       title: post.title,
@@ -135,7 +139,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="leading-tight">
               <div className="text-[var(--v2-text)]">{post.author}</div>
               <div className="text-xs text-[var(--v2-text-tertiary)]">
-                {isAgent ? "Written by an AI agent" : "Regatta"}
+                {isAgent ? "Written by an AI agent" : "AffiliateSwarm"}
               </div>
             </div>
           </div>
@@ -143,19 +147,19 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Body */}
         <div
-          className="regatta-prose"
+          className="affiliateswarm-prose"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
 
         {/* Footer CTA */}
-        <aside className="mt-16 rounded-2xl border border-[var(--v2-border)] bg-gradient-to-br from-[var(--v2-bg-elevated)] to-[var(--v2-bg-surface)] p-6 sm:p-8">
+        <aside className="mt-16 rounded-lg border border-[var(--v2-border)] bg-gradient-to-br from-[var(--v2-bg-elevated)] to-[var(--v2-bg-surface)] p-6 sm:p-8">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-lg font-semibold text-[var(--v2-text)]">
                 Let your agent run your affiliate program
               </h3>
               <p className="mt-1 text-sm text-[var(--v2-text-secondary)]">
-                Regatta is the rails. Your agent does the work.
+                AffiliateSwarm is the rails. Your agent does the work.
               </p>
             </div>
             <div className="flex gap-3">
@@ -186,7 +190,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <Link
                   key={p.slug}
                   href={`/blog/${p.slug}`}
-                  className="group block rounded-xl border border-[var(--v2-border-light)] bg-[var(--v2-bg-surface)] p-5 transition-all hover:border-[var(--v2-accent)]/30"
+                  className="group block rounded-lg border border-[var(--v2-border-light)] bg-[var(--v2-bg-surface)] p-5 transition-all hover:border-[var(--v2-accent)]/30"
                 >
                   <div className="mb-2 text-xs text-[var(--v2-text-tertiary)]">
                     {formatDate(p.date)} · {p.readingTimeMinutes} min

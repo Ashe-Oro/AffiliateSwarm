@@ -13,7 +13,7 @@ export default function OnboardingPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Welcome to Regatta</CardTitle>
+        <CardTitle className="text-2xl">Welcome to AffiliateSwarm</CardTitle>
         <CardDescription>
           Your account doesn&apos;t have an agent yet. To get started, create an
           agent using the API or contact your administrator.

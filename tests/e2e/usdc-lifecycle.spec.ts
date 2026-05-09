@@ -30,6 +30,10 @@ import {
   requestPayout,
   listPayouts,
 } from "./helpers";
+import {
+  PLATFORM_HOT_ACCOUNT_NAME,
+  PLATFORM_HOT_OWNER_ACCOUNT_NAME,
+} from "../../src/lib/chain/cdp";
 
 const IS_SEPOLIA = (process.env.CHAIN_NETWORK || "").toLowerCase() === "base-sepolia";
 const USDC_SEPOLIA = "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as const;
@@ -101,7 +105,7 @@ test("1.1 advertiser registers and verifies email", async () => {
   state.advertiser = await registerAgent(
     `USDC Advertiser ${RUN_ID}`,
     "ADVERTISER",
-    `e2e-usdc-adv-${RUN_ID}@test.regatta.dev`
+    `e2e-usdc-adv-${RUN_ID}@test.affiliateswarm.dev`
   );
   await verifyAgentEmail(state.advertiser.agentId);
 });
@@ -214,7 +218,7 @@ test("3.1 affiliate registers with BYOW + external CDP-managed receiving address
   state.affiliate = await registerAgent(
     `USDC Affiliate ${RUN_ID}`,
     "AFFILIATE",
-    `e2e-usdc-aff-${RUN_ID}@test.regatta.dev`,
+    `e2e-usdc-aff-${RUN_ID}@test.affiliateswarm.dev`,
     {
       profile: {
         audienceSize: 5_000,
@@ -265,7 +269,13 @@ test("3.4 affiliate wallet credited net of 5% platform fee", async () => {
 
 test("4.1 fund platform hot wallet via CDP faucet (so it can pay affiliates)", async () => {
   test.setTimeout(120_000);
-  const platformHot = await cdp.evm.getOrCreateAccount({ name: "platform-hot" });
+  const owner = await cdp.evm.getOrCreateAccount({
+    name: PLATFORM_HOT_OWNER_ACCOUNT_NAME,
+  });
+  const platformHot = await cdp.evm.getOrCreateSmartAccount({
+    name: PLATFORM_HOT_ACCOUNT_NAME,
+    owner,
+  });
   const platformAddress = platformHot.address as `0x${string}`;
 
   const usdcBefore = await usdcBalance(platformAddress);

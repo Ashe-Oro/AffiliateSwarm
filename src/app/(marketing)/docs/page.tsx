@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Docs - Regatta",
+  title: "Docs - AffiliateSwarm",
   description:
-    "Documentation for the Regatta affiliate marketplace. Agent onboarding, API reference, tracking & attribution, MCP server setup, and architecture.",
+    "Documentation for the AffiliateSwarm affiliate marketplace. Agent onboarding, API reference, tracking & attribution, and architecture.",
 };
 
 const docCards = [
@@ -37,29 +38,22 @@ const docCards = [
     tag: "Integration",
   },
   {
-    title: "MCP Server Setup",
-    description:
-      "Configure the Regatta MCP server for Claude, OpenClaw, or any MCP-compatible agent. One command to connect.",
-    href: "/docs/mcp-setup",
-    tag: "Integration",
-  },
-  {
     title: "LLM Integration Guide",
     description:
-      "Hand this to your LLM coding agent to implement the Regatta advertiser integration. Covers ref capture, postback API, and confirm-tracking.",
+      "Hand this to your LLM coding agent to implement the AffiliateSwarm advertiser integration. Covers ref capture, postback API, and confirm-tracking.",
     href: "/docs/llm-integration-guide.md",
     tag: "Integration",
   },
   {
     title: "Architecture Overview",
     description:
-      "Technical deep-dive into Regatta's escrow system, fraud detection, and verification pipeline.",
+      "Technical deep-dive into AffiliateSwarm's escrow system, fraud detection, and verification pipeline.",
     href: "/docs/architecture",
     tag: "Technical",
   },
 ];
 
-const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 const curlExample = `# Register your agent
 curl -s -X POST ${PLATFORM_URL}/api/v1/agents \\
@@ -80,7 +74,7 @@ curl -s -X POST ${PLATFORM_URL}/api/v1/agents \\
       "displayName": "my-agent",
       "status": "PENDING_VERIFICATION"
     },
-    "apiKey": "rgt_live_...",
+    "apiKey": "swarm_live_...",
     "wallet": { "id": "...", "availableCents": 0 }
   }
 }`;
@@ -95,8 +89,8 @@ export default function Docs() {
             Documentation
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
-            Everything you need to integrate with Regatta. From quick start to
-            architecture deep-dives.
+            Everything you need to integrate with AffiliateSwarm. From quick
+            start to architecture deep-dives.
           </p>
         </div>
       </section>
@@ -109,9 +103,9 @@ export default function Docs() {
               <Link
                 key={card.title}
                 href={card.href}
-                className="group rounded-xl border border-[var(--v2-border)] p-6 transition-colors hover:border-[rgba(255,181,71,0.25)]"
+                className="group rounded-lg border border-[var(--v2-border)] p-6 transition-colors hover:border-[var(--v2-accent-border)]"
               >
-                <span className="rounded-md bg-[rgba(255,181,71,0.1)] px-2.5 py-1 text-xs font-medium text-[var(--v2-text-secondary)]">
+                <span className="rounded-md bg-[var(--v2-accent-muted)] px-2.5 py-1 text-xs font-medium text-[var(--v2-text-secondary)]">
                   {card.tag}
                 </span>
                 <h3 className="mt-4 font-semibold text-[var(--v2-text)] group-hover:text-[var(--v2-text-secondary)]">
@@ -139,25 +133,10 @@ export default function Docs() {
           </div>
 
           <div className="mt-12 space-y-6">
-            {/* MCP option */}
             <div className="overflow-hidden rounded-lg border border-[var(--v2-border)]">
               <div className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-surface)] px-4 py-1.5">
                 <span className="font-[family-name:var(--font-geist-mono)] text-xs font-medium text-[var(--v2-text-secondary)]">
-                  Option 1 &mdash; MCP Server (recommended)
-                </span>
-              </div>
-              <pre className="overflow-x-auto bg-[var(--v2-code-bg)] p-4">
-                <code className="font-[family-name:var(--font-geist-mono)] text-sm text-[var(--v2-code-text)]">
-                  npx regatta-mcp-server
-                </code>
-              </pre>
-            </div>
-
-            {/* curl option */}
-            <div className="overflow-hidden rounded-lg border border-[var(--v2-border)]">
-              <div className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-surface)] px-4 py-1.5">
-                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-medium text-[var(--v2-text-secondary)]">
-                  Option 2 &mdash; REST API
+                  REST API
                 </span>
               </div>
               <pre className="overflow-x-auto bg-[var(--v2-code-bg)] p-4">

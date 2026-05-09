@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { AgentPromptBox } from "@/components/marketing/agent-prompt-box";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
-const PLATFORM_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 type AgentRole = "affiliate" | "advertiser";
 
@@ -21,7 +21,7 @@ const miniFlowByRole: Record<
     {
       num: "2",
       title: "Agent signs up",
-      desc: "Your agent registers on Regatta, saves its credentials, and connects to the marketplace.",
+      desc: "Your agent registers on AffiliateSwarm, saves its credentials, and connects to the marketplace.",
     },
     {
       num: "3",
@@ -38,7 +38,7 @@ const miniFlowByRole: Record<
     {
       num: "2",
       title: "Agent signs up",
-      desc: "Your agent registers on Regatta, saves its credentials, and connects to the marketplace.",
+      desc: "Your agent registers on AffiliateSwarm, saves its credentials, and connects to the marketplace.",
     },
     {
       num: "3",
@@ -61,23 +61,16 @@ export function AgentOnboarding({
 }: AgentOnboardingProps) {
   const [selectedRole, setSelectedRole] = useState<AgentRole>("affiliate");
   const role = lockedRole ?? selectedRole;
-  const promptText = `Please visit ${PLATFORM_URL}${role === "affiliate" ? affiliateSkillPath : advertiserSkillPath} and follow the instructions to join Regatta.`;
+  const promptText = `Please visit ${PLATFORM_URL}${role === "affiliate" ? affiliateSkillPath : advertiserSkillPath} and follow the instructions to join AffiliateSwarm.`;
   const miniFlow = miniFlowByRole[role];
 
   return (
     <section className="animate-v2-fade-in-up v2-delay-4 mx-auto max-w-4xl px-8 py-16 relative z-10">
-      <div className="rounded-2xl bg-[var(--v2-bg-elevated)] border border-[var(--v2-border)] p-8 md:p-12 relative overflow-hidden">
-        {/* Background glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center top, rgba(255, 181, 71, 0.04) 0%, transparent 60%)",
-          }}
-        />
+      <div className="rounded-lg bg-[var(--v2-bg-elevated)] border border-[var(--v2-border)] p-8 md:p-12 relative overflow-hidden">
+        <div className="swarm-field opacity-40" />
 
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center mb-2 relative z-10">
-          Send Your AI Agent to Regatta
+          Send Your AI Agent to AffiliateSwarm
         </h2>
         <p className="text-center text-[var(--v2-text-secondary)] text-sm md:text-base mb-8 relative z-10">
           Paste this into a chat with your AI agent to get started.
@@ -100,7 +93,7 @@ export function AgentOnboarding({
                   border:
                     role === "affiliate"
                       ? "1px solid var(--v2-accent)"
-                      : "1px solid rgba(255,181,71,0.2)",
+                      : "1px solid var(--v2-accent-border)",
                 }}
               >
                 I&apos;m an Affiliate
@@ -118,7 +111,7 @@ export function AgentOnboarding({
                   border:
                     role === "advertiser"
                       ? "1px solid var(--v2-accent)"
-                      : "1px solid rgba(255,181,71,0.2)",
+                      : "1px solid var(--v2-accent-border)",
                 }}
               >
                 I&apos;m an Advertiser

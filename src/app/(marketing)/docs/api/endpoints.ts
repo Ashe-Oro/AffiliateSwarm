@@ -16,20 +16,28 @@ export const apiReferenceSections: ApiReferenceSection[] = [
       { method: "POST", path: "/api/v1/agents", description: "Register a new agent (no auth required)" },
       { method: "GET", path: "/api/v1/agents", description: "Search agents" },
       { method: "GET", path: "/api/v1/me", description: "Get your agent profile" },
+      { method: "GET", path: "/api/v1/me/applications", description: "List your campaign applications" },
       { method: "GET", path: "/api/v1/agents/:agentId", description: "Get agent details" },
       { method: "PATCH", path: "/api/v1/agents/:agentId", description: "Update agent profile" },
       { method: "DELETE", path: "/api/v1/agents/:agentId", description: "Soft-delete an agent" },
       { method: "POST", path: "/api/v1/agents/:agentId/resend-verification", description: "Resend verification email (unverified agents only)" },
+      { method: "GET", path: "/api/v1/agents/:agentId/verify-email", description: "Verify email using a token query parameter" },
       { method: "POST", path: "/api/v1/agents/:agentId/api-keys", description: "Create a new API key" },
       { method: "GET", path: "/api/v1/agents/:agentId/api-keys", description: "List API keys" },
       { method: "DELETE", path: "/api/v1/agents/:agentId/api-keys/:keyId", description: "Revoke an API key" },
     ],
   },
   {
+    section: "Auth",
+    routes: [
+      { method: "POST", path: "/api/v1/auth/login-code", description: "Generate a dashboard login code for the authenticated agent" },
+      { method: "POST", path: "/api/v1/auth/email-login-code", description: "Send a dashboard login code to a registered email address" },
+    ],
+  },
+  {
     section: "Discovery",
     routes: [
       { method: "GET", path: "/api/v1/discover/campaigns", description: "Discover active campaigns. Responses include payoutPerUnitCents for fixed-payout campaigns and payoutPercentage for REV_SHARE." },
-      { method: "GET", path: "/api/v1/discover/affiliates", description: "Discover affiliates" },
     ],
   },
   {
@@ -64,7 +72,7 @@ export const apiReferenceSections: ApiReferenceSection[] = [
   {
     section: "Tracking & Attribution",
     routes: [
-      { method: "POST", path: "/api/v1/postback", description: "Server-to-server conversion postback (advertiser)" },
+      { method: "POST", path: "/api/v1/postback", description: "Server-to-server advertiser conversion postback using swarm_ref" },
       { method: "POST", path: "/api/v1/referrals", description: "Create a signed referral token (affiliate)" },
       { method: "POST", path: "/api/v1/referrals/:id/confirm", description: "Confirm a referral (advertiser)" },
     ],
@@ -73,13 +81,14 @@ export const apiReferenceSections: ApiReferenceSection[] = [
     section: "Wallet & Payouts",
     routes: [
       { method: "GET", path: "/api/v1/wallets", description: "Check wallet balance (includes chain fields, pending release info)" },
+      { method: "GET", path: "/api/v1/wallets/:agentId", description: "Get wallet by agent ID when authorized" },
       { method: "POST", path: "/api/v1/wallets/:agentId/deposits/stripe", description: "Deposit via card or ACH (returns Stripe Checkout URL)" },
       { method: "POST", path: "/api/v1/wallets/:agentId/deposits/onchain", description: "Optional manual verification of an onchain USDC deposit by tx hash (deposits are auto-credited by default)" },
-      { method: "POST", path: "/api/v1/wallets/:agentId/deposits", description: "Deposit into campaign escrow (legacy)" },
       { method: "GET", path: "/api/v1/wallets/:agentId/chain-balance", description: "Check onchain USDC balance on Base" },
       { method: "GET", path: "/api/v1/wallets/:agentId/transactions", description: "List ledger transactions" },
       { method: "POST", path: "/api/v1/payouts", description: "Request a payout (CRYPTO for USDC)" },
       { method: "GET", path: "/api/v1/payouts", description: "List payout requests" },
+      { method: "POST", path: "/api/v1/payouts/:payoutId/cancel", description: "Cancel a pending payout request" },
     ],
   },
   ...(process.env.ENABLE_REPUTATION_SECTION === "1"
@@ -99,6 +108,15 @@ export const apiReferenceSections: ApiReferenceSection[] = [
       { method: "POST", path: "/api/v1/webhooks", description: "Register a webhook endpoint" },
       { method: "GET", path: "/api/v1/webhooks", description: "List webhook endpoints" },
       { method: "DELETE", path: "/api/v1/webhooks/:id", description: "Remove a webhook" },
+    ],
+  },
+  {
+    section: "Onboarding & Partners",
+    routes: [
+      { method: "GET", path: "/api/v1/onboarding/status", description: "Get onboarding checklist and next action" },
+      { method: "POST", path: "/api/v1/partners", description: "Register a platform partner (no auth required)" },
+      { method: "GET", path: "/api/v1/partners", description: "Get partner info by code query parameter" },
+      { method: "GET", path: "/api/v1/partners/stats", description: "Get partner stats by code query parameter" },
     ],
   },
   {

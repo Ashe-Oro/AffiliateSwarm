@@ -1,5 +1,5 @@
 /**
- * Full E2E lifecycle test — exercises the entire Regatta platform across
+ * Full E2E lifecycle test — exercises the entire AffiliateSwarm platform across
  * all three roles (advertiser, affiliate, admin) via API and browser.
  *
  * All tests run sequentially and share state across the entire file.
@@ -71,10 +71,10 @@ test("1.1 advertiser registers", async () => {
   state.advertiser = await registerAgent(
     `E2E Advertiser ${RUN_ID}`,
     "ADVERTISER",
-    `e2e-adv-${RUN_ID}@test.regatta.dev`
+    `e2e-adv-${RUN_ID}@test.affiliateswarm.dev`
   );
   expect(state.advertiser.agentId).toBeTruthy();
-  expect(state.advertiser.apiKey).toMatch(/^rgt_live_/);
+  expect(state.advertiser.apiKey).toMatch(/^swarm_live_/);
 });
 
 test("1.2 advertiser verifies email", async () => {
@@ -200,7 +200,7 @@ test("3.1 affiliate registers with full profile", async () => {
   state.affiliate = await registerAgent(
     `E2E Affiliate ${RUN_ID}`,
     "AFFILIATE",
-    `e2e-aff-${RUN_ID}@test.regatta.dev`,
+    `e2e-aff-${RUN_ID}@test.affiliateswarm.dev`,
     {
       profile: {
         audienceSize: 50000,
@@ -215,7 +215,7 @@ test("3.1 affiliate registers with full profile", async () => {
     }
   );
   expect(state.affiliate.agentId).toBeTruthy();
-  expect(state.affiliate.apiKey).toMatch(/^rgt_live_/);
+  expect(state.affiliate.apiKey).toMatch(/^swarm_live_/);
 });
 
 test("3.2 affiliate verifies email", async () => {
@@ -310,10 +310,10 @@ test("4.3 advertiser sees affiliate profile in application listing", async () =>
 // ═══════════════════════════════════════════════════════════════════════
 
 test("5.1 affiliate tracking link points directly at advertiser landing URL", async () => {
-  // Direct-ref model: affiliate shares `<landingUrl>?rgta_ref=<code>` — no Regatta redirect.
+  // Direct-ref model: affiliate shares `<landingUrl>?swarm_ref=<code>` — no AffiliateSwarm redirect.
   const result = await followTrackingLink(state.trackingCode!);
   expect(result.status).toBe(200);
-  expect(result.location).toContain(`rgta_ref=${state.trackingCode}`);
+  expect(result.location).toContain(`swarm_ref=${state.trackingCode}`);
   expect(result.ref).toBe(state.trackingCode);
 });
 
@@ -336,7 +336,7 @@ test("5.3 duplicate postback is idempotent (returns existing)", async () => {
     "POST",
     "/api/v1/postback",
     {
-      rgta_ref: state.trackingCode,
+      swarm_ref: state.trackingCode,
       externalId: `e2e-purchase-${RUN_ID}`, // same externalId
       eventType: "PURCHASE",
       revenueCents: 5000,
@@ -649,7 +649,7 @@ test("9.1 rejects bad API key", async () => {
     "GET",
     "/api/v1/me",
     undefined,
-    "rgt_live_invalid_key_xxx"
+    "swarm_live_invalid_key_xxx"
   );
   expect(status).toBe(401);
 });

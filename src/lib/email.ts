@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { FROM_EMAIL, PRODUCT_NAME } from "@/lib/brand";
 import { logger } from "@/lib/logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -9,7 +10,7 @@ export function getResend(): Resend | null {
   return new Resend(key);
 }
 
-export const FROM = "Regatta <noreply@regatta.network>";
+export const FROM = FROM_EMAIL;
 
 // ---------------------------------------------------------------------------
 // Retry helper for transient Resend failures
@@ -93,7 +94,7 @@ export async function sendVerificationEmail(
         to,
         subject: "Verify your email address",
         html: `
-<h2>Welcome to Regatta</h2>
+<h2>Welcome to ${PRODUCT_NAME}</h2>
 
 <h3>If you're a human</h3>
 <p>Click the button below to verify your email address:</p>
@@ -138,10 +139,10 @@ export async function sendLoginCodeEmail(
       resend.emails.send({
         from: FROM,
         to,
-        subject: `Your Regatta login code: ${code}`,
+        subject: `Your ${PRODUCT_NAME} login code: ${code}`,
         html: `
 <h2>Your login code</h2>
-<p>Hi ${displayName}, here's your login code for Regatta:</p>
+<p>Hi ${displayName}, here's your login code for ${PRODUCT_NAME}:</p>
 <p style="font-size: 32px; font-weight: bold; font-family: monospace; letter-spacing: 0.3em; background: #f4f4f5; padding: 16px 24px; border-radius: 8px; display: inline-block;">${code}</p>
 <p>Enter it at <a href="${loginUrl}" style="font-weight: bold;">${loginUrl}</a></p>
 <p style="color: #71717a; font-size: 13px;">This code expires in 5 minutes and can only be used once. If you didn't request this, you can safely ignore this email.</p>
@@ -173,11 +174,11 @@ export async function sendOnboardingEmail(
   const nextSteps =
     agentType === "ADVERTISER" || agentType === "DUAL"
       ? `
-<li>Create a campaign — tell your agent: <em>Create a campaign on Regatta for [your product]</em></li>
+<li>Create a campaign — tell your agent: <em>Create a campaign on ${PRODUCT_NAME} for [your product]</em></li>
 <li>Fund your campaign with card, ACH, or USDC</li>
 <li>Activate it and watch affiliates start driving leads</li>`
       : `
-<li>Discover campaigns — tell your agent: <em>Find campaigns on Regatta that match our audience</em></li>
+<li>Discover campaigns — tell your agent: <em>Find campaigns on ${PRODUCT_NAME} that match our audience</em></li>
 <li>Apply to the best ones and get your tracking links</li>
 <li>Start earning commissions on every conversion</li>`;
 
@@ -192,9 +193,9 @@ export async function sendOnboardingEmail(
       resend.emails.send({
         from: FROM,
         to,
-        subject: `Welcome to Regatta — you're registered as ${typeLabel === "advertiser and affiliate" ? "an" : (/^[aeiou]/i.test(typeLabel) ? "an" : "a")} ${typeLabel}`,
+        subject: `Welcome to ${PRODUCT_NAME} — you're registered as ${typeLabel === "advertiser and affiliate" ? "an" : (/^[aeiou]/i.test(typeLabel) ? "an" : "a")} ${typeLabel}`,
         html: `
-<h2>Welcome to Regatta, ${displayName}</h2>
+<h2>Welcome to ${PRODUCT_NAME}, ${displayName}</h2>
 <p>You're registered as <strong>${typeLabel}</strong> on the agent-first affiliate marketplace.</p>
 
 <h3>What's Next</h3>
@@ -203,7 +204,7 @@ ${nextSteps}
 </ol>
 
 <h3>Access Your Dashboard</h3>
-<p>To sign in, tell your agent: <em>"Give me my Regatta login code."</em> They'll generate a temporary 6-character code. Enter it at:</p>
+<p>To sign in, tell your agent: <em>"Give me my ${PRODUCT_NAME} login code."</em> They'll generate a temporary 6-character code. Enter it at:</p>
 <p><a href="${loginUrl}" style="font-weight: bold;">${loginUrl}</a></p>
 <p style="color: #71717a; font-size: 13px;">Login codes expire after 5 minutes and are single-use. Ask your agent for a new one anytime.</p>
 <h3>Your Agent's Cheat Sheet</h3>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { TRACKING_PARAM } from "@/lib/brand";
 import { trackClick } from "@/services/tracking.service";
 
 type RouteContext = { params: Promise<{ trackingCode: string }> };
@@ -7,7 +8,7 @@ type RouteContext = { params: Promise<{ trackingCode: string }> };
  * GET /t/:trackingCode — Legacy redirect endpoint for click tracking.
  *
  * Disabled by default. Affiliates now share the advertiser's landing URL
- * directly with `?rgta_ref=<code>` appended (see buildTrackingUrl). The
+ * directly with `?swarm_ref=<code>` appended (see buildTrackingUrl). The
  * redirect stays behind a flag so old links in the wild can be re-enabled
  * if needed.
  */
@@ -19,7 +20,7 @@ export async function GET(
     return NextResponse.json(
       {
         error:
-          "Redirect tracking is disabled. Affiliate links now point directly to the advertiser with ?rgta_ref= appended.",
+          "Redirect tracking is disabled. Affiliate links now point directly to the advertiser with ?swarm_ref= appended.",
       },
       { status: 410 }
     );
@@ -42,9 +43,9 @@ export async function GET(
     );
   }
 
-  // Append ?rgta_ref=trackingCode to the landing URL
+  // Append ?swarm_ref=trackingCode to the landing URL
   const url = new URL(result.redirectUrl);
-  url.searchParams.set("rgta_ref", trackingCode);
+  url.searchParams.set(TRACKING_PARAM, trackingCode);
 
   return NextResponse.redirect(url.toString(), 302);
 }

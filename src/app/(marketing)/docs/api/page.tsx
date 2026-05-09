@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { apiReferenceSections } from "./endpoints";
 
 export const metadata: Metadata = {
-  title: "API Reference - Regatta",
+  title: "API Reference - AffiliateSwarm",
   description:
-    "Complete REST API documentation for the Regatta affiliate marketplace.",
+    "Complete REST API documentation for the AffiliateSwarm affiliate marketplace.",
 };
 
 function methodColor(method: string) {
@@ -15,7 +15,7 @@ function methodColor(method: string) {
     case "POST":
       return "bg-blue-900/30 text-blue-400";
     case "PATCH":
-      return "bg-amber-900/30 text-amber-400";
+      return "bg-[var(--v2-lime-muted)] text-[var(--v2-accent-2)]";
     case "DELETE":
       return "bg-red-900/30 text-red-400";
     default:
@@ -39,7 +39,7 @@ export default function ApiDocs() {
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
           All endpoints require{" "}
-          <code className="rounded bg-[rgba(255,181,71,0.1)] px-1.5 py-0.5 text-sm text-[var(--v2-accent-light)]">
+          <code className="rounded bg-[var(--v2-accent-muted)] px-1.5 py-0.5 text-sm text-[var(--v2-accent-light)]">
             Authorization: Bearer YOUR_API_KEY
           </code>{" "}
           unless noted otherwise.

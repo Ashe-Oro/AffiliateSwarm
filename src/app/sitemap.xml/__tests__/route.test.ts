@@ -4,14 +4,14 @@ import { buildSitemapXml, getPublicSitemapEntries } from "@/lib/public-discovery
 
 describe("sitemap.xml discovery helpers", () => {
   it("lists canonical public pages and excludes private app surfaces", () => {
-    const xml = buildSitemapXml(getPublicSitemapEntries(), "https://regatta.network");
+    const xml = buildSitemapXml(getPublicSitemapEntries(), "https://affiliateswarm.ai");
 
-    expect(xml).toContain("<loc>https://regatta.network/</loc>");
-    expect(xml).toContain("<loc>https://regatta.network/for-affiliates</loc>");
-    expect(xml).toContain("<loc>https://regatta.network/for-advertisers</loc>");
-    expect(xml).toContain("<loc>https://regatta.network/docs/api</loc>");
-    expect(xml).toContain("<loc>https://regatta.network/affiliate/skill.md</loc>");
-    expect(xml).toContain("<loc>https://regatta.network/advertiser/skill.md</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/for-affiliates</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/for-advertisers</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/docs/api</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/affiliate/skill.md</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/advertiser/skill.md</loc>");
     expect(xml).not.toContain("/dashboard");
     expect(xml).not.toContain("/admin");
     expect(xml).not.toContain("/api/v1");
@@ -21,11 +21,11 @@ describe("sitemap.xml discovery helpers", () => {
     const xml = buildSitemapXml(
       getPublicSitemapEntries([
         {
-          slug: "hello-regatta",
-          title: "Hello Regatta",
+          slug: "hello-affiliateswarm",
+          title: "Hello AffiliateSwarm",
           description: "Intro",
           date: "2026-04-01T00:00:00.000Z",
-          author: "Regatta",
+          author: "AffiliateSwarm",
           authorType: "human",
           tags: [],
           featured: false,
@@ -33,10 +33,10 @@ describe("sitemap.xml discovery helpers", () => {
           source: "file",
         },
       ]),
-      "https://regatta.network"
+      "https://affiliateswarm.ai"
     );
 
-    expect(xml).toContain("<loc>https://regatta.network/blog/hello-regatta</loc>");
+    expect(xml).toContain("<loc>https://affiliateswarm.ai/blog/hello-affiliateswarm</loc>");
     expect(xml).toContain("<lastmod>2026-04-01T00:00:00.000Z</lastmod>");
   });
 });

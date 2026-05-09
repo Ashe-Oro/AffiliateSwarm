@@ -38,7 +38,7 @@ test.describe("Campaign creation dashboard flow", () => {
     await expect(page).toHaveURL(/\/dashboard\/campaigns\/new/);
 
     // Regression guard for #199: the create form must not surface a
-    // Conversion Window field. Regatta does not set cookies or enforce
+    // Conversion Window field. AffiliateSwarm does not set cookies or enforce
     // attribution windows — the advertiser's own site owns that.
     await expect(
       page.getByLabel(/Conversion Window/i)

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_COOKIE } from "@/lib/brand";
 
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -16,7 +17,7 @@ function timingSafeEqual(a: string, b: string): boolean {
  * POST /api/admin/login — Validate admin token and set cookie.
  *
  * Body: { token: string }
- * Sets `regatta_admin_token` cookie on success.
+ * Sets `affiliateswarm_admin_token` cookie on success.
  */
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ ok: true });
-  res.cookies.set("regatta_admin_token", token, {
+  res.cookies.set(ADMIN_COOKIE, token, {
     path: "/",
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { DEFAULT_APP_URL, PARTNER_REF_COOKIE } from "@/lib/brand";
 import { ENABLE_PARTNER_PROGRAM } from "@/lib/feature-flags";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 type RouteContext = { params: Promise<{ code: string }> };
 
@@ -28,7 +29,7 @@ export async function GET(
   const response = NextResponse.redirect(url.toString(), 302);
 
   // Set a cookie so the partner code persists across page navigations
-  response.cookies.set("regatta_ref", upperCode, {
+  response.cookies.set(PARTNER_REF_COOKIE, upperCode, {
     httpOnly: false,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

@@ -1,6 +1,5 @@
 import type { BlogPostMeta } from "@/lib/blog/posts";
-
-export const DEFAULT_APP_URL = "https://regatta.network";
+import { DEFAULT_APP_URL, PRODUCT_NAME } from "./brand";
 
 export type SitemapEntry = {
   path: string;
@@ -20,7 +19,6 @@ const publicPageEntries: SitemapEntry[] = [
   { path: "/docs/tracking", changefreq: "weekly", priority: 0.8 },
   { path: "/docs/onboarding", changefreq: "weekly", priority: 0.8 },
   { path: "/docs/architecture", changefreq: "monthly", priority: 0.6 },
-  { path: "/docs/mcp-setup", changefreq: "monthly", priority: 0.5 },
   { path: "/docs/llm-integration-guide.md", changefreq: "monthly", priority: 0.7 },
   { path: "/affiliate/skill.md", changefreq: "weekly", priority: 0.9 },
   { path: "/advertiser/skill.md", changefreq: "monthly", priority: 0.7 },
@@ -86,7 +84,7 @@ export function buildRobotsTxt(baseUrl?: string): string {
   const root = getPublicBaseUrl(baseUrl);
 
   return [
-    "# Regatta crawler policy",
+    `# ${PRODUCT_NAME} crawler policy`,
     "# Public marketing, documentation, blog, and agent skill pages are crawlable.",
     "# Private dashboards, admin, auth, test, cron, and API mutation surfaces are not for crawlers.",
     "",
@@ -138,14 +136,14 @@ export function getApiCatalog(baseUrl?: string) {
           {
             href: `${root}/docs/api`,
             type: "text/html",
-            title: "Regatta public API documentation",
+            title: `${PRODUCT_NAME} public API documentation`,
           },
         ],
         status: [
           {
             href: `${root}/api/health`,
             type: "application/json",
-            title: "Regatta API health",
+            title: `${PRODUCT_NAME} API health`,
           },
         ],
       },
@@ -155,19 +153,19 @@ export function getApiCatalog(baseUrl?: string) {
           {
             href: `${root}/.well-known/agent-skills/index.json`,
             type: "application/json",
-            title: "Regatta agent skills discovery index",
+            title: `${PRODUCT_NAME} agent skills discovery index`,
           },
         ],
         "service-doc": [
           {
             href: `${root}/affiliate/skill.md`,
             type: "text/markdown",
-            title: "Regatta affiliate skill",
+            title: `${PRODUCT_NAME} affiliate skill`,
           },
           {
             href: `${root}/advertiser/skill.md`,
             type: "text/markdown",
-            title: "Regatta advertiser skill",
+            title: `${PRODUCT_NAME} advertiser skill`,
           },
         ],
       },
@@ -176,10 +174,10 @@ export function getApiCatalog(baseUrl?: string) {
 }
 
 export const HOMEPAGE_LINK_HEADER = [
-  '</.well-known/api-catalog>; rel="service-desc"; type="application/linkset+json"; title="Regatta API catalog"',
-  '</docs/api>; rel="service-doc"; type="text/html"; title="Regatta API docs"',
-  '</api/health>; rel="status"; type="application/json"; title="Regatta API health"',
-  '</.well-known/agent-skills/index.json>; rel="service-desc"; type="application/json"; title="Regatta agent skills index"',
-  '</affiliate/skill.md>; rel="service-doc"; type="text/markdown"; title="Regatta affiliate skill"',
-  '</advertiser/skill.md>; rel="service-doc"; type="text/markdown"; title="Regatta advertiser skill"',
+  `</.well-known/api-catalog>; rel="service-desc"; type="application/linkset+json"; title="${PRODUCT_NAME} API catalog"`,
+  `</docs/api>; rel="service-doc"; type="text/html"; title="${PRODUCT_NAME} API docs"`,
+  `</api/health>; rel="status"; type="application/json"; title="${PRODUCT_NAME} API health"`,
+  `</.well-known/agent-skills/index.json>; rel="service-desc"; type="application/json"; title="${PRODUCT_NAME} agent skills index"`,
+  `</affiliate/skill.md>; rel="service-doc"; type="text/markdown"; title="${PRODUCT_NAME} affiliate skill"`,
+  `</advertiser/skill.md>; rel="service-doc"; type="text/markdown"; title="${PRODUCT_NAME} advertiser skill"`,
 ].join(", ");

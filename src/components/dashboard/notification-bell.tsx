@@ -45,7 +45,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   CAMPAIGNS: "bg-blue-500/20 text-blue-400",
   APPLICATIONS: "bg-purple-500/20 text-purple-400",
   LEADS: "bg-green-500/20 text-green-400",
-  TRACKING: "bg-amber-500/20 text-amber-400",
+  TRACKING: "bg-[var(--v2-accent-muted)] text-[var(--v2-accent)]",
   EARNINGS: "bg-emerald-500/20 text-emerald-400",
   PAYOUTS: "bg-cyan-500/20 text-cyan-400",
 };

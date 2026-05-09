@@ -29,7 +29,7 @@ test.describe("API: Resend Verification", () => {
     state.advertiser = await registerAgent(
       `Resend Adv ${RUN_ID}`,
       "ADVERTISER",
-      `resend-adv-${RUN_ID}@test.regatta.dev`
+      `resend-adv-${RUN_ID}@test.affiliateswarm.dev`
     );
     expect(state.advertiser.agentId).toBeTruthy();
   });
@@ -54,7 +54,7 @@ test.describe("API: Resend Verification", () => {
     state.affiliate = await registerAgent(
       `Resend Aff ${RUN_ID}`,
       "AFFILIATE",
-      `resend-aff-${RUN_ID}@test.regatta.dev`
+      `resend-aff-${RUN_ID}@test.affiliateswarm.dev`
     );
 
     // Try to resend the affiliate's verification using the advertiser's key

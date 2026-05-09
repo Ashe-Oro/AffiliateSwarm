@@ -69,7 +69,7 @@ describe("POST /api/v1/postback funding shortfall responses", () => {
 
     const res = await POST(
       buildRequest({
-        rgta_ref: "abc",
+        swarm_ref: "abc",
         externalId: "ord_1",
         eventType: "PURCHASE",
       })
@@ -99,7 +99,7 @@ describe("POST /api/v1/postback funding shortfall responses", () => {
 
     const res = await POST(
       buildRequest({
-        rgta_ref: "abc",
+        swarm_ref: "abc",
         externalId: "ord_2",
         eventType: "PURCHASE",
       })

@@ -14,7 +14,7 @@ import { SubmitLeadSchema } from "@/lib/validators/lead";
 
 describe("PostbackSchema", () => {
   const validInput = {
-    rgta_ref: "abc123",
+    swarm_ref: "abc123",
     externalId: "order_456",
     eventType: "PURCHASE" as const,
   };
@@ -33,9 +33,9 @@ describe("PostbackSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("rejects missing rgta_ref", () => {
-    const { rgta_ref, ...rest } = validInput;
-    void rgta_ref;
+  it("rejects missing swarm_ref", () => {
+    const { swarm_ref, ...rest } = validInput;
+    void swarm_ref;
     const result = PostbackSchema.safeParse(rest);
     expect(result.success).toBe(false);
   });

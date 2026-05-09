@@ -6,7 +6,7 @@
  */
 import { readFileSync } from "fs";
 
-const BASE_URL = process.argv[2] || "https://regatta-k9m5lyib8-omri-cohens-projects.vercel.app";
+const BASE_URL = process.argv[2] || "https://affiliateswarm.ai";
 
 let passed = 0;
 let failed = 0;
@@ -70,7 +70,7 @@ async function main() {
     const ct = res.headers.get("content-type") || "";
     assert(ct.includes("text/markdown"), `Expected markdown, got ${ct}`);
     const text = await res.text();
-    assert(text.includes("Regatta"), "Body should mention Regatta");
+    assert(text.includes("AffiliateSwarm"), "Body should mention AffiliateSwarm");
   });
 
   await test("GET /campaign-template.md returns markdown", async () => {
@@ -89,7 +89,7 @@ async function main() {
       displayName: `E2E-Test-${Date.now()}`,
       type: "AFFILIATE",
       description: "E2E test agent",
-      email: `e2e-${Date.now()}@test.regatta.dev`,
+      email: `e2e-${Date.now()}@test.affiliateswarm.dev`,
       partnerCode: "TESTPARTNER",
     });
     assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);
@@ -107,7 +107,7 @@ async function main() {
   });
 
   await test("GET /api/v1/me — reject bad key", async () => {
-    const { status } = await api("GET", "/api/v1/me", undefined, "rgt_live_invalidkey");
+    const { status } = await api("GET", "/api/v1/me", undefined, "swarm_live_invalidkey");
     assert(status === 401, `Expected 401, got ${status}`);
   });
 
@@ -184,11 +184,15 @@ async function main() {
   console.log("\n5. Click Tracking\n");
 
   if (enrollmentTrackingCode) {
-    await test("GET /t/:trackingCode — redirect works", async () => {
-      const res = await fetch(`${BASE_URL}/t/${enrollmentTrackingCode}`, { redirect: "manual" });
-      assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-      const location = res.headers.get("location") || "";
-      assert(location.includes("ref="), `Redirect should include ref param, got: ${location}`);
+    await test("GET mock landing with swarm_ref — landing captures tracking code", async () => {
+      const res = await fetch(`${BASE_URL}/api/test/mock-landing?swarm_ref=${enrollmentTrackingCode}`);
+      if (res.status === 404) {
+        console.log("        SKIP  /api/test/mock-landing is not enabled in this environment");
+        return;
+      }
+      assert(res.status === 200, `Expected 200, got ${res.status}`);
+      const text = await res.text();
+      assert(text.includes(`id="swarm-ref">${enrollmentTrackingCode}</code>`), "Landing page should render swarm_ref");
     });
   }
 
@@ -198,7 +202,7 @@ async function main() {
   if (enrollmentTrackingCode && advertiserKey) {
     await test("POST /api/v1/postback — report conversion", async () => {
       const { status, json } = await api("POST", "/api/v1/postback", {
-        rgta_ref: enrollmentTrackingCode,
+        swarm_ref: enrollmentTrackingCode,
         externalId: `e2e-test-${Date.now()}`,
         eventType: "PURCHASE",
         revenueCents: 9900,
@@ -211,7 +215,7 @@ async function main() {
     await test("POST /api/v1/postback — idempotent on same externalId", async () => {
       const extId = `e2e-idempotent-${Date.now()}`;
       const { status: s1 } = await api("POST", "/api/v1/postback", {
-        rgta_ref: enrollmentTrackingCode,
+        swarm_ref: enrollmentTrackingCode,
         externalId: extId,
         eventType: "PURCHASE",
         revenueCents: 5000,
@@ -219,7 +223,7 @@ async function main() {
       assert(s1 === 201 || s1 === 200, `First call failed: ${s1}`);
 
       const { status: s2, json: j2 } = await api("POST", "/api/v1/postback", {
-        rgta_ref: enrollmentTrackingCode,
+        swarm_ref: enrollmentTrackingCode,
         externalId: extId,
         eventType: "PURCHASE",
         revenueCents: 5000,
@@ -680,7 +684,7 @@ async function main() {
       displayName: `E2E-Partner-${Date.now()}`,
       type: "AFFILIATE",
       description: "E2E test with partner code",
-      email: `e2e-partner-${Date.now()}@test.regatta.dev`,
+      email: `e2e-partner-${Date.now()}@test.affiliateswarm.dev`,
       partnerCode: "TESTPARTNER",
     });
     assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);
@@ -739,7 +743,7 @@ async function main() {
     const location = res.headers.get("location") || "";
     assert(location.includes("ref=TESTPARTNER"), `Redirect should include ref param, got: ${location}`);
     const setCookie = res.headers.get("set-cookie") || "";
-    assert(setCookie.includes("regatta_ref"), `Should set regatta_ref cookie, got: ${setCookie}`);
+    assert(setCookie.includes("affiliateswarm_ref"), `Should set affiliateswarm_ref cookie, got: ${setCookie}`);
     assert(setCookie.includes("TESTPARTNER"), `Cookie should contain the code, got: ${setCookie}`);
   });
 
@@ -793,7 +797,7 @@ async function main() {
     const { status, json } = await api("POST", "/api/v1/agents", {
       displayName: `Referred-Affiliate-${Date.now()}`,
       type: "AFFILIATE",
-      email: `ref-aff-${Date.now()}@test.regatta.dev`,
+      email: `ref-aff-${Date.now()}@test.affiliateswarm.dev`,
       description: "E2E referred affiliate",
       partnerCode: "TESTPARTNER",
     });
@@ -817,7 +821,7 @@ async function main() {
   // Advertiser fires postback for the referred affiliate's tracking code
   await test("Postback for referred affiliate — conversion tracked", async () => {
     const { status, json } = await api("POST", "/api/v1/postback", {
-      rgta_ref: refTrackingCode,
+      swarm_ref: refTrackingCode,
       externalId: `ref-flow-${Date.now()}`,
       eventType: "PURCHASE",
       revenueCents: 5000,

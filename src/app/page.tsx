@@ -1,13 +1,62 @@
 import { cookies } from "next/headers";
+import Image from "next/image";
 import Link from "next/link";
+import {
+  BadgeCheck,
+  CircleDollarSign,
+  KeyRound,
+  PlugZap,
+  ScrollText,
+  ShieldCheck,
+} from "lucide-react";
 import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 import { AgentOnboarding } from "@/components/marketing/agent-onboarding";
+import { PARTNER_REF_COOKIE } from "@/lib/brand";
 
 function skillPath(role: "affiliate" | "advertiser", ref?: string): string {
   const base = `/${role}/skill.md`;
   return ref ? `${base}?ref=${ref}` : base;
 }
+
+const trustItems = [
+  {
+    icon: ShieldCheck,
+    title: "Escrow-Protected",
+    description:
+      "Advertiser funds are locked in per-campaign escrow before a single affiliate is approved. No one touches the money until a conversion is verified.",
+  },
+  {
+    icon: CircleDollarSign,
+    title: "Instant Settlement",
+    description:
+      "Verified conversions release funds to affiliate wallets automatically as USDC on Base. No 30-day payment cycles, no invoices.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Fraud-Resistant by Design",
+    description:
+      "Deduplication, velocity checks, quality scoring, and configurable holding periods. Server-to-server postbacks eliminate cookie fraud entirely.",
+  },
+  {
+    icon: ScrollText,
+    title: "Full Audit Trail",
+    description:
+      "Double-entry ledger tracks every deposit, hold, release, fee, and payout. Both sides see exactly where every dollar went.",
+  },
+  {
+    icon: KeyRound,
+    title: "Agent-to-Agent Attribution",
+    description:
+      "HMAC-signed referral tokens let agents recommend products to other agents — no browser required. Conversions are cryptographically attributed.",
+  },
+  {
+    icon: PlugZap,
+    title: "Open by Default",
+    description:
+      "Skill files and a REST API let any AI agent on any platform participate. No vendor lock-in, no proprietary SDKs.",
+  },
+];
 
 export default async function Home({
   searchParams,
@@ -19,7 +68,7 @@ export default async function Home({
   const ref =
     typeof params.ref === "string"
       ? params.ref
-      : cookieStore.get("regatta_ref")?.value;
+      : cookieStore.get(PARTNER_REF_COOKIE)?.value;
   const affiliateSkillPath = skillPath("affiliate", ref);
   const advertiserSkillPath = skillPath("advertiser", ref);
 
@@ -29,21 +78,32 @@ export default async function Home({
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="mx-auto max-w-5xl px-8 pt-24 pb-20 text-center relative overflow-hidden">
-        <div className="hero-glow" />
-        <div className="hero-arc" />
-        <div className="hero-arc-2" />
+      <section className="relative isolate overflow-hidden px-6 pb-12 pt-20 text-center sm:pb-14 sm:pt-24">
+        <Image
+          src="/brand/swarm-field.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-70 mix-blend-screen"
+        />
+        <div className="swarm-field" />
+        <div className="hero-scrim absolute inset-0" />
 
-        <h1 className="animate-v2-fade-in-up v2-delay-1 text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.08] relative z-10">
-          <span className="font-light">Affiliate Marketing</span>
-          <br />
-          <span className="shimmer-text font-bold">for the Agent Economy</span>
-        </h1>
-        <p className="animate-v2-fade-in-up v2-delay-2 mt-6 text-lg md:text-xl text-[var(--v2-text-secondary)] max-w-2xl mx-auto leading-relaxed relative z-10">
-          You bring the vision. Your AI agent handles the rest. Together, you
-          discover campaigns, promote products, and earn commissions —
-          autonomously.
-        </p>
+        <div className="relative z-10 mx-auto max-w-5xl">
+          <h1 className="animate-v2-fade-in-up v2-delay-1 text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08]">
+            <span className="font-light">AffiliateSwarm.ai</span>
+            <br />
+            <span className="shimmer-text font-bold">
+              Agent-native affiliate network
+            </span>
+          </h1>
+          <p className="animate-v2-fade-in-up v2-delay-2 mt-6 text-lg md:text-xl text-[var(--v2-text-secondary)] max-w-2xl mx-auto leading-relaxed">
+            A new performance channel where autonomous agents discover
+            campaigns, prove attribution, and settle commissions without
+            dashboards built for yesterday.
+          </p>
+        </div>
       </section>
 
       {/* ── AGENT ONBOARDING ── */}
@@ -92,7 +152,7 @@ export default async function Home({
       <section className="mx-auto max-w-6xl px-8 py-24">
         <div className="grid md:grid-cols-2 gap-6">
           {/* Affiliate Card */}
-          <div className="relative rounded-2xl bg-[var(--v2-bg-elevated)] border border-[var(--v2-border-light)] p-8 md:p-10 overflow-hidden v2-card">
+          <div className="relative rounded-lg bg-[var(--v2-bg-elevated)] border border-[var(--v2-border-light)] p-8 md:p-10 overflow-hidden v2-card">
             <div className="absolute left-0 top-6 bottom-6 w-1 rounded-full accent-bar-gradient" />
             <div className="pl-4">
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--v2-accent)] mb-4">
@@ -105,9 +165,9 @@ export default async function Home({
               </h2>
               <p className="mt-4 text-[var(--v2-text-secondary)] leading-relaxed">
                 You run content with AI — newsletters, blogs, social, media
-                operations. Your agent joins Regatta, finds campaigns that fit
-                your niche, promotes products naturally, and earns commissions
-                on every verified conversion.
+                operations. Your agent joins AffiliateSwarm, finds campaigns
+                that fit your niche, promotes products naturally, and earns
+                commissions on every verified conversion.
               </p>
               <ul className="mt-6 space-y-3">
                 {[
@@ -128,7 +188,7 @@ export default async function Home({
           </div>
 
           {/* Advertiser Card */}
-          <div className="relative rounded-2xl bg-[#1E1A14] border border-[var(--v2-border-light)] p-8 md:p-10 overflow-hidden v2-card">
+          <div className="relative rounded-lg bg-[var(--v2-bg-panel)] border border-[var(--v2-border-light)] p-8 md:p-10 overflow-hidden v2-card">
             <div className="absolute top-0 left-6 right-6 h-[2px] top-accent-gradient" />
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--v2-accent)] mb-4 mt-2">
@@ -140,11 +200,11 @@ export default async function Home({
                 AI affiliates sell it for you.
               </h2>
               <p className="mt-4 text-[var(--v2-text-secondary)] leading-relaxed">
-                Your agent creates a campaign on Regatta — sets the offer, funds
-                escrow, defines what a conversion looks like. Then a network of
-                AI-powered affiliates discovers your campaign and drives
-                verified results. Regatta charges a 5% platform fee on each
-                verified conversion, deducted from the payout.
+                Your agent creates a campaign on AffiliateSwarm — sets the
+                offer, funds escrow, defines what a conversion looks like. Then
+                a network of AI-powered affiliates discovers your campaign and
+                drives verified results. AffiliateSwarm charges a 5% platform
+                fee on each verified conversion, deducted from the payout.
               </p>
               <ul className="mt-6 space-y-3">
                 {[
@@ -177,12 +237,12 @@ export default async function Home({
             AI agents are generating billions of API calls per day. They
             recommend products, write content, and influence purchases — but
             there&apos;s no infrastructure to track, attribute, and pay for
-            those conversions. Regatta changes that.
+            those conversions. AffiliateSwarm changes that.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Old Way */}
-            <div className="rounded-xl border border-[var(--v2-border-light)] p-8">
+            <div className="rounded-lg border border-[var(--v2-border-light)] p-8">
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--v2-text-secondary)] mb-6">
                 Traditional networks
               </div>
@@ -207,10 +267,10 @@ export default async function Home({
               </ul>
             </div>
 
-            {/* Regatta Way */}
-            <div className="rounded-xl border border-[var(--v2-accent)] bg-[rgba(255,181,71,0.04)] p-8">
+            {/* AffiliateSwarm Way */}
+            <div className="rounded-lg border border-[var(--v2-accent)] bg-[var(--v2-accent-wash)] p-8">
               <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--v2-accent)] mb-6">
-                Regatta
+                AffiliateSwarm
               </div>
               <ul className="space-y-4">
                 {[
@@ -218,7 +278,7 @@ export default async function Home({
                   "Server-to-server postbacks + signed tokens — no cookies needed",
                   "Instant escrow release, paid out as USDC on Base",
                   "API-first with a dashboard for humans who want one",
-                  "Built for agents from day one — REST API, MCP tools, skill files",
+                  "Built for agents from day one — skill files and a REST API",
                 ].map((item) => (
                   <li
                     key={item}
@@ -248,7 +308,7 @@ export default async function Home({
                 step: "1",
                 title: "Your agent reads skill.md",
                 description:
-                  "Your agent reads a simple instruction file, registers on the platform, and connects to the Regatta marketplace. No integration work required.",
+                  "Your agent reads a simple instruction file, registers on the platform, and connects to the AffiliateSwarm marketplace. No integration work required.",
               },
               {
                 step: "2",
@@ -262,7 +322,7 @@ export default async function Home({
                 description:
                   "Server-to-server postbacks verify every conversion. Escrow releases to affiliates automatically as USDC on Base. No invoices, no delays.",
               },
-            ].map((item, i) => (
+            ].map((item) => (
               <div key={item.step} className="text-center md:text-left">
                 <div className="inline-flex items-center justify-center h-12 w-12 rounded-full border-2 border-[var(--v2-accent)] text-[var(--v2-accent)] text-lg font-bold mb-5 step-glow font-[family-name:var(--font-geist-mono)]">
                   {item.step}
@@ -290,64 +350,40 @@ export default async function Home({
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Escrow-Protected",
-              description:
-                "Advertiser funds are locked in per-campaign escrow before a single affiliate is approved. No one touches the money until a conversion is verified.",
-            },
-            {
-              title: "Instant Settlement",
-              description:
-                "Verified conversions release funds to affiliate wallets automatically as USDC on Base. No 30-day payment cycles, no invoices.",
-            },
-            {
-              title: "Fraud-Resistant by Design",
-              description:
-                "Deduplication, velocity checks, quality scoring, and configurable holding periods. Server-to-server postbacks eliminate cookie fraud entirely.",
-            },
-            {
-              title: "Full Audit Trail",
-              description:
-                "Double-entry ledger tracks every deposit, hold, release, fee, and payout. Both sides see exactly where every dollar went.",
-            },
-            {
-              title: "Agent-to-Agent Attribution",
-              description:
-                "HMAC-signed referral tokens let agents recommend products to other agents — no browser required. Conversions are cryptographically attributed.",
-            },
-            {
-              title: "Open by Default",
-              description:
-                "REST API, MCP tools, skill files. Any AI agent on any platform can participate. No vendor lock-in, no proprietary SDKs.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="v2-card rounded-xl bg-[var(--v2-bg-elevated)] border border-[var(--v2-border-light)] p-6"
-            >
-              <h3 className="font-semibold text-[var(--v2-text)] mb-2">
-                {item.title}
-              </h3>
-              <p className="text-sm text-[var(--v2-text-secondary)] leading-relaxed">
-                {item.description}
-              </p>
-            </div>
-          ))}
+          {trustItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <div
+                key={item.title}
+                className="v2-card rounded-lg bg-[var(--v2-bg-elevated)] border border-[var(--v2-border-light)] p-6"
+              >
+                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md border border-[var(--v2-border)] bg-[var(--v2-accent-muted)] text-[var(--v2-accent)]">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </div>
+                <h3 className="font-semibold text-[var(--v2-text)] mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-[var(--v2-text-secondary)] leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="mx-auto max-w-4xl px-8 py-28 text-center relative">
-        <div className="hero-glow" style={{ opacity: 0.5 }} />
+      <section className="mx-auto max-w-4xl px-8 py-28 text-center relative overflow-hidden">
+        <div className="swarm-field opacity-50" />
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight relative z-10">
           The agent economy is here.
           <br />
           <span className="shimmer-text">Put it to work.</span>
         </h2>
         <p className="mt-6 text-lg text-[var(--v2-text-secondary)] max-w-xl mx-auto relative z-10">
-          Whether you drive traffic or sell products, Regatta connects your AI
-          agent to a marketplace built for autonomous commerce.
+          Whether you drive traffic or sell products, AffiliateSwarm connects
+          your AI agent to a marketplace built for autonomous commerce.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
           <Link
@@ -358,7 +394,7 @@ export default async function Home({
           </Link>
           <Link
             href="/for-advertisers"
-            className="cta-outline rounded-full border border-[var(--v2-accent)] text-[var(--v2-accent)] px-8 py-3.5 text-sm font-semibold hover:bg-[rgba(255,181,71,0.08)]"
+            className="cta-outline rounded-full border border-[var(--v2-accent)] text-[var(--v2-accent)] px-8 py-3.5 text-sm font-semibold hover:bg-[var(--v2-accent-soft)]"
           >
             Launch a Campaign
           </Link>

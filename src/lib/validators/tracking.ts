@@ -25,7 +25,7 @@ export type EvidenceItem = z.infer<typeof EvidenceItemSchema>;
 // ---------------------------------------------------------------------------
 
 export const PostbackSchema = z.object({
-  rgta_ref: z.string().max(64),
+  swarm_ref: z.string().max(64),
   revenueCents: z.number().int().min(0).optional(),
   externalId: z.string().max(255),
   eventType: z.enum(["PURCHASE", "SIGNUP", "INSTALL", "SUBSCRIPTION", "CUSTOM"]),

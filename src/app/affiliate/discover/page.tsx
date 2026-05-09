@@ -78,7 +78,10 @@ function computeFundingHealth(
   walletAvailableCents: number,
   budgetHeadroomCents: number
 ): FundingHealth {
-  const walletContribution = Math.max(0, Math.min(walletAvailableCents, budgetHeadroomCents));
+  const walletContribution = Math.max(
+    0,
+    Math.min(walletAvailableCents, budgetHeadroomCents)
+  );
   const runwayCents = escrowBalanceCents + walletContribution;
   const perConversionCents = Math.max(estimatedPayoutCents, 1);
   if (runwayCents >= perConversionCents * 10) return "healthy";
@@ -98,7 +101,7 @@ function fundingHealthBadge(health: FundingHealth) {
       return {
         label: "funds low",
         className:
-          "border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100",
+          "border-[var(--v2-accent-2)] bg-[var(--v2-lime-muted)] text-[var(--v2-text)]",
       };
     case "at_risk":
       return {
@@ -231,17 +234,23 @@ export default async function DiscoverCampaignsPage({
         <div className="space-y-4">
           {campaigns.map((campaign) => {
             const existingStatus = enrollmentMap.get(campaign.id);
-            const escrowBalance = campaign.escrowAccount?.currentBalanceCents ?? 0;
-            const totalDeposited = campaign.escrowAccount?.totalDepositedCents ?? 0;
-            const walletAvailable = campaign.advertiser.wallet?.availableCents ?? 0;
-            const budgetHeadroom = Math.max(0, campaign.budgetCents - totalDeposited);
+            const escrowBalance =
+              campaign.escrowAccount?.currentBalanceCents ?? 0;
+            const totalDeposited =
+              campaign.escrowAccount?.totalDepositedCents ?? 0;
+            const walletAvailable =
+              campaign.advertiser.wallet?.availableCents ?? 0;
+            const budgetHeadroom = Math.max(
+              0,
+              campaign.budgetCents - totalDeposited
+            );
             // For REV_SHARE we don't know the per-conversion payout upfront; use
             // a nominal $1 so funding-health rules don't falsely flag healthy
             // campaigns as "at risk" just because payoutPercentage isn't a cents value.
             const estimatedPayoutCents =
               campaign.compensationModel === "REV_SHARE"
                 ? 100
-                : campaign.payoutPerUnitCents ?? 0;
+                : (campaign.payoutPerUnitCents ?? 0);
             const fundingHealth = computeFundingHealth(
               estimatedPayoutCents,
               escrowBalance,
@@ -255,9 +264,7 @@ export default async function DiscoverCampaignsPage({
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
-                      <CardTitle className="text-lg">
-                        {campaign.name}
-                      </CardTitle>
+                      <CardTitle className="text-lg">{campaign.name}</CardTitle>
                       <CardDescription className="mt-1">
                         by {campaign.advertiser.displayName} &middot;{" "}
                         {formatPayout(
@@ -271,7 +278,10 @@ export default async function DiscoverCampaignsPage({
                       <Badge variant="outline">
                         {compensationBadgeLabel(campaign.compensationModel)}
                       </Badge>
-                      <Badge variant="outline" className={fundingBadge.className}>
+                      <Badge
+                        variant="outline"
+                        className={fundingBadge.className}
+                      >
                         {fundingBadge.label}
                       </Badge>
                       {campaign.enrollmentPolicy === "OPEN" && (
@@ -293,20 +303,12 @@ export default async function DiscoverCampaignsPage({
                   {/* Geo targets & categories */}
                   <div className="mb-3 flex flex-wrap gap-1.5">
                     {campaign.geoTargets.map((geo) => (
-                      <Badge
-                        key={geo}
-                        variant="outline"
-                        className="text-xs"
-                      >
+                      <Badge key={geo} variant="outline" className="text-xs">
                         {geo}
                       </Badge>
                     ))}
                     {campaign.categories.map((cat) => (
-                      <Badge
-                        key={cat}
-                        variant="outline"
-                        className="text-xs"
-                      >
+                      <Badge key={cat} variant="outline" className="text-xs">
                         {cat}
                       </Badge>
                     ))}
@@ -315,9 +317,7 @@ export default async function DiscoverCampaignsPage({
                   {/* Action: show enrollment status or apply button */}
                   {existingStatus ? (
                     <div className="flex items-center gap-2">
-                      <Badge
-                        variant={enrollmentStatusVariant(existingStatus)}
-                      >
+                      <Badge variant={enrollmentStatusVariant(existingStatus)}>
                         {existingStatus.toLowerCase().replace(/_/g, " ")}
                       </Badge>
                       <span className="text-sm text-muted-foreground">

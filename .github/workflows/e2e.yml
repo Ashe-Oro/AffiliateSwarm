@@ -9,7 +9,7 @@ name: E2E Tests (Playwright)
 #   2.  Campaign creation, escrow funding, tracking setup, activation
 #   3.  Affiliate registration with full profile
 #   4.  Campaign discovery, application, profile visibility
-#   5.  Click tracking (redirect + ref), postback conversion, idempotency
+#   5.  Click tracking (direct link + swarm_ref), postback conversion, idempotency
 #   6.  Wallet balances, escrow deductions, lead lists, analytics KPIs
 #   7.  Affiliate payout (PLATFORM_CREDIT instant, CRYPTO pending)
 #   8.  Error handling (bad auth, 404s, invalid payloads, business rules)
@@ -20,12 +20,12 @@ name: E2E Tests (Playwright)
 # Triggers:
 #   1. PRs that touch meaningful code (path filters below)
 #   2. Manual dispatch via `gh workflow run e2e`
-#   3. Push to master (post-merge verification)
+#   3. Push to main (post-merge verification)
 # ---------------------------------------------------------------
 
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       # API routes and business logic
       - "src/app/api/**"
@@ -39,7 +39,7 @@ on:
       - "src/app/admin/**"
       - "src/components/**"
       # Auth and middleware
-      - "src/app/login/**"
+      - "src/app/(auth)/**"
       - "proxy.ts"
       - "middleware.ts"
       # The E2E tests themselves
@@ -50,7 +50,7 @@ on:
       - "package-lock.json"
 
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "src/**"
       - "prisma/**"
@@ -77,13 +77,13 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: regatta
-          POSTGRES_PASSWORD: regatta_dev
-          POSTGRES_DB: regatta
+          POSTGRES_USER: affiliateswarm
+          POSTGRES_PASSWORD: affiliateswarm_dev
+          POSTGRES_DB: affiliateswarm
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U regatta"
+          --health-cmd "pg_isready -U affiliateswarm"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -118,7 +118,7 @@ jobs:
       - name: Run database migrations
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: postgresql://regatta:regatta_dev@localhost:5432/regatta?schema=public
+          DATABASE_URL: postgresql://affiliateswarm:affiliateswarm_dev@localhost:5432/affiliateswarm?schema=public
 
       - name: Run E2E tests
         run: |
@@ -128,7 +128,7 @@ jobs:
             npx playwright test tests/e2e/full-lifecycle.spec.ts
           fi
         env:
-          DATABASE_URL: postgresql://regatta:regatta_dev@localhost:5432/regatta?schema=public
+          DATABASE_URL: postgresql://affiliateswarm:affiliateswarm_dev@localhost:5432/affiliateswarm?schema=public
           REDIS_URL: redis://localhost:6379
           BASE_URL: http://localhost:3099
           NEXT_PUBLIC_APP_URL: http://localhost:3099

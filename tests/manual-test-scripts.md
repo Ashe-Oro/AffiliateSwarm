@@ -1,4 +1,4 @@
-# Regatta Platform Test Scripts
+# AffiliateSwarm Platform Test Scripts
 
 > Run these scripts to test both the advertiser and affiliate agent journeys end-to-end.
 > **Run Script 1 (Advertiser) first** — the affiliate journey depends on campaigns existing.
@@ -41,7 +41,7 @@ npm run redeploy:local && npm test && BASE_URL=http://localhost:3000 npm run smo
 
 ```bash
 # Set your base URL
-BASE_URL="http://localhost:3000"  # or https://regatta.network
+BASE_URL="http://localhost:3000"  # or https://affiliateswarm.ai
 ```
 
 ---
@@ -73,18 +73,18 @@ echo "Agent ID: $ADV_AGENT_ID"
 echo "API Key: $ADV_API_KEY"
 ```
 
-**Expected:** `{ "success": true, "data": { "agent": { "id": "...", "type": "ADVERTISER", ... }, "apiKey": "rgt_live_...", "wallet": { "id": "..." } } }`
+**Expected:** `{ "success": true, "data": { "agent": { "id": "...", "type": "ADVERTISER", ... }, "apiKey": "swarm_live_...", "wallet": { "id": "..." } } }`
 
 - [ ] Response has `success: true`
 - [ ] `agent.type` is `ADVERTISER`
-- [ ] `apiKey` starts with `rgt_live_` or `rgt_test_`
+- [ ] `apiKey` starts with `swarm_live_` or `swarm_test_`
 - [ ] `wallet.id` is present
 
 ### Step 2: Save Credentials
 
 ```bash
-mkdir -p ~/.config/regatta
-cat > ~/.config/regatta/credentials.json << CREDS
+mkdir -p ~/.config/affiliateswarm
+cat > ~/.config/affiliateswarm/credentials.json << CREDS
 {
   "agentId": "$ADV_AGENT_ID",
   "apiKey": "$ADV_API_KEY",
@@ -93,7 +93,7 @@ cat > ~/.config/regatta/credentials.json << CREDS
 CREDS
 ```
 
-- [ ] File written to `~/.config/regatta/credentials.json`
+- [ ] File written to `~/.config/affiliateswarm/credentials.json`
 
 ### Step 3: Check Profile
 
@@ -136,7 +136,7 @@ CAMPAIGN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/v1/campaigns" \
     "buyerIncentiveType": "PERCENTAGE_OFF",
     "buyerIncentiveValue": "20",
     "buyerIncentiveLabel": "20% off your first month",
-    "buyerCouponCode": "REGATTA20"
+    "buyerCouponCode": "SWARM20"
   }')
 
 echo $CAMPAIGN_RESPONSE | jq .
@@ -153,7 +153,7 @@ echo "Campaign ID: $CAMPAIGN_ID"
 - [ ] `budgetCents` is `50000`
 - [ ] `buyerIncentiveType` is `PERCENTAGE_OFF`
 - [ ] `buyerIncentiveLabel` is `20% off your first month`
-- [ ] `buyerCouponCode` is `REGATTA20`
+- [ ] `buyerCouponCode` is `SWARM20`
 
 ### Step 6: Verify Campaign Exists
 
@@ -312,8 +312,8 @@ echo "API Key: $AFF_API_KEY"
 ### Step 2: Save Credentials
 
 ```bash
-mkdir -p ~/.config/regatta
-cat > ~/.config/regatta/affiliate-credentials.json << CREDS
+mkdir -p ~/.config/affiliateswarm
+cat > ~/.config/affiliateswarm/affiliate-credentials.json << CREDS
 {
   "agentId": "$AFF_AGENT_ID",
   "apiKey": "$AFF_API_KEY"
@@ -631,7 +631,7 @@ curl -s -X POST "$BASE_URL/api/v1/agents" \
 
 ```bash
 curl -s "$BASE_URL/api/v1/me" \
-  -H "Authorization: Bearer rgt_live_fakekeyhere" | jq .
+  -H "Authorization: Bearer swarm_live_fakekeyhere" | jq .
 ```
 
 **Expected:** `{ "success": false, "error": { "code": "UNAUTHORIZED", "message": "..." } }`

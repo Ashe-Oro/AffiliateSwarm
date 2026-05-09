@@ -179,8 +179,8 @@ export async function confirmTracking(apiKey: string, testTrackingCode: string) 
     "POST",
     "/api/v1/postback",
     {
-      rgta_ref: testTrackingCode,
-      externalId: `regatta-confirm-${Date.now()}`,
+      swarm_ref: testTrackingCode,
+      externalId: `affiliateswarm-confirm-${Date.now()}`,
       eventType: "PURCHASE",
     },
     apiKey
@@ -263,7 +263,7 @@ export async function setupAdminAuth(context: BrowserContext) {
   }
   await context.addCookies([
     {
-      name: "regatta_admin_token",
+      name: "affiliateswarm_admin_token",
       value: adminSecret,
       domain: "localhost",
       path: "/",
@@ -323,7 +323,7 @@ export async function completeStripeCheckout(
   await page.waitForSelector("#cardNumber", { timeout: 15_000 });
 
   // Fill email
-  await page.locator("#email").fill("e2e-test@regatta.dev");
+  await page.locator("#email").fill("e2e-test@affiliateswarm.dev");
 
   // Fill card details
   await page.locator("#cardNumber").fill("4242424242424242");
@@ -437,13 +437,13 @@ export async function fundCampaignViaStripe(
 // ── Tracking Link Helpers ──────────────────────────────────────────────
 
 /**
- * Follow a tracking link and return the redirect destination + extracted ref.
- * Does NOT follow the redirect (uses manual redirect mode).
+ * Follow the direct-ref tracking URL and return the landing destination +
+ * extracted ref.
  */
 export async function followTrackingLink(trackingCode: string, landingUrl?: string) {
   const target = landingUrl
-    ? `${landingUrl}${landingUrl.includes("?") ? "&" : "?"}rgta_ref=${trackingCode}`
-    : `${MOCK_LANDING_URL}?rgta_ref=${trackingCode}`;
+    ? `${landingUrl}${landingUrl.includes("?") ? "&" : "?"}swarm_ref=${trackingCode}`
+    : `${MOCK_LANDING_URL}?swarm_ref=${trackingCode}`;
   const res = await fetch(target, { redirect: "manual" });
   return {
     status: res.status,
@@ -453,13 +453,13 @@ export async function followTrackingLink(trackingCode: string, landingUrl?: stri
 }
 
 /**
- * Navigate directly to the advertiser's landing page with ?rgta_ref= appended,
+ * Navigate directly to the advertiser's landing page with ?swarm_ref= appended,
  * the way a real user would after clicking an affiliate's link.
  */
 export async function followTrackingLinkInBrowser(page: Page, trackingCode: string) {
-  const url = `${MOCK_LANDING_URL}?rgta_ref=${trackingCode}`;
+  const url = `${MOCK_LANDING_URL}?swarm_ref=${trackingCode}`;
   await page.goto(url);
-  const refElement = page.locator("#rgta-ref");
+  const refElement = page.locator("#swarm-ref");
   const ref = await refElement.textContent();
   return { ref, url: page.url() };
 }
@@ -477,7 +477,7 @@ export async function firePostback(
     "POST",
     "/api/v1/postback",
     {
-      rgta_ref: ref,
+      swarm_ref: ref,
       externalId,
       eventType,
       ...(revenueCents !== undefined && { revenueCents }),
@@ -506,7 +506,7 @@ export async function getWalletBalance(apiKey: string) {
   }
   return {
     availableCents: json.data.availableCents as number,
-    pendingCents: json.data.pendingCents as number,
+    pendingCents: (json.data.pendingCents ?? json.data.pendingPayoutCents) as number,
   };
 }
 

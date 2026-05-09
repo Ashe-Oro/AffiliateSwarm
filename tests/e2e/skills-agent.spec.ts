@@ -1,6 +1,6 @@
 /**
  * Skill-driven e2e — proves a real LLM agent can read each SKILL.md file and
- * register itself on Regatta via the API. This is the "Venice test": if Venice's
+ * register itself on AffiliateSwarm via the API. This is the "Venice test": if Venice's
  * Claude reads our advertiser/affiliate skill and follows it, does it work?
  *
  * Skipped unless ANTHROPIC_API_KEY is set. Costs API credits per run.
@@ -58,7 +58,7 @@ async function runAgentSession(opts: {
     {
       name: "http_request",
       description:
-        "Make an HTTP request to the Regatta platform API. Returns the response status code and JSON body.",
+        "Make an HTTP request to the AffiliateSwarm platform API. Returns the response status code and JSON body.",
       input_schema: {
         type: "object",
         properties: {
@@ -236,11 +236,11 @@ test("advertiser skill — agent reads SKILL.md and registers via API", async ()
   test.setTimeout(180_000);
 
   const skill = readFileSync(
-    join(process.cwd(), "skills/regatta-advertiser/SKILL.md"),
+    join(process.cwd(), "skills/swarm-advertiser/SKILL.md"),
     "utf-8"
   );
 
-  const email = `skill-adv-${RUN_ID}@test.regatta.dev`;
+  const email = `skill-adv-${RUN_ID}@test.affiliateswarm.dev`;
   const displayName = `Skill-Test Advertiser ${RUN_ID}`;
 
   const userPrompt = `Your human has approved the registration. Use these values:
@@ -248,9 +248,9 @@ test("advertiser skill — agent reads SKILL.md and registers via API", async ()
 - displayName: ${displayName}
 - description: AI productivity tools for individual users.
 
-IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT regatta.network). Substitute that host for every API call you make.
+IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT affiliateswarm.ai). Substitute that host for every API call you make.
 
-You do NOT have a filesystem in this sandbox — skip any "save credentials to ~/.config/regatta/credentials.json" step. Just register and report the resulting agentId + apiKey to me when done.`;
+You do NOT have a filesystem in this sandbox — skip any "save credentials to ~/.config/affiliateswarm/credentials.json" step. Just register and report the resulting agentId + apiKey to me when done.`;
 
   const result = await runAgentSession({
     systemPrompt: skill,
@@ -259,7 +259,7 @@ You do NOT have a filesystem in this sandbox — skip any "save credentials to ~
 
   const reg = findRegistrationResponse(result.toolCalls);
   expect(reg, `agent should have called POST /api/v1/agents successfully. Final: ${result.finalText}`).not.toBeNull();
-  expect(reg!.apiKey).toMatch(/^rgt_live_/);
+  expect(reg!.apiKey).toMatch(/^swarm_live_/);
 
   const agent = await verifyAgentExists(reg!.apiKey!);
   expect(agent.displayName).toBe(displayName);
@@ -270,11 +270,11 @@ test("affiliate skill — agent reads SKILL.md and registers via API", async () 
   test.setTimeout(180_000);
 
   const skill = readFileSync(
-    join(process.cwd(), "skills/regatta-affiliate/SKILL.md"),
+    join(process.cwd(), "skills/swarm-affiliate/SKILL.md"),
     "utf-8"
   );
 
-  const email = `skill-aff-${RUN_ID}@test.regatta.dev`;
+  const email = `skill-aff-${RUN_ID}@test.affiliateswarm.dev`;
   const displayName = `Skill-Test Affiliate ${RUN_ID}`;
 
   const userPrompt = `Your human has approved the registration. Use these values:
@@ -286,9 +286,9 @@ test("affiliate skill — agent reads SKILL.md and registers via API", async () 
 - contentType: review
 - audienceGeo: US
 
-IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT regatta.network). Substitute that host for every API call you make.
+IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT affiliateswarm.ai). Substitute that host for every API call you make.
 
-You do NOT have a filesystem in this sandbox — skip any "save credentials to ~/.config/regatta/credentials.json" step. Just register and report the resulting agentId + apiKey to me when done.`;
+You do NOT have a filesystem in this sandbox — skip any "save credentials to ~/.config/affiliateswarm/credentials.json" step. Just register and report the resulting agentId + apiKey to me when done.`;
 
   const result = await runAgentSession({
     systemPrompt: skill,
@@ -297,7 +297,7 @@ You do NOT have a filesystem in this sandbox — skip any "save credentials to ~
 
   const reg = findRegistrationResponse(result.toolCalls);
   expect(reg, `agent should have called POST /api/v1/agents successfully. Final: ${result.finalText}`).not.toBeNull();
-  expect(reg!.apiKey).toMatch(/^rgt_live_/);
+  expect(reg!.apiKey).toMatch(/^swarm_live_/);
 
   const agent = await verifyAgentExists(reg!.apiKey!);
   expect(agent.displayName).toBe(displayName);

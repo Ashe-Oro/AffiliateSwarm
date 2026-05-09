@@ -139,7 +139,7 @@ export async function GET(req: NextRequest) {
     const problems = failed + recoverErrors;
     if (problems > 0) {
       void sendAdminAlert({
-        subject: `[Regatta] process-payouts cron had ${problems} failure${problems === 1 ? "" : "s"}`,
+        subject: `[AffiliateSwarm] process-payouts cron had ${problems} failure${problems === 1 ? "" : "s"}`,
         summary,
       });
     }

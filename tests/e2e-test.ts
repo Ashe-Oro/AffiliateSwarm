@@ -1,5 +1,5 @@
 /**
- * Full E2E test for Regatta — runs against local dev server.
+ * Full E2E test for AffiliateSwarm — runs against local dev server.
  *
  * Prerequisites:
  *   npx tsx tests/seed-test-campaign.ts   (one-time setup)
@@ -63,7 +63,7 @@ async function main() {
   const affId = keys.affiliate.agentId;
   const partnerCode = keys.partner.referralCode;
 
-  console.log(`\nRegatta E2E Test — ${BASE_URL}\n`);
+  console.log(`\nAffiliateSwarm E2E Test — ${BASE_URL}\n`);
   console.log("=".repeat(60));
 
   // ── 1. Skill Files ──
@@ -73,7 +73,7 @@ async function main() {
     const res = await fetch(`${BASE_URL}/affiliate/skill.md`);
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     const text = await res.text();
-    assert(text.includes("Regatta"), "Should mention Regatta");
+    assert(text.includes("AffiliateSwarm"), "Should mention AffiliateSwarm");
   });
 
   await test("GET /advertiser/skill.md — accessible without auth", async () => {
@@ -97,7 +97,7 @@ async function main() {
     const loc = res.headers.get("location") || "";
     assert(loc.includes(`ref=${partnerCode}`), `Should include ref param, got: ${loc}`);
     const cookie = res.headers.get("set-cookie") || "";
-    assert(cookie.includes("regatta_ref"), `Should set regatta_ref cookie`);
+    assert(cookie.includes("affiliateswarm_ref"), `Should set affiliateswarm_ref cookie`);
   });
 
   await test("GET /affiliate/skill.md?ref=CODE — injects partnerCode", async () => {
@@ -129,7 +129,7 @@ async function main() {
   });
 
   await test("GET /api/v1/me — rejects bad key", async () => {
-    const { status } = await api("GET", "/api/v1/me", undefined, "rgt_live_badkey");
+    const { status } = await api("GET", "/api/v1/me", undefined, "swarm_live_badkey");
     assert(status === 401, `Expected 401, got ${status}`);
   });
 
@@ -167,11 +167,11 @@ async function main() {
   // ── 6. Click Tracking ──
   console.log("\n6. Click Tracking\n");
 
-  await test("GET /t/:trackingCode — redirect with ref param", async () => {
-    const res = await fetch(`${BASE_URL}/t/${trackingCode}`, { redirect: "manual" });
-    assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-    const loc = res.headers.get("location") || "";
-    assert(loc.includes(`ref=${trackingCode}`), `Should include ref, got: ${loc}`);
+  await test("GET mock landing with swarm_ref — landing captures tracking code", async () => {
+    const res = await fetch(`${BASE_URL}/api/test/mock-landing?swarm_ref=${trackingCode}`);
+    assert(res.status === 200, `Expected 200, got ${res.status}`);
+    const text = await res.text();
+    assert(text.includes(`id="swarm-ref">${trackingCode}</code>`), "Landing page should render swarm_ref");
   });
 
   // ── 7. Postback (Conversion) ──
@@ -179,7 +179,7 @@ async function main() {
 
   await test("POST /api/v1/postback — conversion tracked and verified", async () => {
     const { status, json } = await api("POST", "/api/v1/postback", {
-      rgta_ref: trackingCode,
+      swarm_ref: trackingCode,
       externalId: `e2e-${Date.now()}`,
       eventType: "PURCHASE",
       revenueCents: 5000,
@@ -191,8 +191,8 @@ async function main() {
 
   await test("POST /api/v1/postback — idempotent on same externalId", async () => {
     const extId = `e2e-idem-${Date.now()}`;
-    await api("POST", "/api/v1/postback", { rgta_ref: trackingCode, externalId: extId, eventType: "PURCHASE", revenueCents: 3000 }, advKey);
-    const { status, json } = await api("POST", "/api/v1/postback", { rgta_ref: trackingCode, externalId: extId, eventType: "PURCHASE", revenueCents: 3000 }, advKey);
+    await api("POST", "/api/v1/postback", { swarm_ref: trackingCode, externalId: extId, eventType: "PURCHASE", revenueCents: 3000 }, advKey);
+    const { status, json } = await api("POST", "/api/v1/postback", { swarm_ref: trackingCode, externalId: extId, eventType: "PURCHASE", revenueCents: 3000 }, advKey);
     assert(status === 200, `Second call should be 200, got ${status}`);
   });
 
@@ -244,7 +244,7 @@ async function main() {
     const { status, json } = await api("POST", "/api/v1/agents", {
       displayName: `E2E-New-${Date.now()}`,
       type: "AFFILIATE",
-      email: `e2e-new-${Date.now()}@test.regatta.dev`,
+      email: `e2e-new-${Date.now()}@test.affiliateswarm.dev`,
       partnerCode,
     });
     assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);

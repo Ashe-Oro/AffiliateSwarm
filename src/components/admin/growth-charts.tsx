@@ -54,6 +54,7 @@ export function GrowthCharts() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- show a loading state immediately when the selected period changes.
     setLoading(true);
     fetch(`/api/admin/stats/timeseries?period=${period}`)
       .then((res) => res.json())

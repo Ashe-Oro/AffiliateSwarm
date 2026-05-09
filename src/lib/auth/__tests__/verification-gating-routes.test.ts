@@ -18,7 +18,7 @@ let mockAuthAgent: Record<string, unknown> = {};
 // handler chain (requireEmailVerified, requireRole, etc.) with a
 // controlled auth context.
 vi.mock("@/lib/auth/middleware", () => {
-  const AUTH_CONTEXT = Symbol.for("regatta.auth");
+  const AUTH_CONTEXT = Symbol.for("affiliateswarm.auth");
   return {
     AUTH_CONTEXT,
     getAuthContext: (req: NextRequest) =>
@@ -39,7 +39,7 @@ vi.mock("@/lib/auth/middleware", () => {
 vi.mock("@/lib/auth/session", () => ({
   getSessionFromRequest: vi.fn(),
   validateSession: vi.fn(),
-  SESSION_COOKIE: "regatta_session",
+  SESSION_COOKIE: "affiliateswarm_session",
 }));
 
 // Mock prisma for agent lookups in dashboard auth

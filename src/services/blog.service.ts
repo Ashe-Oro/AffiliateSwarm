@@ -66,7 +66,7 @@ export async function createBlogPost(
   input: CreateBlogPostInput,
   opts: CreateBlogPostOptions = {}
 ): Promise<BlogPost> {
-  const authorName = input.author ?? opts.defaultAuthor ?? "Regatta Agent";
+  const authorName = input.author ?? opts.defaultAuthor ?? "AffiliateSwarm Agent";
 
   let slug: string;
   if (input.slug) {

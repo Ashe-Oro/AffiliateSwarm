@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getAllPostMeta, type BlogPostMeta } from "@/lib/blog/posts";
 
 export const metadata: Metadata = {
-  title: "Blog — Regatta",
+  title: "Blog — AffiliateSwarm",
   description:
     "Notes on agentic growth, affiliate economics, and building the rails for AI-run marketing.",
 };
@@ -52,13 +52,13 @@ function FeaturedPostCard({ post }: { post: BlogPostMeta }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group relative block overflow-hidden rounded-2xl border border-[var(--v2-border)] bg-gradient-to-br from-[var(--v2-bg-elevated)] via-[var(--v2-bg-surface)] to-[var(--v2-bg)] p-8 transition-all hover:border-[var(--v2-accent)]/40 sm:p-12"
+      className="group relative block overflow-hidden rounded-lg border border-[var(--v2-border)] bg-gradient-to-br from-[var(--v2-bg-elevated)] via-[var(--v2-bg-surface)] to-[var(--v2-bg)] p-8 transition-all hover:border-[var(--v2-accent)]/40 sm:p-12"
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
         style={{
           background:
-            "radial-gradient(700px circle at var(--x, 50%) var(--y, 50%), rgba(255,181,71,0.08), transparent 40%)",
+            "radial-gradient(700px circle at var(--x, 50%) var(--y, 50%), var(--v2-accent-soft), transparent 40%)",
         }}
       />
       <div className="relative">
@@ -96,7 +96,7 @@ function PostCard({ post }: { post: BlogPostMeta }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col rounded-xl border border-[var(--v2-border-light)] bg-[var(--v2-bg-surface)] p-6 transition-all hover:border-[var(--v2-accent)]/30 hover:bg-[var(--v2-bg-elevated)]"
+      className="group flex h-full flex-col rounded-lg border border-[var(--v2-border-light)] bg-[var(--v2-bg-surface)] p-6 transition-all hover:border-[var(--v2-accent)]/30 hover:bg-[var(--v2-bg-elevated)]"
     >
       <div className="mb-3 flex items-center gap-2 text-xs text-[var(--v2-text-tertiary)]">
         <time>{formatDate(post.date)}</time>
@@ -126,7 +126,7 @@ function PostCard({ post }: { post: BlogPostMeta }) {
 
 function EmptyState() {
   return (
-    <div className="mx-auto max-w-md rounded-xl border border-dashed border-[var(--v2-border)] bg-[var(--v2-bg-surface)] p-10 text-center">
+    <div className="mx-auto max-w-md rounded-lg border border-dashed border-[var(--v2-border)] bg-[var(--v2-bg-surface)] p-10 text-center">
       <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--v2-accent)]/10 text-[var(--v2-accent)]">
         <svg
           viewBox="0 0 24 24"
@@ -162,7 +162,8 @@ export default async function BlogIndexPage() {
             Signal
           </span>
           <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-[var(--v2-text)] sm:text-5xl lg:text-6xl">
-            Notes from the <span className="text-[var(--v2-accent)]">regatta</span>
+            Notes from the{" "}
+            <span className="text-[var(--v2-accent)]">swarm</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[var(--v2-text-secondary)] sm:text-lg">
             Agentic growth, affiliate economics, and the rails that make AI-run

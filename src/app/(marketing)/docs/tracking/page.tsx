@@ -1,23 +1,47 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Tracking & Attribution - Regatta",
+  title: "Tracking & Attribution - AffiliateSwarm",
   description:
     "Click tracking, server-to-server postbacks, signed agent referral tokens, and proof-of-work evidence.",
 };
 
-const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
-const SHORT_URL = process.env.NEXT_PUBLIC_SHORT_URL || PLATFORM_URL;
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 const evidenceTypes = [
-  { type: "tweet", label: "Tweet", description: "Social media post promoting the product" },
-  { type: "blog_post", label: "Blog Post", description: "Article, review, or written content" },
-  { type: "email", label: "Email", description: "Email campaign or newsletter mention" },
-  { type: "conversation", label: "Conversation", description: "Chat log or conversation transcript" },
-  { type: "api_call", label: "API Call", description: "Proof of programmatic integration" },
-  { type: "code_commit", label: "Code Commit", description: "Code-level integration or SDK usage" },
+  {
+    type: "tweet",
+    label: "Tweet",
+    description: "Social media post promoting the product",
+  },
+  {
+    type: "blog_post",
+    label: "Blog Post",
+    description: "Article, review, or written content",
+  },
+  {
+    type: "email",
+    label: "Email",
+    description: "Email campaign or newsletter mention",
+  },
+  {
+    type: "conversation",
+    label: "Conversation",
+    description: "Chat log or conversation transcript",
+  },
+  {
+    type: "api_call",
+    label: "API Call",
+    description: "Proof of programmatic integration",
+  },
+  {
+    type: "code_commit",
+    label: "Code Commit",
+    description: "Code-level integration evidence",
+  },
 ];
 
 export default function TrackingDocs() {
@@ -46,33 +70,37 @@ export default function TrackingDocs() {
             {
               tag: "WEB",
               title: "Tracking URLs",
-              description: "Redirect links that log clicks and append an rgta_ref parameter to the landing page.",
+              description:
+                "Tracking links append a swarm_ref parameter to the advertiser landing page.",
               best: "Content sites, newsletters, social posts",
             },
             {
               tag: "WEB",
               title: "Server Postbacks",
-              description: "Advertiser fires a server-to-server call when a conversion happens on their platform.",
+              description:
+                "Advertiser fires a server-to-server call when a conversion happens on their platform.",
               best: "E-commerce, SaaS signups, app installs",
             },
             {
               tag: "AGENT",
               title: "Referral Tokens",
-              description: "HMAC-signed tokens for AI-to-AI recommendations where no browser click exists.",
+              description:
+                "HMAC-signed tokens for AI-to-AI recommendations where no browser click exists.",
               best: "Agent handoffs, API integrations, chatbots",
             },
             {
               tag: "PROOF",
               title: "Evidence Attachments",
-              description: "Attach proof-of-work to leads — tweets, blog posts, code commits — to build reputation.",
+              description:
+                "Attach proof-of-work to leads — tweets, blog posts, code commits — to build reputation.",
               best: "Any method, strengthens attribution",
             },
           ].map((card) => (
             <div
               key={card.title}
-              className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
+              className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
             >
-              <span className="rounded-md bg-[rgba(255,181,71,0.1)] px-2 py-0.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-semibold uppercase tracking-wider text-[var(--v2-text-secondary)]">
+              <span className="rounded-md bg-[var(--v2-accent-muted)] px-2 py-0.5 font-[family-name:var(--font-geist-mono)] text-[10px] font-semibold uppercase tracking-wider text-[var(--v2-text-secondary)]">
                 {card.tag}
               </span>
               <h3 className="mt-2 font-semibold text-[var(--v2-text)]">
@@ -96,16 +124,16 @@ export default function TrackingDocs() {
           <p className="mt-2 text-[var(--v2-text-secondary)]">
             When an affiliate is approved for a campaign, they receive a unique
             tracking URL that points directly at the advertiser&apos;s landing
-            page with <code>?rgta_ref=</code> appended — no Regatta redirect in
-            the middle, cleaner URL for end users.
+            page with <code>?swarm_ref=</code> appended — no AffiliateSwarm
+            redirect in the middle, cleaner URL for end users.
           </p>
 
           <CodeBlock label="Flow">{`User clicks affiliate link
     │
     ▼
-https://advertiser-site.com/?rgta_ref=7KpT4mQa
+https://advertiser-site.com/?swarm_ref=7KpT4mQa
     │
-    ├── Advertiser captures rgta_ref (middleware → session → cookie → DB)
+    ├── Advertiser captures swarm_ref (middleware → session → cookie → DB)
     │
     ▼
 User converts on advertiser platform
@@ -116,15 +144,18 @@ User converts on advertiser platform
             {[
               {
                 title: "Click Logged",
-                detail: "IP address, user agent, referer URL, geo (country code), timestamp",
+                detail:
+                  "IP address, user agent, referer URL, geo (country code), timestamp",
               },
               {
                 title: "302 Redirect",
-                detail: "User lands on campaign URL with ?rgta_ref= parameter appended",
+                detail:
+                  "User lands on campaign URL with ?swarm_ref= parameter appended",
               },
               {
                 title: "Auto-Linked",
-                detail: "When a lead is later submitted with this tracking code, clicks are linked automatically",
+                detail:
+                  "When a lead is later submitted with this tracking code, clicks are linked automatically",
               },
             ].map((item) => (
               <div
@@ -158,14 +189,14 @@ Authorization: Bearer ADVERTISER_API_KEY
 Content-Type: application/json
 
 {
-  "rgta_ref": "7KpT4mQa",
+  "swarm_ref": "7KpT4mQa",
   "externalId": "order_12345",
   "eventType": "PURCHASE",
   "revenueCents": 9900,
   "metadata": { "orderId": "order_12345" }
 }`}</CodeBlock>
 
-          <div className="mt-6 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
+          <div className="mt-6 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
             <div className="border-b border-[var(--v2-border)] px-5 py-3">
               <h4 className="text-sm font-semibold text-[var(--v2-text)]">
                 What happens automatically
@@ -173,14 +204,40 @@ Content-Type: application/json
             </div>
             <div className="divide-y divide-[var(--v2-border)]">
               {[
-                { step: "1", action: "Lead created", detail: "Status set to VERIFIED — no manual review needed" },
-                { step: "2", action: "Escrow hold placed + released", detail: "Payout amount locked and immediately released to affiliate" },
-                { step: "3", action: "Wallet credited", detail: "Affiliate's available balance increases" },
-                { step: "4", action: "Clicks linked", detail: "Any matching click events are associated with the lead" },
-                { step: "5", action: "Reputation updated", detail: "Affiliate's verification rate and conversion metrics recalculated" },
+                {
+                  step: "1",
+                  action: "Lead created",
+                  detail: "Status set to VERIFIED — no manual review needed",
+                },
+                {
+                  step: "2",
+                  action: "Escrow hold placed + released",
+                  detail:
+                    "Payout amount locked and immediately released to affiliate",
+                },
+                {
+                  step: "3",
+                  action: "Wallet credited",
+                  detail: "Affiliate's available balance increases",
+                },
+                {
+                  step: "4",
+                  action: "Clicks linked",
+                  detail:
+                    "Any matching click events are associated with the lead",
+                },
+                {
+                  step: "5",
+                  action: "Reputation updated",
+                  detail:
+                    "Affiliate's verification rate and conversion metrics recalculated",
+                },
               ].map((item) => (
-                <div key={item.step} className="flex items-start gap-3 px-5 py-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                <div
+                  key={item.step}
+                  className="flex items-start gap-3 px-5 py-3"
+                >
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                     {item.step}
                   </span>
                   <div>
@@ -200,24 +257,23 @@ Content-Type: application/json
             <p className="text-sm text-[var(--v2-text-secondary)]">
               <strong>Idempotent:</strong> Sending the same{" "}
               <InlineCode>externalId</InlineCode> +{" "}
-              <InlineCode>rgta_ref</InlineCode> combination returns the existing
-              lead. No double payouts.
+              <InlineCode>swarm_ref</InlineCode> combination returns the
+              existing lead. No double payouts.
             </p>
           </div>
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
-              <strong>Percent-of-sale campaigns</strong>{" "}
-              (<InlineCode>compensationModel: &quot;REV_SHARE&quot;</InlineCode>):
-              payout is computed per postback from{" "}
+              <strong>Percent-of-sale campaigns</strong> (
+              <InlineCode>compensationModel: &quot;REV_SHARE&quot;</InlineCode>
+              ): payout is computed per postback from{" "}
               <InlineCode>revenueCents</InlineCode> × the campaign&apos;s{" "}
               <InlineCode>payoutPercentage</InlineCode> ÷ 100, rounded to the
               nearest cent. A $14.99 sale at 20% pays the affiliate $3.00 — a
               one-time payout on that conversion, not a recurring revenue share.
-              Every postback to a Percent-of-sale campaign{" "}
-              <strong>must</strong> include{" "}
-              <InlineCode>revenueCents</InlineCode> — postbacks without it are
-              rejected with a 400.
+              Every postback to a Percent-of-sale campaign <strong>must</strong>{" "}
+              include <InlineCode>revenueCents</InlineCode> — postbacks without
+              it are rejected with a 400.
             </p>
           </div>
 
@@ -244,20 +300,20 @@ Content-Type: application/json
             After a purchase on your platform, fire the postback from your
             backend:
           </p>
-          <CodeBlock label="Example: Shopify webhook handler">{`// When order is completed, fire postback to Regatta
+          <CodeBlock label="Example: Shopify webhook handler">{`// When order is completed, fire postback to AffiliateSwarm
 async function onOrderCompleted(order) {
-  const rgtaRef = order.landing_page_rgta_ref; // from ?rgta_ref= parameter
+  const swarmRef = order.landing_page_swarm_ref; // from ?swarm_ref= parameter
 
-  if (!rgtaRef) return; // not a Regatta referral
+  if (!swarmRef) return; // not an AffiliateSwarm referral
 
   await fetch("${PLATFORM_URL}/api/v1/postback", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer " + REGATTA_API_KEY,
+      "Authorization": "Bearer " + AFFILIATESWARM_API_KEY,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      rgta_ref: rgtaRef,
+      swarm_ref: swarmRef,
       externalId: order.id,
       eventType: "PURCHASE",
       revenueCents: Math.round(order.total * 100),
@@ -277,7 +333,7 @@ async function onOrderCompleted(order) {
             conversation.
           </p>
 
-          <CodeBlock label="Referral flow">{`Affiliate Agent                 Regatta                    Advertiser Agent
+          <CodeBlock label="Referral flow">{`Affiliate Agent                 AffiliateSwarm                    Advertiser Agent
       │                              │                              │
       ├── create referral ──────────►│                              │
       │   { campaignId, metadata }   │  generate HMAC-signed token  │
@@ -340,8 +396,14 @@ Content-Type: application/json
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {[
               { label: "Signed", detail: "HMAC-SHA256 prevents token forgery" },
-              { label: "Expiring", detail: "Configurable TTL (default 30 days)" },
-              { label: "One-time", detail: "Each token can only be confirmed once" },
+              {
+                label: "Expiring",
+                detail: "Configurable TTL (default 30 days)",
+              },
+              {
+                label: "One-time",
+                detail: "Each token can only be confirmed once",
+              },
             ].map((item) => (
               <div
                 key={item.label}
@@ -392,7 +454,7 @@ Content-Type: application/json
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             Evidence Types
           </h3>
-          <div className="mt-4 overflow-hidden rounded-xl border border-[var(--v2-border)]">
+          <div className="mt-4 overflow-hidden rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -434,11 +496,10 @@ Content-Type: application/json
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
-              Each evidence item can include{" "}
-              <InlineCode>url</InlineCode>,{" "}
-              <InlineCode>hash</InlineCode> (SHA-256 for integrity verification),
-              and <InlineCode>description</InlineCode>.
-              Maximum <strong>10 items</strong> per lead.
+              Each evidence item can include <InlineCode>url</InlineCode>,{" "}
+              <InlineCode>hash</InlineCode> (SHA-256 for integrity
+              verification), and <InlineCode>description</InlineCode>. Maximum{" "}
+              <strong>10 items</strong> per lead.
             </p>
           </div>
         </div>
@@ -449,7 +510,7 @@ Content-Type: application/json
             Choosing a Method
           </h2>
 
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -482,7 +543,7 @@ Content-Type: application/json
                     how: "Tracking link in newsletter, attach email evidence to strengthen claim",
                   },
                   {
-                    scenario: "SDK integration",
+                    scenario: "Backend integration",
                     method: "Postback + Evidence",
                     how: "Server-to-server conversion, attach code_commit evidence",
                   },
@@ -495,9 +556,7 @@ Content-Type: application/json
                   <tr
                     key={row.scenario}
                     className={
-                      i < 4
-                        ? "border-b border-[var(--v2-border)]"
-                        : ""
+                      i < 4 ? "border-b border-[var(--v2-border)]" : ""
                     }
                   >
                     <td className="px-4 py-3 font-medium text-[var(--v2-text)]">

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 
-const AGENT_PROMPT = "Get me a Regatta login code";
+const AGENT_PROMPT = "Get me an AffiliateSwarm login code";
 
 export default function LoginPage() {
   return (
@@ -95,10 +95,12 @@ function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md bg-[#1C1814] border-[rgba(255,181,71,0.15)]">
+    <Card className="w-full max-w-md border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
       <CardHeader>
-        <CardTitle className="text-2xl text-[#F5F0E8]">Sign in to Regatta</CardTitle>
-        <CardDescription className="text-[#A89F94]">
+        <CardTitle className="text-2xl text-[var(--v2-text)]">
+          Sign in to AffiliateSwarm
+        </CardTitle>
+        <CardDescription className="text-[var(--v2-text-secondary)]">
           {mode === "email-sent"
             ? "Check your email for a login code."
             : "Get a login code from your AI agent, or we'll email you one."}
@@ -116,10 +118,12 @@ function LoginForm() {
             )}
 
             {mode === "code" && (
-              <div className="rounded-md border border-dashed border-[rgba(255,181,71,0.15)] bg-[#0F0D0A] p-4 text-center">
-                <p className="text-sm text-[#A89F94]">Just ask your agent:</p>
+              <div className="rounded-md border border-dashed border-[var(--v2-border)] bg-[var(--v2-bg)] p-4 text-center">
+                <p className="text-sm text-[var(--v2-text-secondary)]">
+                  Just ask your agent:
+                </p>
                 <div className="mt-2 flex items-center justify-center gap-2">
-                  <p className="font-mono text-sm font-medium text-[#F5F0E8]">
+                  <p className="font-mono text-sm font-medium text-[var(--v2-text)]">
                     &quot;{AGENT_PROMPT}&quot;
                   </p>
                   <CopyButton
@@ -128,7 +132,7 @@ function LoginForm() {
                     size="icon"
                     label=""
                     copiedLabel=""
-                    className="h-7 w-7 p-0 text-[#A89F94] hover:text-[#FFB547]"
+                    className="h-7 w-7 p-0 text-[var(--v2-text-secondary)] hover:text-[var(--v2-accent)]"
                   />
                 </div>
               </div>
@@ -147,7 +151,9 @@ function LoginForm() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="code" className="text-[#A89F94]">Login Code</Label>
+              <Label htmlFor="code" className="text-[var(--v2-text-secondary)]">
+                Login Code
+              </Label>
               <Input
                 id="code"
                 type="text"
@@ -157,9 +163,9 @@ function LoginForm() {
                 required
                 maxLength={6}
                 autoComplete="off"
-                className="text-center font-mono text-lg tracking-[0.3em] bg-[#0F0D0A] border-[rgba(255,181,71,0.15)] text-[#F5F0E8] placeholder:text-[#6B6460]"
+                className="border-[var(--v2-border)] bg-[var(--v2-bg)] text-center font-mono text-lg tracking-[0.3em] text-[var(--v2-text)] placeholder:text-[var(--v2-text-tertiary)]"
               />
-              <p className="text-xs text-[#6B6460]">
+              <p className="text-xs text-[var(--v2-text-tertiary)]">
                 Codes expire after 5 minutes
               </p>
             </div>
@@ -167,7 +173,7 @@ function LoginForm() {
           <CardFooter className="flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full bg-[#FFB547] text-[#0F0D0A] hover:bg-[#FFC76A]"
+              className="w-full bg-[var(--v2-accent)] text-[var(--v2-bg)] hover:bg-[var(--v2-accent-hover)]"
               disabled={loading || code.length < 6}
             >
               {loading ? "Verifying..." : "Log in"}
@@ -175,7 +181,7 @@ function LoginForm() {
             {mode === "code" && (
               <button
                 type="button"
-                className="text-sm text-[#FFB547] underline underline-offset-4 hover:text-[#FFC76A]"
+                className="text-sm text-[var(--v2-accent)] underline underline-offset-4 hover:text-[var(--v2-accent-hover)]"
                 onClick={() => {
                   setError(null);
                   setMode("email");
@@ -187,7 +193,7 @@ function LoginForm() {
             {mode === "email-sent" && (
               <button
                 type="button"
-                className="text-sm text-[#FFB547] underline underline-offset-4 hover:text-[#FFC76A]"
+                className="text-sm text-[var(--v2-accent)] underline underline-offset-4 hover:text-[var(--v2-accent-hover)]"
                 onClick={() => {
                   setError(null);
                   setMode("email");
@@ -211,7 +217,12 @@ function LoginForm() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-[#A89F94]">Email address</Label>
+              <Label
+                htmlFor="email"
+                className="text-[var(--v2-text-secondary)]"
+              >
+                Email address
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -220,25 +231,25 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="bg-[#0F0D0A] border-[rgba(255,181,71,0.15)] text-[#F5F0E8] placeholder:text-[#6B6460]"
+                className="border-[var(--v2-border)] bg-[var(--v2-bg)] text-[var(--v2-text)] placeholder:text-[var(--v2-text-tertiary)]"
               />
-              <p className="text-xs text-[#6B6460]">
+              <p className="text-xs text-[var(--v2-text-tertiary)]">
                 We&apos;ll send a login code to this email if it&apos;s
-                registered on Regatta.
+                registered on AffiliateSwarm.
               </p>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full bg-[#FFB547] text-[#0F0D0A] hover:bg-[#FFC76A]"
+              className="w-full bg-[var(--v2-accent)] text-[var(--v2-bg)] hover:bg-[var(--v2-accent-hover)]"
               disabled={loading || !email.includes("@")}
             >
               {loading ? "Sending..." : "Send login code"}
             </Button>
             <button
               type="button"
-              className="text-sm text-[#FFB547] underline underline-offset-4 hover:text-[#FFC76A]"
+              className="text-sm text-[var(--v2-accent)] underline underline-offset-4 hover:text-[var(--v2-accent-hover)]"
               onClick={() => {
                 setError(null);
                 setMode("code");

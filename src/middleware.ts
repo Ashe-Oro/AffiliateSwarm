@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_COOKIE, SESSION_COOKIE } from "@/lib/brand";
 
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -18,7 +19,7 @@ export function middleware(request: NextRequest) {
 
   // Admin routes: validate admin token (timing-safe)
   if (pathname.startsWith("/admin")) {
-    const token = request.cookies.get("regatta_admin_token")?.value;
+    const token = request.cookies.get(ADMIN_COOKIE)?.value;
     const secret = process.env.ADMIN_SECRET;
 
     if (!secret || !token || !timingSafeEqual(token, secret)) {
@@ -36,7 +37,7 @@ export function middleware(request: NextRequest) {
 
   // Dashboard and affiliate dashboard routes: session cookie gate
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/affiliate")) {
-    const sessionToken = request.cookies.get("regatta_session")?.value;
+    const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
 
     if (!sessionToken) {
       const loginUrl = new URL("/login", request.url);

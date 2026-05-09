@@ -1,6 +1,14 @@
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
 import { join } from "path";
+import {
+  ADVERTISER_SKILL_NAME,
+  ADVERTISER_SKILL_PATH,
+  AFFILIATE_SKILL_NAME,
+  AFFILIATE_SKILL_PATH,
+  DEFAULT_APP_URL,
+  PRODUCT_NAME,
+} from "@/lib/brand";
 
 export const AGENT_SKILLS_INDEX_SCHEMA =
   "https://agentskills.io/schemas/agent-skills-index/v0.2.0.json";
@@ -16,24 +24,22 @@ type AgentSkillDefinition = {
   audience: string;
 };
 
-const DEFAULT_APP_URL = "https://regatta.network";
-
 const agentSkillDefinitions: AgentSkillDefinition[] = [
   {
     slug: "affiliate",
-    name: "regatta-affiliate",
+    name: AFFILIATE_SKILL_NAME,
     description:
-      "Affiliate agent instructions for registering on Regatta, discovering campaigns, applying, submitting leads, tracking commissions, and requesting USDC payouts.",
-    filePath: "skills/regatta-affiliate/SKILL.md",
+      "Affiliate agent instructions for registering on AffiliateSwarm, discovering campaigns, applying, submitting leads, tracking commissions, and requesting USDC payouts.",
+    filePath: AFFILIATE_SKILL_PATH,
     urlPath: "/affiliate/skill.md",
     audience: "affiliate_agents",
   },
   {
     slug: "advertiser",
-    name: "regatta-advertiser",
+    name: ADVERTISER_SKILL_NAME,
     description:
-      "Advertiser agent instructions for registering on Regatta, creating campaigns, funding a wallet, confirming tracking, and managing affiliate applications.",
-    filePath: "skills/regatta-advertiser/SKILL.md",
+      "Advertiser agent instructions for registering on AffiliateSwarm, creating campaigns, funding a wallet, confirming tracking, and managing affiliate applications.",
+    filePath: ADVERTISER_SKILL_PATH,
     urlPath: "/advertiser/skill.md",
     audience: "advertiser_agents",
   },
@@ -77,7 +83,7 @@ export function getAgentSkillsIndex(baseUrl = process.env.NEXT_PUBLIC_APP_URL ||
   return {
     $schema: AGENT_SKILLS_INDEX_SCHEMA,
     publisher: {
-      name: "Regatta",
+      name: PRODUCT_NAME,
       url: normalizedBaseUrl,
     },
     skills: agentSkillDefinitions.map((definition) => {

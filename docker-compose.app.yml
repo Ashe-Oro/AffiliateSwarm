@@ -11,9 +11,9 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "${REGATTA_APP_PORT:-3000}:3000"
+      - "${AFFILIATESWARM_APP_PORT:-3000}:3000"
     environment:
-      DATABASE_URL: postgresql://regatta:regatta_dev@postgres:5432/regatta?schema=public
+      DATABASE_URL: postgresql://affiliateswarm:affiliateswarm_dev@postgres:5432/affiliateswarm?schema=public
       REDIS_URL: redis://redis:6379
       NODE_ENV: production
       ENABLE_TEST_ROUTES: "1"
@@ -24,4 +24,4 @@ services:
       ALLOW_DB_RESET: "true"
       ALLOW_MOCK_CDP: ${ALLOW_MOCK_CDP:-1}
       CRON_SECRET: ${CRON_SECRET:-local-cron-secret}
-      REGATTA_REFERRAL_SECRET: ${REGATTA_REFERRAL_SECRET:-local-referral-secret}
+      AFFILIATESWARM_REFERRAL_SECRET: ${AFFILIATESWARM_REFERRAL_SECRET:-local-referral-secret}

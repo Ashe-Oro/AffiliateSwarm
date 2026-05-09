@@ -118,11 +118,11 @@ export function WebhookManagement({ webhooks }: WebhookManagementProps) {
   return (
     <div className="space-y-4">
       {newSecret && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950">
-          <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+        <div className="rounded-md border border-[var(--v2-accent-border)] bg-[var(--v2-accent-wash)] p-3">
+          <p className="text-sm font-medium text-[var(--v2-text)]">
             Copy your webhook secret now. It won&apos;t be shown in full again.
           </p>
-          <code className="mt-1 block break-all rounded bg-amber-100 px-2 py-1 font-mono text-xs dark:bg-amber-900">
+          <code className="mt-1 block break-all rounded bg-[var(--v2-code-bg)] px-2 py-1 font-mono text-xs text-[var(--v2-code-text)]">
             {newSecret}
           </code>
           <Button
@@ -188,7 +188,7 @@ export function WebhookManagement({ webhooks }: WebhookManagementProps) {
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com/webhooks/regatta"
+              placeholder="https://example.com/webhooks/affiliateswarm"
               required
             />
           </div>

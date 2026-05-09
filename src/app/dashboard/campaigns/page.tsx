@@ -90,13 +90,20 @@ export default async function DashboardCampaignsPage() {
       </div>
 
       {coverage?.oversubscribed && (
-        <div className="rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
-          <p className="font-medium">Your active campaign budgets exceed your wallet balance.</p>
+        <div className="rounded-md border border-[var(--v2-accent-3)] bg-[rgba(255,107,107,0.08)] p-4 text-sm text-[var(--v2-text)]">
+          <p className="font-medium">
+            Your active campaign budgets exceed your wallet balance.
+          </p>
           <p className="mt-1">
-            {coverage.activeCampaignCount} active campaign{coverage.activeCampaignCount === 1 ? "" : "s"} have{" "}
-            <strong>{formatCents(coverage.activeBudgetHeadroomCents)}</strong> of remaining budget, but your wallet only has{" "}
-            <strong>{formatCents(coverage.walletAvailableCents)}</strong> available &mdash; a shortfall of{" "}
-            <strong>{formatCents(coverage.shortfallCents)}</strong>. Campaigns draw from your wallet first-come-first-served, so a busy campaign can starve siblings if funds run out. Top up to guarantee coverage.
+            {coverage.activeCampaignCount} active campaign
+            {coverage.activeCampaignCount === 1 ? "" : "s"} have{" "}
+            <strong>{formatCents(coverage.activeBudgetHeadroomCents)}</strong>{" "}
+            of remaining budget, but your wallet only has{" "}
+            <strong>{formatCents(coverage.walletAvailableCents)}</strong>{" "}
+            available &mdash; a shortfall of{" "}
+            <strong>{formatCents(coverage.shortfallCents)}</strong>. Campaigns
+            draw from your wallet first-come-first-served, so a busy campaign
+            can starve siblings if funds run out. Top up to guarantee coverage.
           </p>
         </div>
       )}

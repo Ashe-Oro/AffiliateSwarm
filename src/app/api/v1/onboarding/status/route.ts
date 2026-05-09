@@ -49,7 +49,7 @@ export const GET = withAuth(async (req: NextRequest) => {
   steps.push({
     step: "register",
     status: "done",
-    description: "Registered on Regatta",
+    description: "Registered on AffiliateSwarm",
   });
 
   steps.push({
@@ -57,7 +57,7 @@ export const GET = withAuth(async (req: NextRequest) => {
     status: emailVerified ? "done" : "pending",
     description: "Email address verified",
     ...(!emailVerified && {
-      action: "Check your human's email for a verification link from Regatta",
+      action: "Check your human's email for a verification link from AffiliateSwarm",
     }),
   });
 

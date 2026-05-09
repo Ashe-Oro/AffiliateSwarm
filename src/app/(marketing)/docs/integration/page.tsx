@@ -1,16 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Advertiser Integration Guide - Regatta",
+  title: "Advertiser Integration Guide - AffiliateSwarm",
   description:
-    "Step-by-step instructions for capturing referral codes and firing postbacks to integrate with Regatta.",
+    "Step-by-step instructions for capturing referral codes and firing postbacks to integrate with AffiliateSwarm.",
 };
 
-const PLATFORM_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://regatta.network";
-const SHORT_URL = process.env.NEXT_PUBLIC_SHORT_URL || PLATFORM_URL;
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 const troubleshootingRows = [
   {
@@ -24,9 +23,9 @@ const troubleshootingRows = [
     fix: "Only ADVERTISER or DUAL type agents can fire postbacks. Check your agent type in the dashboard",
   },
   {
-    error: "400 rgta_ref is required",
-    cause: "Missing rgta_ref field in request body",
-    fix: "Ensure you're capturing and passing the ?rgta_ref= parameter from the landing URL",
+    error: "400 swarm_ref is required",
+    cause: "Missing swarm_ref field in request body",
+    fix: "Ensure you're capturing and passing the ?swarm_ref= parameter from the landing URL",
   },
   {
     error: "400 externalId is required",
@@ -50,23 +49,24 @@ const troubleshootingRows = [
   },
   {
     error: "200 (not 201)",
-    cause: "Duplicate postback — same rgta_ref + externalId already processed",
+    cause: "Duplicate postback — same swarm_ref + externalId already processed",
     fix: "This is expected! The endpoint is idempotent. The existing lead is returned",
   },
   {
     error: "400 revenueCents is required",
-    cause: "Postback to a Percent-of-sale campaign (compensationModel: \"REV_SHARE\") without revenueCents",
+    cause:
+      'Postback to a Percent-of-sale campaign (compensationModel: "REV_SHARE") without revenueCents',
     fix: "Percent-of-sale campaigns compute payout as revenueCents × payoutPercentage ÷ 100. Include revenueCents on every postback for this campaign type.",
   },
 ];
 
 const postbackFields = [
   {
-    field: "rgta_ref",
+    field: "swarm_ref",
     type: "string",
     required: true,
     description:
-      "The tracking code from the ?rgta_ref= parameter. Max 64 characters.",
+      "The tracking code from the ?swarm_ref= parameter. Max 64 characters.",
   },
   {
     field: "externalId",
@@ -87,7 +87,7 @@ const postbackFields = [
     type: "integer",
     required: "conditional",
     description:
-      "Revenue amount in cents (e.g. 9900 = $99.00). Must be non-negative. Required for Percent-of-sale campaigns (compensationModel: \"REV_SHARE\") — the affiliate payout is computed as revenueCents × payoutPercentage ÷ 100. Optional for flat-fee campaigns (CPL/CPA/CPC; recommended for dashboard revenue attribution).",
+      'Revenue amount in cents (e.g. 9900 = $99.00). Must be non-negative. Required for Percent-of-sale campaigns (compensationModel: "REV_SHARE") — the affiliate payout is computed as revenueCents × payoutPercentage ÷ 100. Optional for flat-fee campaigns (CPL/CPA/CPC; recommended for dashboard revenue attribution).',
   },
   {
     field: "metadata",
@@ -114,7 +114,7 @@ export default function IntegrationGuideDocs() {
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
           Hand this page to your engineering team. Three steps to start
-          receiving leads from Regatta affiliates.
+          receiving leads from AffiliateSwarm affiliates.
         </p>
 
         {/* ── PREREQUISITES ── */}
@@ -125,7 +125,7 @@ export default function IntegrationGuideDocs() {
           <ul className="mt-2 space-y-1 text-sm text-[var(--v2-text-secondary)]">
             <li>
               &bull; You need an <strong>advertiser API key</strong> (starts
-              with <InlineCode>rgt_live_</InlineCode>). Find it in your{" "}
+              with <InlineCode>swarm_live_</InlineCode>). Find it in your{" "}
               <Link
                 href="/dashboard/settings"
                 className="text-[var(--v2-accent-light)] hover:underline"
@@ -150,31 +150,32 @@ export default function IntegrationGuideDocs() {
             How It Works
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            Regatta handles affiliate link tracking. Your job is to capture
-            the referral code and tell Regatta when a conversion happens.
+            AffiliateSwarm handles affiliate link tracking. Your job is to
+            capture the referral code and tell AffiliateSwarm when a conversion
+            happens.
           </p>
 
           <CodeBlock label="End-to-end flow">{`User clicks affiliate link
     │
     ▼
-https://your-site.com/landing?rgta_ref=abc123xyz
+https://your-site.com/landing?swarm_ref=abc123xyz
     │
-    ├── Step 1: YOUR CODE captures the ?rgta_ref= parameter
+    ├── Step 1: YOUR CODE captures the ?swarm_ref= parameter
     │
     ▼
 User converts on your platform (purchase, signup, etc.)
     │
-    ├── Step 2: YOUR CODE fires a postback to Regatta
+    ├── Step 2: YOUR CODE fires a postback to AffiliateSwarm
     │
     ▼
-Regatta creates a verified lead, credits the affiliate`}</CodeBlock>
+AffiliateSwarm creates a verified lead, credits the affiliate`}</CodeBlock>
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
               <strong>You only need to implement two things:</strong> capture
-              the <InlineCode>?rgta_ref=</InlineCode> parameter when users land
+              the <InlineCode>?swarm_ref=</InlineCode> parameter when users land
               on your site, and fire a POST request when they convert.
-              Everything else is handled by Regatta.
+              Everything else is handled by AffiliateSwarm.
             </p>
           </div>
         </div>
@@ -182,7 +183,7 @@ Regatta creates a verified lead, credits the affiliate`}</CodeBlock>
         {/* ── STEP 1: CAPTURE ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
               1
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -190,10 +191,11 @@ Regatta creates a verified lead, credits the affiliate`}</CodeBlock>
             </h2>
           </div>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
-            When a user arrives via a Regatta affiliate link, your landing URL
-            will include a <InlineCode>?rgta_ref=TRACKING_CODE</InlineCode>{" "}
-            parameter. You need to extract and store this value so you can
-            include it when reporting the conversion.
+            When a user arrives via an AffiliateSwarm affiliate link, your
+            landing URL will include a{" "}
+            <InlineCode>?swarm_ref=TRACKING_CODE</InlineCode> parameter. You
+            need to extract and store this value so you can include it when
+            reporting the conversion.
           </p>
 
           <div className="mt-6 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
@@ -215,29 +217,29 @@ Regatta creates a verified lead, credits the affiliate`}</CodeBlock>
           </p>
           <CodeBlock label="JavaScript — capture on landing page">{`// Add this to your landing page
 const params = new URLSearchParams(window.location.search);
-const rgtaRef = params.get("rgta_ref");
+const swarmRef = params.get("swarm_ref");
 
-if (rgtaRef) {
+if (swarmRef) {
   // Store in a cookie (30 days)
-  document.cookie = "rgta_ref=" + rgtaRef + "; path=/; max-age=2592000; SameSite=Lax";
+  document.cookie = "swarm_ref=" + swarmRef + "; path=/; max-age=2592000; SameSite=Lax";
 
   // Also send to your backend for server-side storage
   fetch("/api/store-ref", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ rgta_ref: rgtaRef }),
+    body: JSON.stringify({ swarm_ref: swarmRef }),
   });
 }`}</CodeBlock>
 
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             Node.js / Express
           </h3>
-          <CodeBlock label="Node.js — Express middleware">{`// Middleware: capture rgta_ref on any incoming request
+          <CodeBlock label="Node.js — Express middleware">{`// Middleware: capture swarm_ref on any incoming request
 app.use((req, res, next) => {
-  const rgtaRef = req.query.rgta_ref;
-  if (rgtaRef) {
+  const swarmRef = req.query.swarm_ref;
+  if (swarmRef) {
     // Store in session (or database tied to user)
-    req.session.rgtaRef = rgtaRef;
+    req.session.swarmRef = swarmRef;
   }
   next();
 });`}</CodeBlock>
@@ -248,22 +250,22 @@ app.use((req, res, next) => {
           <CodeBlock label="Python — Flask before_request hook">{`from flask import request, session
 
 @app.before_request
-def capture_rgta_ref():
-    rgta_ref = request.args.get("rgta_ref")
-    if rgta_ref:
-        session["rgta_ref"] = rgta_ref`}</CodeBlock>
+def capture_swarm_ref():
+    swarm_ref = request.args.get("swarm_ref")
+    if swarm_ref:
+        session["swarm_ref"] = swarm_ref`}</CodeBlock>
 
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             Ruby on Rails
           </h3>
           <CodeBlock label="Ruby — ApplicationController before_action">{`class ApplicationController < ActionController::Base
-  before_action :capture_rgta_ref
+  before_action :capture_swarm_ref
 
   private
 
-  def capture_rgta_ref
-    if params[:rgta_ref].present?
-      session[:rgta_ref] = params[:rgta_ref]
+  def capture_swarm_ref
+    if params[:swarm_ref].present?
+      session[:swarm_ref] = params[:swarm_ref]
     end
   end
 end`}</CodeBlock>
@@ -274,8 +276,8 @@ end`}</CodeBlock>
           <CodeBlock label="PHP — capture on landing page">{`<?php
 session_start();
 
-if (isset($_GET['rgta_ref'])) {
-    $_SESSION['rgta_ref'] = $_GET['rgta_ref'];
+if (isset($_GET['swarm_ref'])) {
+    $_SESSION['swarm_ref'] = $_GET['swarm_ref'];
 }
 ?>`}</CodeBlock>
         </div>
@@ -283,7 +285,7 @@ if (isset($_GET['rgta_ref'])) {
         {/* ── BUYER INCENTIVE (OPTIONAL) ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.08)] font-[family-name:var(--font-geist-mono)] text-xs text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-soft)] font-[family-name:var(--font-geist-mono)] text-xs text-[var(--v2-text-secondary)]">
               +
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -294,11 +296,11 @@ if (isset($_GET['rgta_ref'])) {
             If your campaign includes a buyer incentive (a discount for referred
             users), the affiliate tracking URL will also include a{" "}
             <InlineCode>?promo=CODE</InlineCode> parameter alongside the{" "}
-            <InlineCode>?rgta_ref=</InlineCode>. This is the coupon code you
-            configured when creating the campaign in Regatta.
+            <InlineCode>?swarm_ref=</InlineCode>. This is the coupon code you
+            configured when creating the campaign in AffiliateSwarm.
           </p>
 
-          <CodeBlock label="Example tracking URL with promo code">{`https://your-site.com/signup?rgta_ref=abc123xyz&promo=REGATTA20`}</CodeBlock>
+          <CodeBlock label="Example tracking URL with promo code">{`https://your-site.com/signup?swarm_ref=abc123xyz&promo=SWARM20`}</CodeBlock>
 
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             Capture the promo code
@@ -306,19 +308,19 @@ if (isset($_GET['rgta_ref'])) {
           <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
             Extend your capture middleware to also extract and persist the{" "}
             <InlineCode>promo</InlineCode> parameter, just like the{" "}
-            <InlineCode>rgta_ref</InlineCode>.
+            <InlineCode>swarm_ref</InlineCode>.
           </p>
 
-          <CodeBlock label="Node.js — capture rgta_ref and promo">{`app.use((req, res, next) => {
-  const rgtaRef = req.query.rgta_ref;
+          <CodeBlock label="Node.js — capture swarm_ref and promo">{`app.use((req, res, next) => {
+  const swarmRef = req.query.swarm_ref;
   const promo = req.query.promo;
-  if (rgtaRef) {
-    req.session.rgtaRef = rgtaRef;
-    res.cookie("rgta_ref", rgtaRef, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
+  if (swarmRef) {
+    req.session.swarmRef = swarmRef;
+    res.cookie("swarm_ref", swarmRef, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
   }
   if (promo) {
-    req.session.rgtaPromo = promo;
-    res.cookie("rgta_promo", promo, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
+    req.session.swarmPromo = promo;
+    res.cookie("swarm_promo", promo, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
   }
   next();
 });`}</CodeBlock>
@@ -340,7 +342,7 @@ if (isset($_GET['rgta_ref'])) {
             a coupon discount. The discount will be pre-applied automatically.
           </p>
 
-          <CodeBlock label="Stripe Checkout Session — server-side">{`const promo = req.session.rgtaPromo || req.cookies.rgta_promo;
+          <CodeBlock label="Stripe Checkout Session — server-side">{`const promo = req.session.swarmPromo || req.cookies.swarm_promo;
 
 const session = await stripe.checkout.sessions.create({
   // ... other params
@@ -360,10 +362,10 @@ const session = await stripe.checkout.sessions.create({
 
           <CodeBlock label="React — auto-fill promo code from cookie">{`import { useEffect, useState } from "react";
 
-function useRgtaPromo(): string | null {
+function useSwarmPromo(): string | null {
   const [promo, setPromo] = useState<string | null>(null);
   useEffect(() => {
-    const match = document.cookie.match(/rgta_promo=([^;]+)/);
+    const match = document.cookie.match(/swarm_promo=([^;]+)/);
     if (match) setPromo(decodeURIComponent(match[1]));
   }, []);
   return promo;
@@ -371,12 +373,12 @@ function useRgtaPromo(): string | null {
 
 // In your checkout component
 function CheckoutPage() {
-  const rgtaPromo = useRgtaPromo();
+  const swarmPromo = useSwarmPromo();
   const [promoCode, setPromoCode] = useState("");
 
   useEffect(() => {
-    if (rgtaPromo) setPromoCode(rgtaPromo);
-  }, [rgtaPromo]);
+    if (swarmPromo) setPromoCode(swarmPromo);
+  }, [swarmPromo]);
 
   return (
     <input
@@ -387,13 +389,13 @@ function CheckoutPage() {
   );
 }`}</CodeBlock>
 
-          <CodeBlock label="Vanilla JS — auto-fill promo code from cookie">{`function getRgtaPromo() {
-  const match = document.cookie.match(/rgta_promo=([^;]+)/);
+          <CodeBlock label="Vanilla JS — auto-fill promo code from cookie">{`function getSwarmPromo() {
+  const match = document.cookie.match(/swarm_promo=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const promo = getRgtaPromo();
+  const promo = getSwarmPromo();
   if (promo) {
     // Adjust the selector to match your promotion code input
     const input = document.querySelector('input[placeholder*="promotion code"]');
@@ -414,9 +416,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
-              <strong>Note:</strong> Not all campaigns have buyer incentives.
-              If <InlineCode>?promo=</InlineCode> is absent from the tracking
-              URL, no discount is expected. The promo code handles the{" "}
+              <strong>Note:</strong> Not all campaigns have buyer incentives. If{" "}
+              <InlineCode>?promo=</InlineCode> is absent from the tracking URL,
+              no discount is expected. The promo code handles the{" "}
               <em>buyer&apos;s</em> discount; the affiliate&apos;s commission is
               handled separately via the postback.
             </p>
@@ -426,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         {/* ── STEP 2: POSTBACK ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
               2
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -435,15 +437,15 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
             When a user converts (purchase, signup, install, etc.), send a POST
-            request to Regatta from your backend. This creates a verified lead
-            and credits the affiliate automatically.
+            request to AffiliateSwarm from your backend. This creates a verified
+            lead and credits the affiliate automatically.
           </p>
 
           <CodeBlock label="curl — fire a postback">{`curl -X POST ${PLATFORM_URL}/api/v1/postback \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "rgta_ref": "abc123xyz",
+    "swarm_ref": "abc123xyz",
     "externalId": "order_12345",
     "eventType": "PURCHASE",
     "revenueCents": 9900,
@@ -457,17 +459,17 @@ document.addEventListener("DOMContentLoaded", () => {
 // The postback is fire-and-forget from the buyer's perspective: log
 // failures, never throw back into the request handler that's serving
 // the buyer's confirmation page. Conversion tracking is between you
-// and Regatta — the buyer is not part of that conversation.
-async function reportConversion(rgtaRef, orderId, amountCents) {
+// and AffiliateSwarm — the buyer is not part of that conversation.
+async function reportConversion(swarmRef, orderId, amountCents) {
   try {
     const response = await fetch("${PLATFORM_URL}/api/v1/postback", {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + process.env.REGATTA_API_KEY,
+        "Authorization": "Bearer " + process.env.AFFILIATESWARM_API_KEY,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        rgta_ref: rgtaRef,
+        swarm_ref: swarmRef,
         externalId: orderId,
         eventType: "PURCHASE",
         revenueCents: amountCents,
@@ -475,10 +477,10 @@ async function reportConversion(rgtaRef, orderId, amountCents) {
     });
 
     if (!response.ok) {
-      console.error("[regatta] postback non-2xx", response.status, await response.text());
+      console.error("[affiliateswarm] postback non-2xx", response.status, await response.text());
     }
   } catch (err) {
-    console.error("[regatta] postback threw", err);
+    console.error("[affiliateswarm] postback threw", err);
   }
 }`}</CodeBlock>
 
@@ -492,17 +494,17 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-def report_conversion(rgta_ref, order_id, amount_cents):
+def report_conversion(swarm_ref, order_id, amount_cents):
     """Fire-and-forget. Log failures; never raise into the checkout handler."""
     try:
         response = requests.post(
             "${PLATFORM_URL}/api/v1/postback",
             headers={
-                "Authorization": f"Bearer {os.environ['REGATTA_API_KEY']}",
+                "Authorization": f"Bearer {os.environ['AFFILIATESWARM_API_KEY']}",
                 "Content-Type": "application/json",
             },
             json={
-                "rgta_ref": rgta_ref,
+                "swarm_ref": swarm_ref,
                 "externalId": order_id,
                 "eventType": "PURCHASE",
                 "revenueCents": amount_cents,
@@ -511,11 +513,11 @@ def report_conversion(rgta_ref, order_id, amount_cents):
         )
         if not response.ok:
             logger.error(
-                "regatta postback non-2xx",
+                "affiliateswarm postback non-2xx",
                 extra={"status": response.status_code, "body": response.text},
             )
     except requests.RequestException:
-        logger.exception("regatta postback failed")`}</CodeBlock>
+        logger.exception("affiliateswarm postback failed")`}</CodeBlock>
 
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             Ruby
@@ -525,16 +527,16 @@ require "json"
 require "uri"
 
 # Fire-and-forget. Log failures; do not raise into the checkout handler.
-def report_conversion(rgta_ref, order_id, amount_cents)
+def report_conversion(swarm_ref, order_id, amount_cents)
   uri = URI("${PLATFORM_URL}/api/v1/postback")
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = uri.scheme == "https"
 
   request = Net::HTTP::Post.new(uri)
-  request["Authorization"] = "Bearer #{ENV['REGATTA_API_KEY']}"
+  request["Authorization"] = "Bearer #{ENV['AFFILIATESWARM_API_KEY']}"
   request["Content-Type"] = "application/json"
   request.body = {
-    rgta_ref: rgta_ref,
+    swarm_ref: swarm_ref,
     externalId: order_id,
     eventType: "PURCHASE",
     revenueCents: amount_cents
@@ -542,10 +544,10 @@ def report_conversion(rgta_ref, order_id, amount_cents)
 
   response = http.request(request)
   unless response.is_a?(Net::HTTPSuccess)
-    Rails.logger.error("[regatta] postback non-2xx #{response.code}: #{response.body}")
+    Rails.logger.error("[affiliateswarm] postback non-2xx #{response.code}: #{response.body}")
   end
 rescue StandardError => e
-  Rails.logger.error("[regatta] postback failed: #{e.message}")
+  Rails.logger.error("[affiliateswarm] postback failed: #{e.message}")
 end`}</CodeBlock>
 
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
@@ -553,7 +555,7 @@ end`}</CodeBlock>
           </h3>
           <CodeBlock label="PHP — fire postback with cURL">{`<?php
 // Fire-and-forget. Log failures; do not surface them to the buyer.
-function reportConversion($rgtaRef, $orderId, $amountCents) {
+function reportConversion($swarmRef, $orderId, $amountCents) {
     $ch = curl_init("${PLATFORM_URL}/api/v1/postback");
 
     curl_setopt_array($ch, [
@@ -561,11 +563,11 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 10,
         CURLOPT_HTTPHEADER => [
-            "Authorization: Bearer " . getenv("REGATTA_API_KEY"),
+            "Authorization: Bearer " . getenv("AFFILIATESWARM_API_KEY"),
             "Content-Type: application/json",
         ],
         CURLOPT_POSTFIELDS => json_encode([
-            "rgta_ref" => $rgtaRef,
+            "swarm_ref" => $swarmRef,
             "externalId" => $orderId,
             "eventType" => "PURCHASE",
             "revenueCents" => $amountCents,
@@ -578,7 +580,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
     curl_close($ch);
 
     if ($error !== "" || $status < 200 || $status >= 300) {
-        error_log("[regatta] postback failed status={$status} error={$error} body={$response}");
+        error_log("[affiliateswarm] postback failed status={$status} error={$error} body={$response}");
     }
 }
 ?>`}</CodeBlock>
@@ -586,11 +588,11 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
           <div className="mt-6 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
               <strong>Idempotent:</strong> If you send the same{" "}
-              <InlineCode>rgta_ref</InlineCode> +{" "}
+              <InlineCode>swarm_ref</InlineCode> +{" "}
               <InlineCode>externalId</InlineCode> combination twice, the
               endpoint returns the existing lead (HTTP 200) instead of creating
-              a duplicate (HTTP 201). No double payouts. It&apos;s safe to
-              retry on failure.
+              a duplicate (HTTP 201). No double payouts. It&apos;s safe to retry
+              on failure.
             </p>
           </div>
 
@@ -598,26 +600,25 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
             Postback failures must not affect the buyer
           </h3>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
-            A failed postback is an <strong>ops concern</strong>, never a
-            buyer concern. The buyer has already paid; their checkout has
-            succeeded; their confirmation experience must be visually
-            identical regardless of whether the postback returned{" "}
-            <InlineCode>200</InlineCode>, <InlineCode>4xx</InlineCode>,{" "}
-            <InlineCode>5xx</InlineCode>, timed out, or threw. Conversion
-            tracking is between you and Regatta — the buyer is not part of
-            that conversation.
+            A failed postback is an <strong>ops concern</strong>, never a buyer
+            concern. The buyer has already paid; their checkout has succeeded;
+            their confirmation experience must be visually identical regardless
+            of whether the postback returned <InlineCode>200</InlineCode>,{" "}
+            <InlineCode>4xx</InlineCode>, <InlineCode>5xx</InlineCode>, timed
+            out, or threw. Conversion tracking is between you and AffiliateSwarm
+            — the buyer is not part of that conversation.
           </p>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-5">
               <h4 className="text-sm font-semibold uppercase tracking-wider text-emerald-400">
                 ✅ Do
               </h4>
               <ul className="mt-3 space-y-2 text-sm text-[var(--v2-text-secondary)]">
                 <li>
-                  Fire the postback from your <strong>backend</strong> —
-                  payment webhook or order-completion handler — never from
-                  the buyer&apos;s success page.
+                  Fire the postback from your <strong>backend</strong> — payment
+                  webhook or order-completion handler — never from the
+                  buyer&apos;s success page.
                 </li>
                 <li>
                   Log failures via <InlineCode>console.error</InlineCode> /{" "}
@@ -626,8 +627,8 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                 </li>
                 <li>
                   Catch and swallow exceptions inside the postback caller.
-                  Render the same success UI whether the postback succeeded
-                  or not.
+                  Render the same success UI whether the postback succeeded or
+                  not.
                 </li>
                 <li>
                   Retry transient failures (<InlineCode>5xx</InlineCode>,
@@ -637,20 +638,20 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                 </li>
               </ul>
             </div>
-            <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
+            <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-5">
               <h4 className="text-sm font-semibold uppercase tracking-wider text-red-400">
                 ❌ Don&apos;t
               </h4>
               <ul className="mt-3 space-y-2 text-sm text-[var(--v2-text-secondary)]">
                 <li>
-                  Render the postback response or error string to the buyer
-                  (no red &quot;Regatta postback failed&quot; cards on the
+                  Render the postback response or error string to the buyer (no
+                  red &quot;AffiliateSwarm postback failed&quot; cards on the
                   confirmation page).
                 </li>
                 <li>
-                  Throw out of the postback caller into the checkout
-                  request handler — that&apos;s how error strings end up on
-                  the buyer&apos;s screen.
+                  Throw out of the postback caller into the checkout request
+                  handler — that&apos;s how error strings end up on the
+                  buyer&apos;s screen.
                 </li>
                 <li>
                   Block the buyer&apos;s confirmation page on the postback
@@ -658,8 +659,8 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                 </li>
                 <li>
                   Auto-retry <InlineCode>404 NOT_FOUND</InlineCode> — the{" "}
-                  <InlineCode>rgta_ref</InlineCode> doesn&apos;t match an active
-                  affiliate enrollment, and retrying won&apos;t fix it.
+                  <InlineCode>swarm_ref</InlineCode> doesn&apos;t match an
+                  active affiliate enrollment, and retrying won&apos;t fix it.
                 </li>
               </ul>
             </div>
@@ -668,7 +669,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             What happens when you fire a postback
           </h3>
-          <div className="mt-3 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
+          <div className="mt-3 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
             <div className="divide-y divide-[var(--v2-border)]">
               {[
                 {
@@ -700,7 +701,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                   key={item.step}
                   className="flex items-start gap-3 px-5 py-3"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                     {item.step}
                   </span>
                   <div>
@@ -720,7 +721,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
         {/* ── STEP 3: CONFIRM TRACKING ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
               3
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -731,16 +732,17 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
             Before your campaign can go live, you must prove your integration
             actually works by running a real postback through it end-to-end.
             This catches wiring bugs (wrong API key, wrong field names,
-            rgta_ref not persisting) before any affiliate sends traffic.
+            swarm_ref not persisting) before any affiliate sends traffic.
           </p>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
             There is no separate confirm-tracking endpoint. You verify your
             integration by firing a <strong>normal postback</strong> (same
-            endpoint, same body, <InlineCode>eventType: &quot;PURCHASE&quot;</InlineCode>)
-            with the <InlineCode>rgta_ref</InlineCode> set to your campaign&apos;s{" "}
+            endpoint, same body,{" "}
+            <InlineCode>eventType: &quot;PURCHASE&quot;</InlineCode>) with the{" "}
+            <InlineCode>swarm_ref</InlineCode> set to your campaign&apos;s{" "}
             <InlineCode>testTrackingCode</InlineCode> instead of a real
-            affiliate&apos;s code. Regatta recognizes the test code, marks the
-            campaign as tracking-confirmed, and returns a special test
+            affiliate&apos;s code. AffiliateSwarm recognizes the test code,
+            marks the campaign as tracking-confirmed, and returns a special test
             response — no lead is created and no affiliate is paid.
           </p>
 
@@ -754,7 +756,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "rgta_ref": "YOUR_TEST_TRACKING_CODE",
+    "swarm_ref": "YOUR_TEST_TRACKING_CODE",
     "externalId": "test-confirm-1",
     "eventType": "PURCHASE",
     "revenueCents": 1000
@@ -773,9 +775,11 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
-              <strong>Use the same code path you&apos;ll use in production.</strong>{" "}
-              Only the <InlineCode>rgta_ref</InlineCode> value differs. This proves
-              the integration end-to-end — not just that the endpoint is
+              <strong>
+                Use the same code path you&apos;ll use in production.
+              </strong>{" "}
+              Only the <InlineCode>swarm_ref</InlineCode> value differs. This
+              proves the integration end-to-end — not just that the endpoint is
               reachable. You only need to do this once per campaign.
             </p>
           </div>
@@ -787,13 +791,13 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
             Testing Your Integration
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            Walk a real postback through your own integration end-to-end
-            using your campaign&apos;s <strong>test tracking code</strong>.
-            Regatta recognizes the test code and marks the campaign as
+            Walk a real postback through your own integration end-to-end using
+            your campaign&apos;s <strong>test tracking code</strong>.
+            AffiliateSwarm recognizes the test code and marks the campaign as
             tracking-confirmed; no lead is created and no affiliate is paid.
           </p>
 
-          <div className="mt-6 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
+          <div className="mt-6 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
             <div className="divide-y divide-[var(--v2-border)]">
               {[
                 {
@@ -802,8 +806,8 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                     <>
                       Read your campaign&apos;s{" "}
                       <InlineCode>testTrackingCode</InlineCode> from the
-                      create-campaign response, or from the campaign page
-                      in your dashboard.
+                      create-campaign response, or from the campaign page in
+                      your dashboard.
                     </>
                   ),
                 },
@@ -813,27 +817,27 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                     <>
                       Land on your own site with the test code appended:{" "}
                       <InlineCode>
-                        https://your-site.com/?rgta_ref=YOUR_TEST_CODE
+                        https://your-site.com/?swarm_ref=YOUR_TEST_CODE
                       </InlineCode>
-                      , so your capture path runs exactly as it would for a
-                      real affiliate.
+                      , so your capture path runs exactly as it would for a real
+                      affiliate.
                     </>
                   ),
                 },
                 {
                   step: "3",
-                  text: 'Complete a real conversion in your app (sign up, buy, whatever your CPA action is) so your backend fires a postback. Use the same code path you use in production — only the rgta_ref value differs.',
+                  text: "Complete a real conversion in your app (sign up, buy, whatever your CPA action is) so your backend fires a postback. Use the same code path you use in production — only the swarm_ref value differs.",
                 },
                 {
                   step: "4",
-                  text: "Regatta receives the postback, recognizes the test code, and marks the campaign as tracking-confirmed. Check your dashboard to confirm.",
+                  text: "AffiliateSwarm receives the postback, recognizes the test code, and marks the campaign as tracking-confirmed. Check your dashboard to confirm.",
                 },
               ].map((item) => (
                 <div
                   key={item.step}
                   className="flex items-start gap-3 px-5 py-3"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                     {item.step}
                   </span>
                   <p className="text-sm text-[var(--v2-text-secondary)]">
@@ -864,7 +868,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
               {
                 title: "Single-Page Apps (SPA)",
                 description:
-                  'If your site uses client-side routing, the ?rgta_ref= parameter may be lost on navigation. Capture it immediately on app initialization and store it in your state management (Redux, Zustand, etc.) or localStorage in addition to a cookie.',
+                  "If your site uses client-side routing, the ?swarm_ref= parameter may be lost on navigation. Capture it immediately on app initialization and store it in your state management (Redux, Zustand, etc.) or localStorage in addition to a cookie.",
               },
               {
                 title: "Delayed Conversions",
@@ -874,17 +878,17 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
               {
                 title: "Multiple Conversions Per User",
                 description:
-                  "You can fire multiple postbacks for the same rgta_ref with different externalIds. Each one creates a separate lead. Use this for recurring purchases or subscription renewals.",
+                  "You can fire multiple postbacks for the same swarm_ref with different externalIds. Each one creates a separate lead. Use this for recurring purchases or subscription renewals.",
               },
               {
                 title: "Webhook Integration",
                 description:
-                  "If you use Stripe, Shopify, or similar platforms, fire the Regatta postback from your webhook handler when an order is completed or a subscription is activated.",
+                  "If you use Stripe, Shopify, or similar platforms, fire the AffiliateSwarm postback from your webhook handler when an order is completed or a subscription is activated.",
               },
             ].map((pattern) => (
               <div
                 key={pattern.title}
-                className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
+                className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
               >
                 <h3 className="font-semibold text-[var(--v2-text)]">
                   {pattern.title}
@@ -902,7 +906,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
           <h2 className="text-2xl font-bold text-[var(--v2-text)]">
             Postback Field Reference
           </h2>
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -980,7 +984,7 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
           <h2 className="text-2xl font-bold text-[var(--v2-text)]">
             Troubleshooting
           </h2>
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -1022,10 +1026,8 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
         </div>
 
         {/* ── SUMMARY ── */}
-        <div className="mt-16 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
-          <h2 className="text-xl font-bold text-[var(--v2-text)]">
-            Summary
-          </h2>
+        <div className="mt-16 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
+          <h2 className="text-xl font-bold text-[var(--v2-text)]">Summary</h2>
           <div className="mt-4 space-y-3">
             {[
               {
@@ -1033,8 +1035,8 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                 text: (
                   <>
                     <strong>Capture</strong> the{" "}
-                    <InlineCode>?rgta_ref=</InlineCode> parameter on your landing
-                    page and store it server-side
+                    <InlineCode>?swarm_ref=</InlineCode> parameter on your
+                    landing page and store it server-side
                   </>
                 ),
               },
@@ -1054,14 +1056,14 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
                   <>
                     <strong>Confirm</strong> tracking once per campaign by
                     firing a test postback with{" "}
-                    <InlineCode>rgta_ref</InlineCode> set to your campaign&apos;s{" "}
-                    <InlineCode>testTrackingCode</InlineCode>
+                    <InlineCode>swarm_ref</InlineCode> set to your
+                    campaign&apos;s <InlineCode>testTrackingCode</InlineCode>
                   </>
                 ),
               },
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                   {item.step}
                 </span>
                 <p className="text-sm text-[var(--v2-text-secondary)]">
@@ -1072,13 +1074,13 @@ function reportConversion($rgtaRef, $orderId, $amountCents) {
           </div>
           <p className="mt-4 text-sm text-[var(--v2-text-secondary)]">
             That&apos;s it. Three steps, and your platform is connected to
-            Regatta&apos;s affiliate network. Questions? Reach out via your
-            dashboard or email{" "}
+            AffiliateSwarm&apos;s affiliate network. Questions? Reach out via
+            your dashboard or email{" "}
             <a
-              href="mailto:support@regatta.network"
+              href="mailto:support@affiliateswarm.ai"
               className="text-[var(--v2-accent-light)] hover:underline"
             >
-              support@regatta.network
+              support@affiliateswarm.ai
             </a>
             .
           </p>

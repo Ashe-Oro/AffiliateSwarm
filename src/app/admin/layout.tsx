@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const navItems = [
   { href: "/admin", label: "Overview" },
@@ -16,7 +17,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <aside className="w-60 shrink-0 border-r border-border bg-sidebar text-sidebar-foreground">
         <div className="flex h-14 items-center border-b border-border px-5">
           <Link href="/admin" className="text-lg font-semibold tracking-tight">
-            Regatta Admin
+            <BrandLogo markClassName="h-6 w-6" suffix="Admin" />
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-3">

@@ -38,7 +38,7 @@ const TX_HASH = ("0x" + "4".repeat(64)) as `0x${string}`;
 
 const platformAccount = {
   address: HOT_ADDRESS,
-  name: "platform-hot",
+  name: "swarm-hot",
   smartAccount: {},
 };
 
