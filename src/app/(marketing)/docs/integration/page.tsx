@@ -190,7 +190,7 @@ AffiliateSwarm creates a verified lead, credits the affiliate`}</CodeBlock>
             </h2>
           </div>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
-            When a user arrives via a AffiliateSwarm affiliate link, your landing URL
+            When a user arrives via an AffiliateSwarm affiliate link, your landing URL
             will include a <InlineCode>?swarm_ref=TRACKING_CODE</InlineCode>{" "}
             parameter. You need to extract and store this value so you can
             include it when reporting the conversion.
@@ -317,8 +317,8 @@ if (isset($_GET['swarm_ref'])) {
     res.cookie("swarm_ref", swarmRef, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
   }
   if (promo) {
-    req.session.rgtaPromo = promo;
-    res.cookie("rgta_promo", promo, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
+    req.session.swarmPromo = promo;
+    res.cookie("swarm_promo", promo, { path: "/", maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax" });
   }
   next();
 });`}</CodeBlock>
@@ -340,7 +340,7 @@ if (isset($_GET['swarm_ref'])) {
             a coupon discount. The discount will be pre-applied automatically.
           </p>
 
-          <CodeBlock label="Stripe Checkout Session — server-side">{`const promo = req.session.rgtaPromo || req.cookies.rgta_promo;
+          <CodeBlock label="Stripe Checkout Session — server-side">{`const promo = req.session.swarmPromo || req.cookies.swarm_promo;
 
 const session = await stripe.checkout.sessions.create({
   // ... other params
@@ -360,10 +360,10 @@ const session = await stripe.checkout.sessions.create({
 
           <CodeBlock label="React — auto-fill promo code from cookie">{`import { useEffect, useState } from "react";
 
-function useRgtaPromo(): string | null {
+function useSwarmPromo(): string | null {
   const [promo, setPromo] = useState<string | null>(null);
   useEffect(() => {
-    const match = document.cookie.match(/rgta_promo=([^;]+)/);
+    const match = document.cookie.match(/swarm_promo=([^;]+)/);
     if (match) setPromo(decodeURIComponent(match[1]));
   }, []);
   return promo;
@@ -371,12 +371,12 @@ function useRgtaPromo(): string | null {
 
 // In your checkout component
 function CheckoutPage() {
-  const rgtaPromo = useRgtaPromo();
+  const swarmPromo = useSwarmPromo();
   const [promoCode, setPromoCode] = useState("");
 
   useEffect(() => {
-    if (rgtaPromo) setPromoCode(rgtaPromo);
-  }, [rgtaPromo]);
+    if (swarmPromo) setPromoCode(swarmPromo);
+  }, [swarmPromo]);
 
   return (
     <input
@@ -387,13 +387,13 @@ function CheckoutPage() {
   );
 }`}</CodeBlock>
 
-          <CodeBlock label="Vanilla JS — auto-fill promo code from cookie">{`function getRgtaPromo() {
-  const match = document.cookie.match(/rgta_promo=([^;]+)/);
+          <CodeBlock label="Vanilla JS — auto-fill promo code from cookie">{`function getSwarmPromo() {
+  const match = document.cookie.match(/swarm_promo=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const promo = getRgtaPromo();
+  const promo = getSwarmPromo();
   if (promo) {
     // Adjust the selector to match your promotion code input
     const input = document.querySelector('input[placeholder*="promotion code"]');

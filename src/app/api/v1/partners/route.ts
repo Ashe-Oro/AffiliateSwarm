@@ -18,7 +18,7 @@ const CreatePartnerSchema = z.object({
 });
 
 /**
- * POST /api/v1/partners — Register as a AffiliateSwarm partner (public).
+ * POST /api/v1/partners — Register as an AffiliateSwarm partner (public).
  */
 export async function POST(req: NextRequest) {
   if (!ENABLE_PARTNER_PROGRAM()) {

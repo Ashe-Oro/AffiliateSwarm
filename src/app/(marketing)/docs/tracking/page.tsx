@@ -17,7 +17,7 @@ const evidenceTypes = [
   { type: "email", label: "Email", description: "Email campaign or newsletter mention" },
   { type: "conversation", label: "Conversation", description: "Chat log or conversation transcript" },
   { type: "api_call", label: "API Call", description: "Proof of programmatic integration" },
-  { type: "code_commit", label: "Code Commit", description: "Code-level integration or SDK usage" },
+  { type: "code_commit", label: "Code Commit", description: "Code-level integration evidence" },
 ];
 
 export default function TrackingDocs() {
@@ -46,7 +46,7 @@ export default function TrackingDocs() {
             {
               tag: "WEB",
               title: "Tracking URLs",
-              description: "Redirect links that log clicks and append an swarm_ref parameter to the landing page.",
+              description: "Tracking links append a swarm_ref parameter to the advertiser landing page.",
               best: "Content sites, newsletters, social posts",
             },
             {
@@ -248,7 +248,7 @@ Content-Type: application/json
 async function onOrderCompleted(order) {
   const swarmRef = order.landing_page_swarm_ref; // from ?swarm_ref= parameter
 
-  if (!swarmRef) return; // not a AffiliateSwarm referral
+  if (!swarmRef) return; // not an AffiliateSwarm referral
 
   await fetch("${PLATFORM_URL}/api/v1/postback", {
     method: "POST",
@@ -482,7 +482,7 @@ Content-Type: application/json
                     how: "Tracking link in newsletter, attach email evidence to strengthen claim",
                   },
                   {
-                    scenario: "SDK integration",
+                    scenario: "Backend integration",
                     method: "Postback + Evidence",
                     how: "Server-to-server conversion, attach code_commit evidence",
                   },

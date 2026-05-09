@@ -72,7 +72,7 @@ def capture_swarm_ref():
         g.swarm_ref = swarm_ref
 
 @app.after_request
-def set_rgta_cookie(response):
+def set_swarm_ref_cookie(response):
     swarm_ref = getattr(g, "swarm_ref", None)
     if swarm_ref:
         response.set_cookie(
@@ -99,7 +99,7 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-> **Heads up — overwrite footgun.** The middleware above sets the cookie on **any** request that has `?swarm_ref=` in the URL. That means an attacker (or a competing affiliate) can craft a link like `https://your-site.com/some-path?swarm_ref=ATTACKER_CODE` and overwrite a victim's existing legitimate value. To prevent this, gate the cookie write so it only fires when no `affiliateswarm_ref` cookie is already set, OR scope the middleware to specific landing routes that you actually advertise to affiliates.
+> **Heads up — overwrite footgun.** The middleware above sets the cookie on **any** request that has `?swarm_ref=` in the URL. That means an attacker (or a competing affiliate) can craft a link like `https://your-site.com/some-path?swarm_ref=ATTACKER_CODE` and overwrite a victim's existing legitimate value. To prevent this, gate the cookie write so it only fires when no `swarm_ref` cookie is already set, OR scope the middleware to specific landing routes that you actually advertise to affiliates.
 
 **B. Persist on the first durable record** — When you create the first persistent entity for this visitor (user, order, lead, checkout session, customer), read the value from the cookie and store it on that record:
 
@@ -154,7 +154,7 @@ When a tracked user successfully converts (completes a purchase, subscribes, sig
 POST https://affiliateswarm.ai/api/v1/postback
 ```
 
-This is a **server-to-server** endpoint. Don't call it from a browser — your `AFFILIATESWARM_API_KEY` would be exposed and browser networks aren't authoritative for conversion events. There are no CORS preflight requirements (and you shouldn't trigger any), no IP allowlist to register, and no client-side SDK is required. Standard HTTPS to `affiliateswarm.ai` from any backend works.
+This is a **server-to-server** endpoint. Don't call it from a browser — your `AFFILIATESWARM_API_KEY` would be exposed and browser networks aren't authoritative for conversion events. There are no CORS preflight requirements (and you shouldn't trigger any), no IP allowlist to register, and no client-side package is required. Standard HTTPS to `affiliateswarm.ai` from any backend works.
 
 ### Authentication
 
@@ -570,7 +570,7 @@ app.post("/webhooks/stripe", async (req, res) => {
 ```javascript
 // Don't make the user wait for the AffiliateSwarm API call.
 // Fire it in a background job / queue instead:
-await queue.add("rgta-postback", {
+await queue.add("affiliateswarm-postback", {
   swarm_ref: user.swarmRef,
   externalId: order.id,
   eventType: "PURCHASE",
@@ -612,7 +612,7 @@ Extend your capture middleware to also store `?promo=` in a cookie (same pattern
 // Node.js / Express — add this alongside the ref capture from section 1
 const promo = req.query.promo;
 if (promo && typeof promo === "string") {
-  res.cookie("rgta_promo", promo, {
+  res.cookie("swarm_promo", promo, {
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000,
     sameSite: "lax",
@@ -621,7 +621,7 @@ if (promo && typeof promo === "string") {
 }
 ```
 
-The pattern is the same in any language — mirror whatever you did for `swarm_ref` in section 1 (Flask `g` + `after_request`, Rails `before_action`, Next.js middleware, etc.) and add a parallel `rgta_promo` cookie.
+The pattern is the same in any language — mirror whatever you did for `swarm_ref` in section 1 (Flask `g` + `after_request`, Rails `before_action`, Next.js middleware, etc.) and add a parallel `swarm_promo` cookie.
 
 If your campaign's buyer incentive persists past the initial visit (e.g. the user comes back days later to complete checkout), also attach `promo` to the same durable record you use for `swarm_ref`.
 
@@ -631,14 +631,14 @@ The capture step above is billing-system-agnostic. Applying the discount is not 
 
 The general pattern, regardless of provider:
 
-1. At checkout (or wherever the discount gets applied), read the `rgta_promo` cookie — or load it from the durable record if you persisted it there.
+1. At checkout (or wherever the discount gets applied), read the `swarm_promo` cookie — or load it from the durable record if you persisted it there.
 2. Look up the code in your billing system to confirm it exists and is active. Handle unknown/expired codes gracefully (options below).
 3. Apply the resulting discount to the order, subscription, or payment.
 
 Pseudocode:
 
 ```javascript
-const promo = req.cookies.rgta_promo;  // or from your DB record
+const promo = req.cookies.swarm_promo;  // or from your DB record
 
 if (promo) {
   const discount = await yourBillingSystem.lookupDiscount(promo);
@@ -680,7 +680,7 @@ Let Stripe handle promotion code lookup natively — pass the promotion code as 
 
 ```javascript
 // Server-side — create the Checkout Session
-const promo = req.cookies.rgta_promo;
+const promo = req.cookies.swarm_promo;
 
 let discounts = undefined;
 if (promo) {
@@ -704,7 +704,7 @@ If lookup fails or the code is inactive, falling back to `allow_promotion_codes:
 Resolve the promotion code on your server at checkout submit and apply it to the subscription or payment intent:
 
 ```javascript
-const promo = req.cookies.rgta_promo;
+const promo = req.cookies.swarm_promo;
 let couponId;
 if (promo) {
   const list = await stripe.promotionCodes.list({ code: promo, active: true, limit: 1 });
