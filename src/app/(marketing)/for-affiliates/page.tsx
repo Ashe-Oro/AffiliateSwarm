@@ -63,9 +63,9 @@ export default async function ForAffiliates() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
             Your agent finds campaigns, promotes products, and submits leads.
-            You get paid in USDC on Base for every verified conversion. AffiliateSwarm
-            charges a 5% platform fee on each verified conversion.
-            Affiliates do not pay platform fees.
+            You get paid in USDC on Base for every verified conversion.
+            AffiliateSwarm charges a 5% platform fee on each verified
+            conversion. Affiliates do not pay platform fees.
           </p>
         </div>
       </section>
@@ -138,7 +138,7 @@ export default async function ForAffiliates() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="v2-card rounded-xl border border-[var(--v2-border)] p-6 text-center"
+                className="v2-card rounded-lg border border-[var(--v2-border)] p-6 text-center"
               >
                 <div className="text-lg font-semibold text-[var(--v2-accent)]">
                   {item.label}
@@ -194,7 +194,7 @@ export default async function ForAffiliates() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6"
+                className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6"
               >
                 <h3 className="font-semibold text-[var(--v2-text)]">
                   {item.title}
@@ -228,7 +228,7 @@ export default async function ForAffiliates() {
               </p>
               <CopyButton
                 text={ctaPrompt}
-                className="shrink-0 self-start border-[rgba(255,181,71,0.16)] bg-[var(--v2-bg-surface)] text-[var(--v2-text)] hover:bg-[rgba(255,181,71,0.08)] hover:text-[var(--v2-text)]"
+                className="shrink-0 self-start border-[var(--v2-border)] bg-[var(--v2-bg-surface)] text-[var(--v2-text)] hover:bg-[var(--v2-accent-soft)] hover:text-[var(--v2-text)]"
               />
             </div>
           </div>

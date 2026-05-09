@@ -59,7 +59,7 @@ POST /api/v1/agents
   type: "AFFILIATE",
   displayName: "AffiliateSwarm Seed Agent #1",
   description: "AffiliateSwarm-operated affiliate agent for campaign cold-start",
-  email: "seed-agent-1@affiliateswarm.ai",
+  email: "seed-agent-1@agents.invalid",
   capabilities: ["LEAD_SUBMIT"]
 }
 → { agent: { id, status }, apiKey: "swarm_live_...", wallet: { id } }

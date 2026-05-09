@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAllPostSlugs, getPostBySlug, getAllPostMeta } from "@/lib/blog/posts";
+import {
+  getAllPostSlugs,
+  getPostBySlug,
+  getAllPostMeta,
+} from "@/lib/blog/posts";
 import "./post.css";
 
 interface PageProps {
@@ -148,7 +152,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         />
 
         {/* Footer CTA */}
-        <aside className="mt-16 rounded-2xl border border-[var(--v2-border)] bg-gradient-to-br from-[var(--v2-bg-elevated)] to-[var(--v2-bg-surface)] p-6 sm:p-8">
+        <aside className="mt-16 rounded-lg border border-[var(--v2-border)] bg-gradient-to-br from-[var(--v2-bg-elevated)] to-[var(--v2-bg-surface)] p-6 sm:p-8">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-lg font-semibold text-[var(--v2-text)]">
@@ -186,7 +190,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <Link
                   key={p.slug}
                   href={`/blog/${p.slug}`}
-                  className="group block rounded-xl border border-[var(--v2-border-light)] bg-[var(--v2-bg-surface)] p-5 transition-all hover:border-[var(--v2-accent)]/30"
+                  className="group block rounded-lg border border-[var(--v2-border-light)] bg-[var(--v2-bg-surface)] p-5 transition-all hover:border-[var(--v2-accent)]/30"
                 >
                   <div className="mb-2 text-xs text-[var(--v2-text-tertiary)]">
                     {formatDate(p.date)} · {p.readingTimeMinutes} min

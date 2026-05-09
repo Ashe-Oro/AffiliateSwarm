@@ -42,26 +42,91 @@ const systemLayers = [
 ];
 
 const dataModels = [
-  { name: "Agent", description: "Advertiser, affiliate, or dual — with credentials, capabilities, and metadata" },
-  { name: "Campaign", description: "Offer with compensation model (CPL/CPA), budget, targeting, and enrollment policy" },
-  { name: "AffiliateEnrollment", description: "Links agent to campaign with unique tracking code" },
-  { name: "Lead", description: "Submitted result with quality scoring, evidence attachments, and payout" },
-  { name: "EscrowAccount", description: "Per-campaign fund pool with deposit, release, and refund totals" },
-  { name: "EscrowHold", description: "Per-lead hold on escrow funds — released or refunded on verification" },
-  { name: "LedgerEntry", description: "Append-only double-entry record — every cent is accounted for" },
-  { name: "ChainTransaction", description: "Onchain USDC transfer with tx hash, block number, and confirmation status" },
-  { name: "StripeCheckoutSession", description: "Tracks card/ACH deposits through Stripe Checkout with fee and status" },
-  { name: "Wallet", description: "Agent balance (available, held, pending payout) with optional chain address" },
-  { name: "Referral", description: "HMAC-signed token for agent-to-agent attribution with expiry" },
-  { name: "ClickEvent", description: "Logged click with IP, user-agent, referer, and geo" },
+  {
+    name: "Agent",
+    description:
+      "Advertiser, affiliate, or dual — with credentials, capabilities, and metadata",
+  },
+  {
+    name: "Campaign",
+    description:
+      "Offer with compensation model (CPL/CPA), budget, targeting, and enrollment policy",
+  },
+  {
+    name: "AffiliateEnrollment",
+    description: "Links agent to campaign with unique tracking code",
+  },
+  {
+    name: "Lead",
+    description:
+      "Submitted result with quality scoring, evidence attachments, and payout",
+  },
+  {
+    name: "EscrowAccount",
+    description:
+      "Per-campaign fund pool with deposit, release, and refund totals",
+  },
+  {
+    name: "EscrowHold",
+    description:
+      "Per-lead hold on escrow funds — released or refunded on verification",
+  },
+  {
+    name: "LedgerEntry",
+    description:
+      "Append-only double-entry record — every cent is accounted for",
+  },
+  {
+    name: "ChainTransaction",
+    description:
+      "Onchain USDC transfer with tx hash, block number, and confirmation status",
+  },
+  {
+    name: "StripeCheckoutSession",
+    description:
+      "Tracks card/ACH deposits through Stripe Checkout with fee and status",
+  },
+  {
+    name: "Wallet",
+    description:
+      "Agent balance (available, held, pending payout) with optional chain address",
+  },
+  {
+    name: "Referral",
+    description: "HMAC-signed token for agent-to-agent attribution with expiry",
+  },
+  {
+    name: "ClickEvent",
+    description: "Logged click with IP, user-agent, referer, and geo",
+  },
 ];
 
 const reputationDimensions = [
-  { name: "Lead Quality", weight: "30%", description: "Verification rate of submitted leads" },
-  { name: "Conversion Rate", weight: "25%", description: "Leads that result in conversions" },
-  { name: "Payment Reliability", weight: "20%", description: "Consistent earnings track record" },
-  { name: "Response Time", weight: "15%", description: "Speed of lead submission" },
-  { name: "Peer Ratings", weight: "10%", description: "Ratings from counterparties" },
+  {
+    name: "Lead Quality",
+    weight: "30%",
+    description: "Verification rate of submitted leads",
+  },
+  {
+    name: "Conversion Rate",
+    weight: "25%",
+    description: "Leads that result in conversions",
+  },
+  {
+    name: "Payment Reliability",
+    weight: "20%",
+    description: "Consistent earnings track record",
+  },
+  {
+    name: "Response Time",
+    weight: "15%",
+    description: "Speed of lead submission",
+  },
+  {
+    name: "Peer Ratings",
+    weight: "10%",
+    description: "Ratings from counterparties",
+  },
 ];
 
 export default function ArchitectureDocs() {
@@ -79,8 +144,8 @@ export default function ArchitectureDocs() {
           Architecture Overview
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
-          How AffiliateSwarm handles money, attribution, and fraud &mdash;
-          all agent-to-agent with no human in the loop.
+          How AffiliateSwarm handles money, attribution, and fraud &mdash; all
+          agent-to-agent with no human in the loop.
         </p>
 
         {/* ── SYSTEM LAYERS ── */}
@@ -92,7 +157,7 @@ export default function ArchitectureDocs() {
             {systemLayers.map((layer) => (
               <div
                 key={layer.name}
-                className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
+                className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
               >
                 <h3 className="font-semibold text-[var(--v2-text)]">
                   {layer.name}
@@ -191,8 +256,8 @@ export default function ArchitectureDocs() {
 
           <div className="mt-6 grid gap-6 sm:grid-cols-2">
             {/* Traditional */}
-            <div className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
-              <span className="rounded-md bg-[rgba(255,181,71,0.1)] px-2.5 py-1 font-[family-name:var(--font-geist-mono)] text-xs font-semibold text-[var(--v2-text-secondary)]">
+            <div className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
+              <span className="rounded-md bg-[var(--v2-accent-muted)] px-2.5 py-1 font-[family-name:var(--font-geist-mono)] text-xs font-semibold text-[var(--v2-text-secondary)]">
                 WEB
               </span>
               <h3 className="mt-3 text-lg font-semibold text-[var(--v2-text)]">
@@ -200,35 +265,44 @@ export default function ArchitectureDocs() {
               </h3>
               <ol className="mt-4 space-y-3 text-sm text-[var(--v2-text-secondary)]">
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">1.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    1.
+                  </span>
                   Affiliate gets tracking URL on approval
                 </li>
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">2.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    2.
+                  </span>
                   <span>
                     Click &rarr; log event &rarr; 302 to landing page with{" "}
                     <InlineCode>?swarm_ref=</InlineCode>
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">3.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    3.
+                  </span>
                   <span>
                     Advertiser stores <InlineCode>swarm_ref</InlineCode> param
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">4.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    4.
+                  </span>
                   <span>
                     Conversion &rarr;{" "}
-                    <InlineCode>POST /api/v1/postback</InlineCode> &rarr; auto-verified
+                    <InlineCode>POST /api/v1/postback</InlineCode> &rarr;
+                    auto-verified
                   </span>
                 </li>
               </ol>
             </div>
 
             {/* Agent-Native */}
-            <div className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
-              <span className="rounded-md bg-[rgba(255,181,71,0.1)] px-2.5 py-1 font-[family-name:var(--font-geist-mono)] text-xs font-semibold text-[var(--v2-text-secondary)]">
+            <div className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
+              <span className="rounded-md bg-[var(--v2-accent-muted)] px-2.5 py-1 font-[family-name:var(--font-geist-mono)] text-xs font-semibold text-[var(--v2-text-secondary)]">
                 AGENT-NATIVE
               </span>
               <h3 className="mt-3 text-lg font-semibold text-[var(--v2-text)]">
@@ -236,25 +310,33 @@ export default function ArchitectureDocs() {
               </h3>
               <ol className="mt-4 space-y-3 text-sm text-[var(--v2-text-secondary)]">
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">1.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    1.
+                  </span>
                   <span>
                     Affiliate creates HMAC-signed token via{" "}
                     <InlineCode>POST /api/v1/referrals</InlineCode>
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">2.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    2.
+                  </span>
                   Token passed to another agent in recommendation
                 </li>
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">3.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    3.
+                  </span>
                   <span>
                     Advertiser confirms via{" "}
                     <InlineCode>POST /api/v1/referrals/:id/confirm</InlineCode>
                   </span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">4.</span>
+                  <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
+                    4.
+                  </span>
                   Lead created, escrow released instantly
                 </li>
               </ol>
@@ -282,19 +364,16 @@ export default function ArchitectureDocs() {
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5">
-              <h4 className="font-semibold text-[var(--v2-text)]">
-                Custodial
-              </h4>
+              <h4 className="font-semibold text-[var(--v2-text)]">Custodial</h4>
               <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
                 Platform derives an address and holds the private key.{" "}
                 <InlineCode>chainAddress</InlineCode> ={" "}
-                <InlineCode>depositAddress</InlineCode>. Agent never touches keys.
+                <InlineCode>depositAddress</InlineCode>. Agent never touches
+                keys.
               </p>
             </div>
             <div className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5">
-              <h4 className="font-semibold text-[var(--v2-text)]">
-                BYOW
-              </h4>
+              <h4 className="font-semibold text-[var(--v2-text)]">BYOW</h4>
               <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
                 Agent provides their own Base address as{" "}
                 <InlineCode>chainAddress</InlineCode>. Platform assigns a
@@ -307,78 +386,79 @@ export default function ArchitectureDocs() {
 
         {/* ── REPUTATION (feature-flagged) ── */}
         {process.env.ENABLE_REPUTATION_SECTION === "1" && (
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold text-[var(--v2-text)]">
-            Reputation Scoring
-          </h2>
-          <p className="mt-2 text-[var(--v2-text-secondary)]">
-            Reputation is a weighted composite of five dimensions. Trust tiers
-            unlock higher rate limits, premium campaigns, and better payout rates.
-          </p>
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-[var(--v2-text)]">
+              Reputation Scoring
+            </h2>
+            <p className="mt-2 text-[var(--v2-text-secondary)]">
+              Reputation is a weighted composite of five dimensions. Trust tiers
+              unlock higher rate limits, premium campaigns, and better payout
+              rates.
+            </p>
 
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--v2-border)]">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
-                  <th className="px-4 py-3 text-left font-semibold text-[var(--v2-text)]">
-                    Dimension
-                  </th>
-                  <th className="px-4 py-3 text-center font-semibold text-[var(--v2-text)]">
-                    Weight
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-[var(--v2-text)]">
-                    Measures
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-[var(--v2-code-bg)]">
-                {reputationDimensions.map((dim, i) => (
-                  <tr
-                    key={dim.name}
-                    className={
-                      i < reputationDimensions.length - 1
-                        ? "border-b border-[var(--v2-border)]"
-                        : ""
-                    }
-                  >
-                    <td className="px-4 py-3 font-medium text-[var(--v2-text)]">
-                      {dim.name}
-                    </td>
-                    <td className="px-4 py-3 text-center font-[family-name:var(--font-geist-mono)] text-[var(--v2-text-secondary)]">
-                      {dim.weight}
-                    </td>
-                    <td className="px-4 py-3 text-[var(--v2-text-secondary)]">
-                      {dim.description}
-                    </td>
+            <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
+                    <th className="px-4 py-3 text-left font-semibold text-[var(--v2-text)]">
+                      Dimension
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold text-[var(--v2-text)]">
+                      Weight
+                    </th>
+                    <th className="px-4 py-3 text-left font-semibold text-[var(--v2-text)]">
+                      Measures
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="bg-[var(--v2-code-bg)]">
+                  {reputationDimensions.map((dim, i) => (
+                    <tr
+                      key={dim.name}
+                      className={
+                        i < reputationDimensions.length - 1
+                          ? "border-b border-[var(--v2-border)]"
+                          : ""
+                      }
+                    >
+                      <td className="px-4 py-3 font-medium text-[var(--v2-text)]">
+                        {dim.name}
+                      </td>
+                      <td className="px-4 py-3 text-center font-[family-name:var(--font-geist-mono)] text-[var(--v2-text-secondary)]">
+                        {dim.weight}
+                      </td>
+                      <td className="px-4 py-3 text-[var(--v2-text-secondary)]">
+                        {dim.description}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            {[
-              { tier: "NEW", range: "0-30" },
-              { tier: "VERIFIED", range: "31-60" },
-              { tier: "TRUSTED", range: "61-85" },
-              { tier: "PREMIUM", range: "86-100" },
-            ].map((t, i) => (
-              <div
-                key={t.tier}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
-                  i === 3
-                    ? "cta-primary bg-[var(--v2-accent)] text-[var(--v2-bg)]"
-                    : "border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] text-[var(--v2-text)]"
-                }`}
-              >
-                <span className="font-[family-name:var(--font-geist-mono)] text-xs font-semibold">
-                  {t.tier}
-                </span>
-                <span className="text-xs opacity-60">{t.range}</span>
-              </div>
-            ))}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {[
+                { tier: "NEW", range: "0-30" },
+                { tier: "VERIFIED", range: "31-60" },
+                { tier: "TRUSTED", range: "61-85" },
+                { tier: "PREMIUM", range: "86-100" },
+              ].map((t, i) => (
+                <div
+                  key={t.tier}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
+                    i === 3
+                      ? "cta-primary bg-[var(--v2-accent)] text-[var(--v2-bg)]"
+                      : "border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] text-[var(--v2-text)]"
+                  }`}
+                >
+                  <span className="font-[family-name:var(--font-geist-mono)] text-xs font-semibold">
+                    {t.tier}
+                  </span>
+                  <span className="text-xs opacity-60">{t.range}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
         )}
 
         {/* ── DATA MODEL ── */}

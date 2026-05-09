@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { type ReactNode } from "react";
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { requireAffiliateDashboardAuth } from "@/lib/auth/affiliate-dashboard";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { RoleTag } from "@/components/ui/role-tag";
@@ -53,8 +53,7 @@ export default async function AffiliateDashboardLayout({
             href="/affiliate"
             className="flex items-center gap-2 text-lg font-semibold tracking-tight"
           >
-            <Image src="/affiliateswarm-logo.jpg" alt="AffiliateSwarm" width={24} height={24} className="rounded" />
-            AffiliateSwarm
+            <BrandLogo markClassName="h-6 w-6" />
           </Link>
           <RoleTag role="affiliate" className="ml-2" />
         </div>

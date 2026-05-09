@@ -1,5 +1,9 @@
 # Website Copy Review - 2026-04-06
 
+> Historical note: this audit predates the AffiliateSwarm MCP/SDK
+> decommission. Sections about MCP setup are superseded; current agent
+> onboarding uses skill files plus the REST API.
+
 Full copy audit across all marketing pages, docs, auth flows, and shared components. Each finding is verified against the actual implementation (Prisma schema, service layer, config).
 
 ---
@@ -9,11 +13,13 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 1. "Instant" payouts are not instant
 
 **Where it appears:**
+
 - `/for-affiliates` — Agent Referrals card: "you get paid instantly from escrow"
 - `/for-advertisers` — Signed Referral Tokens card: "Payout is instant"
 - `/for-advertisers` — Escrow section: "Instant Release — Once verified, payouts release automatically to affiliate wallets. No manual approvals needed."
 
 **What actually happens:**
+
 - Default escrow holding period is **30 days** (`prisma/schema.prisma` line 417)
 - After holding period, `processMaturedHolds()` releases funds to wallet
 - Affiliate must then **request a payout** (not automatic)
@@ -27,9 +33,11 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 2. "Unlimited rate limits (6000 req/min)" is self-contradictory
 
 **Where it appears:**
+
 - `/for-affiliates` — Premium trust tier benefits: "Unlimited rate limits (6000 req/min)"
 
 **What's implemented:**
+
 - `src/lib/auth/rate-limit.ts` defines ENTERPRISE tier at exactly 6,000 req/min
 - There is no unlimited tier
 
@@ -40,9 +48,11 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 3. Revenue share from "AffiliateSwarm's cut" implies a platform fee that doesn't exist
 
 **Where it appears:**
+
 - `/partners` — Benefits section: "When your referrals generate revenue, you earn from AffiliateSwarm's cut automatically."
 
 **What's implemented:**
+
 - AffiliateSwarm charges **no platform fee** on conversions (confirmed in pricing page and code)
 - The 3% credit card processing fee is passed through to Stripe
 - Partner revenue share (0.5%) is calculated on conversion volume (`escrow.service.ts` lines 632-635)
@@ -58,6 +68,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 4. CPC compensation model omitted from advertiser marketing
 
 **Where it appears (or doesn't):**
+
 - `/for-advertisers` — Compensation Models section shows only CPL, CPA, RevShare
 - The Prisma schema includes `CPC` as a valid compensation model
 - The campaign creation form includes CPC as an option
@@ -70,9 +81,11 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 5. "No manual approvals needed" contradicts the lead review flow
 
 **Where it appears:**
+
 - `/for-advertisers` — Escrow section, "Instant Release" card: "No manual approvals needed."
 
 **What's implemented:**
+
 - The API has `POST /api/v1/leads/:id/verify` and `POST /api/v1/leads/:id/reject` — manual review endpoints
 - The advertiser dashboard has a leads review page
 - Postbacks auto-verify, but direct lead submissions require advertiser review
@@ -82,9 +95,14 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 
 ---
 
-### 6. skill.md URL format is inconsistent across pages
+### 6. skill.md URL format is inconsistent across pages (resolved)
+
+**Status:** Resolved in the AffiliateSwarm brand refresh. Runtime prompt and
+docs examples now derive absolute app URLs from the configured app URL with the
+shared `DEFAULT_APP_URL` fallback.
 
 **Pattern observed:**
+
 - Homepage agent-onboarding component: `https://affiliateswarm.ai/affiliate/skill.md` (hardcoded full URL)
 - For-affiliates/for-advertisers pages: `{PLATFORM_HOST}/affiliate/skill.md` (domain without protocol)
 - Partners page: same domain-without-protocol pattern
@@ -94,30 +112,17 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 
 ---
 
-### 7. MCP server package may not be published
+### 7. MCP server package may not be published (superseded)
 
-**Where it appears:**
-- `/docs` — Quick Start: `npx regatta-mcp-server`
-- `/docs/mcp-setup` — Quick Start: `npx regatta-mcp-server`
-
-**What exists:**
-- A `mcp-server/package.json` exists with the correct package name and bin entry
-- But the README and other docs reference `npx tsx src/mcp/index.ts` (running from source)
-- Unclear if the package is actually published to npm
-
-**Recommendation:** Verify the package is published. If not, either publish it or update the docs to show the actual setup method. Users running `npx regatta-mcp-server` and getting a 404 is a bad first experience.
+**Status:** Superseded. The standalone MCP server has been decommissioned, and
+current agent onboarding uses role-specific skill files plus the REST API.
 
 ---
 
-### 8. "OpenClaw" reference may confuse readers
+### 8. "OpenClaw" reference may confuse readers (superseded)
 
-**Where it appears:**
-- `/docs/mcp-setup` — Intro: "Configure the AffiliateSwarm MCP server for Claude, OpenClaw, or any MCP-compatible agent."
-- Docs hub card: "Configure the AffiliateSwarm MCP server for Claude, OpenClaw, or any MCP-compatible agent."
-
-**Issue:** OpenClaw is a third-party MCP host that may not be widely known. Listing it alongside Claude could confuse readers into thinking it's a AffiliateSwarm product, or could feel dated if OpenClaw changes/disappears.
-
-**Recommendation:** Replace with more generic language: "Configure the AffiliateSwarm MCP server for Claude Desktop or any MCP-compatible agent." Only name third-party products if they're well-known.
+**Status:** Superseded. The referenced MCP setup page and docs hub card were
+removed with the standalone MCP server decommission.
 
 ---
 
@@ -126,6 +131,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 9. Pricing page hero says "You only pay when you earn" — but this is affiliate language on a page that also addresses advertisers
 
 **Where it appears:**
+
 - `/pricing` — Hero subtitle: "Free to join. You only pay when you earn."
 
 **Issue:** Advertisers don't "earn" — they pay for results. This tagline only makes sense for affiliates. The pricing page addresses both audiences.
@@ -137,6 +143,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 10. Pricing FAQ #2 conflates advertiser and affiliate perspectives
 
 **Where it appears:**
+
 - `/pricing` — FAQ: "Are there any platform fees?" — "No fees are deducted from payouts. When you set a $10 CPA, your affiliate receives the full $10 on each verified lead. You only pay for results — never upfront."
 
 **Issue:** The first sentence speaks to affiliates ("no fees deducted from payouts"). The second speaks to advertisers ("when you set a $10 CPA"). The third could be either. This creates confusion about who "you" is.
@@ -148,6 +155,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 11. Trust tier naming inconsistency between pages
 
 **Where it appears:**
+
 - `/for-affiliates` page uses: NEW, VERIFIED, TRUSTED, PREMIUM
 - `/pricing` page uses: Free, Standard, Premium, Enterprise
 - `/docs/architecture` uses: NEW, VERIFIED, TRUSTED, PREMIUM (score ranges)
@@ -161,9 +169,11 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 12. Rate limit tier mismatch: "ELEVATED" tier exists in code but not in copy
 
 **What's implemented:**
+
 - `src/lib/auth/rate-limit.ts` defines 5 tiers: FREE (60), STANDARD (300), ELEVATED (600), PREMIUM (1200), ENTERPRISE (6000)
 
 **What copy shows:**
+
 - For-affiliates page: 60, 300, 1200, 6000 (4 tiers, skips ELEVATED)
 - Pricing page: 60, 300, 1200, 6000 (4 tiers, skips ELEVATED)
 
@@ -176,6 +186,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 13. "Connect Your Agent" CTA links to /docs — not a direct connection flow
 
 **Where it appears:**
+
 - `/for-affiliates` — Hero CTA: "Connect Your Agent →" links to `/docs`
 - `/for-affiliates` — Bottom CTA: "Connect Your Agent →" links to `/docs`
 
@@ -188,6 +199,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 14. "Don't have an AI agent yet? Get early access →" on homepage is unclear
 
 **Where it appears:**
+
 - Homepage `agent-onboarding.tsx` — Bottom fallback: "Don't have an AI agent yet? Get early access →" links to `/for-affiliates`
 
 **Issue:** "Get early access" implies a waitlist or limited availability. The for-affiliates page doesn't have any early access concept — it's just a marketing page. This creates false expectations.
@@ -199,9 +211,11 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ### 15. Homepage "How It Works" step 3: "Conversions verified on-chain" is misleading
 
 **Where it appears:**
+
 - Homepage — How It Works, Step 3: "Server-to-server postbacks verify every conversion on-chain."
 
 **What actually happens:**
+
 - Postbacks are standard HTTP server-to-server calls (not on-chain)
 - The verification happens in the application layer (database)
 - Only the final payout settlement happens on-chain (USDC transfer on Base)
@@ -213,20 +227,25 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 ## Low-Priority / Polish Issues
 
 ### 16. Repetitive "Tell your agent" blocks across pages
+
 Every marketing page has a nearly identical "Tell your agent" prompt block. While intentional for each page's context, it creates a copy-paste feeling when browsing multiple pages. Consider differentiating the prompt text per page or reducing to one per page (currently some pages have two).
 
 ### 17. Onboarding page is bare
+
 `/onboarding` has minimal copy: "Your account doesn't have an agent yet. To get started, create an agent using the API or contact your administrator." No links to docs, no guidance on what to do next. This is a dead-end for confused users.
 
 **Recommendation:** Add a link to the docs onboarding guide, or better yet, inline the skill.md prompt.
 
 ### 18. Login page styling uses hardcoded colors instead of CSS variables
+
 Minor consistency issue: the login page uses hardcoded hex colors (`#1C1814`, `#F5F0E8`, `#A89F94`, etc.) while all other pages use CSS variables (`var(--v2-text)`, etc.). Not a copy issue, but worth noting for maintenance.
 
 ### 19. Footer is minimal
+
 Footer only has 4 links (Docs, API Reference, Affiliate Skill, Advertiser Skill). Missing: Pricing, For Affiliates, For Advertisers, Login. The footer is a secondary navigation — users expect to find key pages there.
 
 ### 20. Architecture page exposes internal implementation details
+
 The architecture docs page shows Prisma ORM, HD wallet derivation paths, and internal data models. This is fine for technical credibility but could be a security concern (attackers knowing the exact wallet derivation scheme, for example).
 
 **Recommendation:** Consider whether the HD wallet tree diagram and derivation paths should be public. The escrow flow and reputation scoring are fine to share.
@@ -235,15 +254,15 @@ The architecture docs page shows Prisma ORM, HD wallet derivation paths, and int
 
 ## Consistency Check Results
 
-| Check | Status |
-|-------|--------|
-| "Seller" → "Advertiser" normalization | ✅ Complete in active code |
+| Check                                   | Status                                             |
+| --------------------------------------- | -------------------------------------------------- |
+| "Seller" → "Advertiser" normalization   | ✅ Complete in active code                         |
 | "Publisher" → "Affiliate" normalization | ✅ Complete in active code (residual in seed data) |
-| "ELITE" trust tier references | ✅ None found |
-| Compensation model completeness | ⚠️ CPC missing from marketing |
-| Trust tier names consistent | ⚠️ Pricing page uses different names |
-| Fee model consistent across pages | ❌ Pricing vs Partners contradiction |
-| Payout timing claims accurate | ❌ "Instant" is inaccurate |
+| "ELITE" trust tier references           | ✅ None found                                      |
+| Compensation model completeness         | ⚠️ CPC missing from marketing                      |
+| Trust tier names consistent             | ⚠️ Pricing page uses different names               |
+| Fee model consistent across pages       | ❌ Pricing vs Partners contradiction               |
+| Payout timing claims accurate           | ❌ "Instant" is inaccurate                         |
 
 ---
 

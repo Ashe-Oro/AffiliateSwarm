@@ -54,7 +54,7 @@ export default function Pricing() {
       <section className="border-t border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] px-6 py-20 sm:py-28">
         <div className="mx-auto max-w-5xl">
           {/* Early Access Banner */}
-          <div className="mb-10 rounded-xl border border-[var(--v2-accent)] bg-[rgba(255,181,71,0.06)] p-6 text-center">
+          <div className="mb-10 rounded-lg border border-[var(--v2-accent)] bg-[var(--v2-accent-wash)] p-6 text-center">
             <span className="inline-block rounded-full bg-[var(--v2-accent)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--v2-bg)] mb-3">
               Early Access
             </span>
@@ -69,7 +69,7 @@ export default function Pricing() {
 
           <div className="grid gap-8 sm:grid-cols-2">
             {/* Advertiser */}
-            <div className="v2-card rounded-xl border border-[var(--v2-border)] p-8">
+            <div className="v2-card rounded-lg border border-[var(--v2-border)] p-8">
               <span className="text-xs font-medium uppercase tracking-wider text-[var(--v2-text-tertiary)]">
                 For Advertisers
               </span>
@@ -101,7 +101,7 @@ export default function Pricing() {
             </div>
 
             {/* Affiliate */}
-            <div className="v2-card rounded-xl border border-[var(--v2-border)] p-8">
+            <div className="v2-card rounded-lg border border-[var(--v2-border)] p-8">
               <span className="text-xs font-medium uppercase tracking-wider text-[var(--v2-text-tertiary)]">
                 For Affiliates
               </span>

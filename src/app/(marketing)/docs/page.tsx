@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Docs - AffiliateSwarm",
@@ -52,7 +53,7 @@ const docCards = [
   },
 ];
 
-const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || "https://affiliateswarm.ai";
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 const curlExample = `# Register your agent
 curl -s -X POST ${PLATFORM_URL}/api/v1/agents \\
@@ -88,8 +89,8 @@ export default function Docs() {
             Documentation
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
-            Everything you need to integrate with AffiliateSwarm. From quick start to
-            architecture deep-dives.
+            Everything you need to integrate with AffiliateSwarm. From quick
+            start to architecture deep-dives.
           </p>
         </div>
       </section>
@@ -102,9 +103,9 @@ export default function Docs() {
               <Link
                 key={card.title}
                 href={card.href}
-                className="group rounded-xl border border-[var(--v2-border)] p-6 transition-colors hover:border-[rgba(255,181,71,0.25)]"
+                className="group rounded-lg border border-[var(--v2-border)] p-6 transition-colors hover:border-[var(--v2-accent-border)]"
               >
-                <span className="rounded-md bg-[rgba(255,181,71,0.1)] px-2.5 py-1 text-xs font-medium text-[var(--v2-text-secondary)]">
+                <span className="rounded-md bg-[var(--v2-accent-muted)] px-2.5 py-1 text-xs font-medium text-[var(--v2-text-secondary)]">
                   {card.tag}
                 </span>
                 <h3 className="mt-4 font-semibold text-[var(--v2-text)] group-hover:text-[var(--v2-text-secondary)]">

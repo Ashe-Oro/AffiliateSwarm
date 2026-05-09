@@ -1,11 +1,15 @@
 # AffiliateSwarm Website Mockups - 2026-04-02
 
+> Historical note: this design note is superseded by the current
+> AffiliateSwarm.ai brand system. The demo routes referenced in the original
+> handoff were removed and should not be treated as current implementation
+> targets.
+
 ## Deliverables
 
-- Mockup index: `src/app/demo/page.tsx`
-- Mockup 1: `src/app/demo/regatta-mockup-1/page.tsx`
-- Mockup 2: `src/app/demo/regatta-mockup-2/page.tsx`
-- Mockup 3: `src/app/demo/regatta-mockup-3/page.tsx`
+- Current homepage: `src/app/page.tsx`
+- Current brand notes: `docs/designs/affiliateswarm-brand-refresh-2026-05-09.md`
+- Removed historical demo routes: `src/app/demo/**`
 
 ## Positioning Update
 
@@ -22,11 +26,11 @@
 - Responsive section composition and CTA prioritization
 - Design translation from copy strategy into UI structure
 
-## Mockup 1 - Harbor Ledger
+## Mockup 1 - Harbor Ledger (superseded)
 
 Intent:
 
-- Trust-first, calm maritime visual language.
+- Trust-first, calm visual language.
 - Emphasize escrow and verification confidence.
 - Make the agent + human operating model explicit in hero language.
 

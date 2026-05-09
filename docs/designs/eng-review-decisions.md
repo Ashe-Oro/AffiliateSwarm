@@ -52,4 +52,4 @@ Read this + `launch-strategy.md` to understand the full scope.
 - src/lib/auth/middleware.ts — 2 .catch(() => {}) on lastUsedAt
 
 ## Test Target: 60 total (27 existing + 33 new)
-See ~/.gstack/projects/omricohen-regatta/omri-master-test-plan-20260319-095200.md
+See the off-repo historical gstack master test plan from 2026-03-19.

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Advertiser Integration Guide - AffiliateSwarm",
@@ -8,9 +9,7 @@ export const metadata: Metadata = {
     "Step-by-step instructions for capturing referral codes and firing postbacks to integrate with AffiliateSwarm.",
 };
 
-const PLATFORM_URL =
-  process.env.NEXT_PUBLIC_APP_URL || "https://affiliateswarm.ai";
-const SHORT_URL = process.env.NEXT_PUBLIC_SHORT_URL || PLATFORM_URL;
+const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 const troubleshootingRows = [
   {
@@ -55,7 +54,8 @@ const troubleshootingRows = [
   },
   {
     error: "400 revenueCents is required",
-    cause: "Postback to a Percent-of-sale campaign (compensationModel: \"REV_SHARE\") without revenueCents",
+    cause:
+      'Postback to a Percent-of-sale campaign (compensationModel: "REV_SHARE") without revenueCents',
     fix: "Percent-of-sale campaigns compute payout as revenueCents × payoutPercentage ÷ 100. Include revenueCents on every postback for this campaign type.",
   },
 ];
@@ -87,7 +87,7 @@ const postbackFields = [
     type: "integer",
     required: "conditional",
     description:
-      "Revenue amount in cents (e.g. 9900 = $99.00). Must be non-negative. Required for Percent-of-sale campaigns (compensationModel: \"REV_SHARE\") — the affiliate payout is computed as revenueCents × payoutPercentage ÷ 100. Optional for flat-fee campaigns (CPL/CPA/CPC; recommended for dashboard revenue attribution).",
+      'Revenue amount in cents (e.g. 9900 = $99.00). Must be non-negative. Required for Percent-of-sale campaigns (compensationModel: "REV_SHARE") — the affiliate payout is computed as revenueCents × payoutPercentage ÷ 100. Optional for flat-fee campaigns (CPL/CPA/CPC; recommended for dashboard revenue attribution).',
   },
   {
     field: "metadata",
@@ -150,8 +150,9 @@ export default function IntegrationGuideDocs() {
             How It Works
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            AffiliateSwarm handles affiliate link tracking. Your job is to capture
-            the referral code and tell AffiliateSwarm when a conversion happens.
+            AffiliateSwarm handles affiliate link tracking. Your job is to
+            capture the referral code and tell AffiliateSwarm when a conversion
+            happens.
           </p>
 
           <CodeBlock label="End-to-end flow">{`User clicks affiliate link
@@ -182,7 +183,7 @@ AffiliateSwarm creates a verified lead, credits the affiliate`}</CodeBlock>
         {/* ── STEP 1: CAPTURE ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
               1
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -190,10 +191,11 @@ AffiliateSwarm creates a verified lead, credits the affiliate`}</CodeBlock>
             </h2>
           </div>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
-            When a user arrives via an AffiliateSwarm affiliate link, your landing URL
-            will include a <InlineCode>?swarm_ref=TRACKING_CODE</InlineCode>{" "}
-            parameter. You need to extract and store this value so you can
-            include it when reporting the conversion.
+            When a user arrives via an AffiliateSwarm affiliate link, your
+            landing URL will include a{" "}
+            <InlineCode>?swarm_ref=TRACKING_CODE</InlineCode> parameter. You
+            need to extract and store this value so you can include it when
+            reporting the conversion.
           </p>
 
           <div className="mt-6 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
@@ -283,7 +285,7 @@ if (isset($_GET['swarm_ref'])) {
         {/* ── BUYER INCENTIVE (OPTIONAL) ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.08)] font-[family-name:var(--font-geist-mono)] text-xs text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-soft)] font-[family-name:var(--font-geist-mono)] text-xs text-[var(--v2-text-secondary)]">
               +
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -414,9 +416,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
-              <strong>Note:</strong> Not all campaigns have buyer incentives.
-              If <InlineCode>?promo=</InlineCode> is absent from the tracking
-              URL, no discount is expected. The promo code handles the{" "}
+              <strong>Note:</strong> Not all campaigns have buyer incentives. If{" "}
+              <InlineCode>?promo=</InlineCode> is absent from the tracking URL,
+              no discount is expected. The promo code handles the{" "}
               <em>buyer&apos;s</em> discount; the affiliate&apos;s commission is
               handled separately via the postback.
             </p>
@@ -426,7 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         {/* ── STEP 2: POSTBACK ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
               2
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -435,8 +437,8 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
             When a user converts (purchase, signup, install, etc.), send a POST
-            request to AffiliateSwarm from your backend. This creates a verified lead
-            and credits the affiliate automatically.
+            request to AffiliateSwarm from your backend. This creates a verified
+            lead and credits the affiliate automatically.
           </p>
 
           <CodeBlock label="curl — fire a postback">{`curl -X POST ${PLATFORM_URL}/api/v1/postback \\
@@ -589,8 +591,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
               <InlineCode>swarm_ref</InlineCode> +{" "}
               <InlineCode>externalId</InlineCode> combination twice, the
               endpoint returns the existing lead (HTTP 200) instead of creating
-              a duplicate (HTTP 201). No double payouts. It&apos;s safe to
-              retry on failure.
+              a duplicate (HTTP 201). No double payouts. It&apos;s safe to retry
+              on failure.
             </p>
           </div>
 
@@ -598,26 +600,25 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
             Postback failures must not affect the buyer
           </h3>
           <p className="mt-3 text-[var(--v2-text-secondary)]">
-            A failed postback is an <strong>ops concern</strong>, never a
-            buyer concern. The buyer has already paid; their checkout has
-            succeeded; their confirmation experience must be visually
-            identical regardless of whether the postback returned{" "}
-            <InlineCode>200</InlineCode>, <InlineCode>4xx</InlineCode>,{" "}
-            <InlineCode>5xx</InlineCode>, timed out, or threw. Conversion
-            tracking is between you and AffiliateSwarm — the buyer is not part of
-            that conversation.
+            A failed postback is an <strong>ops concern</strong>, never a buyer
+            concern. The buyer has already paid; their checkout has succeeded;
+            their confirmation experience must be visually identical regardless
+            of whether the postback returned <InlineCode>200</InlineCode>,{" "}
+            <InlineCode>4xx</InlineCode>, <InlineCode>5xx</InlineCode>, timed
+            out, or threw. Conversion tracking is between you and AffiliateSwarm
+            — the buyer is not part of that conversation.
           </p>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+            <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-5">
               <h4 className="text-sm font-semibold uppercase tracking-wider text-emerald-400">
                 ✅ Do
               </h4>
               <ul className="mt-3 space-y-2 text-sm text-[var(--v2-text-secondary)]">
                 <li>
-                  Fire the postback from your <strong>backend</strong> —
-                  payment webhook or order-completion handler — never from
-                  the buyer&apos;s success page.
+                  Fire the postback from your <strong>backend</strong> — payment
+                  webhook or order-completion handler — never from the
+                  buyer&apos;s success page.
                 </li>
                 <li>
                   Log failures via <InlineCode>console.error</InlineCode> /{" "}
@@ -626,8 +627,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                 </li>
                 <li>
                   Catch and swallow exceptions inside the postback caller.
-                  Render the same success UI whether the postback succeeded
-                  or not.
+                  Render the same success UI whether the postback succeeded or
+                  not.
                 </li>
                 <li>
                   Retry transient failures (<InlineCode>5xx</InlineCode>,
@@ -637,20 +638,20 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                 </li>
               </ul>
             </div>
-            <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
+            <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-5">
               <h4 className="text-sm font-semibold uppercase tracking-wider text-red-400">
                 ❌ Don&apos;t
               </h4>
               <ul className="mt-3 space-y-2 text-sm text-[var(--v2-text-secondary)]">
                 <li>
-                  Render the postback response or error string to the buyer
-                  (no red &quot;AffiliateSwarm postback failed&quot; cards on the
+                  Render the postback response or error string to the buyer (no
+                  red &quot;AffiliateSwarm postback failed&quot; cards on the
                   confirmation page).
                 </li>
                 <li>
-                  Throw out of the postback caller into the checkout
-                  request handler — that&apos;s how error strings end up on
-                  the buyer&apos;s screen.
+                  Throw out of the postback caller into the checkout request
+                  handler — that&apos;s how error strings end up on the
+                  buyer&apos;s screen.
                 </li>
                 <li>
                   Block the buyer&apos;s confirmation page on the postback
@@ -658,8 +659,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                 </li>
                 <li>
                   Auto-retry <InlineCode>404 NOT_FOUND</InlineCode> — the{" "}
-                  <InlineCode>swarm_ref</InlineCode> doesn&apos;t match an active
-                  affiliate enrollment, and retrying won&apos;t fix it.
+                  <InlineCode>swarm_ref</InlineCode> doesn&apos;t match an
+                  active affiliate enrollment, and retrying won&apos;t fix it.
                 </li>
               </ul>
             </div>
@@ -668,7 +669,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             What happens when you fire a postback
           </h3>
-          <div className="mt-3 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
+          <div className="mt-3 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
             <div className="divide-y divide-[var(--v2-border)]">
               {[
                 {
@@ -700,7 +701,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                   key={item.step}
                   className="flex items-start gap-3 px-5 py-3"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                     {item.step}
                   </span>
                   <div>
@@ -720,7 +721,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
         {/* ── STEP 3: CONFIRM TRACKING ── */}
         <div className="mt-16">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-sm font-bold text-[var(--v2-text-secondary)]">
               3
             </span>
             <h2 className="text-2xl font-bold text-[var(--v2-text)]">
@@ -736,11 +737,12 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           <p className="mt-3 text-[var(--v2-text-secondary)]">
             There is no separate confirm-tracking endpoint. You verify your
             integration by firing a <strong>normal postback</strong> (same
-            endpoint, same body, <InlineCode>eventType: &quot;PURCHASE&quot;</InlineCode>)
-            with the <InlineCode>swarm_ref</InlineCode> set to your campaign&apos;s{" "}
+            endpoint, same body,{" "}
+            <InlineCode>eventType: &quot;PURCHASE&quot;</InlineCode>) with the{" "}
+            <InlineCode>swarm_ref</InlineCode> set to your campaign&apos;s{" "}
             <InlineCode>testTrackingCode</InlineCode> instead of a real
-            affiliate&apos;s code. AffiliateSwarm recognizes the test code, marks the
-            campaign as tracking-confirmed, and returns a special test
+            affiliate&apos;s code. AffiliateSwarm recognizes the test code,
+            marks the campaign as tracking-confirmed, and returns a special test
             response — no lead is created and no affiliate is paid.
           </p>
 
@@ -773,9 +775,11 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
-              <strong>Use the same code path you&apos;ll use in production.</strong>{" "}
-              Only the <InlineCode>swarm_ref</InlineCode> value differs. This proves
-              the integration end-to-end — not just that the endpoint is
+              <strong>
+                Use the same code path you&apos;ll use in production.
+              </strong>{" "}
+              Only the <InlineCode>swarm_ref</InlineCode> value differs. This
+              proves the integration end-to-end — not just that the endpoint is
               reachable. You only need to do this once per campaign.
             </p>
           </div>
@@ -787,13 +791,13 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
             Testing Your Integration
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            Walk a real postback through your own integration end-to-end
-            using your campaign&apos;s <strong>test tracking code</strong>.
+            Walk a real postback through your own integration end-to-end using
+            your campaign&apos;s <strong>test tracking code</strong>.
             AffiliateSwarm recognizes the test code and marks the campaign as
             tracking-confirmed; no lead is created and no affiliate is paid.
           </p>
 
-          <div className="mt-6 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
+          <div className="mt-6 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
             <div className="divide-y divide-[var(--v2-border)]">
               {[
                 {
@@ -802,8 +806,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                     <>
                       Read your campaign&apos;s{" "}
                       <InlineCode>testTrackingCode</InlineCode> from the
-                      create-campaign response, or from the campaign page
-                      in your dashboard.
+                      create-campaign response, or from the campaign page in
+                      your dashboard.
                     </>
                   ),
                 },
@@ -815,14 +819,14 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                       <InlineCode>
                         https://your-site.com/?swarm_ref=YOUR_TEST_CODE
                       </InlineCode>
-                      , so your capture path runs exactly as it would for a
-                      real affiliate.
+                      , so your capture path runs exactly as it would for a real
+                      affiliate.
                     </>
                   ),
                 },
                 {
                   step: "3",
-                  text: 'Complete a real conversion in your app (sign up, buy, whatever your CPA action is) so your backend fires a postback. Use the same code path you use in production — only the swarm_ref value differs.',
+                  text: "Complete a real conversion in your app (sign up, buy, whatever your CPA action is) so your backend fires a postback. Use the same code path you use in production — only the swarm_ref value differs.",
                 },
                 {
                   step: "4",
@@ -833,7 +837,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                   key={item.step}
                   className="flex items-start gap-3 px-5 py-3"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                     {item.step}
                   </span>
                   <p className="text-sm text-[var(--v2-text-secondary)]">
@@ -864,7 +868,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
               {
                 title: "Single-Page Apps (SPA)",
                 description:
-                  'If your site uses client-side routing, the ?swarm_ref= parameter may be lost on navigation. Capture it immediately on app initialization and store it in your state management (Redux, Zustand, etc.) or localStorage in addition to a cookie.',
+                  "If your site uses client-side routing, the ?swarm_ref= parameter may be lost on navigation. Capture it immediately on app initialization and store it in your state management (Redux, Zustand, etc.) or localStorage in addition to a cookie.",
               },
               {
                 title: "Delayed Conversions",
@@ -884,7 +888,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
             ].map((pattern) => (
               <div
                 key={pattern.title}
-                className="rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
+                className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5"
               >
                 <h3 className="font-semibold text-[var(--v2-text)]">
                   {pattern.title}
@@ -902,7 +906,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           <h2 className="text-2xl font-bold text-[var(--v2-text)]">
             Postback Field Reference
           </h2>
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -980,7 +984,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           <h2 className="text-2xl font-bold text-[var(--v2-text)]">
             Troubleshooting
           </h2>
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -1022,10 +1026,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
         </div>
 
         {/* ── SUMMARY ── */}
-        <div className="mt-16 rounded-xl border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
-          <h2 className="text-xl font-bold text-[var(--v2-text)]">
-            Summary
-          </h2>
+        <div className="mt-16 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-6">
+          <h2 className="text-xl font-bold text-[var(--v2-text)]">Summary</h2>
           <div className="mt-4 space-y-3">
             {[
               {
@@ -1033,8 +1035,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                 text: (
                   <>
                     <strong>Capture</strong> the{" "}
-                    <InlineCode>?swarm_ref=</InlineCode> parameter on your landing
-                    page and store it server-side
+                    <InlineCode>?swarm_ref=</InlineCode> parameter on your
+                    landing page and store it server-side
                   </>
                 ),
               },
@@ -1054,14 +1056,14 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                   <>
                     <strong>Confirm</strong> tracking once per campaign by
                     firing a test postback with{" "}
-                    <InlineCode>swarm_ref</InlineCode> set to your campaign&apos;s{" "}
-                    <InlineCode>testTrackingCode</InlineCode>
+                    <InlineCode>swarm_ref</InlineCode> set to your
+                    campaign&apos;s <InlineCode>testTrackingCode</InlineCode>
                   </>
                 ),
               },
             ].map((item) => (
               <div key={item.step} className="flex items-start gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(255,181,71,0.1)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--v2-accent-muted)] font-[family-name:var(--font-geist-mono)] text-xs font-bold text-[var(--v2-text-secondary)]">
                   {item.step}
                 </span>
                 <p className="text-sm text-[var(--v2-text-secondary)]">
@@ -1072,8 +1074,8 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           </div>
           <p className="mt-4 text-sm text-[var(--v2-text-secondary)]">
             That&apos;s it. Three steps, and your platform is connected to
-            AffiliateSwarm&apos;s affiliate network. Questions? Reach out via your
-            dashboard or email{" "}
+            AffiliateSwarm&apos;s affiliate network. Questions? Reach out via
+            your dashboard or email{" "}
             <a
               href="mailto:support@affiliateswarm.ai"
               className="text-[var(--v2-accent-light)] hover:underline"

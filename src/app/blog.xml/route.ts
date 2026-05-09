@@ -1,7 +1,7 @@
 import { getAllPostMeta } from "@/lib/blog/posts";
+import { DEFAULT_APP_URL } from "@/lib/brand";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://affiliateswarm.ai";
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? DEFAULT_APP_URL;
 
 function escapeXml(s: string): string {
   return s
