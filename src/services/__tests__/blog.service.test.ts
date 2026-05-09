@@ -211,8 +211,8 @@ describe("createBlogPost", () => {
 
     await expect(
       createBlogPost(
-        { ...input, slug: "hello-affiliateswarm" },
-        { reservedSlugs: new Set(["hello-affiliateswarm"]) }
+        { ...input, slug: "reserved-file-post" },
+        { reservedSlugs: new Set(["reserved-file-post"]) }
       )
     ).rejects.toThrow(ConflictError);
   });
