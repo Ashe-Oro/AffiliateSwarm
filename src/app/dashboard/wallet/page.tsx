@@ -92,7 +92,7 @@ export default async function DashboardWalletPage() {
   const enableBankTransfer = enableStripeDeposits && ENABLE_BANK_TRANSFER();
 
   const balanceCards = [
-    { title: "Available", value: formatCents(available), description: "Ready to deposit into campaigns" },
+    { title: "Available", value: formatCents(available), description: "Available to campaigns" },
     { title: "Committed to Campaigns", value: formatCents(heldInEscrow), description: "Held in escrow for active campaigns" },
     { title: "Committed to Payouts", value: formatCents(pendingPayout), description: "Owed to affiliates, awaiting release" },
     { title: "Paid to Affiliates", value: formatCents(paidToAffiliates), description: "Released from escrow to affiliates" },
