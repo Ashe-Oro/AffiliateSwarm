@@ -69,7 +69,7 @@
 - **#19, #26, #27, #28**: Closed (by design / already implemented)
 
 ### Phase 2 — Security Gates
-- **#4**: `requireEmailVerified()` middleware blocks: campaign creation, Stripe deposits, campaign applications
+- **#4**: `requireEmailVerified()` middleware blocks: campaign creation, deposits, campaign applications
 - **#8**: `trackingConfirmedAt` field on Campaign; new `POST /confirm-tracking` endpoint; activation gated on it
 
 ### Phase 3 — Payout Infrastructure
@@ -82,11 +82,11 @@
 - **#11**: Admin API endpoints for suspend/activate agents + process/reject payouts; dashboard pages enhanced with action buttons
 
 ### Phase 6 — Funding Model Re-architecture
-- **#25**: `StripeCheckoutSession.campaignId` now optional; deposits go to wallet; `allocateBudget()` moves funds wallet→escrow; deposit form defaults to "Account balance"
+- **#25**: Checkout session `campaignId` now optional; deposits go to wallet; `allocateBudget()` moves funds wallet→escrow; deposit form defaults to "Account balance"
 
 ### Schema Changes (migration needed)
 - `Campaign.holdingPeriodDays Int @default(30)`
 - `Campaign.trackingConfirmedAt DateTime?`
 - `EscrowHold.releaseAt DateTime?`
 - `HoldStatus.PENDING_RELEASE` enum value
-- `StripeCheckoutSession.campaignId` now optional
+- Checkout session `campaignId` now optional

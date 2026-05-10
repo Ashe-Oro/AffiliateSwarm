@@ -320,6 +320,7 @@ export interface PayoutCancelledEvent {
     payoutRequestId: string;
     affiliateId: string;
     amountCents: number;
+    reason?: string;
   };
 }
 

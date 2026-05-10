@@ -2,10 +2,10 @@
  * Staging E2E — Full money path on the deployed site (affiliateswarm.ai).
  *
  * Fully automated — uses throwawaymail.app for email verification
- * and real Stripe test-mode payments. No manual steps required.
+ * and real hosted checkout test-mode payments. No manual steps required.
  *
  * Run:
- *   BASE_URL=https://affiliateswarm.ai STRIPE_SECRET_KEY=sk_test_... \
+ *   BASE_URL=https://affiliateswarm.ai STRIPE_SECRET_KEY=sk_test_... ENABLE_STRIPE_DEPOSITS=true \
  *     npx playwright test tests/e2e/staging-stripe.spec.ts
  */
 
@@ -20,7 +20,13 @@ import {
 
 const RUN_ID = Date.now();
 const BASE_URL = process.env.BASE_URL || "https://affiliateswarm.ai";
-const HAS_STRIPE = !!process.env.STRIPE_SECRET_KEY;
+function envEnabled(name: string) {
+  return ["1", "true", "yes", "on"].includes(
+    (process.env[name] ?? "").toLowerCase()
+  );
+}
+const HAS_STRIPE =
+  !!process.env.STRIPE_SECRET_KEY && envEnabled("ENABLE_STRIPE_DEPOSITS");
 const THROWAWAY_API = "https://throwawaymail.app/api";
 
 // ── Throwaway Mail Helpers ────────────────────────────────────────────────
@@ -165,7 +171,7 @@ test.describe("Phase 1: Advertiser Setup", () => {
 
   test("1.4 fund campaign via Stripe checkout ($10)", async ({ page }) => {
     test.setTimeout(90_000);
-    test.skip(!HAS_STRIPE, "STRIPE_SECRET_KEY not set");
+    test.skip(!HAS_STRIPE, "STRIPE_SECRET_KEY or ENABLE_STRIPE_DEPOSITS not set");
 
     const { status, json } = await api(
       "POST",

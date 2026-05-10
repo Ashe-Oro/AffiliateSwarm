@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendPayout, recoverStuckPayout } from "@/services/chain.service";
 import { processAchPayout } from "@/services/stripe.service";
+import { cancelBankTransferPayoutForDisabledRail } from "@/services/escrow.service";
 import { getResend, FROM } from "@/lib/email";
+import { ENABLE_STRIPE_WITHDRAWALS } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 
 // Rows that have been PROCESSING longer than this without reaching a terminal
@@ -46,6 +48,7 @@ export async function GET(req: NextRequest) {
     let processed = 0;
     let failed = 0;
     let skipped = 0;
+    let cancelledDisabledBank = 0;
 
     for (const payout of pendingPayouts) {
       try {
@@ -59,6 +62,15 @@ export async function GET(req: NextRequest) {
             );
           }
         } else if (payout.method === "BANK_TRANSFER") {
+          if (!ENABLE_STRIPE_WITHDRAWALS()) {
+            await cancelBankTransferPayoutForDisabledRail(payout.id);
+            cancelledDisabledBank++;
+            console.warn(
+              `[process-payouts] Cancelled bank payout ${payout.id}: bank withdrawals disabled`
+            );
+            continue;
+          }
+
           const result = await processAchPayout(payout.id);
           if (result.success) processed++;
           else {
@@ -119,6 +131,7 @@ export async function GET(req: NextRequest) {
       processed,
       failed,
       skipped,
+      cancelledDisabledBank,
       stuckFound: stuckPayouts.length,
       recoveredCompleted,
       recoveredFailed,
@@ -128,7 +141,7 @@ export async function GET(req: NextRequest) {
     };
 
     console.log(
-      `[process-payouts] total=${summary.total} processed=${processed} failed=${failed} skipped=${skipped} ` +
+      `[process-payouts] total=${summary.total} processed=${processed} failed=${failed} skipped=${skipped} cancelledDisabledBank=${cancelledDisabledBank} ` +
         `stuckFound=${summary.stuckFound} recoveredCompleted=${recoveredCompleted} recoveredFailed=${recoveredFailed} ` +
         `recoveredReset=${recoveredReset} recoveredInFlight=${recoveredInFlight} recoverErrors=${recoverErrors}`
     );

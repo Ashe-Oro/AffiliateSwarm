@@ -24,8 +24,8 @@ const systemLayers = [
   {
     name: "Escrow & Payments",
     description:
-      "Double-entry ledger with campaign escrow accounts. Funds held on lead submission, released on verification. Deposits via credit card, ACH, or USDC on Base.",
-    tech: "Double-entry ledger, Stripe, USDC, Base (8453)",
+      "Double-entry ledger with campaign escrow accounts. Funds held on lead submission, released on verification. Deposits and payouts settle as USDC on Base.",
+    tech: "Double-entry ledger, USDC, Base (8453)",
   },
   {
     name: "Chain Layer",
@@ -82,9 +82,9 @@ const dataModels = [
       "Onchain USDC transfer with tx hash, block number, and confirmation status",
   },
   {
-    name: "StripeCheckoutSession",
+    name: "CheckoutSession",
     description:
-      "Tracks card/ACH deposits through Stripe Checkout with fee and status",
+      "Tracks feature-flagged card or bank deposits with fee and status",
   },
   {
     name: "Wallet",
@@ -207,7 +207,7 @@ export default function ArchitectureDocs() {
                 step: "1",
                 title: "Fund Escrow",
                 description:
-                  "Advertiser funds escrow via credit card (instant, 3% fee), ACH bank transfer (no fee), or USDC on Base. Minimum deposit $10. Escrow credited on payment confirmation.",
+                  "Advertiser funds escrow with USDC on Base. Minimum deposit $10. Escrow is credited after onchain confirmation.",
               },
               {
                 step: "2",

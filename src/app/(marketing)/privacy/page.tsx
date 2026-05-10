@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Privacy Policy - AffiliateSwarm",
-  description: "AffiliateSwarm privacy policy describing how we collect, use, and protect your data.",
+  description:
+    "AffiliateSwarm privacy policy describing how we collect, use, and protect your data.",
 };
 
 const EFFECTIVE_DATE = "April 13, 2026";
@@ -12,7 +13,7 @@ const sections = [
   {
     title: "1. Information We Collect",
     content:
-      "We collect information you provide when registering an account: email address, display name, and wallet addresses. For advertisers, we collect payment information processed by Stripe (we do not store card numbers). For affiliates, we collect audience profile data you optionally provide (audience size, channels, content type, geographic focus). We also collect API usage logs, IP addresses, and browser metadata for security and analytics purposes.",
+      "We collect information you provide when registering an account: email address, display name, and wallet addresses. For advertisers, we collect USDC deposit and wallet details needed to operate payments. For affiliates, we collect audience profile data you optionally provide (audience size, channels, content type, geographic focus). We also collect API usage logs, IP addresses, and browser metadata for security and analytics purposes.",
   },
   {
     title: "2. How We Use Your Information",
@@ -27,12 +28,12 @@ const sections = [
   {
     title: "4. Payment Data",
     content:
-      "Credit card and bank account information is processed by Stripe and subject to Stripe's privacy policy. We store only Stripe session IDs and transaction references — never raw card numbers or bank credentials. USDC transactions on Base are recorded by blockchain transaction hash and wallet address.",
+      "USDC transactions on Base are recorded by blockchain transaction hash and wallet address. We do not store raw private keys in client-accessible storage.",
   },
   {
     title: "5. Data Sharing",
     content:
-      "We share data with: (a) Stripe for payment processing; (b) Resend for transactional email delivery; (c) Vercel for hosting and serverless infrastructure; (d) law enforcement when required by valid legal process. Advertisers see affiliate display names and lead data for their campaigns. Affiliates see campaign details and advertiser display names. Neither party sees the other's email address or financial details unless voluntarily shared.",
+      "We share data with: (a) Resend for transactional email delivery; (b) Vercel for hosting and serverless infrastructure; (c) law enforcement when required by valid legal process. Advertisers see affiliate display names and lead data for their campaigns. Affiliates see campaign details and advertiser display names. Neither party sees the other's email address or financial details unless voluntarily shared.",
   },
   {
     title: "6. Data Retention",

@@ -68,8 +68,10 @@ import {
   calculatePayout,
   processMaturedHolds,
   cancelPayout,
+  cancelBankTransferPayoutForDisabledRail,
   classifyFundingError,
 } from "@/services/escrow.service";
+import { notify } from "@/services/notification.service";
 import {
   ForbiddenError,
   ValidationError,
@@ -704,6 +706,7 @@ describe("getWallet", () => {
 describe("requestPayout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.ENABLE_STRIPE_WITHDRAWALS;
   });
 
   it("happy path: moves funds to pendingPayout and creates payout request", async () => {
@@ -809,7 +812,18 @@ describe("requestPayout", () => {
     ).rejects.toThrow("valid chainAddress");
   });
 
-  it("accepts BANK_TRANSFER without chainAddress", async () => {
+  it("rejects BANK_TRANSFER when Stripe withdrawals are disabled", async () => {
+    await expect(
+      requestPayout(AFFILIATE_ID, 2000, "BANK_TRANSFER", {
+        routingNumber: "123456",
+        accountNumber: "789012",
+      })
+    ).rejects.toThrow("Bank withdrawals are not currently available");
+  });
+
+  it("accepts BANK_TRANSFER without chainAddress when Stripe withdrawals are enabled", async () => {
+    process.env.ENABLE_STRIPE_WITHDRAWALS = "true";
+
     const wallet = mockWallet({ agentId: AFFILIATE_ID, availableCents: 5000 });
     const payout = {
       id: "payout-2",
@@ -1109,6 +1123,47 @@ describe("cancelPayout", () => {
         }),
       })
     );
+  });
+
+  it("cancels a disabled bank-transfer payout and tells the affiliate to re-request USDC", async () => {
+    mockTx.payoutRequest.findUnique.mockResolvedValue(
+      mockPayout({ method: "BANK_TRANSFER" })
+    );
+    mockTx.wallet.update.mockResolvedValue({});
+    mockTx.payoutRequest.update.mockResolvedValue(
+      mockPayout({ method: "BANK_TRANSFER", status: "CANCELLED" })
+    );
+    mockTx.ledgerEntry.create.mockResolvedValue({});
+
+    const result = await cancelBankTransferPayoutForDisabledRail(PAYOUT_ID);
+
+    expect(result.status).toBe("CANCELLED");
+    expect(mockTx.wallet.update).toHaveBeenCalledWith({
+      where: { id: WALLET_ID },
+      data: {
+        availableCents: { increment: 500 },
+        pendingPayoutCents: { decrement: 500 },
+      },
+    });
+    expect(mockTx.payoutRequest.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "CANCELLED",
+          failureReason:
+            "Bank withdrawals are no longer available. Please request a USDC payout on Base.",
+        }),
+      })
+    );
+    expect(notify).toHaveBeenCalledWith({
+      type: "payout.cancelled",
+      data: expect.objectContaining({
+        payoutRequestId: PAYOUT_ID,
+        affiliateId: AFFILIATE_ID,
+        amountCents: 500,
+        reason:
+          "Bank withdrawals are no longer available. Please request a USDC payout on Base.",
+      }),
+    });
   });
 
   it("throws NotFoundError for a missing payout", async () => {

@@ -12,7 +12,7 @@ const BuyerIncentiveTypeEnum = z.enum([
   "CUSTOM",
 ]);
 
-// Stripe coupon ID format: alphanumeric, underscore, hyphen.
+// Coupon ID format: alphanumeric, underscore, hyphen.
 const BuyerCouponCodeSchema = z
   .string()
   .max(100)

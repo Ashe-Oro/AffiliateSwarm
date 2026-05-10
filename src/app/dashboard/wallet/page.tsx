@@ -19,6 +19,10 @@ import {
 import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { requireDashboardAuth } from "@/lib/auth/dashboard";
+import {
+  ENABLE_BANK_TRANSFER,
+  ENABLE_STRIPE_DEPOSITS,
+} from "@/lib/feature-flags";
 import { DepositForm } from "@/components/dashboard/deposit-form";
 import { DepositStatusBanner } from "@/components/dashboard/deposit-status-banner";
 
@@ -84,9 +88,11 @@ export default async function DashboardWalletPage() {
   const available = wallet?.availableCents ?? 0;
   const pendingPayout = wallet?.pendingPayoutCents ?? 0;
   const total = available + (wallet?.heldCents ?? 0) + pendingPayout;
+  const enableStripeDeposits = ENABLE_STRIPE_DEPOSITS();
+  const enableBankTransfer = enableStripeDeposits && ENABLE_BANK_TRANSFER();
 
   const balanceCards = [
-    { title: "Available", value: formatCents(available), description: "Ready to deposit into campaigns" },
+    { title: "Available", value: formatCents(available), description: "Available to campaigns" },
     { title: "Committed to Campaigns", value: formatCents(heldInEscrow), description: "Held in escrow for active campaigns" },
     { title: "Committed to Payouts", value: formatCents(pendingPayout), description: "Owed to affiliates, awaiting release" },
     { title: "Paid to Affiliates", value: formatCents(paidToAffiliates), description: "Released from escrow to affiliates" },
@@ -98,8 +104,7 @@ export default async function DashboardWalletPage() {
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Wallet</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Add funds with credit card, bank transfer, or crypto.
-          Then allocate to your campaigns.
+          Add funds with USDC on Base. Then allocate to your campaigns.
         </p>
       </div>
 
@@ -127,15 +132,18 @@ export default async function DashboardWalletPage() {
         <CardHeader>
           <CardTitle>Add Funds</CardTitle>
           <CardDescription>
-            {process.env.ENABLE_BANK_TRANSFER === "true"
+            {enableBankTransfer
               ? "Choose a payment method to add funds to your wallet. Card payments are instant (3% fee), ACH takes 3-5 days (no fee), and crypto deposits are verified onchain."
-              : "Choose a payment method to add funds to your wallet. Card payments are instant (3% fee), and crypto deposits are verified onchain."}
+              : enableStripeDeposits
+                ? "Choose a payment method to add funds to your wallet. Card payments are instant (3% fee), and crypto deposits are verified onchain."
+                : "Send USDC on Base to add funds to your wallet. Deposits are detected automatically once confirmed onchain."}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <DepositForm
             depositAddress={wallet?.depositAddress ?? null}
-            enableBankTransfer={process.env.ENABLE_BANK_TRANSFER === "true"}
+            enableStripeDeposits={enableStripeDeposits}
+            enableBankTransfer={enableBankTransfer}
           />
         </CardContent>
       </Card>

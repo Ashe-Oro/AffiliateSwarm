@@ -7,6 +7,12 @@
 import { readFileSync } from "fs";
 
 const BASE_URL = process.argv[2] || "https://affiliateswarm.ai";
+const stripeDepositsEnabled = ["1", "true", "yes", "on"].includes(
+  (process.env.ENABLE_STRIPE_DEPOSITS ?? "").toLowerCase()
+);
+const bankTransferEnabled = ["1", "true", "yes", "on"].includes(
+  (process.env.ENABLE_BANK_TRANSFER ?? "").toLowerCase()
+);
 
 let passed = 0;
 let failed = 0;
@@ -294,10 +300,12 @@ async function main() {
     assert(json.data.referrals.total >= 1, "Should have at least 1 referral (from our E2E agent)");
   });
 
-  // ── 12. Stripe Deposits ──
-  console.log("\n12. Stripe Deposits\n");
+  // ── 12. Card/Bank Deposits ──
+  console.log("\n12. Card/Bank Deposits\n");
 
-  if (advertiserKey && advertiserCampaignId) {
+  if (!stripeDepositsEnabled) {
+    console.log("  SKIP  card/bank deposit tests (ENABLE_STRIPE_DEPOSITS not set)\n");
+  } else if (advertiserKey && advertiserCampaignId) {
     await test("POST /api/v1/wallets/:agentId/deposits/stripe — create card checkout", async () => {
       const { status, json } = await api(
         "POST",
@@ -306,21 +314,25 @@ async function main() {
         advertiserKey
       );
       assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
-      assert(json.data.url, "Should return a Stripe Checkout URL");
-      assert(json.data.url.includes("checkout.stripe.com"), `URL should be Stripe, got: ${json.data.url}`);
+      assert(json.data.url, "Should return a hosted checkout URL");
+      assert(json.data.url.includes("checkout.stripe.com"), `Unexpected checkout URL: ${json.data.url}`);
     });
 
-    await test("POST /api/v1/wallets/:agentId/deposits/stripe — create ACH checkout", async () => {
-      const { status, json } = await api(
-        "POST",
-        `/api/v1/wallets/${advertiserAgentId}/deposits/stripe`,
-        { campaignId: advertiserCampaignId, amountCents: 10000, paymentMethod: "ach" },
-        advertiserKey
-      );
-      assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
-      assert(json.data.url, "Should return a Stripe Checkout URL");
-      assert(json.data.url.includes("checkout.stripe.com"), `URL should be Stripe, got: ${json.data.url}`);
-    });
+    if (bankTransferEnabled) {
+      await test("POST /api/v1/wallets/:agentId/deposits/stripe — create ACH checkout", async () => {
+        const { status, json } = await api(
+          "POST",
+          `/api/v1/wallets/${advertiserAgentId}/deposits/stripe`,
+          { campaignId: advertiserCampaignId, amountCents: 10000, paymentMethod: "ach" },
+          advertiserKey
+        );
+        assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
+        assert(json.data.url, "Should return a hosted checkout URL");
+        assert(json.data.url.includes("checkout.stripe.com"), `Unexpected checkout URL: ${json.data.url}`);
+      });
+    } else {
+      console.log("  SKIP  ACH checkout test (ENABLE_BANK_TRANSFER not set)\n");
+    }
 
     await test("POST /api/v1/wallets/:agentId/deposits/stripe — reject below minimum", async () => {
       const { status, json } = await api(

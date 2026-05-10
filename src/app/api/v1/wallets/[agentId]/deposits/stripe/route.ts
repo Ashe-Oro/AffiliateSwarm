@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { successResponse, errorResponse } from "@/lib/api-response";
 import { withAuth, getAuthContext, requireEmailVerified } from "@/lib/auth";
+import {
+  ENABLE_BANK_TRANSFER,
+  ENABLE_STRIPE_DEPOSITS,
+} from "@/lib/feature-flags";
 import { CreateStripeCheckoutSchema } from "@/lib/validators/stripe";
 import { createCheckoutSession } from "@/services/stripe.service";
 import { AppError } from "@/lib/errors";
@@ -19,6 +23,22 @@ export const POST = withAuth(
 
       const body = await req.json();
       const parsed = CreateStripeCheckoutSchema.parse(body);
+
+      if (!ENABLE_STRIPE_DEPOSITS()) {
+        return errorResponse(
+          "PAYMENT_METHOD_DISABLED",
+          "Card and bank deposits are not currently available. Please deposit USDC on Base.",
+          400
+        );
+      }
+
+      if (parsed.paymentMethod === "ach" && !ENABLE_BANK_TRANSFER()) {
+        return errorResponse(
+          "PAYMENT_METHOD_DISABLED",
+          "Bank transfer deposits are not currently available. Please use card or USDC on Base.",
+          400
+        );
+      }
 
       const result = await createCheckoutSession(
         agentId,

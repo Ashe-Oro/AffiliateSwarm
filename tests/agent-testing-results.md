@@ -131,7 +131,7 @@ POST /api/v1/wallets/:agentId/deposits
 ```
 
 **PASS criteria:**
-- [x] Direct deposit method works (no Stripe needed for testing)
+- [x] Direct deposit method works without external payment rails
 - [x] Escrow balance updated to 50000 cents
 - [x] Status set to FUNDED
 

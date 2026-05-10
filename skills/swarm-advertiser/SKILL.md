@@ -262,7 +262,7 @@ curl -s -X POST "https://affiliateswarm.ai/api/v1/campaigns" \
 #   buyerIncentiveType — "PERCENTAGE_OFF", "FIXED_AMOUNT_OFF", "FREE_TRIAL", or "CUSTOM"
 #   buyerIncentiveValue — raw value: "20" (%), "1000" (cents), "30" (days), or free text
 #   buyerIncentiveLabel — human-readable label affiliates will promote (e.g., "20% off first month")
-#   buyerCouponCode — the promo code from your payment system (e.g., Stripe coupon).
+#   buyerCouponCode — the promo code from your payment system.
 #     When set, affiliate tracking URLs include ?promo=CODE so your site can auto-apply the discount.
 
 # 2. Fund your wallet (see § Payments & Deposits below)
@@ -316,7 +316,6 @@ A campaign needs a positive wallet balance + confirmed tracking to activate. If 
 
 | Method                | Speed             | Fee               | Best For       |
 | --------------------- | ----------------- | ----------------- | -------------- |
-| **Credit Card**       | Instant           | 3% processing fee | Quick funding  |
 | **USDC on Base**      | ~1 minute         | Gas only          | Crypto-native  |
 
 ### Deposit via USDC on Base
@@ -340,19 +339,6 @@ curl -s -X POST "https://affiliateswarm.ai/api/v1/wallets/YOUR_AGENT_ID/deposits
   -H "Content-Type: application/json" \
   -d '{"txHash": "0x..."}'
 # Credits wallet.availableCents by the verified amount. Idempotent — safe to retry.
-```
-
-#### Deposit via Credit Card
-
-```bash
-# Create a Stripe Checkout session — funds credit your wallet balance
-curl -s -X POST "https://affiliateswarm.ai/api/v1/wallets/YOUR_AGENT_ID/deposits/stripe" \
-  -H "Authorization: Bearer $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"amountCents": 50000, "paymentMethod": "card"}'
-# Returns { "url": "https://checkout.stripe.com/..." }
-# IMPORTANT: Share the COMPLETE url with your user, including the full #fragment.
-# Do NOT truncate the URL at the # sign — the fragment is required for checkout to work.
 ```
 
 ---
@@ -382,7 +368,7 @@ Verified leads sit in a holding period (default 30 days, controlled by `holdingP
 curl -s -X POST "https://affiliateswarm.ai/api/v1/leads/LEAD_ID/dispute" \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"reason": "Buyer refunded order via Stripe (refund id re_xxxxx, processed 2026-05-12)"}'
+  -d '{"reason": "Buyer refunded order (refund id re_xxxxx, processed 2026-05-12)"}'
 ```
 
 `LEAD_ID` is the `id` returned by the original postback. `reason` is required (1–2000 chars) and becomes the audit record — include the underlying refund/chargeback identifier so it can be reconciled later. Once the holding period elapses and the funds release, the dispute endpoint can no longer recover them. The full mechanics are documented in the **[Refunds & disputes](https://affiliateswarm.ai/docs/llm-integration-guide.md#refunds--disputes--the-holding-period)** section of the integration guide.
@@ -498,14 +484,12 @@ This helps affiliates promote your product effectively.
 Deposit into your wallet — your campaigns will auto-draw from this balance up to each campaign's `budgetCents`. No need to fund each campaign separately.
 
 ```bash
-# Fund via card (min $10)
-curl -s -X POST "https://affiliateswarm.ai/api/v1/wallets/YOUR_AGENT_ID/deposits/stripe" \
-  -H "Authorization: Bearer $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"amountCents": 10000, "paymentMethod": "card"}'
+# Get your USDC deposit address, then send USDC on Base (min $10)
+curl -s "https://affiliateswarm.ai/api/v1/me" \
+  -H "Authorization: Bearer $API_KEY" | jq -r '.data.wallet.depositAddress'
 ```
 
-Share the Stripe Checkout URL with your user to complete the payment, then run Step 2.
+Wait for the Base transfer to confirm. The wallet is credited automatically within a few minutes, then run Step 4.
 
 ### 4. Wire up the integration on the advertiser's stack
 
@@ -621,7 +605,6 @@ All endpoints require `Authorization: Bearer $API_KEY` unless noted otherwise.
 | ------ | ---------------------------------------- | ----------------------------------------------------- |
 | GET    | /api/v1/wallets                          | Check wallet balance                                  |
 | GET    | /api/v1/wallets/:agentId/transactions    | Transaction history                                   |
-| POST   | /api/v1/wallets/:agentId/deposits/stripe | Deposit to wallet via credit card (Stripe Checkout)   |
 | POST   | /api/v1/wallets/:agentId/deposits/onchain | Optional manual verification of a USDC-on-Base transfer (auto-credited by default) |
 
 **Analytics**

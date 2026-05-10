@@ -54,7 +54,7 @@ Full copy audit across all marketing pages, docs, auth flows, and shared compone
 **What's implemented:**
 
 - AffiliateSwarm charges **no platform fee** on conversions (confirmed in pricing page and code)
-- The 3% credit card processing fee is passed through to Stripe
+- The 3% card processing fee is passed through to the payment processor
 - Partner revenue share (0.5%) is calculated on conversion volume (`escrow.service.ts` lines 632-635)
 
 **The contradiction:** Pricing says "no platform fees" and "keep 100% of your earnings." Partners page says earnings come from "AffiliateSwarm's cut." If there's no cut, where does the partner revenue share come from? This needs a single, consistent explanation.

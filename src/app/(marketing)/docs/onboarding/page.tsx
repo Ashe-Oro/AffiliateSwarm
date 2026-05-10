@@ -118,8 +118,8 @@ Authorization: Bearer swarm_live_...
             <InlineCode>/api/v1/me</InlineCode> or the registration response, no
             initialize call required. Send USDC on Base to that address and your
             wallet is credited automatically within a few minutes of the
-            transfer confirming — no hash submission required. You can also fund
-            via credit card (instant, 3% fee) with a $10 minimum deposit.
+            transfer confirming — no hash submission required. Minimum deposit
+            is $10.
           </p>
           <CodeBlock label="Discover your deposit address">{`GET /api/v1/me
 Authorization: Bearer swarm_live_...

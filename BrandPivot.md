@@ -676,11 +676,11 @@ Critical cron rule:
 
 Recommended Vercel environment variable environments:
 
-- Production: real production DB, real Base mainnet CDP, real Stripe/Resend, real domain.
-- Preview: preview DB or sandbox DB, Base Sepolia or mock CDP, test Stripe/Resend where possible.
+- Production: real production DB, real Base mainnet CDP, real Resend, real domain.
+- Preview: preview DB or sandbox DB, Base Sepolia or mock CDP, test email provider where possible.
 - Development: local or dev DB, Base Sepolia or mock CDP.
 
-Do not point Vercel Preview deployments at production `DATABASE_URL`, production CDP credentials, or production Stripe webhook secrets unless there is an explicit emergency reason.
+Do not point Vercel Preview deployments at production `DATABASE_URL`, production CDP credentials, or production payment webhook secrets unless there is an explicit emergency reason.
 
 ### Vercel Environment Variables
 
@@ -712,13 +712,6 @@ Email:
 RESEND_API_KEY
 ```
 
-Stripe:
-
-```txt
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-```
-
 Chain/CDP:
 
 ```txt
@@ -745,7 +738,7 @@ Because this is a fresh deployment, generate new values for every secret and do 
 - Generate a new `ADMIN_SECRET`.
 - Generate a new `CRON_SECRET`.
 - Generate new CDP credentials and `CDP_WALLET_SECRET`.
-- Generate new Stripe webhook secrets for the AffiliateSwarm endpoint.
+- Keep card/bank processor credentials unset until that rail is explicitly enabled.
 - Generate or configure new Resend/domain credentials for `affiliateswarm.ai`.
 
 Old `REGATTA_*` fallbacks should not be needed outside removed MCP server and SDK paths. Prefer documenting and setting new `AFFILIATESWARM_*` names only.
@@ -785,7 +778,7 @@ escrow accounts and escrow holds
 ledger entries
 payout requests
 chain transactions
-stripe checkout sessions
+checkout sessions
 webhook subscriptions
 ```
 
@@ -924,15 +917,13 @@ CDP verification checklist:
 
 ### Payment And Webhook Setup
 
-Although the requested scope is Vercel, database, and CDP, the production app also depends on Stripe and Resend.
+Although the requested scope is Vercel, database, and CDP, the production app also depends on Resend. Card and bank payment rails remain feature-flagged off for the USDC launch.
 
-Stripe:
+Card/bank rail:
 
-- Create or select the Stripe account AffiliateSwarm will use.
-- Add the webhook endpoint for `https://affiliateswarm.ai/api/webhooks/stripe`.
-- Set the resulting new `STRIPE_WEBHOOK_SECRET` in Vercel Production.
-- Set the matching `STRIPE_SECRET_KEY` in Vercel Production.
-- Verify checkout success/cancel URLs use `affiliateswarm.ai`.
+- Leave processor credentials unset until this rail is explicitly enabled.
+- Keep webhook configuration disabled while Base USDC is the only live funding and payout rail.
+- Verify success/cancel URLs use `affiliateswarm.ai` before enabling this rail later.
 
 Resend/email:
 
@@ -949,7 +940,7 @@ Recommended runbook for the fresh AffiliateSwarm deployment:
 3. Create a fresh AffiliateSwarm production Postgres database.
 4. Create a separate preview/staging database if preview flows will be tested.
 5. Create fresh production secrets: `HMAC_ENCRYPTION_KEY`, `ADMIN_SECRET`, `CRON_SECRET`.
-6. Create/configure fresh Stripe and Resend credentials for AffiliateSwarm.
+6. Create/configure fresh Resend credentials for AffiliateSwarm; leave optional card/bank processor credentials disabled.
 7. Create/configure fresh Coinbase CDP production credentials, wallet secret, Base RPC URL, and paymaster URL.
 8. Configure Vercel Production env vars.
 9. Configure Vercel Preview env vars with safe preview DB and Base Sepolia/mock CDP.
@@ -960,7 +951,7 @@ Recommended runbook for the fresh AffiliateSwarm deployment:
 14. Verify login/signup on production with a test account.
 15. Verify a new API key can be generated and used.
 16. Verify CDP creates a new test deposit address in the intended environment.
-17. Verify Stripe webhook endpoint and Resend domain.
+17. Verify Base USDC deposit detection and Resend domain.
 18. Add/verify Vercel domains for `affiliateswarm.ai`.
 19. Enable/monitor AffiliateSwarm crons.
 20. Watch logs for `detect-deposits`, `sweep`, `process-holds`, `process-payouts`, and `email-retry-sweep`.
@@ -968,8 +959,8 @@ Recommended runbook for the fresh AffiliateSwarm deployment:
 Rollback plan:
 
 - Because there is no old production data or domain to preserve, rollback means disabling the new Vercel deployment, fixing configuration/code, and redeploying.
-- If any real deposits, payouts, or Stripe payments have occurred, preserve the new production DB and logs before disabling anything.
-- Do not delete the fresh CDP project, database, or Stripe webhook until any real funds/events are reconciled.
+- If any real deposits, payouts, or payment processor events have occurred, preserve the new production DB and logs before disabling anything.
+- Do not delete the fresh CDP project, database, or payment webhook until any real funds/events are reconciled.
 
 ## Docs And Blog
 
@@ -1067,7 +1058,7 @@ Update assertions for:
 9. Rename tracking params, API key prefixes, cookies, env names, and HMAC headers without legacy aliases.
 10. Replace or rename assets.
 11. Rename legacy CDP account constants before any funded production launch, if desired.
-12. Prepare fresh Vercel, database, Stripe, Resend, and Coinbase CDP secrets/configuration.
+12. Prepare fresh Vercel, database, Resend, and Coinbase CDP secrets/configuration.
 13. Update tests and docs fixtures.
 14. Run formatting/lint/tests/build.
 15. Run final Regatta search and classify remaining hits.
@@ -1137,7 +1128,7 @@ The migration is complete when:
 - No Regatta production database, domain, CDP wallet, or funds are required for AffiliateSwarm launch.
 - Fresh production secrets are created by the operator and stored in Vercel, not committed.
 - Fresh Coinbase CDP credentials, wallet secret, Base RPC URL, and mainnet paymaster URL are configured.
-- Stripe webhook endpoint is configured for `https://affiliateswarm.ai/api/webhooks/stripe`.
+- Base USDC funding and payout flows are verified, and optional card/bank processor webhooks remain disabled until explicitly enabled.
 - Resend/email sending is verified for `noreply@affiliateswarm.ai`.
 - Tests, lint, and build pass.
 - Final stale-reference search has only intentional historical/ignored hits.

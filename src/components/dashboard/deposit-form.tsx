@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 
 interface DepositFormProps {
   depositAddress: string | null;
+  enableStripeDeposits?: boolean;
   enableBankTransfer?: boolean;
 }
 
@@ -27,9 +28,15 @@ function getCheckoutButtonLabel(
   return `Deposit $${(amountCents / 100).toFixed(2)} with Bank Transfer`;
 }
 
-export function DepositForm({ depositAddress, enableBankTransfer = false }: DepositFormProps) {
+export function DepositForm({
+  depositAddress,
+  enableStripeDeposits = false,
+  enableBankTransfer = false,
+}: DepositFormProps) {
   const router = useRouter();
-  const [method, setMethod] = useState<DepositMethod>("card");
+  const [method, setMethod] = useState<DepositMethod>(
+    enableStripeDeposits ? "card" : "crypto"
+  );
   const [amount, setAmount] = useState("");
   const [txHash, setTxHash] = useState("");
   const [showManual, setShowManual] = useState(false);
@@ -103,7 +110,7 @@ export function DepositForm({ depositAddress, enableBankTransfer = false }: Depo
         throw new Error(data.error?.message ?? "Failed to create checkout");
       }
 
-      // Redirect to Stripe Checkout
+      // Redirect to hosted checkout.
       window.location.href = data.data.url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -112,8 +119,10 @@ export function DepositForm({ depositAddress, enableBankTransfer = false }: Depo
   }
 
   const methods: { key: DepositMethod; label: string; desc: string }[] = [
-    { key: "card", label: "Credit Card", desc: "Instant, 3% fee" },
-    ...(enableBankTransfer
+    ...(enableStripeDeposits
+      ? [{ key: "card" as const, label: "Credit Card", desc: "Instant, 3% fee" }]
+      : []),
+    ...(enableStripeDeposits && enableBankTransfer
       ? [{ key: "ach" as const, label: "Bank Transfer", desc: "3-5 days, no fee" }]
       : []),
     { key: "crypto", label: "Crypto (USDC)", desc: "Instant, On Base chain" },
@@ -122,7 +131,7 @@ export function DepositForm({ depositAddress, enableBankTransfer = false }: Depo
   return (
     <div className="space-y-6">
       {/* Method selector */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         {methods.map((m) => (
           <button
             key={m.key}
@@ -224,7 +233,7 @@ export function DepositForm({ depositAddress, enableBankTransfer = false }: Depo
       )}
 
       {/* Card / ACH form */}
-      {(method === "card" || method === "ach") && (
+      {enableStripeDeposits && (method === "card" || method === "ach") && (
         <form onSubmit={handleStripeCheckout} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="deposit-amount">Amount (USD)</Label>

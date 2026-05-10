@@ -17,7 +17,7 @@ Sites analyzed: PartnerStack, impact.com, Awin (ShareASale), CJ, Rakuten Adverti
 
 **CTAs:** Rounded 8px corners, #434DE1 purple fill with white text, 600 font-weight. Input-button combos for email capture. Purple text arrows for secondary actions.
 
-**Graphics:** Animated globe visualization, SVG map cards with colored left-stripe accents, continuous-scroll logo marquee (680s animation loop).
+**Graphics:** Animated globe visualization, SVG map cards with colored left-band accents, continuous-scroll logo marquee (680s animation loop).
 
 **Social proof:** G2 badge (4.7 stars, 820 reviews), "600+ companies" stat, rotating testimonial carousel (8.5s interval), named customers (monday.com), "115,000+ active partners."
 
@@ -123,7 +123,7 @@ Sites analyzed: PartnerStack, impact.com, Awin (ShareASale), CJ, Rakuten Adverti
 
 **CTAs:** Solid color (likely green). "Start your 14-day free trial." Rounded corners.
 
-**Graphics:** Stripe Verified Partner badge. G2 momentum leader badge. GDPR compliance icon. Wave/divider SVGs (rounded tops, sharp bottoms). Video thumbnails with overlays.
+**Graphics:** Verified partner badge. G2 momentum leader badge. GDPR compliance icon. Wave/divider SVGs (rounded tops, sharp bottoms). Video thumbnails with overlays.
 
 **Social proof:** "2,800+ teams." G2 rating 4.5/5, 250 ratings. Client logos in marquee carousel (beehiiv, HeyGen, Riverside FM, Clay, OpusClip). Named testimonials with photos. Specific revenue metrics ($700K worth of sales).
 

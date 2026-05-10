@@ -34,7 +34,7 @@ These are sent through the notification event system with configurable triggers.
 | #   | Event                         | Subject                             | Recipient  | Trigger                                         |
 | --- | ----------------------------- | ----------------------------------- | ---------- | ----------------------------------------------- |
 | 8   | `campaign.created`            | "Campaign created: {CAMPAIGN}"      | Advertiser | New campaign created                            |
-| 9   | `campaign.funded`             | "Funds received for {CAMPAIGN}"     | Advertiser | Deposit via Stripe, USDC, or wallet allocation  |
+| 9   | `campaign.funded`             | "Funds received for {CAMPAIGN}"     | Advertiser | Deposit via USDC or wallet allocation           |
 | 10  | `campaign.tracking_confirmed` | "Tracking confirmed for {CAMPAIGN}" | Advertiser | Advertiser confirms tracking setup              |
 | 11  | `campaign.activated`          | "Campaign is live: {CAMPAIGN}"      | Advertiser | Campaign goes live                              |
 | 12  | `campaign.paused`             | —                                   | —          | Email disabled (webhook only)                   |
@@ -74,8 +74,8 @@ These are sent through the notification event system with configurable triggers.
 | --- | ------------------- | -------------------------------------- | --------- | ------------------------------------------- |
 | 27  | `payout.requested`  | "Payout request received"              | Affiliate | Affiliate requests payout                   |
 | 28  | `payout.processing` | —                                      | —         | Email disabled (webhook only)               |
-| 29  | `payout.completed`  | "Your payout is complete"              | Affiliate | Stripe transfer or onchain TX confirmed     |
-| 30  | `payout.failed`     | "There was a problem with your payout" | Affiliate | Transfer fails (Stripe or onchain)          |
+| 29  | `payout.completed`  | "Your payout is complete"              | Affiliate | Onchain TX confirmed                        |
+| 30  | `payout.failed`     | "There was a problem with your payout" | Affiliate | Onchain transfer fails                      |
 | 31  | `payout.cancelled`  | "Payout cancelled"                     | Affiliate | Affiliate cancels pending payout            |
 | 32  | `payout.rejected`   | "Payout rejected"                      | Affiliate | Not yet triggered in code (template exists) |
 

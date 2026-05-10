@@ -26,7 +26,7 @@ This document compares Rewardful's publicly documented feature set against Affil
 
 | Feature                                                    | Rewardful    | AffiliateSwarm | Notes                                                                                                                                                                                 |
 | ---------------------------------------------------------- | ------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Stripe-native affiliate program setup                      | Yes          | Partial | Rewardful is deeply Stripe-native for commission lifecycle handling. AffiliateSwarm uses Stripe for deposits and funding, not as the core merchant billing source for affiliate commissions. |
+| Billing-native affiliate program setup                     | Yes          | Partial | Rewardful is deeply billing-native for commission lifecycle handling. AffiliateSwarm uses wallet funding, not the merchant billing source, as the core source of affiliate commissions. |
 | Paddle integration                                         | Yes          | No      | Rewardful publicly supports Paddle Classic. No Paddle support found in AffiliateSwarm.                                                                                                       |
 | No-code / quick install setup                              | Yes          | Partial | Rewardful emphasizes fast install. AffiliateSwarm supports dashboard and API onboarding, but not a simple drop-in merchant setup path.                                                       |
 | Broad third-party integrations ecosystem                   | Yes          | No      | Rewardful has a visible integrations catalog. AffiliateSwarm currently relies on its own product surfaces plus API and webhooks.                                                             |
@@ -68,13 +68,13 @@ This document compares Rewardful's publicly documented feature set against Affil
 | Agent-to-agent referral tokens                             | No           | Yes     | AffiliateSwarm-specific differentiator.                                                                                                                                                      |
 | Escrow-backed campaign funding                             | No           | Yes     | Strong AffiliateSwarm differentiator.                                                                                                                                                        |
 | Wallet system for advertisers/affiliates                   | No           | Yes     | AffiliateSwarm uses wallet and escrow primitives. Rewardful does not present itself this way.                                                                                                |
-| Stripe card/ACH funding for advertisers                    | No           | Yes     | AffiliateSwarm supports advertiser funding flows.                                                                                                                                            |
+| Card/bank funding for advertisers                          | No           | No      | AffiliateSwarm is launching with USDC funding first.                                                                                                                                            |
 | Onchain USDC funding/payout rails                          | No           | Yes     | Strong AffiliateSwarm differentiator.                                                                                                                                                        |
 | Crypto payout requests                                     | No           | Yes     | AffiliateSwarm supports crypto payout requests.                                                                                                                                              |
 | Managed payout operations                                  | Yes          | Partial | Rewardful offers a mature managed payout product. AffiliateSwarm supports payout requests and internal processing, but not equivalent global payout operations.                              |
 | PayPal payouts                                             | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
 | Wise payouts                                               | Yes          | No      | Not found in AffiliateSwarm.                                                                                                                                                                 |
-| Multiple payout methods for affiliates                     | Yes          | Partial | Rewardful offers broader payout options. AffiliateSwarm supports crypto and bank transfer, but not the same breadth.                                                                         |
+| Multiple payout methods for affiliates                     | Yes          | No      | Rewardful offers broader payout options. AffiliateSwarm is launching with USDC payouts first.                                                                                               |
 | Multi-currency support                                     | Yes          | No      | Not found clearly in AffiliateSwarm.                                                                                                                                                         |
 | Tax/KYC/compliance handling for payouts                    | Yes          | No      | Rewardful explicitly covers this in Managed Payouts. Not found in AffiliateSwarm.                                                                                                            |
 | Refund handling                                            | Yes          | Partial | Rewardful handles refund-aware commissions. AffiliateSwarm handles rejected leads and escrow refunds, but not broader commerce refund lifecycle logic.                                       |
@@ -97,7 +97,7 @@ This document compares Rewardful's publicly documented feature set against Affil
 
 Rewardful is strongest in the operational layer required by conventional SaaS affiliate programs:
 
-- merchant-friendly setup tied directly to Stripe or Paddle billing
+- merchant-friendly setup tied directly to billing platforms
 - coupon-based promotion and attribution
 - configurable attribution windows and attribution rules
 - recurring commissions and subscription lifecycle handling
@@ -380,7 +380,7 @@ These are likely critical for broader competition with mature platforms, but the
 
 - [ ] Coupon code attribution
 - [ ] Recurring subscription commissions
-- [ ] Billing-system integrations such as Stripe-as-source-of-truth commission sync
+- [ ] Billing-system integrations as source-of-truth commission sync
 - [ ] Managed payout operations and broader payout method coverage
 - [ ] Multi-currency support
 - [ ] Merchant branding controls, custom domains, and polished affiliate portal customization
