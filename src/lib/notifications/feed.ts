@@ -277,7 +277,9 @@ const RENDERERS: Partial<Record<NotificationEvent["type"], ContentRenderer<any>>
 
   "payout.cancelled": (event) => ({
     title: "Payout cancelled",
-    summary: `Your ${formatCents(event.data.amountCents)} payout was cancelled`,
+    summary: event.data.reason
+      ? `Your ${formatCents(event.data.amountCents)} payout was cancelled: ${event.data.reason}`
+      : `Your ${formatCents(event.data.amountCents)} payout was cancelled`,
   }),
 
   "payout.rejected": (event) => ({

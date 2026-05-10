@@ -339,6 +339,7 @@ ${event.data.reason ? `<p>Reason: ${event.data.reason}</p>` : ""}
 <h2>Payout cancelled</h2>
 <p>Hi ${recipient.displayName},</p>
 <p>Your payout of <strong>${formatCents(event.data.amountCents)}</strong> has been cancelled. The funds are back in your wallet.</p>
+${event.data.reason ? `<p>${event.data.reason}</p>` : ""}
     `),
   }),
 

@@ -35,7 +35,7 @@ export const POST = withAuth(
       if (parsed.paymentMethod === "ach" && !ENABLE_BANK_TRANSFER()) {
         return errorResponse(
           "PAYMENT_METHOD_DISABLED",
-          "Bank transfer deposits are not currently available. Please deposit USDC on Base.",
+          "Bank transfer deposits are not currently available. Please use card or USDC on Base.",
           400
         );
       }

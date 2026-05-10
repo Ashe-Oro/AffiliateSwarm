@@ -15,6 +15,10 @@ vi.mock("@/services/stripe.service", () => ({
   processAchPayout: vi.fn(),
 }));
 
+vi.mock("@/services/escrow.service", () => ({
+  cancelBankTransferPayoutForDisabledRail: vi.fn(),
+}));
+
 const mockResendSend = vi.fn();
 vi.mock("@/lib/email", () => ({
   getResend: () => ({ emails: { send: mockResendSend } }),
@@ -30,6 +34,7 @@ import { GET } from "../route";
 import { prisma } from "@/lib/prisma";
 import { sendPayout, recoverStuckPayout } from "@/services/chain.service";
 import { processAchPayout } from "@/services/stripe.service";
+import { cancelBankTransferPayoutForDisabledRail } from "@/services/escrow.service";
 
 const CRON_SECRET = "test-cron-secret";
 
@@ -46,6 +51,8 @@ const mockFindMany = prisma.payoutRequest.findMany as ReturnType<typeof vi.fn>;
 const mockSend = sendPayout as ReturnType<typeof vi.fn>;
 const mockAch = processAchPayout as ReturnType<typeof vi.fn>;
 const mockRecover = recoverStuckPayout as ReturnType<typeof vi.fn>;
+const mockCancelDisabledBank =
+  cancelBankTransferPayoutForDisabledRail as ReturnType<typeof vi.fn>;
 
 /**
  * The route calls findMany twice per tick: once for PENDING, once for stuck
@@ -133,9 +140,13 @@ describe("/api/cron/process-payouts", () => {
     expect(mockAch).toHaveBeenCalledWith("p2");
   });
 
-  it("skips BANK_TRANSFER payouts when Stripe withdrawals are disabled", async () => {
+  it("cancels BANK_TRANSFER payouts when Stripe withdrawals are disabled", async () => {
     routeFindMany({
       pending: [{ id: "p1", method: "BANK_TRANSFER" }],
+    });
+    mockCancelDisabledBank.mockResolvedValue({
+      id: "p1",
+      status: "CANCELLED",
     });
 
     const res = await GET(buildRequest());
@@ -144,7 +155,9 @@ describe("/api/cron/process-payouts", () => {
     expect(res.status).toBe(200);
     expect(json.processed).toBe(0);
     expect(json.failed).toBe(0);
-    expect(json.skipped).toBe(1);
+    expect(json.skipped).toBe(0);
+    expect(json.cancelledDisabledBank).toBe(1);
+    expect(mockCancelDisabledBank).toHaveBeenCalledWith("p1");
     expect(mockAch).not.toHaveBeenCalled();
   });
 

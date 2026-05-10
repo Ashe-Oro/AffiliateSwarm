@@ -68,8 +68,10 @@ import {
   calculatePayout,
   processMaturedHolds,
   cancelPayout,
+  cancelBankTransferPayoutForDisabledRail,
   classifyFundingError,
 } from "@/services/escrow.service";
+import { notify } from "@/services/notification.service";
 import {
   ForbiddenError,
   ValidationError,
@@ -1121,6 +1123,47 @@ describe("cancelPayout", () => {
         }),
       })
     );
+  });
+
+  it("cancels a disabled bank-transfer payout and tells the affiliate to re-request USDC", async () => {
+    mockTx.payoutRequest.findUnique.mockResolvedValue(
+      mockPayout({ method: "BANK_TRANSFER" })
+    );
+    mockTx.wallet.update.mockResolvedValue({});
+    mockTx.payoutRequest.update.mockResolvedValue(
+      mockPayout({ method: "BANK_TRANSFER", status: "CANCELLED" })
+    );
+    mockTx.ledgerEntry.create.mockResolvedValue({});
+
+    const result = await cancelBankTransferPayoutForDisabledRail(PAYOUT_ID);
+
+    expect(result.status).toBe("CANCELLED");
+    expect(mockTx.wallet.update).toHaveBeenCalledWith({
+      where: { id: WALLET_ID },
+      data: {
+        availableCents: { increment: 500 },
+        pendingPayoutCents: { decrement: 500 },
+      },
+    });
+    expect(mockTx.payoutRequest.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "CANCELLED",
+          failureReason:
+            "Bank withdrawals are no longer available. Please request a USDC payout on Base.",
+        }),
+      })
+    );
+    expect(notify).toHaveBeenCalledWith({
+      type: "payout.cancelled",
+      data: expect.objectContaining({
+        payoutRequestId: PAYOUT_ID,
+        affiliateId: AFFILIATE_ID,
+        amountCents: 500,
+        reason:
+          "Bank withdrawals are no longer available. Please request a USDC payout on Base.",
+      }),
+    });
   });
 
   it("throws NotFoundError for a missing payout", async () => {

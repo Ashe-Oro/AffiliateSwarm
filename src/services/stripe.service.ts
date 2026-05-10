@@ -282,7 +282,7 @@ export async function processAchPayout(payoutRequestId: string) {
           entryType: "PAYOUT",
           referenceType: "PAYOUT",
           referenceId: payout.id,
-          memo: `ACH payout completed - processor transfer ${transfer.id}`,
+          memo: `ACH payout completed - Stripe transfer ${transfer.id}`,
         },
       });
     });

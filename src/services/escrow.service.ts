@@ -915,11 +915,19 @@ export async function requestPayout(
 // Cancel Payout
 // ---------------------------------------------------------------------------
 
-/**
- * Cancel a PENDING payout request and return funds to the affiliate's available balance.
- */
-export async function cancelPayout(payoutId: string, affiliateId: string) {
-  const result = await prisma.$transaction(async (tx) => {
+const BANK_WITHDRAWALS_DISABLED_REASON =
+  "Bank withdrawals are no longer available. Please request a USDC payout on Base.";
+
+async function cancelPendingPayout(
+  payoutId: string,
+  opts: {
+    affiliateId?: string;
+    reason?: string;
+    memo: string;
+    requireMethod?: "BANK_TRANSFER" | "CRYPTO" | "PLATFORM_CREDIT";
+  }
+) {
+  return prisma.$transaction(async (tx) => {
     const payout = await tx.payoutRequest.findUnique({
       where: { id: payoutId },
     });
@@ -928,8 +936,14 @@ export async function cancelPayout(payoutId: string, affiliateId: string) {
       throw new NotFoundError("PayoutRequest", payoutId);
     }
 
-    if (payout.affiliateId !== affiliateId) {
+    if (opts.affiliateId && payout.affiliateId !== opts.affiliateId) {
       throw new ForbiddenError("You can only cancel your own payout requests");
+    }
+
+    if (opts.requireMethod && payout.method !== opts.requireMethod) {
+      throw new ValidationError(
+        `Only ${opts.requireMethod} payouts can be cancelled by this path.`
+      );
     }
 
     if (payout.status !== "PENDING") {
@@ -938,7 +952,6 @@ export async function cancelPayout(payoutId: string, affiliateId: string) {
       );
     }
 
-    // Return funds to available balance
     await tx.wallet.update({
       where: { id: payout.walletId },
       data: {
@@ -947,17 +960,15 @@ export async function cancelPayout(payoutId: string, affiliateId: string) {
       },
     });
 
-    // Mark payout as CANCELLED (distinct terminal state from FAILED so the
-    // UI can show "you cancelled this" vs "the network/processor failed it").
     const cancelled = await tx.payoutRequest.update({
       where: { id: payoutId },
       data: {
         status: "CANCELLED",
         processedAt: new Date(),
+        failureReason: opts.reason,
       },
     });
 
-    // Reverse ledger entry
     await tx.ledgerEntry.create({
       data: {
         transactionId: randomUUID(),
@@ -970,11 +981,21 @@ export async function cancelPayout(payoutId: string, affiliateId: string) {
         entryType: "REFUND",
         referenceType: "PAYOUT",
         referenceId: payout.id,
-        memo: `Payout request ${payout.id} cancelled by user — ${payout.amountCents} cents returned to wallet`,
+        memo: opts.memo,
       },
     });
 
     return cancelled;
+  });
+}
+
+/**
+ * Cancel a PENDING payout request and return funds to the affiliate's available balance.
+ */
+export async function cancelPayout(payoutId: string, affiliateId: string) {
+  const result = await cancelPendingPayout(payoutId, {
+    affiliateId,
+    memo: `Payout request ${payoutId} cancelled by user - funds returned to wallet`,
   });
 
   notify({
@@ -983,6 +1004,32 @@ export async function cancelPayout(payoutId: string, affiliateId: string) {
       affiliateId,
       amountCents: result.amountCents,
       payoutRequestId: result.id,
+    },
+  });
+
+  return result;
+}
+
+/**
+ * Cancel a legacy pending bank-transfer payout after bank withdrawals are
+ * disabled, returning funds so the affiliate can re-request a USDC payout.
+ */
+export async function cancelBankTransferPayoutForDisabledRail(
+  payoutId: string
+) {
+  const result = await cancelPendingPayout(payoutId, {
+    reason: BANK_WITHDRAWALS_DISABLED_REASON,
+    memo: `Bank-transfer payout ${payoutId} cancelled because bank withdrawals are disabled - funds returned to wallet`,
+    requireMethod: "BANK_TRANSFER",
+  });
+
+  notify({
+    type: "payout.cancelled",
+    data: {
+      affiliateId: result.affiliateId,
+      amountCents: result.amountCents,
+      payoutRequestId: result.id,
+      reason: BANK_WITHDRAWALS_DISABLED_REASON,
     },
   });
 
