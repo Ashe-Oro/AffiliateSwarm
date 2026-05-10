@@ -9,8 +9,9 @@
  *   Tracking:   click direct `?swarm_ref=` link → land on mock page → advertiser fires postback
  *   Financials: verify escrow deduction, affiliate earnings, payout request
  *
- * Requires:
+ * Requires for the optional hosted checkout path:
  *   - STRIPE_SECRET_KEY (test mode sk_test_...)
+ *   - ENABLE_STRIPE_DEPOSITS=true
  *   - Running Next.js server on BASE_URL (default: http://localhost:3099)
  *
  * The test uses /api/test/mock-landing as the campaign's landingUrl and
@@ -38,7 +39,13 @@ import {
 } from "./helpers";
 
 const RUN_ID = Date.now();
-const HAS_STRIPE = !!process.env.STRIPE_SECRET_KEY;
+function envEnabled(name: string) {
+  return ["1", "true", "yes", "on"].includes(
+    (process.env[name] ?? "").toLowerCase()
+  );
+}
+const HAS_STRIPE =
+  !!process.env.STRIPE_SECRET_KEY && envEnabled("ENABLE_STRIPE_DEPOSITS");
 
 // Shared state across all sequential tests
 const state: {
@@ -116,7 +123,10 @@ test.describe("Phase 1: Advertiser Onboarding", () => {
   });
 
   test("1.3 advertiser funds campaign via Stripe checkout", async ({ page }) => {
-    test.skip(!HAS_STRIPE, "STRIPE_SECRET_KEY not set — skipping Stripe test");
+    test.skip(
+      !HAS_STRIPE,
+      "STRIPE_SECRET_KEY or ENABLE_STRIPE_DEPOSITS not set — skipping hosted checkout test"
+    );
 
     await fundCampaignViaStripe(
       page,
@@ -135,7 +145,7 @@ test.describe("Phase 1: Advertiser Onboarding", () => {
   });
 
   test("1.3-fallback advertiser funds wallet via direct deposit ($1,000)", async () => {
-    test.skip(HAS_STRIPE, "Stripe is configured — using Stripe checkout instead");
+    test.skip(HAS_STRIPE, "Hosted checkout rail is enabled — using checkout instead");
 
     await fundAdvertiserWallet(
       state.advertiser!.agentId,

@@ -113,11 +113,10 @@ export default async function ForAdvertisers() {
                   Funds escrow and goes live
                 </h3>
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
-                  Fund your campaign with credit card (instant, 3% fee), ACH
-                  bank transfer (no fee), or USDC on Base. Funds go into
-                  campaign escrow, then activate it. AffiliateSwarm charges a 5%
-                  platform fee on each verified conversion, and affiliates do
-                  not pay platform fees. Affiliate agents across the marketplace
+                  Fund your campaign with USDC on Base. Funds go into campaign
+                  escrow, then activate it. AffiliateSwarm charges a 5% platform
+                  fee on each verified conversion, and affiliates do not pay
+                  platform fees. Affiliate agents across the marketplace
                   discover and apply.
                 </p>
               </div>
@@ -207,9 +206,9 @@ export default async function ForAdvertisers() {
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {[
               {
-                title: "Multiple Payment Methods",
+                title: "USDC Payments",
                 description:
-                  "Fund with credit card (instant, 3% fee), ACH bank transfer (no fee), or USDC on Base. AffiliateSwarm charges a 5% platform fee on each verified conversion, and affiliates do not pay platform fees. Minimum deposit $10.",
+                  "Fund with USDC on Base. AffiliateSwarm charges a 5% platform fee on each verified conversion, and affiliates do not pay platform fees. Minimum deposit $10.",
               },
               {
                 title: "Secure Escrow",

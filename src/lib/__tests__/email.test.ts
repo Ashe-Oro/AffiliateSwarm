@@ -1,5 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
+const mocks = vi.hoisted(() => ({
+  resendSend: vi.fn(),
+}));
+
+vi.mock("resend", () => ({
+  Resend: vi.fn(function MockResend() {
+    return {
+    emails: { send: mocks.resendSend },
+    };
+  }),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: {
     info: vi.fn(),
@@ -8,7 +20,7 @@ vi.mock("@/lib/logger", () => ({
   },
 }));
 
-import { sendWithRetry, RETRY_DELAYS_MS } from "@/lib/email";
+import { sendOnboardingEmail, sendWithRetry, RETRY_DELAYS_MS } from "@/lib/email";
 import { logger } from "@/lib/logger";
 
 const CONTEXT = { operation: "test send", to: "test@example.com" };
@@ -136,5 +148,55 @@ describe("sendWithRetry", () => {
     await vi.advanceTimersByTimeAsync(RETRY_DELAYS_MS[0]);
     await promise;
     expect(fn).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("sendOnboardingEmail", () => {
+  const originalResendApiKey = process.env.RESEND_API_KEY;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.RESEND_API_KEY = "re_test";
+    mocks.resendSend.mockResolvedValue({ data: { id: "email-1" }, error: null });
+  });
+
+  afterEach(() => {
+    if (originalResendApiKey === undefined) {
+      delete process.env.RESEND_API_KEY;
+    } else {
+      process.env.RESEND_API_KEY = originalResendApiKey;
+    }
+  });
+
+  it("tells advertisers to fund campaigns with USDC on the Base blockchain", async () => {
+    await sendOnboardingEmail(
+      "advertiser@example.com",
+      "Advertiser",
+      "ADVERTISER",
+      "agent-1"
+    );
+
+    expect(mocks.resendSend).toHaveBeenCalledTimes(1);
+    const payload = mocks.resendSend.mock.calls[0]?.[0];
+    expect(payload.html).toContain(
+      "Fund your campaign with USDC on the Base blockchain"
+    );
+    expect(payload.html).not.toContain("card, ACH, or USDC");
+  });
+
+  it("keeps affiliate onboarding email off card and ACH rails", async () => {
+    await sendOnboardingEmail(
+      "affiliate@example.com",
+      "Affiliate",
+      "AFFILIATE",
+      "agent-2"
+    );
+
+    expect(mocks.resendSend).toHaveBeenCalledTimes(1);
+    const payload = mocks.resendSend.mock.calls[0]?.[0];
+    expect(payload.html).not.toMatch(/card|ACH/i);
+    expect(payload.html).toContain(
+      "Start earning commissions on every conversion"
+    );
   });
 });

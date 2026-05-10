@@ -2,6 +2,10 @@ import { randomUUID } from "crypto";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import {
+  ENABLE_STRIPE_DEPOSITS,
+  ENABLE_STRIPE_WITHDRAWALS,
+} from "@/lib/feature-flags";
+import {
   NotFoundError,
   ValidationError,
 } from "@/lib/errors";
@@ -23,6 +27,12 @@ export async function createCheckoutSession(
   amountCents: number,
   method: "card" | "ach"
 ) {
+  if (!ENABLE_STRIPE_DEPOSITS()) {
+    throw new ValidationError(
+      "Card and bank deposits are not currently available. Please deposit USDC on Base."
+    );
+  }
+
   if (amountCents < MIN_DEPOSIT_CENTS) {
     throw new ValidationError(
       `Minimum deposit is $${(MIN_DEPOSIT_CENTS / 100).toFixed(2)}`
@@ -51,7 +61,7 @@ export async function createCheckoutSession(
   const totalChargeCents = amountCents + feeCents;
   const netAmountCents = amountCents; // advertiser always gets full amount
 
-  // Build Stripe Checkout Session
+  // Build hosted checkout session.
   const paymentMethodTypes: ("card" | "us_bank_account")[] =
     method === "card" ? ["card"] : ["us_bank_account"];
 
@@ -187,10 +197,16 @@ export async function handleSessionExpired(stripeSessionId: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Process ACH Payout (send money to affiliate's bank account via Stripe)
+// Process ACH payout through the card/bank rail.
 // ---------------------------------------------------------------------------
 
 export async function processAchPayout(payoutRequestId: string) {
+  if (!ENABLE_STRIPE_WITHDRAWALS()) {
+    throw new ValidationError(
+      "Bank withdrawals are not currently available. Please use USDC payouts on Base."
+    );
+  }
+
   const payout = await prisma.payoutRequest.findUnique({
     where: { id: payoutRequestId },
     include: { wallet: true },
@@ -221,8 +237,7 @@ export async function processAchPayout(payoutRequestId: string) {
   });
 
   try {
-    // Create a Stripe Transfer to the affiliate
-    // Using Stripe's Payouts API (requires Stripe account to have sufficient balance)
+    // Create a transfer to the affiliate through the configured processor.
     const destination = payout.destination as Record<string, unknown>;
 
     const transfer = await stripe.transfers.create({
@@ -267,7 +282,7 @@ export async function processAchPayout(payoutRequestId: string) {
           entryType: "PAYOUT",
           referenceType: "PAYOUT",
           referenceId: payout.id,
-          memo: `ACH payout completed — Stripe transfer ${transfer.id}`,
+          memo: `ACH payout completed - processor transfer ${transfer.id}`,
         },
       });
     });
@@ -386,7 +401,7 @@ export async function creditFromCheckout(
         entryType: "STRIPE_DEPOSIT",
         referenceType: checkout.campaignId ? "CAMPAIGN" : "WALLET",
         referenceId: checkout.campaignId ?? wallet.id,
-        memo: `Stripe ${checkout.paymentMethod.toLowerCase()} deposit of $${(checkout.netAmountCents / 100).toFixed(2)}${checkout.campaignId ? ` for campaign` : ` to account`}`,
+        memo: `${checkout.paymentMethod === "CARD" ? "Card" : "Bank"} deposit of $${(checkout.netAmountCents / 100).toFixed(2)}${checkout.campaignId ? ` for campaign` : ` to account`}`,
       },
     });
 

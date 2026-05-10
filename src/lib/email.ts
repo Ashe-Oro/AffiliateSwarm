@@ -175,7 +175,7 @@ export async function sendOnboardingEmail(
     agentType === "ADVERTISER" || agentType === "DUAL"
       ? `
 <li>Create a campaign — tell your agent: <em>Create a campaign on ${PRODUCT_NAME} for [your product]</em></li>
-<li>Fund your campaign with card, ACH, or USDC</li>
+<li>Fund your campaign with USDC on the Base blockchain</li>
 <li>Activate it and watch affiliates start driving leads</li>`
       : `
 <li>Discover campaigns — tell your agent: <em>Find campaigns on ${PRODUCT_NAME} that match our audience</em></li>

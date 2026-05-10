@@ -11,7 +11,7 @@
 | **Unit Tests** | `npm test` | ~2s | Yes — pre-push hook |
 | **Smoke Tests** | `npm run smoke:local` | ~5s | Yes — pre-push hook |
 | **E2E Fast Path** | `npx playwright test full-lifecycle` | ~15s | Yes — GitHub Actions on PRs touching `src/`, `prisma/`, `tests/e2e/` |
-| **E2E Realistic** | `STRIPE_SECRET_KEY=sk_test_... npx playwright test full-journey` | ~25s | Manual (needs Stripe key) |
+| **E2E Realistic** | `npx playwright test full-journey` | ~25s | Manual |
 | **All E2E** | `npm run test:e2e` | ~40s | Manual |
 | **Docker Rebuild** | `npm run redeploy:local` | ~30s | Yes — post-commit hook |
 | **Script Lint** | `npm run check:scripts` | <1s | Manual |
@@ -125,22 +125,20 @@ Skips automatically for pure documentation, config, or test result file changes.
 
 **Browser dashboard tests (Phases 9-10)** use Playwright's real Chromium browser. The `loginViaBrowser()` helper generates a one-time login code via the API, navigates to `/login`, fills the code, and verifies the redirect lands on the correct dashboard page. Tests then assert that key UI elements are visible — campaign names, KPI cards, table rows, balance displays.
 
-**Funding:** Uses direct escrow deposit (no Stripe) for speed.
+**Funding:** Uses direct escrow deposit for speed.
 
 ### 3b. Realistic Path — `full-journey.spec.ts`
 
-**What it is:** Same lifecycle but with real Stripe checkout, browser-based direct tracking links, and webhook processing. Closest to production behavior.
+**What it is:** Same lifecycle but with browser-based direct tracking links and webhook processing. Closest to production behavior.
 
 **Command:**
 ```bash
-STRIPE_SECRET_KEY=sk_test_... npx playwright test full-journey
+npx playwright test full-journey
 ```
 
 **Additional coverage beyond fast path:**
-- Real Stripe checkout (test card `4242 4242 4242 4242`)
 - Browser follows the direct tracking URL: click link with `?swarm_ref=` -> mock landing page -> postback
-- Stripe webhook processing for payment confirmation
-- Falls back to direct deposit if `STRIPE_SECRET_KEY` not set
+- Uses direct deposit for funding
 
 ### 3c. All E2E
 
@@ -318,7 +316,7 @@ The playbook tests two things:
 | 0. Discovery | Agent reads skill file from URL, saves locally, understands AffiliateSwarm |
 | 1. Registration | Correct fields, no premature campaign creation, credentials saved |
 | 2. Campaign Creation | Separate from registration, new product fields included, confirmation before creating |
-| 3. Funding | Mentions $10 minimum, correct payment method field, full Stripe URL |
+| 3. Funding | Explains Base USDC funding and wallet balance requirements |
 | 4. Tracking Setup | Explains redirect model correctly, guides confirm-tracking, doesn't confuse roles |
 | 5. Activation | Checks both funding AND tracking before activating |
 | 6. Managing Affiliates | Reviews structured application data (profile fields) |
@@ -448,7 +446,7 @@ Most E2E testing now runs automatically via GitHub Actions on PRs. You only need
 |-----------|-------------|
 | Just changed service logic | `npm test` |
 | Changed an API route | `npm run smoke:local` |
-| Changed Stripe integration | `STRIPE_SECRET_KEY=sk_test_... npx playwright test full-journey` |
+| Changed payment rail integration | `npx playwright test full-journey` |
 | Quick check against production | `npx tsx tests/e2e-test.ts https://affiliateswarm.ai` |
 | Debugging a single endpoint | Copy the relevant curl from `tests/manual-test-scripts.md` |
 | Docker seems broken | `npm run redeploy:local && npm run smoke:local` |

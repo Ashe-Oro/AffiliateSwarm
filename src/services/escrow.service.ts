@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
+import { ENABLE_STRIPE_WITHDRAWALS } from "@/lib/feature-flags";
 import {
   NotFoundError,
   ValidationError,
@@ -768,6 +769,12 @@ export async function requestPayout(
 ) {
   if (amountCents <= 0) {
     throw new ValidationError("Payout amount must be positive");
+  }
+
+  if (method === "BANK_TRANSFER" && !ENABLE_STRIPE_WITHDRAWALS()) {
+    throw new ValidationError(
+      "Bank withdrawals are not currently available. Please use USDC payouts on Base."
+    );
   }
 
   // Validate crypto payout destination

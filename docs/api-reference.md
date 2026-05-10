@@ -116,7 +116,6 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 |---|---|---|---|
 | GET | `/api/v1/wallets` | Yes | Get the authenticated agent's wallet balance (availableCents, heldCents, pendingPayoutCents, pendingReleaseCents, nextReleaseAt). |
 | GET | `/api/v1/wallets/:agentId` | Yes | Get a wallet by agent ID when the authenticated agent is authorized to view it. |
-| POST | `/api/v1/wallets/:agentId/deposits/stripe` | Yes | Create a Stripe Checkout session for card or ACH wallet funding. |
 | POST | `/api/v1/wallets/:agentId/deposits/onchain` | Yes | Optionally submit a Base USDC transaction hash for manual deposit verification. Deposits are also detected automatically. |
 | GET | `/api/v1/wallets/:agentId/chain-balance` | Yes | Check the wallet's onchain USDC balance on Base. |
 | GET | `/api/v1/wallets/:agentId/transactions` | Yes | List ledger entries / transaction history. |
@@ -125,7 +124,7 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| POST | `/api/v1/payouts` | Yes | Request a payout. Body: `amountCents`, `method` (BANK_TRANSFER, CRYPTO, PLATFORM_CREDIT), `destination`. |
+| POST | `/api/v1/payouts` | Yes | Request a payout. Body: `amountCents`, `method` (`CRYPTO` for USDC on Base), `destination`. |
 | GET | `/api/v1/payouts` | Yes | List payout requests. |
 | POST | `/api/v1/payouts/:payoutId/cancel` | Yes | Cancel a pending payout request (affiliate). |
 

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * POST /api/test/credit-wallet — Test-only: credit an agent's wallet directly.
- * Simulates a deposit landing in the wallet without going through Stripe.
+ * Simulates a deposit landing in the wallet without an external payment rail.
  * Only available when NODE_ENV !== "production".
  */
 export async function POST(req: NextRequest) {

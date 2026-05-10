@@ -704,6 +704,7 @@ describe("getWallet", () => {
 describe("requestPayout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.ENABLE_STRIPE_WITHDRAWALS;
   });
 
   it("happy path: moves funds to pendingPayout and creates payout request", async () => {
@@ -809,7 +810,18 @@ describe("requestPayout", () => {
     ).rejects.toThrow("valid chainAddress");
   });
 
-  it("accepts BANK_TRANSFER without chainAddress", async () => {
+  it("rejects BANK_TRANSFER when Stripe withdrawals are disabled", async () => {
+    await expect(
+      requestPayout(AFFILIATE_ID, 2000, "BANK_TRANSFER", {
+        routingNumber: "123456",
+        accountNumber: "789012",
+      })
+    ).rejects.toThrow("Bank withdrawals are not currently available");
+  });
+
+  it("accepts BANK_TRANSFER without chainAddress when Stripe withdrawals are enabled", async () => {
+    process.env.ENABLE_STRIPE_WITHDRAWALS = "true";
+
     const wallet = mockWallet({ agentId: AFFILIATE_ID, availableCents: 5000 });
     const payout = {
       id: "payout-2",

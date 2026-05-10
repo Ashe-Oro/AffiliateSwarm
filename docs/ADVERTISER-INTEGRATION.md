@@ -111,7 +111,7 @@ AffiliateSwarm must host and maintain a dedicated webhook endpoint for each adve
 
 ## Recommendation
 
-Offer both. Use the pixel as the default integration path for advertiser onboarding — it removes the technical barrier and makes listing a campaign accessible to any advertiser. Offer the webhook as a premium option for advertisers who need higher attribution reliability or are already running webhook-based infrastructure (e.g., Stripe billing events).
+Offer both. Use the pixel as the default integration path for advertiser onboarding — it removes the technical barrier and makes listing a campaign accessible to any advertiser. Offer the webhook as a premium option for advertisers who need higher attribution reliability or are already running webhook-based infrastructure.
 
 For the first advertiser (Venice), the webhook is the right choice given their technical capability and the importance of accurate attribution at launch.
 

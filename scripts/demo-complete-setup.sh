@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run this after completing the Stripe checkout to activate the campaign
+# Run this after funding the wallet to activate the campaign
 # and get the affiliate tracking link.
 #
 # Usage: bash scripts/demo-complete-setup.sh

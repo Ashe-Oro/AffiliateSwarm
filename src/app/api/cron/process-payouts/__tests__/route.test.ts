@@ -52,10 +52,7 @@ const mockRecover = recoverStuckPayout as ReturnType<typeof vi.fn>;
  * PROCESSING. Route each query to the right mock result based on the where
  * clause so tests don't have to juggle call order.
  */
-function routeFindMany(opts: {
-  pending?: unknown[];
-  stuck?: unknown[];
-}) {
+function routeFindMany(opts: { pending?: unknown[]; stuck?: unknown[] }) {
   mockFindMany.mockImplementation((args: { where: { status: string } }) => {
     if (args.where.status === "PENDING") {
       return Promise.resolve(opts.pending ?? []);
@@ -72,6 +69,7 @@ describe("/api/cron/process-payouts", () => {
     vi.clearAllMocks();
     process.env.CRON_SECRET = CRON_SECRET;
     delete process.env.ADMIN_ALERT_EMAIL;
+    delete process.env.ENABLE_STRIPE_WITHDRAWALS;
   });
 
   // ---- Auth ----------------------------------------------------------------
@@ -115,6 +113,7 @@ describe("/api/cron/process-payouts", () => {
   });
 
   it("routes CRYPTO payouts to sendPayout and BANK_TRANSFER to processAchPayout", async () => {
+    process.env.ENABLE_STRIPE_WITHDRAWALS = "true";
     routeFindMany({
       pending: [
         { id: "p1", method: "CRYPTO" },
@@ -132,6 +131,21 @@ describe("/api/cron/process-payouts", () => {
     expect(json.failed).toBe(0);
     expect(mockSend).toHaveBeenCalledWith("p1");
     expect(mockAch).toHaveBeenCalledWith("p2");
+  });
+
+  it("skips BANK_TRANSFER payouts when Stripe withdrawals are disabled", async () => {
+    routeFindMany({
+      pending: [{ id: "p1", method: "BANK_TRANSFER" }],
+    });
+
+    const res = await GET(buildRequest());
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.processed).toBe(0);
+    expect(json.failed).toBe(0);
+    expect(json.skipped).toBe(1);
+    expect(mockAch).not.toHaveBeenCalled();
   });
 
   it("counts a failed sendPayout result as failed without aborting the batch", async () => {
@@ -169,12 +183,7 @@ describe("/api/cron/process-payouts", () => {
 
   it("recovers stuck PROCESSING rows by outcome type", async () => {
     routeFindMany({
-      stuck: [
-        { id: "r1" },
-        { id: "r2" },
-        { id: "r3" },
-        { id: "r4" },
-      ],
+      stuck: [{ id: "r1" }, { id: "r2" }, { id: "r3" }, { id: "r4" }],
     });
     mockRecover
       .mockResolvedValueOnce({ outcome: "reset_to_pending" })

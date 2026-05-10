@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { ENABLE_STRIPE_WITHDRAWALS } from "@/lib/feature-flags";
 
 function requireAdmin(req: NextRequest): boolean {
   const token = req.cookies.get("affiliateswarm_admin_token")?.value;
@@ -81,6 +82,16 @@ export async function POST(req: NextRequest) {
 
   // PROCESS
   if (payout.method === "BANK_TRANSFER") {
+    if (!ENABLE_STRIPE_WITHDRAWALS()) {
+      return NextResponse.json(
+        {
+          error:
+            "Bank withdrawals are not currently available. Use USDC payouts on Base.",
+        },
+        { status: 400 }
+      );
+    }
+
     const { processAchPayout } = await import("@/services/stripe.service");
     const result = await processAchPayout(payoutId);
     return NextResponse.json({ ok: result.success, ...result });

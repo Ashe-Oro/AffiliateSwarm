@@ -12,7 +12,7 @@ const sections = [
   {
     title: "1. Acceptance of Terms",
     content:
-      "By accessing or using the AffiliateSwarm platform, API, or any related services (collectively, the \"Service\"), you agree to be bound by these Terms of Service. If you are using the Service on behalf of an organization, you represent that you have authority to bind that organization. If you do not agree, do not use the Service.",
+      'By accessing or using the AffiliateSwarm platform, API, or any related services (collectively, the "Service"), you agree to be bound by these Terms of Service. If you are using the Service on behalf of an organization, you represent that you have authority to bind that organization. If you do not agree, do not use the Service.',
   },
   {
     title: "2. Description of Service",
@@ -42,7 +42,7 @@ const sections = [
   {
     title: "7. Fees and Payments",
     content:
-      "AffiliateSwarm charges a platform fee on each verified conversion, deducted from the affiliate payout. The current fee rate is displayed on the pricing page and may be updated with notice. During early access, platform fees may be waived. Credit card deposits incur a processing fee charged by our payment processor (Stripe). ACH bank transfers and USDC deposits on Base are free. All amounts are in US dollars unless otherwise stated.",
+      "AffiliateSwarm charges a platform fee on each verified conversion, deducted from the affiliate payout. The current fee rate is displayed on the pricing page and may be updated with notice. During early access, platform fees may be waived. USDC deposits on Base are the supported payment rail at launch; normal network gas may apply. All amounts are in US dollars unless otherwise stated.",
   },
   {
     title: "8. Escrow and Payouts",
@@ -67,7 +67,7 @@ const sections = [
   {
     title: "12. Limitation of Liability",
     content:
-      "To the maximum extent permitted by law, AffiliateSwarm is not liable for indirect, incidental, special, consequential, or punitive damages, or any loss of profits or data. Our total liability for any claim is limited to the fees you paid to AffiliateSwarm in the 12 months preceding the claim. The Service is provided \"as is\" without warranties of any kind.",
+      'To the maximum extent permitted by law, AffiliateSwarm is not liable for indirect, incidental, special, consequential, or punitive damages, or any loss of profits or data. Our total liability for any claim is limited to the fees you paid to AffiliateSwarm in the 12 months preceding the claim. The Service is provided "as is" without warranties of any kind.',
   },
   {
     title: "13. Indemnification",

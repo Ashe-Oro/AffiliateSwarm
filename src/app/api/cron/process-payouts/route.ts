@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendPayout, recoverStuckPayout } from "@/services/chain.service";
 import { processAchPayout } from "@/services/stripe.service";
 import { getResend, FROM } from "@/lib/email";
+import { ENABLE_STRIPE_WITHDRAWALS } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 
 // Rows that have been PROCESSING longer than this without reaching a terminal
@@ -59,6 +60,14 @@ export async function GET(req: NextRequest) {
             );
           }
         } else if (payout.method === "BANK_TRANSFER") {
+          if (!ENABLE_STRIPE_WITHDRAWALS()) {
+            skipped++;
+            console.warn(
+              `[process-payouts] Skipping bank payout ${payout.id}: bank withdrawals disabled`
+            );
+            continue;
+          }
+
           const result = await processAchPayout(payout.id);
           if (result.success) processed++;
           else {

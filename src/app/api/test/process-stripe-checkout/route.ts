@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { ENABLE_STRIPE_DEPOSITS } from "@/lib/feature-flags";
 import { creditFromCheckout } from "@/services/stripe.service";
 
 /**
@@ -16,6 +17,13 @@ import { creditFromCheckout } from "@/services/stripe.service";
 export async function POST(req: NextRequest) {
   if (process.env.NODE_ENV === "production" && !process.env.ENABLE_TEST_ROUTES) {
     return NextResponse.json({ error: "Not available in production" }, { status: 404 });
+  }
+
+  if (!ENABLE_STRIPE_DEPOSITS()) {
+    return NextResponse.json(
+      { error: "Card and bank deposits are not currently available" },
+      { status: 400 }
+    );
   }
 
   const { stripeSessionId } = await req.json();

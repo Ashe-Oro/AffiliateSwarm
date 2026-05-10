@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { ENABLE_STRIPE_DEPOSITS } from "@/lib/feature-flags";
 import {
   handleCheckoutCompleted,
   handleAsyncPaymentSucceeded,
@@ -8,6 +9,10 @@ import {
 } from "@/services/stripe.service";
 
 export async function POST(req: NextRequest) {
+  if (!ENABLE_STRIPE_DEPOSITS()) {
+    return NextResponse.json({ received: true, skipped: "payment rail disabled" });
+  }
+
   const rawBody = await req.text();
   const signature = req.headers.get("stripe-signature");
 

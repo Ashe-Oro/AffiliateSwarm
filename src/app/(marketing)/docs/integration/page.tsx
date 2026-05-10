@@ -334,30 +334,13 @@ if (isset($_GET['swarm_ref'])) {
           </p>
 
           <h4 className="mt-6 text-base font-semibold text-[var(--v2-text)]">
-            Option 1: Stripe Checkout Sessions (server-side redirect)
+            Hosted or embedded checkout
           </h4>
           <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
-            If you create a Stripe Checkout Session on the server and redirect
-            users to Stripe&apos;s hosted checkout page, pass the promo code as
-            a coupon discount. The discount will be pre-applied automatically.
-          </p>
-
-          <CodeBlock label="Stripe Checkout Session — server-side">{`const promo = req.session.swarmPromo || req.cookies.swarm_promo;
-
-const session = await stripe.checkout.sessions.create({
-  // ... other params
-  ...(promo ? { discounts: [{ coupon: promo }] } : {}),
-});`}</CodeBlock>
-
-          <h4 className="mt-6 text-base font-semibold text-[var(--v2-text)]">
-            Option 2: Custom checkout form (embedded payment UI)
-          </h4>
-          <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
-            If you render your own checkout page with an embedded payment form
-            (e.g., Stripe Elements, a custom React/Vue form with a
-            &ldquo;Promotion code&rdquo; input), read the stored promo cookie on
-            the client and pre-fill it into your form so the discount is applied
-            automatically.
+            If your checkout flow supports discount codes, read the stored promo
+            cookie and apply it using your billing system&apos;s discount API. For
+            embedded forms, you can also pre-fill a &ldquo;Promotion code&rdquo;
+            input so the buyer sees the discount before submitting.
           </p>
 
           <CodeBlock label="React — auto-fill promo code from cookie">{`import { useEffect, useState } from "react";
@@ -409,8 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           <p className="mt-3 text-sm text-[var(--v2-text-secondary)]">
             Then validate and apply the promo code on your server when the form
-            is submitted — look it up in your billing system (e.g.,{" "}
-            <InlineCode>stripe.coupons.retrieve(promoCode)</InlineCode>) and
+            is submitted — look it up in your billing system and
             apply the discount to the subscription or payment intent.
           </p>
 
@@ -883,7 +865,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
               {
                 title: "Webhook Integration",
                 description:
-                  "If you use Stripe, Shopify, or similar platforms, fire the AffiliateSwarm postback from your webhook handler when an order is completed or a subscription is activated.",
+                  "If you use a hosted commerce or billing platform, fire the AffiliateSwarm postback from your webhook handler when an order is completed or a subscription is activated.",
               },
             ].map((pattern) => (
               <div

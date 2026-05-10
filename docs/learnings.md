@@ -107,7 +107,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 ### AffiliateSwarm vs. Rewardful (gap analysis, April 2026)
 **Where AffiliateSwarm leads:** Agent-native workflows, network/marketplace discovery, skill-file onboarding, escrow-backed incentives, onchain funding, crypto payouts, reputation-based trust.
 
-**Where Rewardful leads:** Stripe-native billing integrations, recurring commissions, coupon attribution, cookie-based tracking, attribution controls, payout operations maturity, branded affiliate portals.
+**Where Rewardful leads:** Billing-platform integrations, recurring commissions, coupon attribution, cookie-based tracking, attribution controls, payout operations maturity, branded affiliate portals.
 
 **Key takeaway:** AffiliateSwarm's gaps relative to Rewardful are not in the marketplace concept but in operational maturity for mainstream advertiser affiliate programs. The highest-value gaps to close: attribution flexibility, recurring commissions, coupon-based promotion, payout operations, and integration ecosystem.
 

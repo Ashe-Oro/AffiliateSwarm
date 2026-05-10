@@ -144,9 +144,8 @@
 
 - [ ] **Payout request form** visible (NOT "Tell your agent: Request a payout" text)
 - [ ] Available balance displayed prominently
-- [ ] **Method selector:** CRYPTO and BANK_TRANSFER options
+- [ ] **Method selector:** CRYPTO option only
 - [ ] Select **CRYPTO** → Chain Address input appears (pre-filled if wallet has one)
-- [ ] Select **BANK_TRANSFER** → Stripe Account ID input appears
 - [ ] **Amount input** in dollars with **Max button** that fills available balance
 - [ ] Enter amount < $1.00 → validation prevents submission
 - [ ] Enter amount > available balance → validation error

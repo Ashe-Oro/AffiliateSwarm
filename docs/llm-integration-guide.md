@@ -119,7 +119,7 @@ app.post("/signup", async (req, res) => {
 **C. Read from the durable record at conversion time** — When the user converts, look up the stored value:
 
 ```javascript
-// In your conversion handler (e.g., Stripe webhook)
+// In your conversion handler (e.g., payment webhook)
 const user = await db.users.findById(userId);
 if (user.swarmRef) {
   await reportConversion(user.swarmRef, orderId, amountCents);
@@ -192,7 +192,7 @@ Your API key is generated when you sign up as an advertiser at [affiliateswarm.a
 
 The postback endpoint is **idempotent on `(campaignId, externalId)`**: posting the same `externalId` twice for the same campaign will never double-pay an affiliate. To get that benefit, `externalId` must be **stable and unique per real conversion**:
 
-- **Stable** — derive it from a durable identifier that already exists in your system: the order ID, the Stripe `checkout.session.id`, the subscription ID, the payment intent ID. Something that won't change if you retry.
+- **Stable** — derive it from a durable identifier that already exists in your system: the order ID, the subscription ID, the payment intent ID, or another billing-system event ID. Something that won't change if you retry.
 - **Unique per conversion** — one real conversion = one `externalId`. Don't generate a fresh UUID on each attempt — then a retry looks like a new conversion.
 - **Reuse on retry** — if the postback call fails (network blip, 5xx, timeout) and you retry, you MUST reuse the same `externalId`. AffiliateSwarm will return `200 OK` with the existing lead on the duplicate call and no extra payout is triggered.
 - **Never generate `externalId` client-side or on a success page.** The browser can refresh, open in another tab, or be replayed — any of which would produce a new ID. The backend that owns the authoritative conversion event should pick the ID.
@@ -334,7 +334,7 @@ def report_conversion(swarm_ref: str, order_id: str, amount_cents: int) -> None:
 
 Fire **exactly once** per successful conversion. The most common integration points:
 
-- **Payment webhook** (e.g., Stripe `checkout.session.completed`, Shopify `orders/paid`) — preferred, most reliable.
+- **Payment webhook** — preferred, most reliable.
 - **Order completion handler** — after payment is confirmed, not just at checkout initiation.
 - **Subscription activation** — when a trial converts to paid, or when the initial payment succeeds.
 
@@ -392,7 +392,7 @@ curl -X POST "https://affiliateswarm.ai/api/v1/leads/{leadId}/dispute" \
   -H "Authorization: Bearer $AFFILIATESWARM_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "reason": "Buyer refunded order via Stripe (refund id re_xxxxx, processed 2026-05-12)"
+    "reason": "Buyer refunded order (refund id re_xxxxx, processed 2026-05-12)"
   }'
 ```
 
@@ -407,7 +407,7 @@ The `leadId` is the `id` field returned by the original postback (the `201 Creat
     "id": "lead-uuid",
     "status": "DISPUTED",
     "disputedAt": "2026-05-12T14:22:09.000Z",
-    "disputeReason": "Buyer refunded order via Stripe (refund id re_xxxxx, processed 2026-05-12)"
+    "disputeReason": "Buyer refunded order (refund id re_xxxxx, processed 2026-05-12)"
   }
 }
 ```
@@ -421,11 +421,7 @@ The escrow hold is reversed and the funds return to the campaign's escrow accoun
 
 ### Practical wiring
 
-Hook the dispute call into your billing system's refund webhook:
-
-- **Stripe** — listen for `charge.refunded` (or `refund.created`); look up the original `Lead.id` you stored when the original `checkout.session.completed` fired the postback; call the dispute endpoint with the refund id in the `reason`.
-- **Shopify** — listen for `refunds/create`; same pattern.
-- **Paddle** — listen for `transaction.payment_failed` or refund events; same pattern.
+Hook the dispute call into your billing system's refund webhook. Listen for refund or chargeback events, look up the original `Lead.id` you stored when the conversion postback fired, and call the dispute endpoint with the refund id in the `reason`.
 
 Store the AffiliateSwarm `leadId` from each successful postback alongside your order/checkout record so the refund handler can find it later. If you don't store the `leadId`, you'll be unable to dispute the lead and you'll pay an affiliate commission on a refunded sale.
 
@@ -541,22 +537,22 @@ Successful activation returns `{ success: true, data: { id, status: "ACTIVE", up
 
 ## Common patterns
 
-### Stripe webhook integration
+### Payment webhook integration
 
 ```javascript
-// In your Stripe webhook handler:
-app.post("/webhooks/stripe", async (req, res) => {
-  const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+// In your payment webhook handler:
+app.post("/webhooks/payments", async (req, res) => {
+  const event = verifyPaymentWebhook(req);
 
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const user = await db.users.findById(session.client_reference_id);
+  if (event.type === "payment.completed") {
+    const payment = event.data.object;
+    const user = await db.users.findById(payment.userId);
 
     if (user?.swarmRef) {
       await reportConversion(
         user.swarmRef,
-        session.id,            // externalId — stable, unique per checkout
-        session.amount_total,  // already in cents
+        payment.id,           // externalId — stable, unique per checkout
+        payment.amountCents,  // already in cents
       );
     }
   }
@@ -600,7 +596,7 @@ If your campaign includes a **buyer incentive** (a discount for referred users),
 https://your-site.com/signup?swarm_ref=abc123xyz&promo=SWARM20
 ```
 
-The `promo` value is whatever you configured in your own billing system (a Stripe promotion code, a Shopify discount code, etc.). AffiliateSwarm only passes it through — it does not create or manage the discount.
+The `promo` value is whatever you configured in your own billing system. AffiliateSwarm only passes it through — it does not create or manage the discount.
 
 The **buyer discount** (promo) is independent of the **affiliate commission** (postback). Skip this section entirely if your campaign has no buyer incentive.
 
@@ -665,67 +661,12 @@ if (promo) {
 
 Check your provider's docs for whether discount codes in their system are case-sensitive; treat that as the source of truth for how you normalize the lookup (but always leave the stored raw value untouched — see A.5).
 
-### A.3 Apply the discount — worked example (Stripe)
-
-Stripe has two different concepts that engineers regularly confuse:
-
-- **Coupon** — an internal discount object. Its ID looks like `25_off_abc123` or a custom value you chose when creating it. You pass coupon IDs to `discounts: [{ coupon: COUPON_ID }]`.
-- **Promotion code** — a *customer-facing string* (e.g. `SWARM20`) that is attached to a coupon. Promotion codes are **case-insensitive**. You do **not** pass the promotion code string directly as a coupon ID.
-
-The code your affiliate shares in `?promo=SWARM20` is almost always a **promotion code**, not a coupon ID. Use one of the following patterns.
-
-#### Option 1: Hosted Stripe Checkout (recommended)
-
-Let Stripe handle promotion code lookup natively — pass the promotion code as a pre-applied discount:
-
-```javascript
-// Server-side — create the Checkout Session
-const promo = req.cookies.swarm_promo;
-
-let discounts = undefined;
-if (promo) {
-  // Resolve the promotion code string → its Stripe ID
-  const list = await stripe.promotionCodes.list({ code: promo, active: true, limit: 1 });
-  if (list.data.length > 0) {
-    discounts = [{ promotion_code: list.data[0].id }];
-  }
-}
-
-const session = await stripe.checkout.sessions.create({
-  // ... line_items, mode, success_url, etc.
-  ...(discounts ? { discounts } : { allow_promotion_codes: true }),
-});
-```
-
-If lookup fails or the code is inactive, falling back to `allow_promotion_codes: true` lets the user still enter it manually on the Stripe page.
-
-#### Option 2: Custom checkout (Stripe Elements, Payment Intents, etc.)
-
-Resolve the promotion code on your server at checkout submit and apply it to the subscription or payment intent:
-
-```javascript
-const promo = req.cookies.swarm_promo;
-let couponId;
-if (promo) {
-  const list = await stripe.promotionCodes.list({ code: promo, active: true, limit: 1 });
-  couponId = list.data[0]?.coupon.id;
-}
-
-const subscription = await stripe.subscriptions.create({
-  customer: customerId,
-  items: [{ price: priceId }],
-  ...(couponId ? { discounts: [{ coupon: couponId }] } : {}),
-});
-```
-
-### A.4 Pre-filling the promo on a custom checkout form (optional)
+### A.3 Pre-filling the promo on a custom checkout form (optional)
 
 If you render your own "Promotion code" input field and want to pre-populate it from the cookie, do that on the server during page render (read cookie → render value into the initial form state). Avoid querying the DOM by placeholder and dispatching synthetic `input`/`change` events — it's brittle and breaks easily when the UI changes. If you must auto-fill client-side, prefer a well-known element ID that your own frontend controls.
 
-### A.5 Casing
+### A.4 Casing
 
 - `promo` value itself: store the **raw string exactly as received**, same rule as `swarm_ref`. Don't uppercase/lowercase it in place.
-- **Stripe promotion codes** (customer-facing strings) are case-insensitive on lookup — `SWARM20` and `swarm20` match the same promotion code.
-- **Stripe coupon IDs** (and most other billing systems' raw coupon identifiers) are case-sensitive.
 
 If your billing provider requires normalized casing for lookup, normalize a **copy** for the lookup call only and leave the stored value untouched.
