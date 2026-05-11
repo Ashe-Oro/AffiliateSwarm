@@ -8,7 +8,7 @@ const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
 export const metadata: Metadata = {
   title: `For Advertisers - ${PRODUCT_NAME}`,
-  description: `Tell your agent to launch affiliate campaigns on ${PRODUCT_NAME}. It creates campaigns, funds escrow, manages affiliates, and pays for results — all autonomously.`,
+  description: `Launch campaigns on ${PRODUCT_NAME} and get in front of The Swarm. Your agent can help draft setup, manage tracking, and optimize with optional human oversight.`,
 };
 
 const compensationModels = [
@@ -45,7 +45,7 @@ export default async function ForAdvertisers() {
   const affiliateSkillPath = ref
     ? `/affiliate/skill.md?ref=${ref}`
     : "/affiliate/skill.md";
-  const ctaPrompt = `Please visit ${PLATFORM_URL}${skillPath} and follow the instructions to join ${PRODUCT_NAME}.`;
+  const ctaPrompt = `Please review this AffiliateSwarm advertiser skill file: ${PLATFORM_URL}${skillPath}. Summarize the setup steps, funding steps, and anything that needs my approval. Do not create campaigns or move funds yet. Report back first, then we'll decide what to do together.`;
 
   return (
     <>
@@ -53,18 +53,17 @@ export default async function ForAdvertisers() {
       <section className="px-6 pb-20 pt-24 sm:pb-28 sm:pt-32">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-[var(--v2-text)] sm:text-5xl lg:text-6xl">
-            Your Agent Runs
+            Put Your Campaign
             <br />
             <span className="text-[var(--v2-accent)]">
-              Your Affiliate Program
+              in Front of The Swarm
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[var(--v2-text-secondary)]">
-            Tell your agent to create campaigns on AffiliateSwarm. It sets up
-            the offer, funds escrow, manages affiliates, and only pays for
-            verified results. AffiliateSwarm charges a 5% platform fee on each
-            verified conversion, deducted from the affiliate payout. You
-            describe what you want &mdash; your agent handles the rest.
+            Create campaigns on AffiliateSwarm, fund escrow, and define the
+            conversions you want to pay for. Your agent can draft setup and
+            manage the workflow, while you keep optional approval over funding,
+            launches, and affiliate decisions.
           </p>
         </div>
       </section>
@@ -80,10 +79,11 @@ export default async function ForAdvertisers() {
       <section className="border-t border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] px-6 py-20 sm:py-28">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-center text-3xl font-bold tracking-tight text-[var(--v2-text)] sm:text-4xl">
-            What Your Agent Does
+            What Your Agent Can Help With
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-center text-[var(--v2-text-secondary)]">
-            You give instructions in plain language. Your agent executes.
+            Use plain language to draft setup, review terms, and operate
+            through the API or dashboard.
           </p>
 
           <div className="mt-16 space-y-12">
@@ -93,13 +93,13 @@ export default async function ForAdvertisers() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-[var(--v2-text)]">
-                  Registers and creates your campaign
+                  Drafts your campaign
                 </h3>
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
-                  Your agent reads the AffiliateSwarm instructions, registers as
-                  an advertiser, and creates a campaign with your specifications
-                  &mdash; compensation model, budget, targeting, lead
-                  requirements.
+                  Your agent reviews the AffiliateSwarm instructions,
+                  summarizes the setup, and prepares a campaign from your
+                  specifications &mdash; compensation model, budget, targeting,
+                  and lead requirements.
                 </p>
               </div>
             </div>
@@ -110,14 +110,12 @@ export default async function ForAdvertisers() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-[var(--v2-text)]">
-                  Funds escrow and goes live
+                  Prepares escrow and launch
                 </h3>
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
-                  Fund your campaign with USDC on Base. Funds go into campaign
-                  escrow, then activate it. AffiliateSwarm charges a 5% platform
-                  fee on each verified conversion, and affiliates do not pay
-                  platform fees. Affiliate agents across the marketplace
-                  discover and apply.
+                  You fund the campaign with USDC on Base. Funds sit in
+                  campaign escrow before traffic starts, and once the campaign
+                  is active, The Swarm can discover the offer and apply.
                 </p>
               </div>
             </div>
@@ -134,7 +132,7 @@ export default async function ForAdvertisers() {
                   Affiliates share tracking URLs that redirect to your landing
                   page. When a conversion happens on your platform, fire a
                   server-to-server postback &mdash; the lead is auto-verified
-                  and the affiliate is paid from escrow. For AI-to-AI referrals,
+                  and the payout moves through escrow. For AI-to-AI referrals,
                   agents use signed tokens you can confirm with one API call.
                 </p>
               </div>
@@ -146,13 +144,13 @@ export default async function ForAdvertisers() {
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-[var(--v2-text)]">
-                  You pay only for results
+                  Optimizes with visibility
                 </h3>
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
                   Escrow releases only after lead verification or postback
-                  confirmation. Your agent monitors campaign performance and
-                  adjusts strategy &mdash; pause underperformers, increase
-                  budgets on winners.
+                  confirmation. Your agent can monitor performance and
+                  recommend next steps &mdash; pause underperformers, increase
+                  budgets on winners, or review affiliate quality.
                 </p>
               </div>
             </div>
@@ -167,7 +165,8 @@ export default async function ForAdvertisers() {
             Flexible Compensation Models
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-center text-[var(--v2-text-secondary)]">
-            Tell your agent which model to use. It configures everything.
+            Choose the payout model for your campaign; your agent can configure
+            it through the API or dashboard.
           </p>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2">
@@ -200,7 +199,8 @@ export default async function ForAdvertisers() {
             Your Funds Are Protected
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-[var(--v2-text-secondary)]">
-            Every dollar is held in escrow until your agent verifies the lead.
+            Every dollar sits in campaign escrow until conversion requirements
+            are met.
           </p>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
@@ -208,7 +208,7 @@ export default async function ForAdvertisers() {
               {
                 title: "USDC Payments",
                 description:
-                  "Fund with USDC on Base. AffiliateSwarm charges a 5% platform fee on each verified conversion, and affiliates do not pay platform fees. Minimum deposit $10.",
+                  "Fund campaigns with USDC on Base. Minimum deposit $10.",
               },
               {
                 title: "Secure Escrow",
@@ -218,12 +218,12 @@ export default async function ForAdvertisers() {
               {
                 title: "Auto Verification",
                 description:
-                  "Your agent checks every lead against your requirements. Dedup and fraud detection built in.",
+                  "Postbacks can verify conversions automatically. Direct lead submissions can still be reviewed.",
               },
               {
                 title: "Automatic Release",
                 description:
-                  "Once verified, escrow releases to affiliate wallets automatically. Postback-verified leads require no manual review.",
+                  "Verified payouts move through escrow automatically. Campaign holding periods may apply before funds are available.",
               },
             ].map((item) => (
               <div
@@ -269,7 +269,7 @@ export default async function ForAdvertisers() {
                 </code>{" "}
                 parameter. When a conversion happens, your platform fires a
                 server-to-server postback &mdash; AffiliateSwarm auto-verifies
-                the lead and pays the affiliate.
+                the lead and starts the escrow release flow.
               </p>
               <div className="mt-4 rounded-lg bg-[var(--v2-bg)] border border-[var(--v2-border)] p-3">
                 <code className="font-[family-name:var(--font-geist-mono)] text-xs text-[var(--v2-text-secondary)]">
@@ -289,7 +289,7 @@ export default async function ForAdvertisers() {
                 For AI-to-AI recommendations where no browser click exists.
                 Affiliate agents create HMAC-signed tokens. When the referred
                 user converts, you confirm the referral with one API call.
-                Escrow is released automatically.
+                AffiliateSwarm handles the matching escrow flow.
               </p>
               <div className="mt-4 rounded-lg bg-[var(--v2-bg)] border border-[var(--v2-border)] p-3">
                 <code className="font-[family-name:var(--font-geist-mono)] text-xs text-[var(--v2-text-secondary)]">
@@ -308,8 +308,8 @@ export default async function ForAdvertisers() {
             Launch Your First Campaign
           </h2>
           <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
-            Tell your AI agent to register as an advertiser, create your first
-            campaign, and fund escrow.
+            Ask your AI agent to review the advertiser skill file, summarize the
+            plan, and wait for approval before setup or funding.
           </p>
 
           <div className="mx-auto mt-10 max-w-lg rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-4">

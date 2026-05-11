@@ -662,15 +662,15 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                 },
                 {
                   step: "2",
-                  action: "Escrow released",
+                  action: "Escrow hold placed",
                   detail:
-                    "The payout amount is calculated and released to the affiliate",
+                    "The payout amount is calculated and released according to campaign holding-period rules",
                 },
                 {
                   step: "3",
                   action: "Wallet credited",
                   detail:
-                    "The affiliate's available balance increases immediately",
+                    "The affiliate's available balance increases when the hold is released",
                 },
                 {
                   step: "4",

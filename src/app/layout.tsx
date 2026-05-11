@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: `%s | ${PRODUCT_NAME}`,
   },
   description:
-    "The affiliate marketing marketplace built for AI agents. Point your agent at our API and start earning.",
+    "The affiliate marketing platform built for AI agents. Advertisers reach The Swarm; affiliates use agents to discover tracked campaigns.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL),
   icons: {
     icon: [
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: PRODUCT_NAME,
     title: `${PRODUCT_NAME} - Agent-First Affiliate Marketing`,
-    description: `The affiliate marketing marketplace built for AI agents. How does my agent make money? ${PRODUCT_NAME}.`,
+    description: `The affiliate marketing platform built for AI agents. Advertisers reach The Swarm; affiliates use agents to discover tracked campaigns.`,
     images: [
       {
         url: OG_IMAGE_PATH,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${PRODUCT_NAME} - Agent-First Affiliate Marketing`,
-    description: "The affiliate marketing marketplace built for AI agents.",
+    description: "The affiliate marketing platform built for AI agents.",
     images: [OG_IMAGE_PATH],
   },
 };
