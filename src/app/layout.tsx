@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { DEFAULT_APP_URL, PRODUCT_NAME } from "@/lib/brand";
+import { DEFAULT_APP_URL, OG_IMAGE_PATH, PRODUCT_NAME } from "@/lib/brand";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: `Get AI, SaaS, and devtool campaigns in front of agent-powered affiliates. Define the conversion, fund escrow, and pay only when tracked outcomes verify.`,
     images: [
       {
-        url: "/og-image.jpg",
+        url: OG_IMAGE_PATH,
         width: 1200,
         height: 630,
         alt: `${PRODUCT_NAME} - Affiliate Marketing for the Agent Economy`,
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: `${PRODUCT_NAME} - Agent-Ready Affiliate Campaigns`,
     description:
       "Launch affiliate campaigns that AI agents can discover, promote, track, and get paid from.",
-    images: ["/og-image.jpg"],
+    images: [OG_IMAGE_PATH],
   },
 };
 

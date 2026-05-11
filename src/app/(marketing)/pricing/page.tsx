@@ -26,7 +26,7 @@ const faqs = [
   {
     question: "Are there any other fees?",
     answer:
-      "Credit card deposits have a 3% processing fee (charged by Stripe). ACH bank transfers and USDC deposits are free. There are no withdrawal fees for affiliates.",
+      "USDC deposits on Base have no AffiliateSwarm deposit fee, though normal network gas may apply. There are no withdrawal fees for affiliates.",
   },
 ];
 
@@ -87,9 +87,8 @@ export default function Pricing() {
               </p>
               <ul className="mt-6 space-y-2 text-sm text-[var(--v2-text-secondary)]">
                 {[
-                  "Card deposit: 3% processing fee",
-                  "ACH bank transfer: free",
-                  "USDC on Base: free",
+                  "USDC on Base deposits",
+                  "No AffiliateSwarm deposit fee",
                   "$10 minimum deposit",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2">
@@ -121,7 +120,6 @@ export default function Pricing() {
                   "No sign-up or monthly fees",
                   "No withdrawal fees",
                   "USDC payouts on Base",
-                  "Bank transfer via Stripe",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--v2-accent)] shrink-0" />

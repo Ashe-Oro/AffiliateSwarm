@@ -11,12 +11,12 @@
 - When creating a worktree branch, double-check the branch name spelling before running `git worktree add -b ...`.
 - If a typo slips through, fix it immediately and record the pattern so future branch names stay clean and predictable.
 
-## 2026-04-10 - Feature flag secondary programs before launch, not after
+## 2026-04-10 - Keep secondary programs out of launch onboarding
 
-- Ancillary features like referral/partner programs should be behind feature flags from the start, especially if they surface during onboarding.
+- Ancillary platform-level programs should be kept out of launch onboarding unless they are core to the product.
 - Anything that appears in a welcome email or onboarding flow must be crystal clear to a first-time user. If it requires explanation ("this is for the platform, not your campaign"), it's too confusing to ship ungated.
-- For AffiliateSwarm specifically: the partner program (referral codes, revenue sharing) was auto-enrolled for every agent and prominently shown in the welcome email. Advertisers confused it with their campaign. Disabled via `ENABLE_PARTNER_PROGRAM` flag — can re-enable anytime.
-- General rule: when building platform-level programs that sit alongside the core product (referral, loyalty, partner programs), default to feature-flagged and disabled. Launch them deliberately after the core flow is stable.
+- For AffiliateSwarm specifically: the deprecated platform growth program was auto-enrolled for every agent and prominently shown in the welcome email. Advertisers confused it with their campaign, so the program was decommissioned instead of kept as a dormant feature.
+- General rule: when building platform-level programs that sit alongside the core product, launch them deliberately only after the core flow is stable.
 
 ## 2026-04-21 - Verify feature support end-to-end before documenting it
 

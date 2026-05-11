@@ -20,7 +20,7 @@ Read this + `launch-strategy.md` to understand the full scope.
 | 6 | PR strategy | Single PR | Ship everything together |
 | 7 | Dashboard indexes | Add now | Composite indexes on leads(campaignId, submittedAt), leads(affiliateId, submittedAt), clickEvents(campaignId, clickedAt) |
 | 8 | DRY auth | Extract helper | `assertCampaignOwner(campaignId, agentId)` — repeated 5+ times across services |
-| 9 | Stripe fix | Export creditFromCheckout | Currently private, needs to be exported |
+| 9 | Checkout crediting fix | Export creditFromCheckout | Currently private, needs to be exported |
 | 10 | Seed agent discovery | Polling | Call GET /discover/campaigns every 5 min |
 | 11 | Seed agent leads | Identical treatment | No special flagging vs organic affiliates |
 | 12 | Sandbox isolation | Separate Postgres DB | Same schema, different connection string |

@@ -59,19 +59,6 @@ async function main() {
 
   console.log("Seeding E2E test campaign...\n");
 
-  // Create test partner
-  const partner = await prisma.partner.upsert({
-    where: { referralCode: "E2ETEST" },
-    create: {
-      displayName: "E2E Test Partner",
-      email: "e2e-partner@test.affiliateswarm.dev",
-      referralCode: "E2ETEST",
-      revenueShareBps: 1000,
-    },
-    update: {},
-  });
-  console.log(`Partner: ${partner.referralCode}`);
-
   // Create advertiser
   const advKey = await generateKey();
   const advertiser = await prisma.agent.create({
@@ -147,7 +134,7 @@ async function main() {
   console.log(`Advertiser: ${advertiser.id}`);
   console.log(`Campaign: ${campaign.id} (ACTIVE, $10k funded)`);
 
-  // Create affiliate (referred by test partner)
+  // Create affiliate
   const affKey = await generateKey();
   const affiliate = await prisma.agent.create({
     data: {
@@ -180,18 +167,12 @@ async function main() {
     data: { agentId: affiliate.id, trustTier: "NEW", overallScore: 50, lastRecalculatedAt: new Date() },
   });
 
-  // Track partner referral
-  await prisma.partnerReferral.create({
-    data: { partnerId: partner.id, agentId: affiliate.id, agentType: "AFFILIATE" },
-  });
-
-  console.log(`Affiliate: ${affiliate.id} (referred by ${partner.referralCode})`);
+  console.log(`Affiliate: ${affiliate.id}`);
 
   // Save keys
   const testKeys = {
     advertiser: { agentId: advertiser.id, apiKey: advKey.key, campaignId: campaign.id },
     affiliate: { agentId: affiliate.id, apiKey: affKey.key },
-    partner: { referralCode: partner.referralCode },
   };
 
   const fs = await import("fs");

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { ENABLE_STRIPE_DEPOSITS } from "@/lib/feature-flags";
 import {
   handleCheckoutCompleted,
   handleAsyncPaymentSucceeded,
@@ -31,6 +32,13 @@ export async function POST(req: NextRequest) {
     const message = err instanceof Error ? err.message : "Invalid signature";
     console.error("Stripe webhook signature verification failed:", message);
     return NextResponse.json({ error: message }, { status: 400 });
+  }
+
+  if (!ENABLE_STRIPE_DEPOSITS()) {
+    console.warn(
+      `[stripe-webhook] Verified ${event.type} ignored because payment rail is disabled`
+    );
+    return NextResponse.json({ received: true, skipped: "payment rail disabled" });
   }
 
   try {

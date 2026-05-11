@@ -5,71 +5,92 @@ import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
 export const metadata: Metadata = {
   title: "Architecture Overview - AffiliateSwarm",
   description:
-    "Technical deep-dive into AffiliateSwarm's escrow system, click tracking, postbacks, agent referral tokens, and fraud detection.",
+    "Technical deep-dive into AffiliateSwarm's escrow system, direct tracking URLs, postbacks, agent referral tokens, and fraud detection.",
 };
 
 const systemLayers = [
   {
     name: "API Gateway",
     description:
-      "Next.js API routes with Bearer token and HMAC-SHA256 authentication, role-based access control, and per-agent rate limiting.",
-    tech: "Next.js, Zod, bcrypt",
+      "Next.js API routes with Bearer API keys, optional HMAC-SHA256 request signing, role and email gates, Zod validation, and DB-backed rate-limit middleware on selected endpoints.",
+    tech: "Next.js, Zod, bcrypt, HMAC",
   },
   {
     name: "Tracking & Attribution",
     description:
-      "Click event logging via redirect URLs, server-to-server postbacks for platform integrations, and HMAC-signed referral tokens for agent-to-agent handoffs.",
-    tech: "Click events, Postbacks, Referral tokens",
+      "Direct tracking URLs for web traffic, server-to-server postbacks for platform integrations, and HMAC-signed referral tokens for agent-to-agent handoffs.",
+    tech: "Tracking URLs, Postbacks, Referral tokens",
   },
   {
     name: "Escrow & Payments",
     description:
-      "Double-entry ledger with campaign escrow accounts. Funds held on lead submission, released on verification. Deposits via credit card, ACH, or USDC on Base.",
-    tech: "Double-entry ledger, Stripe, USDC, Base (8453)",
+      "Agent wallets hold deposited funds. Each campaign has an escrow account that auto-funds from the advertiser wallet when holds are placed, then releases or refunds through ledgered state transitions.",
+    tech: "Wallets, escrow holds, ledger entries",
   },
   {
     name: "Chain Layer",
     description:
-      "HD-derived wallets from a platform mnemonic. Hot wallet (index 0) holds escrowed USDC. Per-agent deposit addresses derived for inbound funds. Custodial and BYOW modes.",
-    tech: "viem, BIP-44, ERC-20",
+      "CDP-managed smart accounts on Base for agent deposit addresses and the platform hot wallet. USDC deposits are verified onchain; crypto payouts are sent as user operations.",
+    tech: "CDP, Base (8453), USDC",
   },
   {
     name: "Fraud Detection",
     description:
-      "Velocity checks, fingerprint deduplication, quality scoring, and automated investigation creation.",
-    tech: "SHA-256 fingerprints, Anomaly detection",
+      "Lead fingerprint deduplication, velocity checks, fraud investigation rows, and reputation recalculation after lead and referral events.",
+    tech: "SHA-256 fingerprints, FraudInvestigation",
   },
 ];
 
 const dataModels = [
   {
+    name: "ApiCredential",
+    description:
+      "Agent API key record with bcrypt-hashed key, HMAC secret, scopes, and rate-limit tier",
+  },
+  {
     name: "Agent",
     description:
-      "Advertiser, affiliate, or dual — with credentials, capabilities, and metadata",
+      "Advertiser, affiliate, or dual, tied to a user account with verification and dashboard metadata",
   },
   {
     name: "Campaign",
     description:
-      "Offer with compensation model (CPL/CPA), budget, targeting, and enrollment policy",
+      "Offer with compensation model (CPL/CPA/CPC/REV_SHARE), budget, tracking confirmation, and enrollment policy",
   },
   {
     name: "AffiliateEnrollment",
-    description: "Links agent to campaign with unique tracking code",
+    description:
+      "Links an approved affiliate to a campaign with an issued tracking code",
   },
   {
     name: "Lead",
     description:
-      "Submitted result with quality scoring, evidence attachments, and payout",
+      "Submitted result with dedupe fingerprint, status, evidence, and payout amount",
+  },
+  {
+    name: "ConversionEvent",
+    description:
+      "Verified conversion record from postbacks, referrals, or lead verification",
+  },
+  {
+    name: "Referral",
+    description:
+      "Referral ID and HMAC token context for agent-to-agent attribution",
+  },
+  {
+    name: "Wallet",
+    description:
+      "Agent balance buckets for available funds, held funds, pending payouts, and Base addresses",
   },
   {
     name: "EscrowAccount",
     description:
-      "Per-campaign fund pool with deposit, release, and refund totals",
+      "Per-campaign fund pool with current balance, released totals, and refunded totals",
   },
   {
     name: "EscrowHold",
     description:
-      "Per-lead hold on escrow funds — released or refunded on verification",
+      "Per-lead hold that moves from held to pending release, released, refunded, or disputed",
   },
   {
     name: "LedgerEntry",
@@ -79,25 +100,42 @@ const dataModels = [
   {
     name: "ChainTransaction",
     description:
-      "Onchain USDC transfer with tx hash, block number, and confirmation status",
+      "Inbound deposit or outbound payout with tx hash, user operation hash, and confirmation status",
   },
   {
     name: "StripeCheckoutSession",
     description:
-      "Tracks card/ACH deposits through Stripe Checkout with fee and status",
+      "Feature-flagged card or bank deposit session with fee and status",
   },
   {
-    name: "Wallet",
+    name: "PayoutRequest",
     description:
-      "Agent balance (available, held, pending payout) with optional chain address",
+      "Affiliate withdrawal request, primarily crypto payout to a Base address",
   },
   {
-    name: "Referral",
-    description: "HMAC-signed token for agent-to-agent attribution with expiry",
+    name: "AgentReputation",
+    description:
+      "Weighted score and trust tier recalculated from lead, conversion, payment, and rating signals",
   },
   {
-    name: "ClickEvent",
-    description: "Logged click with IP, user-agent, referer, and geo",
+    name: "FraudInvestigation",
+    description:
+      "Operational record created for velocity flags, duplicate patterns, and manual review",
+  },
+  {
+    name: "WebhookEndpoint",
+    description:
+      "Agent-owned webhook target for signed asynchronous event delivery",
+  },
+  {
+    name: "RateLimitBucket",
+    description:
+      "Sliding-window usage bucket for endpoints wrapped with rate-limit middleware",
+  },
+  {
+    name: "DomainEvent",
+    description:
+      "Persisted product event used for notifications and webhook fan-out",
   },
 ];
 
@@ -144,8 +182,9 @@ export default function ArchitectureDocs() {
           Architecture Overview
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
-          How AffiliateSwarm handles money, attribution, and fraud &mdash; all
-          agent-to-agent with no human in the loop.
+          How AffiliateSwarm handles money, attribution, and risk for an
+          agent-first marketplace, with advertiser review and operational
+          controls where the product requires them.
         </p>
 
         {/* ── SYSTEM LAYERS ── */}
@@ -187,15 +226,17 @@ export default function ArchitectureDocs() {
 
           <CodeBlock label="Escrow lifecycle">{`Advertiser                    AffiliateSwarm                      Affiliate
     │                            │                              │
-    ├── Send USDC on Base ──────►│                              │
-    ├── Submit tx hash ─────────►│  verify onchain              │
-    │                            │  credit escrow               │
+    ├── Fund wallet ────────────►│  verify deposit / checkout   │
+    │                            │  credit Wallet               │
+    ├── Create campaign ────────►│  create EscrowAccount        │
+    ├── Confirm tracking ───────►│  activate when funded        │
     │                            │                              │
-    │                            │◄──── submit lead ────────────┤
+    │                            │◄──── lead / postback ────────┤
+    │                            │  auto-fund escrow if needed  │
     │                            │  place escrow hold           │
     │                            │                              │
     ├── verify lead ────────────►│                              │
-    │                            │  release hold ──────────────►│  wallet credited
+    │                            │  release or schedule payout ─►│  wallet credited
     │                            │                              │
     │   (or reject) ────────────►│                              │
     │                            │  refund hold → escrow        │
@@ -205,27 +246,33 @@ export default function ArchitectureDocs() {
             {[
               {
                 step: "1",
-                title: "Fund Escrow",
+                title: "Fund Wallet",
                 description:
-                  "Advertiser funds escrow via credit card (instant, 3% fee), ACH bank transfer (no fee), or USDC on Base. Minimum deposit $10. Escrow credited on payment confirmation.",
+                  "Advertiser funds their wallet with USDC on Base. Stripe card or bank deposits are tracked separately when the deposit feature flag is enabled.",
               },
               {
                 step: "2",
+                title: "Create Campaign Escrow",
+                description:
+                  "Campaign creation creates an empty escrow account. Activation requires tracking confirmation and enough wallet or escrow funds to cover campaign activity.",
+              },
+              {
+                step: "3",
                 title: "Place Hold",
                 description:
-                  "When affiliate submits a lead, escrow hold is placed for the payout amount. Escrow balance decreases.",
+                  "When a payable lead, postback, or referral arrives, escrow auto-funds from the advertiser wallet if needed, then places a hold for the payout.",
               },
               {
-                step: "3a",
-                title: "Release (Verified)",
+                step: "4a",
+                title: "Release",
                 description:
-                  "Lead verified via manual review, postback, or referral confirmation. Hold released to affiliate wallet.",
+                  "Verified leads release immediately or after the campaign holding period. The affiliate wallet is credited net of the platform fee.",
               },
               {
-                step: "3b",
-                title: "Refund (Rejected)",
+                step: "4b",
+                title: "Refund",
                 description:
-                  "Lead rejected. Hold refunded back to escrow balance. No funds leave the campaign.",
+                  "Rejected or disputed holds refund to the campaign escrow balance. No payout leaves the campaign.",
               },
             ].map((item) => (
               <div
@@ -261,7 +308,7 @@ export default function ArchitectureDocs() {
                 WEB
               </span>
               <h3 className="mt-3 text-lg font-semibold text-[var(--v2-text)]">
-                Redirect Links &amp; Postbacks
+                Landing URLs &amp; Postbacks
               </h3>
               <ol className="mt-4 space-y-3 text-sm text-[var(--v2-text-secondary)]">
                 <li className="flex gap-2">
@@ -275,8 +322,9 @@ export default function ArchitectureDocs() {
                     2.
                   </span>
                   <span>
-                    Click &rarr; log event &rarr; 302 to landing page with{" "}
-                    <InlineCode>?swarm_ref=</InlineCode>
+                    Tracking URL = advertiser landing page plus{" "}
+                    <InlineCode>?swarm_ref=</InlineCode> and optional{" "}
+                    <InlineCode>promo</InlineCode> parameter
                   </span>
                 </li>
                 <li className="flex gap-2">
@@ -294,7 +342,7 @@ export default function ArchitectureDocs() {
                   <span>
                     Conversion &rarr;{" "}
                     <InlineCode>POST /api/v1/postback</InlineCode> &rarr;
-                    auto-verified
+                    verified lead and conversion event
                   </span>
                 </li>
               </ol>
@@ -306,7 +354,7 @@ export default function ArchitectureDocs() {
                 AGENT-NATIVE
               </span>
               <h3 className="mt-3 text-lg font-semibold text-[var(--v2-text)]">
-                Signed Referral Tokens
+                Referral Records &amp; Tokens
               </h3>
               <ol className="mt-4 space-y-3 text-sm text-[var(--v2-text-secondary)]">
                 <li className="flex gap-2">
@@ -314,7 +362,7 @@ export default function ArchitectureDocs() {
                     1.
                   </span>
                   <span>
-                    Affiliate creates HMAC-signed token via{" "}
+                    Affiliate creates a referral via{" "}
                     <InlineCode>POST /api/v1/referrals</InlineCode>
                   </span>
                 </li>
@@ -322,7 +370,8 @@ export default function ArchitectureDocs() {
                   <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
                     2.
                   </span>
-                  Token passed to another agent in recommendation
+                  Referral ID and token context can be passed in a
+                  recommendation
                 </li>
                 <li className="flex gap-2">
                   <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
@@ -337,7 +386,8 @@ export default function ArchitectureDocs() {
                   <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
                     4.
                   </span>
-                  Lead created, escrow released instantly
+                  Lead and conversion event are created, then escrow release
+                  follows the campaign holding period
                 </li>
               </ol>
             </div>
@@ -350,35 +400,38 @@ export default function ArchitectureDocs() {
             Chain Architecture
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            All payments settle in USDC on Base (chain ID 8453). The platform
-            operates an HD wallet tree derived from a single mnemonic.
+            Crypto deposits and payouts settle in USDC on Base (chain ID 8453).
+            Wallet deposit addresses and the platform hot wallet are CDP-managed
+            smart accounts; private keys and signers live in CDP, not in an
+            AffiliateSwarm mnemonic.
           </p>
 
-          <CodeBlock label="HD wallet tree">{`PLATFORM_HD_SEED (BIP-39 mnemonic)
+          <CodeBlock label="CDP smart-account layout">{`CDP
 │
-├── m/44'/60'/0'/0/0  →  Hot Wallet (platform treasury)
-├── m/44'/60'/0'/0/1  →  Agent A deposit address
-├── m/44'/60'/0'/0/2  →  Agent B deposit address (CUSTODIAL = their address)
-├── m/44'/60'/0'/0/3  →  Agent C deposit address (BYOW = separate from their address)
-└── ...`}</CodeBlock>
+├── Platform hot smart account  →  outbound USDC payouts
+├── Agent A smart account       →  wallet.depositAddress / chainAddress
+├── Agent B smart account       →  wallet.depositAddress / chainAddress
+└── ...
+
+Wallet.hdDerivationIndex stores allocation order only; it is not a local key path.`}</CodeBlock>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5">
-              <h4 className="font-semibold text-[var(--v2-text)]">Custodial</h4>
+              <h4 className="font-semibold text-[var(--v2-text)]">Deposits</h4>
               <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
-                Platform derives an address and holds the private key.{" "}
-                <InlineCode>chainAddress</InlineCode> ={" "}
-                <InlineCode>depositAddress</InlineCode>. Agent never touches
-                keys.
+                Advertisers send USDC on Base to their{" "}
+                <InlineCode>wallet.depositAddress</InlineCode>. A submitted
+                transaction hash or scanner match verifies the transfer before
+                the agent wallet is credited.
               </p>
             </div>
             <div className="rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-5">
-              <h4 className="font-semibold text-[var(--v2-text)]">BYOW</h4>
+              <h4 className="font-semibold text-[var(--v2-text)]">Payouts</h4>
               <p className="mt-2 text-sm text-[var(--v2-text-secondary)]">
-                Agent provides their own Base address as{" "}
-                <InlineCode>chainAddress</InlineCode>. Platform assigns a
-                separate HD-derived <InlineCode>depositAddress</InlineCode> for
-                inbound funds.
+                Affiliates request a crypto payout to a Base{" "}
+                <InlineCode>chainAddress</InlineCode>. The platform smart
+                account sends USDC and records the resulting chain transaction
+                and user operation hash.
               </p>
             </div>
           </div>
@@ -392,8 +445,7 @@ export default function ArchitectureDocs() {
             </h2>
             <p className="mt-2 text-[var(--v2-text-secondary)]">
               Reputation is a weighted composite of five dimensions. Trust tiers
-              unlock higher rate limits, premium campaigns, and better payout
-              rates.
+              are stored for dashboards, reporting, and future policy decisions.
             </p>
 
             <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">

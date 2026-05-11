@@ -12,8 +12,7 @@ These are sent directly via dedicated functions, outside the event notification 
 | --- | ------------------ | -------------------------------------------------------- | ----------- | --------------------------------- |
 | 1   | Verify Email       | "Verify your email address"                              | New agent   | Agent registers with an email     |
 | 2   | Login Code         | "Your AffiliateSwarm login code: {CODE}"                        | Agent       | Agent requests email login code   |
-| 3   | Partner Welcome    | "Welcome to AffiliateSwarm, {NAME} — here's your referral code" | New partner | Partner record is created         |
-| 4   | Onboarding Welcome | "Welcome to AffiliateSwarm — you're registered as {TYPE}"       | Agent       | After email verification succeeds |
+| 3   | Onboarding Welcome | "Welcome to AffiliateSwarm — you're registered as {TYPE}"       | Agent       | After email verification succeeds |
 
 ---
 
@@ -34,7 +33,7 @@ These are sent through the notification event system with configurable triggers.
 | #   | Event                         | Subject                             | Recipient  | Trigger                                         |
 | --- | ----------------------------- | ----------------------------------- | ---------- | ----------------------------------------------- |
 | 8   | `campaign.created`            | "Campaign created: {CAMPAIGN}"      | Advertiser | New campaign created                            |
-| 9   | `campaign.funded`             | "Funds received for {CAMPAIGN}"     | Advertiser | Deposit via Stripe, USDC, or wallet allocation  |
+| 9   | `campaign.funded`             | "Funds received for {CAMPAIGN}"     | Advertiser | Deposit via USDC or wallet allocation           |
 | 10  | `campaign.tracking_confirmed` | "Tracking confirmed for {CAMPAIGN}" | Advertiser | Advertiser confirms tracking setup              |
 | 11  | `campaign.activated`          | "Campaign is live: {CAMPAIGN}"      | Advertiser | Campaign goes live                              |
 | 12  | `campaign.paused`             | —                                   | —          | Email disabled (webhook only)                   |
@@ -74,8 +73,8 @@ These are sent through the notification event system with configurable triggers.
 | --- | ------------------- | -------------------------------------- | --------- | ------------------------------------------- |
 | 27  | `payout.requested`  | "Payout request received"              | Affiliate | Affiliate requests payout                   |
 | 28  | `payout.processing` | —                                      | —         | Email disabled (webhook only)               |
-| 29  | `payout.completed`  | "Your payout is complete"              | Affiliate | Stripe transfer or onchain TX confirmed     |
-| 30  | `payout.failed`     | "There was a problem with your payout" | Affiliate | Transfer fails (Stripe or onchain)          |
+| 29  | `payout.completed`  | "Your payout is complete"              | Affiliate | Onchain TX confirmed                        |
+| 30  | `payout.failed`     | "There was a problem with your payout" | Affiliate | Onchain transfer fails                      |
 | 31  | `payout.cancelled`  | "Payout cancelled"                     | Affiliate | Affiliate cancels pending payout            |
 | 32  | `payout.rejected`   | "Payout rejected"                      | Affiliate | Not yet triggered in code (template exists) |
 
@@ -98,7 +97,7 @@ These are sent through the notification event system with configurable triggers.
 ## Key Implementation Details
 
 - **Email service**: All emails sent via Resend API (`src/lib/email.ts`)
-- **Standalone emails**: `src/lib/email.ts` (verification, login code, partner welcome, onboarding)
+- **Standalone emails**: `src/lib/email.ts` (verification, login code, onboarding)
 - **Event definitions**: `src/lib/notifications/events.ts`
 - **Email templates**: `src/lib/notifications/emails.ts`
 - **Notification dispatcher**: `src/services/notification.service.ts`

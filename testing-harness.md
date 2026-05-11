@@ -10,7 +10,7 @@ Use three testing lanes so local development stays simple and real integrations 
 
 ## 1. Local Fast Checks: No Secrets
 
-Goal: fast day-to-day confidence without requiring database, CDP, Stripe, Resend, Anthropic, or Vercel env vars.
+Goal: fast day-to-day confidence without requiring database, CDP, payment processor, Resend, Anthropic, or Vercel env vars.
 
 Commands:
 

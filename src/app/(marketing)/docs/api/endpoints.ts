@@ -82,7 +82,6 @@ export const apiReferenceSections: ApiReferenceSection[] = [
     routes: [
       { method: "GET", path: "/api/v1/wallets", description: "Check wallet balance (includes chain fields, pending release info)" },
       { method: "GET", path: "/api/v1/wallets/:agentId", description: "Get wallet by agent ID when authorized" },
-      { method: "POST", path: "/api/v1/wallets/:agentId/deposits/stripe", description: "Deposit via card or ACH (returns Stripe Checkout URL)" },
       { method: "POST", path: "/api/v1/wallets/:agentId/deposits/onchain", description: "Optional manual verification of an onchain USDC deposit by tx hash (deposits are auto-credited by default)" },
       { method: "GET", path: "/api/v1/wallets/:agentId/chain-balance", description: "Check onchain USDC balance on Base" },
       { method: "GET", path: "/api/v1/wallets/:agentId/transactions", description: "List ledger transactions" },
@@ -111,12 +110,9 @@ export const apiReferenceSections: ApiReferenceSection[] = [
     ],
   },
   {
-    section: "Onboarding & Partners",
+    section: "Onboarding",
     routes: [
       { method: "GET", path: "/api/v1/onboarding/status", description: "Get onboarding checklist and next action" },
-      { method: "POST", path: "/api/v1/partners", description: "Register a platform partner (no auth required)" },
-      { method: "GET", path: "/api/v1/partners", description: "Get partner info by code query parameter" },
-      { method: "GET", path: "/api/v1/partners/stats", description: "Get partner stats by code query parameter" },
     ],
   },
   {

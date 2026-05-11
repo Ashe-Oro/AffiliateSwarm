@@ -26,7 +26,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 
 **Constraints on copy:** Don't write "always free" or "no fees ever" for advertisers — keep language flexible ("no platform fees" is fine). Affiliate side can be more definitive since no fee is planned there.
 
-**Open issue:** The 5% advertiser platform fee was later added to the codebase and marketing copy. The partners page still references "AffiliateSwarm's cut" which created a contradiction with the pricing page's "no platform fees" language. Needs a single consistent explanation.
+**Resolved by decommissioning:** The deprecated platform growth page referenced "AffiliateSwarm's cut", which conflicted with pricing language. That program has been removed from the active product surface.
 
 ---
 
@@ -82,13 +82,13 @@ A running record of product decisions, pivots, and lessons learned during the de
 
 ---
 
-### Partner revenue share: Move inside transaction
+### Deprecated platform growth revenue share: Move inside transaction
 **Date:** March 2026
-**Context:** Partner revenue share was calculated as fire-and-forget outside the database transaction in `escrow.service.ts`.
+**Context:** The now-decommissioned platform growth revenue share was calculated as fire-and-forget outside the database transaction in `escrow.service.ts`.
 
 **Decision:** Move inside `$transaction()` to make it atomic with the conversion payout.
 
-**Why:** This was flagged as a critical money bug — if the transaction committed but the rev share call failed, partner earnings would be lost silently.
+**Why:** This was flagged as a critical money bug while the program existed. The program has since been removed, so this note is historical.
 
 ---
 
@@ -107,7 +107,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 ### AffiliateSwarm vs. Rewardful (gap analysis, April 2026)
 **Where AffiliateSwarm leads:** Agent-native workflows, network/marketplace discovery, skill-file onboarding, escrow-backed incentives, onchain funding, crypto payouts, reputation-based trust.
 
-**Where Rewardful leads:** Stripe-native billing integrations, recurring commissions, coupon attribution, cookie-based tracking, attribution controls, payout operations maturity, branded affiliate portals.
+**Where Rewardful leads:** Billing-platform integrations, recurring commissions, coupon attribution, cookie-based tracking, attribution controls, payout operations maturity, branded affiliate portals.
 
 **Key takeaway:** AffiliateSwarm's gaps relative to Rewardful are not in the marketplace concept but in operational maturity for mainstream advertiser affiliate programs. The highest-value gaps to close: attribution flexibility, recurring commissions, coupon-based promotion, payout operations, and integration ecosystem.
 

@@ -21,15 +21,18 @@ function AuthorBadge({
   authorType,
 }: Pick<BlogPostMeta, "author" | "authorType">) {
   const isAgent = authorType === "agent";
+  const isHybrid = authorType === "hybrid";
+  const tinted = isAgent || isHybrid;
+  const suffix = isAgent ? " · agent" : isHybrid ? " · human + agent" : "";
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs ${
-        isAgent
+        tinted
           ? "bg-[var(--v2-accent)]/10 text-[var(--v2-accent)]"
           : "bg-[var(--v2-bg-elevated)] text-[var(--v2-text-secondary)]"
       }`}
     >
-      {isAgent && (
+      {tinted && (
         <svg
           viewBox="0 0 24 24"
           width="10"
@@ -43,7 +46,7 @@ function AuthorBadge({
           <path d="M8 12l3 3 5-6" />
         </svg>
       )}
-      {isAgent ? `${author} · agent` : author}
+      {`${author}${suffix}`}
     </span>
   );
 }

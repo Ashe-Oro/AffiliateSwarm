@@ -170,32 +170,23 @@ curl -s "$BASE_URL/api/v1/campaigns/$CAMPAIGN_ID" \
 - [ ] Campaign appears in list
 - [ ] Campaign detail returns full object
 
-### Step 7: Fund Campaign Escrow via Stripe
+### Step 7: Fund Wallet With Test Credit
 
 ```bash
-CHECKOUT_RESPONSE=$(curl -s -X POST "$BASE_URL/api/v1/wallets/$ADV_AGENT_ID/deposits/stripe" \
-  -H "Authorization: Bearer $ADV_API_KEY" \
+CREDIT_RESPONSE=$(curl -s -X POST "$BASE_URL/api/test/credit-wallet" \
   -H "Content-Type: application/json" \
   -d "{
-    \"campaignId\": \"$CAMPAIGN_ID\",
-    \"amountCents\": 10000,
-    \"paymentMethod\": \"card\"
+    \"agentId\": \"$ADV_AGENT_ID\",
+    \"amountCents\": 10000
   }")
 
-echo $CHECKOUT_RESPONSE | jq .
-
-CHECKOUT_URL=$(echo $CHECKOUT_RESPONSE | jq -r '.data.url')
-echo "Stripe Checkout URL: $CHECKOUT_URL"
+echo $CREDIT_RESPONSE | jq .
 ```
 
-**Expected:** `{ "success": true, "data": { "url": "https://checkout.stripe.com/...", "checkoutId": "..." } }`
+**Expected:** `{ "ok": true, "data": { "walletId": "...", "availableCents": 10000 } }`
 
-- [ ] Returns a Stripe Checkout URL
-- [ ] `checkoutId` is present
-- [ ] Min deposit $10 (10000 cents) accepted
-- [ ] **Open the URL in a browser to complete payment** (use Stripe test card 4242424242424242)
-
-> **Note:** After completing Stripe checkout, the webhook will credit the campaign escrow. You may need to wait a moment or check the webhook endpoint is configured.
+- [ ] Test credit endpoint returns success
+- [ ] Wallet available balance increases by 10000 cents
 
 ### Step 8: Activate the Campaign
 
@@ -208,7 +199,7 @@ curl -s -X POST "$BASE_URL/api/v1/campaigns/$CAMPAIGN_ID/activate" \
 
 - [ ] Campaign status changes to `ACTIVE`
 
-> **Note:** If activation fails with `PENDING_ESCROW`, the Stripe payment hasn't been processed yet. Wait for the webhook or check the escrow balance.
+> **Note:** If activation fails with `PENDING_ESCROW`, verify the advertiser wallet has enough available balance for the campaign.
 
 ### Step 9: Register a Webhook
 
@@ -516,22 +507,9 @@ curl -s -X POST "$BASE_URL/api/v1/payouts" \
 - [ ] Field is `chainAddress` (not `address`)
 - [ ] Minimum payout is 100 cents ($1.00)
 
-**Also test BANK_TRANSFER:**
+**Also test unsupported methods:**
 
-```bash
-curl -s -X POST "$BASE_URL/api/v1/payouts" \
-  -H "Authorization: Bearer $AFF_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "amountCents": 475,
-    "method": "BANK_TRANSFER",
-    "destination": {
-      "stripeAccountId": "acct_test123"
-    }
-  }' | jq .
-```
-
-- [ ] `stripeAccountId` must start with `acct_`
+- [ ] `BANK_TRANSFER` payout requests are rejected while USDC is the only live payout rail
 
 ### Step 13: (Affiliate) List Payouts
 
@@ -741,22 +719,18 @@ curl -s -X POST "$BASE_URL/api/v1/payouts" \
 
 - [ ] Returns error about minimum payout
 
-### 3.9: Below Minimum Stripe Deposit
+### 3.9: Below Minimum Onchain Deposit
 
 ```bash
-curl -s -X POST "$BASE_URL/api/v1/wallets/$ADV_AGENT_ID/deposits/stripe" \
+curl -s -X POST "$BASE_URL/api/v1/wallets/$ADV_AGENT_ID/deposits/onchain" \
   -H "Authorization: Bearer $ADV_API_KEY" \
   -H "Content-Type: application/json" \
-  -d "{
-    \"campaignId\": \"$CAMPAIGN_ID\",
-    \"amountCents\": 500,
-    \"paymentMethod\": \"card\"
-  }" | jq .
+  -d '{"txHash": "0x123"}' | jq .
 ```
 
-**Expected:** Validation error — minimum Stripe deposit is 1000 cents ($10.00).
+**Expected:** Validation error for invalid onchain deposit data.
 
-- [ ] Returns error about minimum deposit
+- [ ] Returns validation error
 
 ---
 
@@ -769,7 +743,7 @@ curl -s -X POST "$BASE_URL/api/v1/wallets/$ADV_AGENT_ID/deposits/stripe" \
 - [ ] Onboarding status
 - [ ] Campaign creation (correct fields: `compensationModel`, `payoutPerUnitCents`)
 - [ ] Campaign listing & detail
-- [ ] Escrow funding via Stripe (correct field: `paymentMethod`)
+- [ ] Wallet funding via Base USDC or local test credit
 - [ ] Campaign activation
 - [ ] Webhook registration
 - [ ] Login code generation

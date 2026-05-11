@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { successResponse, errorResponse } from "@/lib/api-response";
+import { successResponse } from "@/lib/api-response";
 import { withAuth, getAuthContext } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -86,8 +86,8 @@ export const GET = withAuth(async (req: NextRequest) => {
       step: "campaign_funded",
       status: agent.accountGate !== "PENDING" ? "done" : "pending",
       description: "Funded campaign escrow",
-      ...( agent.accountGate === "PENDING" && {
-        action: "POST /api/v1/wallets/:agentId/deposits/stripe with campaignId and amount",
+      ...(agent.accountGate === "PENDING" && {
+        action: "Send USDC on Base to wallet.depositAddress",
       }),
     });
 

@@ -5,7 +5,7 @@ import { z } from "zod";
 // ---------------------------------------------------------------------------
 
 // BANK_TRANSFER exists in the Prisma enum for historical rows but is disabled
-// at the API surface — we have no Stripe Connect onboarding for affiliates, so
+// at the API surface — we have no bank payout onboarding for affiliates, so
 // we can't route ACH payouts. Only CRYPTO and PLATFORM_CREDIT are accepted.
 const PayoutMethodEnum = z.enum(["CRYPTO", "PLATFORM_CREDIT"]);
 

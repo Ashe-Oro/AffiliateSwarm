@@ -11,8 +11,7 @@ import { sendVerificationEmail, sendOnboardingEmail } from "@/lib/email";
 import type { RegisterAgentInput, UpdateAgentInput, SearchAgentsInput } from "@/lib/validators/agent";
 import type { Prisma } from "@/generated/prisma/client";
 import { logger } from "@/lib/logger";
-import { API_KEY_PREFIX, PRODUCT_DOMAIN } from "@/lib/brand";
-import { ENABLE_PARTNER_PROGRAM } from "@/lib/feature-flags";
+import { API_KEY_PREFIX } from "@/lib/brand";
 import {
   deriveAdvertiserWalletAddress,
   applyAdvertiserWalletInit,
@@ -209,40 +208,6 @@ export async function registerAgent(
         { err, agentId: result.agent.id, email: data.email, action: "send_verification_email" },
         "Failed to send verification email after retries"
       );
-    }
-  }
-
-  // Partner program: auto-create partner record and track referrals (feature-flagged)
-  if (ENABLE_PARTNER_PROGRAM()) {
-    const referralCode = randomBytes(4).toString("hex").toUpperCase();
-    prisma.partner
-      .create({
-        data: {
-          displayName: data.displayName,
-          email: data.email ?? `${result.agent.id}@agent.${PRODUCT_DOMAIN}`,
-          referralCode,
-          revenueShareBps: 50, // 0.5% of conversion volume
-        },
-      })
-      .catch((err) => {
-        logger.warn({ err, agentId: result.agent.id, referralCode, action: "create_partner_record" }, "Failed to create partner record");
-      });
-
-    if (data.partnerCode) {
-      prisma.partner
-        .findUnique({ where: { referralCode: data.partnerCode.toUpperCase(), active: true } })
-        .then((partner) => {
-          if (partner) {
-            return prisma.partnerReferral.create({
-              data: {
-                partnerId: partner.id,
-                agentId: result.agent.id,
-                agentType: data.type,
-              },
-            });
-          }
-        })
-        .catch((err) => logger.error({ err, agentId: result.agent.id, partnerCode: data.partnerCode, action: "track_partner_referral" }, "Failed to track partner referral"));
     }
   }
 

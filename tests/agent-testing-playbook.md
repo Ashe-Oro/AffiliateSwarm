@@ -80,7 +80,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 **FAIL if:**
 - Agent asks for product details, landing page, or conversion info during registration
-- Agent includes `partnerCode` without being given one
+- Agent invents deprecated platform growth-program fields during registration
 - Agent does not save credentials
 - Agent does not verify with `/me`
 
@@ -120,23 +120,19 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 **PASS criteria:**
 - [ ] Agent explains per-campaign escrow (not a general balance)
-- [ ] Agent mentions card (3% fee) and ACH (no fee) options
-- [ ] Agent mentions $10 minimum deposit
-- [ ] Agent does NOT mention USDC deposits as available (marked "coming soon")
+- [ ] Agent mentions Base USDC deposits
+- [ ] Agent does not mention card or ACH options as live rails
 
 **You say:**
-> "Let's fund it with a credit card, $100 to start."
+> "Let's fund it with USDC, $100 to start."
 
 **PASS criteria:**
-- [ ] Agent uses `paymentMethod: "card"` (NOT `method: "card"`)
-- [ ] Agent includes `campaignId` in the deposit request
+- [ ] Agent points to the advertiser wallet deposit address
 - [ ] Agent translates $100 → `amountCents: 10000`
-- [ ] Agent gives you the **full** Stripe Checkout URL (warns not to truncate at `#`)
-- [ ] Agent tells you to open the URL to complete payment
+- [ ] Agent explains that deposits are detected on Base once confirmed
 
 **FAIL if:**
-- Agent doesn't mention the minimum deposit amount
-- Agent truncates the Stripe URL at the `#` fragment
+- Agent presents card or bank transfer as currently available
 
 ### Phase 4: Tracking Setup
 
@@ -360,9 +356,8 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 **Follow-up:**
 > "Actually, can I get paid via bank transfer instead?"
 
-- [ ] Agent switches to `method: "BANK_TRANSFER"`
-- [ ] Agent uses `destination: { "stripeAccountId": "acct_..." }`
-- [ ] Agent asks for the Stripe account ID
+- [ ] Agent explains bank transfer payouts are not currently supported
+- [ ] Agent keeps the payout on `method: "CRYPTO"` with a Base USDC destination
 
 ### Phase 8: Dashboard Access
 
@@ -540,14 +535,13 @@ These are the most common mistakes agents make. If any of these are wrong, the s
 | Create campaign | `productUrl` | (omitted) |
 | Create campaign | `conversionAction` | (omitted) |
 | Create campaign | `productDescription` | (omitted) |
-| Stripe deposit | `paymentMethod` | `method` |
 | Confirm tracking | `POST /campaigns/:id/confirm-tracking` | (skipped entirely) |
 | Review application | `decision` | `status` |
 | Submit lead | `leadData` | `metadata` |
 | Postback | `swarm_ref` | `ref`, `trackingCode` |
 | Postback | `externalId` (required) | `externalId` (optional) |
 | Crypto payout | `chainAddress` | `address` |
-| Bank payout | `stripeAccountId` | `stripeAccount` |
+| Bank payout | Not currently supported | Bank account payload |
 | Register affiliate | `audienceSize` | (omitted) |
 | Register affiliate | `channels` | (omitted) |
 | Register affiliate | `relevantUrls` | (omitted) |

@@ -7,6 +7,12 @@
 import { readFileSync } from "fs";
 
 const BASE_URL = process.argv[2] || "https://affiliateswarm.ai";
+const stripeDepositsEnabled = ["1", "true", "yes", "on"].includes(
+  (process.env.ENABLE_STRIPE_DEPOSITS ?? "").toLowerCase()
+);
+const bankTransferEnabled = ["1", "true", "yes", "on"].includes(
+  (process.env.ENABLE_BANK_TRANSFER ?? "").toLowerCase()
+);
 
 let passed = 0;
 let failed = 0;
@@ -90,7 +96,6 @@ async function main() {
       type: "AFFILIATE",
       description: "E2E test agent",
       email: `e2e-${Date.now()}@test.affiliateswarm.dev`,
-      partnerCode: "TESTPARTNER",
     });
     assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);
     assert(json.data.agent.id, "Missing agent ID");
@@ -279,25 +284,12 @@ async function main() {
     assert(status === 401, `Expected 401, got ${status}`);
   });
 
-  // ── 11. Partner Program ──
-  console.log("\n11. Partner Program\n");
+  // ── 12. Card/Bank Deposits ──
+  console.log("\n12. Card/Bank Deposits\n");
 
-  await test("GET /api/v1/partners?code=TESTPARTNER — lookup partner", async () => {
-    const { status, json } = await api("GET", "/api/v1/partners?code=TESTPARTNER");
-    assert(status === 200, `Expected 200, got ${status}`);
-    assert(json.data.partner.displayName === "Test KOL Partner", "Wrong partner name");
-  });
-
-  await test("GET /api/v1/partners/stats?code=TESTPARTNER — partner stats", async () => {
-    const { status, json } = await api("GET", "/api/v1/partners/stats?code=TESTPARTNER");
-    assert(status === 200, `Expected 200, got ${status}`);
-    assert(json.data.referrals.total >= 1, "Should have at least 1 referral (from our E2E agent)");
-  });
-
-  // ── 12. Stripe Deposits ──
-  console.log("\n12. Stripe Deposits\n");
-
-  if (advertiserKey && advertiserCampaignId) {
+  if (!stripeDepositsEnabled) {
+    console.log("  SKIP  card/bank deposit tests (ENABLE_STRIPE_DEPOSITS not set)\n");
+  } else if (advertiserKey && advertiserCampaignId) {
     await test("POST /api/v1/wallets/:agentId/deposits/stripe — create card checkout", async () => {
       const { status, json } = await api(
         "POST",
@@ -306,21 +298,25 @@ async function main() {
         advertiserKey
       );
       assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
-      assert(json.data.url, "Should return a Stripe Checkout URL");
-      assert(json.data.url.includes("checkout.stripe.com"), `URL should be Stripe, got: ${json.data.url}`);
+      assert(json.data.url, "Should return a hosted checkout URL");
+      assert(json.data.url.includes("checkout.stripe.com"), `Unexpected checkout URL: ${json.data.url}`);
     });
 
-    await test("POST /api/v1/wallets/:agentId/deposits/stripe — create ACH checkout", async () => {
-      const { status, json } = await api(
-        "POST",
-        `/api/v1/wallets/${advertiserAgentId}/deposits/stripe`,
-        { campaignId: advertiserCampaignId, amountCents: 10000, paymentMethod: "ach" },
-        advertiserKey
-      );
-      assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
-      assert(json.data.url, "Should return a Stripe Checkout URL");
-      assert(json.data.url.includes("checkout.stripe.com"), `URL should be Stripe, got: ${json.data.url}`);
-    });
+    if (bankTransferEnabled) {
+      await test("POST /api/v1/wallets/:agentId/deposits/stripe — create ACH checkout", async () => {
+        const { status, json } = await api(
+          "POST",
+          `/api/v1/wallets/${advertiserAgentId}/deposits/stripe`,
+          { campaignId: advertiserCampaignId, amountCents: 10000, paymentMethod: "ach" },
+          advertiserKey
+        );
+        assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
+        assert(json.data.url, "Should return a hosted checkout URL");
+        assert(json.data.url.includes("checkout.stripe.com"), `Unexpected checkout URL: ${json.data.url}`);
+      });
+    } else {
+      console.log("  SKIP  ACH checkout test (ENABLE_BANK_TRANSFER not set)\n");
+    }
 
     await test("POST /api/v1/wallets/:agentId/deposits/stripe — reject below minimum", async () => {
       const { status, json } = await api(
@@ -679,20 +675,6 @@ async function main() {
   // ── 22. Sandbox / Multi-tenant ──
   console.log("\n22. Sandbox / Multi-tenant\n");
 
-  await test("POST /api/v1/agents — registration with partnerCode tracks referral", async () => {
-    const { status, json } = await api("POST", "/api/v1/agents", {
-      displayName: `E2E-Partner-${Date.now()}`,
-      type: "AFFILIATE",
-      description: "E2E test with partner code",
-      email: `e2e-partner-${Date.now()}@test.affiliateswarm.dev`,
-      partnerCode: "TESTPARTNER",
-    });
-    assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);
-    // Verify the partner stats incremented
-    const { json: statsJson } = await api("GET", "/api/v1/partners/stats?code=TESTPARTNER");
-    assert(statsJson.data.referrals.total >= 2, "Partner should have at least 2 referrals now");
-  });
-
   await test("GET /api/v1/analytics/overview — returns numeric fields", async () => {
     const { status, json } = await api("GET", "/api/v1/analytics/overview", undefined, advertiserKey);
     assert(status === 200, `Expected 200, got ${status}`);
@@ -734,40 +716,8 @@ async function main() {
     assert(status === 401, `Expected 401 for reused code, got ${status}`);
   });
 
-  // ── 24. Referral Link Flow (end-to-end) ──
-  console.log("\n24. Referral Link Flow\n");
-
-  await test("GET /r/:code — redirect sets cookie and preserves ref", async () => {
-    const res = await fetch(`${BASE_URL}/r/TESTPARTNER`, { redirect: "manual" });
-    assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-    const location = res.headers.get("location") || "";
-    assert(location.includes("ref=TESTPARTNER"), `Redirect should include ref param, got: ${location}`);
-    const setCookie = res.headers.get("set-cookie") || "";
-    assert(setCookie.includes("affiliateswarm_ref"), `Should set affiliateswarm_ref cookie, got: ${setCookie}`);
-    assert(setCookie.includes("TESTPARTNER"), `Cookie should contain the code, got: ${setCookie}`);
-  });
-
-  await test("GET /affiliate/skill.md?ref=CODE — injects partnerCode", async () => {
-    const res = await fetch(`${BASE_URL}/affiliate/skill.md?ref=TESTPARTNER`);
-    assert(res.status === 200, `Expected 200, got ${res.status}`);
-    const text = await res.text();
-    assert(text.includes('"partnerCode": "TESTPARTNER"'), "Should inject TESTPARTNER as partnerCode");
-    assert(!text.includes("OPTIONAL_PARTNER_CODE"), "Should not contain placeholder");
-  });
-
-  await test("GET /affiliate/skill.md (no ref) — keeps placeholder", async () => {
-    const res = await fetch(`${BASE_URL}/affiliate/skill.md`);
-    assert(res.status === 200, `Expected 200, got ${res.status}`);
-    const text = await res.text();
-    assert(text.includes("OPTIONAL_PARTNER_CODE"), "Should keep placeholder when no ref");
-  });
-
-  await test("GET /advertiser/skill.md?ref=CODE — injects partnerCode", async () => {
-    const res = await fetch(`${BASE_URL}/advertiser/skill.md?ref=TESTPARTNER`);
-    assert(res.status === 200, `Expected 200, got ${res.status}`);
-    const text = await res.text();
-    assert(text.includes('"partnerCode": "TESTPARTNER"'), "Should inject TESTPARTNER as partnerCode");
-  });
+  // ── 24. Skill Redirect Flow ──
+  console.log("\n24. Skill Redirect Flow\n");
 
   await test("GET /skill.md — redirects to /affiliate/skill.md", async () => {
     const res = await fetch(`${BASE_URL}/skill.md`, { redirect: "manual" });
@@ -776,30 +726,22 @@ async function main() {
     assert(location.includes("/affiliate/skill.md"), `Should redirect to affiliate skill, got: ${location}`);
   });
 
-  await test("GET /skill.md?ref=CODE — redirects with ref preserved", async () => {
-    const res = await fetch(`${BASE_URL}/skill.md?ref=TESTPARTNER`, { redirect: "manual" });
-    assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-    const location = res.headers.get("location") || "";
-    assert(location.includes("ref=TESTPARTNER"), `Redirect should preserve ref, got: ${location}`);
-  });
-
-  // ── 25. Full Referral → Affiliate → Conversion → Partner Credit ──
-  console.log("\n25. Full Referral Flow (referred affiliate → conversion → partner credit)\n");
+  // ── 25. New Affiliate → Campaign → Conversion ──
+  console.log("\n25. New Affiliate Campaign Conversion Flow\n");
 
   // Uses the existing funded advertiser campaign from staging-keys.json
-  // Tests: new affiliate registers with partnerCode → applies → gets approved →
-  //        advertiser fires postback → affiliate gets paid → partner gets credit
+  // Tests: new affiliate registers → applies → gets approved →
+  //        advertiser fires postback → affiliate gets paid
 
   let refAffId = "";
   let refAffKey = "";
 
-  await test("Register new affiliate via partnerCode=TESTPARTNER", async () => {
+  await test("Register new affiliate", async () => {
     const { status, json } = await api("POST", "/api/v1/agents", {
       displayName: `Referred-Affiliate-${Date.now()}`,
       type: "AFFILIATE",
       email: `ref-aff-${Date.now()}@test.affiliateswarm.dev`,
       description: "E2E referred affiliate",
-      partnerCode: "TESTPARTNER",
     });
     assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);
     refAffId = json.data.agent.id;
@@ -828,13 +770,6 @@ async function main() {
     }, advertiserKey);
     assert(status === 200 || status === 201, `Expected 200/201, got ${status}: ${JSON.stringify(json)}`);
     assert(json.data.status === "VERIFIED", `Lead should be verified, got ${json.data.status}`);
-  });
-
-  // Verify partner got credit from the conversion
-  await test("Partner earned credit from referred affiliate's conversion", async () => {
-    const { status, json } = await api("GET", "/api/v1/partners/stats?code=TESTPARTNER");
-    assert(status === 200, `Expected 200, got ${status}`);
-    assert(json.data.partner.totalEarnedCents > 0, `Partner should have earned something, got ${json.data.partner.totalEarnedCents}`);
   });
 
   // Verify referred affiliate got paid (full amount — fee is on advertiser, not affiliate)
