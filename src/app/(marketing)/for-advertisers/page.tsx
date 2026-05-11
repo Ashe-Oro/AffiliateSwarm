@@ -23,16 +23,12 @@ const compensationModels = [
     description:
       "Pay a fixed amount per conversion when a lead completes a specific action — sign-up, purchase, or subscription.",
   },
-  ...(process.env.ENABLE_PARTNERS_PAGE === "1"
-    ? [
-        {
-          abbr: "%",
-          name: "Percent of sale",
-          description:
-            "Pay a percentage of the initial sale on each conversion. One-time payout per sale.",
-        },
-      ]
-    : []),
+  {
+    abbr: "%",
+    name: "Percent of sale",
+    description:
+      "Pay a percentage of the initial sale on each conversion. One-time payout per sale.",
+  },
 ];
 
 export default function ForAdvertisers() {
