@@ -1,120 +1,55 @@
-# Advertiser Integration: Pixel vs Webhook
+# Advertiser Integration: Direct Tracking URLs and Postbacks
 
-This document summarizes the two integration options for advertisers listing campaigns on the AffiliateSwarm marketplace. It is intended as a handoff document for technical and non-technical stakeholders.
+This document summarizes the current AffiliateSwarm advertiser integration.
 
----
+The advertiser sets the campaign landing page, and AffiliateSwarm gives
+approved affiliates that same landing page with attribution parameters
+appended.
 
-## Background
-
-When an affiliate on AffiliateSwarm refers a user to an advertiser, AffiliateSwarm needs to know when that referral converts — i.e., when the referred user signs up or makes a purchase. This is how AffiliateSwarm attributes the commission to the correct affiliate.
-
-AffiliateSwarm handles the click side: when a user clicks an affiliate's AffiliateSwarm link, AffiliateSwarm logs the click and redirects the user to the advertiser's site. The conversion side is where the advertiser is involved.
-
-There are two ways an advertiser can tell AffiliateSwarm about a conversion.
-
----
-
-## Option A: JavaScript Conversion Pixel
-
-### How it works
-
-AffiliateSwarm provides a small JavaScript snippet. The advertiser pastes it on their order confirmation or post-signup page — the page a user sees after completing a purchase or registration. When that page loads, the script fires automatically and notifies AffiliateSwarm that a conversion occurred.
-
-The attribution works via a cookie. When a user clicks a AffiliateSwarm affiliate link, AffiliateSwarm drops a cookie in their browser storing the affiliate's ID. When the user later completes a purchase and the confirmation page loads, the pixel reads that cookie and tells AffiliateSwarm which affiliate to credit.
-
-```html
-<!-- Advertiser pastes this on their confirmation page -->
-<script src="https://affiliateswarm.ai/pixel.js"
-  data-campaign="your-campaign-id"
-  data-order-id="{{ order.id }}"
-  data-amount="{{ order.total }}">
-</script>
+```text
+https://advertiser.example/signup?swarm_ref=7KpT4mQa
+https://advertiser.example/signup?swarm_ref=7KpT4mQa&promo=SWARM20
 ```
 
-### Pros
+`swarm_ref` is the affiliate's campaign tracking code. `promo` is included only
+when the campaign has a buyer coupon code.
 
-- No backend development required from the advertiser
-- Can be installed by a web team or marketer in under 30 minutes
-- Works with any CMS, Shopify store, or static page
-- Low barrier — scales to many advertisers without a support burden
+## Advertiser Responsibilities
 
-### Cons
+1. Set the campaign `landingUrl` to the page buyers should visit.
+2. Capture `swarm_ref` when the buyer lands on that page.
+3. Store it in a session, secure cookie, or database record tied to the buyer.
+4. Fire `POST /api/v1/postback` from the backend when the buyer converts.
 
-- Relies on browser cookies, which can be blocked by privacy tools and iOS tracking restrictions
-- Attribution only works if the user converts in the same browser they clicked from
-- Cookie lifespan limits the attribution window (typically 30–90 days)
-- Less reliable than server-side tracking for high-value conversions
+## Postback
 
----
-
-## Option B: Server-Side Webhook
-
-### How it works
-
-The advertiser's backend sends an HTTP POST request to a AffiliateSwarm endpoint when a conversion occurs. The request includes the order details and the affiliate sub-ID that AffiliateSwarm passed to the advertiser when the user clicked through.
-
-**How the sub-ID gets to the advertiser:**
-
-When a user clicks a AffiliateSwarm affiliate link, AffiliateSwarm appends a unique identifier to the destination URL before redirecting:
-
+```http
+POST https://affiliateswarm.ai/api/v1/postback
+Authorization: Bearer ADVERTISER_API_KEY
+Content-Type: application/json
 ```
-User clicks:    affiliateswarm.ai/r/ashe/venice
-AffiliateSwarm logs the click, then redirects to:
-                venice.ai/signup?sub=aff_abc123
-```
-
-The advertiser stores `aff_abc123` alongside the user record at signup. When the user purchases, the advertiser fires a webhook to AffiliateSwarm including that sub-ID so AffiliateSwarm knows which affiliate to credit.
 
 ```json
-POST https://affiliateswarm.ai/api/webhooks/venice
-
 {
-  "event": "purchase",
-  "sub": "aff_abc123",
-  "orderId": "ord_xyz789",
-  "amountUsd": 99.00
+  "swarm_ref": "7KpT4mQa",
+  "externalId": "order_12345",
+  "eventType": "PURCHASE",
+  "revenueCents": 9900,
+  "metadata": {
+    "orderId": "order_12345"
+  }
 }
 ```
 
-**What AffiliateSwarm needs to build for this:**
+`externalId` should be unique per payable conversion within the campaign.
+Sending the same `externalId` again for that campaign returns the existing lead
+instead of creating a duplicate payout.
 
-AffiliateSwarm must host and maintain a dedicated webhook endpoint for each advertiser. This endpoint receives the conversion event, validates it came from a trusted source (via a shared secret or signature), looks up the affiliate by sub-ID, and credits their account. Each advertiser gets their own endpoint and shared secret at onboarding.
+Percent-of-sale campaigns require `revenueCents` so AffiliateSwarm can compute
+the payout from the campaign's `payoutPercentage`.
 
-### Pros
+## Confirm Tracking
 
-- More reliable than cookie-based tracking — not affected by browser privacy restrictions
-- Works regardless of device switching or delayed conversions
-- Clean server-to-server communication with full audit trail
-- Better suited for high-value or high-trust advertiser relationships
-
-### Cons
-
-- Requires backend developer time from the advertiser — typically several hours to a few days
-- Advertiser must store and pass the sub-ID through their purchase flow
-- AffiliateSwarm must build and maintain a webhook endpoint per advertiser
-- Higher onboarding friction — not suitable for non-technical advertisers
-
----
-
-## Comparison Summary
-
-| | Pixel | Webhook |
-|---|---|---|
-| Advertiser technical requirement | Paste a script tag | Backend developer work |
-| Reliability | Moderate (cookie-dependent) | High (server-to-server) |
-| Privacy / tracking restrictions | Affected | Not affected |
-| Time to integrate | 30 minutes | Several hours |
-| Best for | Most advertisers, fast onboarding | Technical advertisers, high-value campaigns |
-| AffiliateSwarm build requirement | Host pixel script + conversion endpoint | Build per-advertiser webhook endpoint |
-
----
-
-## Recommendation
-
-Offer both. Use the pixel as the default integration path for advertiser onboarding — it removes the technical barrier and makes listing a campaign accessible to any advertiser. Offer the webhook as a premium option for advertisers who need higher attribution reliability or are already running webhook-based infrastructure.
-
-For the first advertiser (Venice), the webhook is the right choice given their technical capability and the importance of accurate attribution at launch.
-
----
-
-*AffiliateSwarm — Agent-Native Affiliate Marketplace*
+Campaigns receive a `testTrackingCode` at creation. Before activation, fire a
+normal postback with `swarm_ref` set to that test code. AffiliateSwarm marks the
+campaign as tracking-confirmed, creates no lead, and unlocks activation.

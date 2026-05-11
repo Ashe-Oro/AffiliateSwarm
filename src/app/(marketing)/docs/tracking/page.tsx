@@ -6,7 +6,7 @@ import { DEFAULT_APP_URL } from "@/lib/brand";
 export const metadata: Metadata = {
   title: "Tracking & Attribution - AffiliateSwarm",
   description:
-    "Click tracking, server-to-server postbacks, signed agent referral tokens, and proof-of-work evidence.",
+    "Direct tracking URLs, server-to-server postbacks, signed agent referral records, and proof-of-work evidence.",
 };
 
 const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
@@ -59,9 +59,9 @@ export default function TrackingDocs() {
           Tracking &amp; Attribution
         </h1>
         <p className="mt-4 text-lg text-[var(--v2-text-secondary)]">
-          Four ways to attribute conversions &mdash; from traditional click
-          tracking to AI-native referral tokens. Pick what fits your use case,
-          or combine them.
+          Four ways to attribute or prove conversions &mdash; from direct
+          tracking URLs to AI-native referral records. Pick what fits your use
+          case, or combine them.
         </p>
 
         {/* ── OVERVIEW CARDS ── */}
@@ -71,7 +71,7 @@ export default function TrackingDocs() {
               tag: "WEB",
               title: "Tracking URLs",
               description:
-                "Tracking links append a swarm_ref parameter to the advertiser landing page.",
+                "Tracking links append a swarm_ref parameter directly to the advertiser landing page.",
               best: "Content sites, newsletters, social posts",
             },
             {
@@ -85,15 +85,15 @@ export default function TrackingDocs() {
               tag: "AGENT",
               title: "Referral Tokens",
               description:
-                "HMAC-signed tokens for AI-to-AI recommendations where no browser click exists.",
+                "Stored referral records with HMAC-signed tokens for AI-to-AI recommendations.",
               best: "Agent handoffs, API integrations, chatbots",
             },
             {
               tag: "PROOF",
               title: "Evidence Attachments",
               description:
-                "Attach proof-of-work to leads — tweets, blog posts, code commits — to build reputation.",
-              best: "Any method, strengthens attribution",
+                "Attach proof-of-work to direct lead submissions for manual review.",
+              best: "Direct leads, human-reviewed campaigns",
             },
           ].map((card) => (
             <div
@@ -124,8 +124,9 @@ export default function TrackingDocs() {
           <p className="mt-2 text-[var(--v2-text-secondary)]">
             When an affiliate is approved for a campaign, they receive a unique
             tracking URL that points directly at the advertiser&apos;s landing
-            page with <code>?swarm_ref=</code> appended — no AffiliateSwarm
-            redirect in the middle, cleaner URL for end users.
+            page with <code>?swarm_ref=</code> appended. AffiliateSwarm is not
+            in the click path for current links; the advertiser captures and
+            persists the tracking code, then sends it back on a postback.
           </p>
 
           <CodeBlock label="Flow">{`User clicks affiliate link
@@ -143,19 +144,19 @@ User converts on advertiser platform
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {[
               {
-                title: "Click Logged",
+                title: "Direct Landing",
                 detail:
-                  "IP address, user agent, referer URL, geo (country code), timestamp",
+                  "The user lands directly on the advertiser's campaign URL.",
               },
               {
-                title: "302 Redirect",
+                title: "Advertiser Captures",
                 detail:
-                  "User lands on campaign URL with ?swarm_ref= parameter appended",
+                  "The advertiser stores swarm_ref in a session, cookie, or database for later conversion reporting.",
               },
               {
-                title: "Auto-Linked",
+                title: "Promo Included",
                 detail:
-                  "When a lead is later submitted with this tracking code, clicks are linked automatically",
+                  "If the campaign has a buyer coupon code, the URL also includes a promo parameter.",
               },
             ].map((item) => (
               <div
@@ -211,21 +212,21 @@ Content-Type: application/json
                 },
                 {
                   step: "2",
-                  action: "Escrow hold placed",
+                  action: "Payout reserved",
                   detail:
-                    "Payout amount locked and released according to campaign holding-period rules",
+                    "Payout amount calculated, reserved from campaign funding, and moved into the release flow",
                 },
                 {
                   step: "3",
-                  action: "Wallet credited",
+                  action: "Conversion recorded",
                   detail:
-                    "Affiliate's available balance increases when the hold is released",
+                    "A ConversionEvent is created for reporting and analytics",
                 },
                 {
                   step: "4",
-                  action: "Clicks linked",
+                  action: "Earnings released",
                   detail:
-                    "Any matching click events are associated with the lead",
+                    "Funds become available immediately only when holdingPeriodDays is 0; otherwise they wait in pending release",
                 },
                 {
                   step: "5",
@@ -257,9 +258,20 @@ Content-Type: application/json
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">
               <strong>Idempotent:</strong> Sending the same{" "}
-              <InlineCode>externalId</InlineCode> +{" "}
-              <InlineCode>swarm_ref</InlineCode> combination returns the
-              existing lead. No double payouts.
+              <InlineCode>externalId</InlineCode> for the same campaign returns
+              the existing lead. Use a unique external ID for each payable
+              conversion in a campaign.
+            </p>
+          </div>
+
+          <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
+            <p className="text-sm text-[var(--v2-text-secondary)]">
+              <strong>Confirm before activation:</strong> Campaigns receive a{" "}
+              <InlineCode>testTrackingCode</InlineCode> at creation. Fire a
+              normal postback with <InlineCode>swarm_ref</InlineCode> set to
+              that test code. AffiliateSwarm sets{" "}
+              <InlineCode>trackingConfirmedAt</InlineCode>, returns a test
+              response, creates no lead, and unlocks campaign activation.
             </p>
           </div>
 
@@ -329,23 +341,25 @@ async function onOrderCompleted(order) {
             3. Agent Referral Tokens
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            For AI-to-AI scenarios where no browser click exists &mdash; one
-            agent recommending a product to another agent or to a user through
-            conversation.
+            For AI-to-AI scenarios where no browser click exists. An affiliate
+            creates a referral record, passes the returned referral{" "}
+            <InlineCode>id</InlineCode> and signed token through context, and
+            the campaign owner confirms the referral by ID when the conversion
+            happens.
           </p>
 
           <CodeBlock label="Referral flow">{`Affiliate Agent                 AffiliateSwarm                    Advertiser Agent
       │                              │                              │
       ├── create referral ──────────►│                              │
-      │   { campaignId, metadata }   │  generate HMAC-signed token  │
+      │   { campaignId, metadata }   │  create id + signed token    │
       │                              │                              │
-      │◄── token ───────────────────┤                              │
+      │◄── { id, token } ────────────┤                              │
       │                              │                              │
       ├── recommend product ─────────────────────────────────────►│
-      │   (pass token in context)    │                              │
+      │   (pass id + token context)  │                              │
       │                              │                              │
       │                              │◄──── confirm referral ──────┤
-      │                              │  { revenueCents }            │
+      │                              │  /referrals/:id/confirm      │
       │                              │                              │
       │                              │  create verified lead        │
       │  wallet credited ◄───────────│  release when available      │
@@ -369,8 +383,9 @@ Content-Type: application/json
   "expiresInHours": 720
 }`}</CodeBlock>
               <p className="mt-2 text-xs text-[var(--v2-text-secondary)]">
-                Token is HMAC-signed, expires in 30 days by default. Pass it to
-                the other agent as part of your recommendation context.
+                The response includes the referral ID and token. Store the ID
+                because the advertiser confirms via the URL path. Default expiry
+                is 30 days.
               </p>
             </div>
             <div>
@@ -390,13 +405,18 @@ Content-Type: application/json
               <p className="mt-2 text-xs text-[var(--v2-text-secondary)]">
                 Creates a verified lead, starts the escrow release flow, and
                 credits the affiliate&apos;s wallet when funds become available.
+                Percent-of-sale campaigns require{" "}
+                <InlineCode>revenueCents</InlineCode> here.
               </p>
             </div>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {[
-              { label: "Signed", detail: "HMAC-SHA256 prevents token forgery" },
+              {
+                label: "Signed",
+                detail: "HMAC-SHA256 token is returned for recommendation context",
+              },
               {
                 label: "Expiring",
                 detail: "Configurable TTL (default 30 days)",
@@ -427,8 +447,9 @@ Content-Type: application/json
             4. Evidence Attachments
           </h2>
           <p className="mt-2 text-[var(--v2-text-secondary)]">
-            Attach proof-of-work when submitting leads to strengthen claims and
-            build reputation. Works alongside any tracking method.
+            Attach proof-of-work when an affiliate submits a direct lead to
+            strengthen claims and support manual review. Evidence is stored on
+            the lead; postbacks and referral confirmations use metadata instead.
           </p>
 
           <CodeBlock label="POST /api/v1/leads">{`POST /api/v1/leads
@@ -500,7 +521,10 @@ Content-Type: application/json
               Each evidence item can include <InlineCode>url</InlineCode>,{" "}
               <InlineCode>hash</InlineCode> (SHA-256 for integrity
               verification), and <InlineCode>description</InlineCode>. Maximum{" "}
-              <strong>10 items</strong> per lead.
+              <strong>10 items</strong> per lead. Direct lead submissions are
+              for fixed-payout campaigns; Percent-of-sale campaigns use
+              postbacks or referral confirmations with{" "}
+              <InlineCode>revenueCents</InlineCode>.
             </p>
           </div>
         </div>
@@ -529,29 +553,29 @@ Content-Type: application/json
               <tbody className="bg-[var(--v2-code-bg)]">
                 {[
                   {
-                    scenario: "Blog links to product",
+                    scenario: "Blog, newsletter, or social link",
                     method: "Tracking URL + Postback",
-                    how: "Affiliate embeds tracking link, advertiser fires postback on purchase",
+                    how: "Affiliate shares direct swarm_ref URL; advertiser captures it and fires postback on conversion",
                   },
                   {
                     scenario: "Agent recommends to agent",
-                    method: "Referral Token",
-                    how: "Affiliate creates token, passes in conversation, advertiser confirms",
+                    method: "Referral record + token",
+                    how: "Affiliate creates referral, passes id and token context, advertiser confirms by referral ID",
                   },
                   {
-                    scenario: "Newsletter mention",
-                    method: "Tracking URL + Evidence",
-                    how: "Tracking link in newsletter, attach email evidence to strengthen claim",
+                    scenario: "Human-reviewed lead",
+                    method: "Direct Lead + Evidence",
+                    how: "Affiliate submits lead evidence; advertiser verifies or rejects the lead",
                   },
                   {
                     scenario: "Backend integration",
-                    method: "Postback + Evidence",
-                    how: "Server-to-server conversion, attach code_commit evidence",
+                    method: "Postback + metadata",
+                    how: "Server reports conversion with externalId, swarm_ref, and optional metadata",
                   },
                   {
-                    scenario: "Social media post",
-                    method: "Direct Lead + Evidence",
-                    how: "Submit lead with tweet evidence, advertiser manually verifies",
+                    scenario: "Percent-of-sale conversion",
+                    method: "Postback or Referral Confirm",
+                    how: "Include revenueCents so AffiliateSwarm can compute payoutPercentage",
                   },
                 ].map((row, i) => (
                   <tr

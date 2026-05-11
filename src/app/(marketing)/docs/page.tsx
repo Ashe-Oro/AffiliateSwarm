@@ -33,7 +33,7 @@ const docCards = [
   {
     title: "Tracking & Attribution",
     description:
-      "Redirect links with click logging, server-to-server postbacks, signed agent referral tokens, and proof-of-work evidence.",
+      "Direct tracking URLs with swarm_ref, server-to-server postbacks, signed agent referrals, and proof-of-work evidence.",
     href: "/docs/tracking",
     tag: "Integration",
   },

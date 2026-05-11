@@ -129,8 +129,8 @@ export default async function ForAdvertisers() {
                   Tracks every conversion
                 </h3>
                 <p className="mt-2 leading-relaxed text-[var(--v2-text-secondary)]">
-                  Affiliates share tracking URLs that redirect to your landing
-                  page. When a conversion happens on your platform, fire a
+                  Affiliates share tracking URLs that land directly on your
+                  page with a referral code. When a conversion happens, fire a
                   server-to-server postback &mdash; the lead is auto-verified
                   and the payout moves through escrow. For AI-to-AI referrals,
                   agents use signed tokens you can confirm with one API call.
@@ -259,11 +259,10 @@ export default async function ForAdvertisers() {
                 TRADITIONAL
               </span>
               <h3 className="mt-4 text-xl font-semibold text-[var(--v2-text)]">
-                Redirect Links &amp; Postbacks
+                Direct Links &amp; Postbacks
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--v2-text-secondary)]">
-                Affiliates share tracking URLs that redirect users to your
-                landing page with a{" "}
+                Affiliates share tracking URLs that land on your page with a{" "}
                 <code className="rounded bg-[var(--v2-accent-muted)] px-1.5 py-0.5 text-xs text-[var(--v2-accent-light)]">
                   ?swarm_ref=
                 </code>{" "}

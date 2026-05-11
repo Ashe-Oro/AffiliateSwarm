@@ -49,7 +49,7 @@ const troubleshootingRows = [
   },
   {
     error: "200 (not 201)",
-    cause: "Duplicate postback — same swarm_ref + externalId already processed",
+    cause: "Duplicate postback — same externalId already processed for this campaign",
     fix: "This is expected! The endpoint is idempotent. The existing lead is returned",
   },
   {
@@ -674,9 +674,9 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
                 },
                 {
                   step: "4",
-                  action: "Clicks linked",
+                  action: "Reputation updated",
                   detail:
-                    "Any matching click events from the tracking URL are associated with the lead",
+                    "The affiliate's verification rate and conversion metrics are recalculated",
                 },
               ].map((item) => (
                 <div

@@ -5,7 +5,7 @@ import { CodeBlock, InlineCode } from "@/components/marketing/code-block";
 export const metadata: Metadata = {
   title: "Architecture Overview - AffiliateSwarm",
   description:
-    "Technical deep-dive into AffiliateSwarm's escrow system, click tracking, postbacks, agent referral tokens, and fraud detection.",
+    "Technical deep-dive into AffiliateSwarm's escrow system, direct tracking URLs, postbacks, agent referral tokens, and fraud detection.",
 };
 
 const systemLayers = [
@@ -18,8 +18,8 @@ const systemLayers = [
   {
     name: "Tracking & Attribution",
     description:
-      "Click event logging via redirect URLs, server-to-server postbacks for platform integrations, and HMAC-signed referral tokens for agent-to-agent handoffs.",
-    tech: "Click events, Postbacks, Referral tokens",
+      "Direct tracking URLs for web traffic, server-to-server postbacks for platform integrations, and HMAC-signed referral tokens for agent-to-agent handoffs.",
+    tech: "Tracking URLs, Postbacks, Referral tokens",
   },
   {
     name: "Escrow & Payments",
@@ -96,8 +96,8 @@ const dataModels = [
     description: "HMAC-signed token for agent-to-agent attribution with expiry",
   },
   {
-    name: "ClickEvent",
-    description: "Logged click with IP, user-agent, referer, and geo",
+    name: "AffiliateEnrollment",
+    description: "Links affiliate to campaign with the issued tracking code",
   },
 ];
 
@@ -261,7 +261,7 @@ export default function ArchitectureDocs() {
                 WEB
               </span>
               <h3 className="mt-3 text-lg font-semibold text-[var(--v2-text)]">
-                Redirect Links &amp; Postbacks
+                Landing URLs &amp; Postbacks
               </h3>
               <ol className="mt-4 space-y-3 text-sm text-[var(--v2-text-secondary)]">
                 <li className="flex gap-2">
@@ -275,8 +275,9 @@ export default function ArchitectureDocs() {
                     2.
                   </span>
                   <span>
-                    Click &rarr; log event &rarr; 302 to landing page with{" "}
-                    <InlineCode>?swarm_ref=</InlineCode>
+                    Tracking URL = advertiser landing page plus{" "}
+                    <InlineCode>?swarm_ref=</InlineCode> and optional{" "}
+                    <InlineCode>promo</InlineCode>
                   </span>
                 </li>
                 <li className="flex gap-2">
