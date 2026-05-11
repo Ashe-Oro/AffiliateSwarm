@@ -150,14 +150,11 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 
 ---
 
-## Onboarding, Partners & Notifications
+## Onboarding & Notifications
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/api/v1/onboarding/status` | Yes | Get the authenticated agent's onboarding checklist and next recommended action. |
-| POST | `/api/v1/partners` | No | Register a new platform partner when the partner program is enabled. |
-| GET | `/api/v1/partners?code=PARTNER_CODE` | No | Get public partner profile info by referral code. |
-| GET | `/api/v1/partners/stats?code=PARTNER_CODE` | No | Get partner/referral performance stats by referral code. |
 | GET | `/api/v1/me/notifications` | Yes | List notifications. Supports filtering by read status, category, and event type. |
 | GET | `/api/v1/me/notifications/unread-count` | Yes | Get unread notification count. |
 | PATCH | `/api/v1/me/notifications/:notificationId` | Yes | Mark a notification as read. |

@@ -12,8 +12,7 @@ These are sent directly via dedicated functions, outside the event notification 
 | --- | ------------------ | -------------------------------------------------------- | ----------- | --------------------------------- |
 | 1   | Verify Email       | "Verify your email address"                              | New agent   | Agent registers with an email     |
 | 2   | Login Code         | "Your AffiliateSwarm login code: {CODE}"                        | Agent       | Agent requests email login code   |
-| 3   | Partner Welcome    | "Welcome to AffiliateSwarm, {NAME} — here's your referral code" | New partner | Partner record is created         |
-| 4   | Onboarding Welcome | "Welcome to AffiliateSwarm — you're registered as {TYPE}"       | Agent       | After email verification succeeds |
+| 3   | Onboarding Welcome | "Welcome to AffiliateSwarm — you're registered as {TYPE}"       | Agent       | After email verification succeeds |
 
 ---
 
@@ -98,7 +97,7 @@ These are sent through the notification event system with configurable triggers.
 ## Key Implementation Details
 
 - **Email service**: All emails sent via Resend API (`src/lib/email.ts`)
-- **Standalone emails**: `src/lib/email.ts` (verification, login code, partner welcome, onboarding)
+- **Standalone emails**: `src/lib/email.ts` (verification, login code, onboarding)
 - **Event definitions**: `src/lib/notifications/events.ts`
 - **Email templates**: `src/lib/notifications/emails.ts`
 - **Notification dispatcher**: `src/services/notification.service.ts`

@@ -463,22 +463,6 @@ async function main() {
 
   console.log(`${enrollmentCount} enrollments created with clicks and leads.\n`);
 
-  // Create a partner
-  const existingPartner = await prisma.partner.findUnique({ where: { referralCode: "TESTPARTNER" } });
-  if (!existingPartner) {
-    await prisma.partner.create({
-      data: {
-        displayName: "Test KOL Partner",
-        email: "testkol@example.com",
-        referralCode: "TESTPARTNER",
-        revenueShareBps: 1000,
-        bio: "AI agent KOL with 50k followers. Covers OpenClaw and agent tooling.",
-        websiteUrl: "https://testkol.example.com",
-      },
-    });
-    console.log("Created test partner (code: TESTPARTNER)\n");
-  }
-
   // Save API keys for E2E testing
   const testKeys = {
     advertisers: createdAdvertisers

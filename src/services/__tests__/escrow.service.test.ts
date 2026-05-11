@@ -14,9 +14,6 @@ const mockTx = {
   domainEvent: { create: vi.fn() },
   payoutRequest: { create: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
   conversionEvent: { create: vi.fn() },
-  partner: { update: vi.fn() },
-  partnerReferral: { findUnique: vi.fn() },
-  partnerTransaction: { create: vi.fn() },
 };
 
 vi.mock("@/services/notification.service", () => ({
@@ -993,8 +990,6 @@ describe("processMaturedHolds", () => {
     mockTx.wallet.findUnique.mockResolvedValue(mockWallet());
     mockTx.ledgerEntry.create.mockResolvedValue({});
     mockTx.domainEvent.create.mockResolvedValue({});
-    mockTx.partnerReferral.findUnique.mockResolvedValue(null);
-
     // Post-transaction: escrow lookup for notification
     (prisma.escrowAccount.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       campaignId: CAMPAIGN_ID,

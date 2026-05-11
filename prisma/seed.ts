@@ -190,88 +190,12 @@ async function main() {
     `Created reputation records: ${advertiserReputation.trustTier} (advertiser), ${affiliateReputation.trustTier} (affiliate)`
   );
 
-  // ── AffiliateSwarm's own advertiser account ──
-  const affiliateSwarm = await prisma.agent.create({
-    data: {
-      type: "ADVERTISER",
-      displayName: "AffiliateSwarm",
-      ownerAccountId: "00000000-0000-0000-0000-000000000003",
-      description:
-        "AffiliateSwarm — the affiliate marketplace for AI agents. Earn by referring advertisers and affiliates to the platform.",
-      websiteUrl: "https://affiliateswarm.ai",
-      logoUrl: "https://affiliateswarm.ai/logo.png",
-      status: "ACTIVE",
-      accountGate: "LIVE",
-      verificationLevel: "IDENTITY_VERIFIED",
-      capabilities: ["CAMPAIGN_CREATE", "CAMPAIGN_MANAGE"],
-    },
-  });
-
-  await prisma.wallet.create({
-    data: {
-      agentId: affiliateSwarm.id,
-      currency: "USD",
-      availableCents: 0,
-      heldCents: 0,
-      pendingPayoutCents: 0,
-      status: "ACTIVE",
-    },
-  });
-
-  await prisma.agentReputation.create({
-    data: {
-      agentId: affiliateSwarm.id,
-      trustTier: "PREMIUM",
-      overallScore: 100.0,
-      totalLeadsSubmitted: 0,
-      totalLeadsVerified: 0,
-      totalLeadsRejected: 0,
-      totalConversions: 0,
-      fraudFlagCount: 0,
-      lastRecalculatedAt: new Date(),
-    },
-  });
-
-  // AffiliateSwarm's "Grow AffiliateSwarm" campaign — affiliates earn for referring new users
-  const affiliateSwarmCampaign = await prisma.campaign.create({
-    data: {
-      advertiserId: affiliateSwarm.id,
-      name: "Grow AffiliateSwarm — Refer Advertisers & Affiliates",
-      description:
-        "Earn commissions by referring new advertisers and affiliates to AffiliateSwarm. When someone you refer signs up and generates revenue on the platform, you earn a share. This is AffiliateSwarm's own referral campaign — help us grow the network.",
-      status: "ACTIVE",
-      compensationModel: "REV_SHARE",
-      payoutPercentage: 10, // 10% revenue share
-      currency: "USD",
-      budgetCents: 10000000, // $100,000 budget
-      budgetSpentCents: 0,
-      geoTargets: [],
-      categories: ["affiliate-network", "ai-agents", "referral"],
-      landingUrl: "https://affiliateswarm.ai/partners",
-      enrollmentPolicy: "OPEN",
-      requiresVerification: false,
-    },
-  });
-
-  // Create escrow for the AffiliateSwarm campaign
-  await prisma.escrowAccount.create({
-    data: {
-      campaignId: affiliateSwarmCampaign.id,
-      advertiserId: affiliateSwarm.id,
-      totalDepositedCents: 10000000,
-      currentBalanceCents: 10000000,
-      status: "FUNDED",
-    },
-  });
-
-  console.log(`Created AffiliateSwarm advertiser + "Grow AffiliateSwarm" campaign`);
-
   console.log("\nSeed completed successfully!");
   console.log({
-    agents: 3,
-    campaigns: 2,
-    wallets: 3,
-    reputationRecords: 3,
+    agents: 2,
+    campaigns: 1,
+    wallets: 2,
+    reputationRecords: 2,
   });
 }
 

@@ -1,9 +1,8 @@
-import { cookies } from "next/headers";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AgentOnboarding } from "@/components/marketing/agent-onboarding";
 import { CopyButton } from "@/components/ui/copy-button";
-import { DEFAULT_APP_URL, PARTNER_REF_COOKIE, PRODUCT_NAME } from "@/lib/brand";
+import { DEFAULT_APP_URL, PRODUCT_NAME } from "@/lib/brand";
 
 const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
@@ -40,15 +39,9 @@ const steps = [
   },
 ];
 
-export default async function ForAffiliates() {
-  const cookieStore = await cookies();
-  const ref = cookieStore.get(PARTNER_REF_COOKIE)?.value;
-  const skillPath = ref
-    ? `/affiliate/skill.md?ref=${ref}`
-    : "/affiliate/skill.md";
-  const advertiserSkillPath = ref
-    ? `/advertiser/skill.md?ref=${ref}`
-    : "/advertiser/skill.md";
+export default function ForAffiliates() {
+  const skillPath = "/affiliate/skill.md";
+  const advertiserSkillPath = "/advertiser/skill.md";
   const ctaPrompt = `Please review this AffiliateSwarm affiliate skill file: ${PLATFORM_URL}${skillPath}. Summarize what it asks you to do, flag anything that needs my approval, then report back. If it looks good, we'll follow the onboarding instructions together.`;
 
   return (

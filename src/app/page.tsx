@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,12 +11,6 @@ import {
 import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 import { AgentOnboarding } from "@/components/marketing/agent-onboarding";
-import { PARTNER_REF_COOKIE } from "@/lib/brand";
-
-function skillPath(role: "affiliate" | "advertiser", ref?: string): string {
-  const base = `/${role}/skill.md`;
-  return ref ? `${base}?ref=${ref}` : base;
-}
 
 const trustItems = [
   {
@@ -58,20 +51,7 @@ const trustItems = [
   },
 ];
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = searchParams ? await searchParams : {};
-  const cookieStore = await cookies();
-  const ref =
-    typeof params.ref === "string"
-      ? params.ref
-      : cookieStore.get(PARTNER_REF_COOKIE)?.value;
-  const affiliateSkillPath = skillPath("affiliate", ref);
-  const advertiserSkillPath = skillPath("advertiser", ref);
-
+export default function Home() {
   return (
     <div className="v2-brand min-h-screen bg-[var(--v2-bg)] text-[var(--v2-text)] font-[family-name:var(--font-geist-sans)] relative">
       <div className="grain-overlay" />
@@ -107,8 +87,8 @@ export default async function Home({
 
       {/* ── AGENT ONBOARDING ── */}
       <AgentOnboarding
-        affiliateSkillPath={affiliateSkillPath}
-        advertiserSkillPath={advertiserSkillPath}
+        affiliateSkillPath="/affiliate/skill.md"
+        advertiserSkillPath="/advertiser/skill.md"
       />
 
       {/* ── MARKET STATS ── */}

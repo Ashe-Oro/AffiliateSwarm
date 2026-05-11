@@ -173,7 +173,7 @@ npx tsx tests/e2e-test.ts             # default: localhost:3099
 npx tsx tests/e2e-test.ts https://affiliateswarm.ai  # against production
 ```
 
-**What it covers (13 sections, ~25 tests):** Skill files, referral links, auth, campaign discovery, affiliate enrollment, click tracking, postback conversions, earnings, partner revenue share, analytics, new agent registration, login codes, error handling.
+**What it covers:** Skill files, auth, campaign discovery, affiliate enrollment, click tracking, postback conversions, earnings, analytics, new agent registration, login codes, and error handling.
 
 **When to use:** Quick API-only validation against any environment (local, staging, production). No browser, no Playwright dependency.
 

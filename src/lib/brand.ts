@@ -14,7 +14,6 @@ export const TEST_API_KEY_PREFIX = "swarm_test_";
 
 export const SESSION_COOKIE = "affiliateswarm_session";
 export const ADMIN_COOKIE = "affiliateswarm_admin_token";
-export const PARTNER_REF_COOKIE = "affiliateswarm_ref";
 
 export const AFFILIATE_SKILL_NAME = "swarm-affiliate";
 export const ADVERTISER_SKILL_NAME = "swarm-advertiser";

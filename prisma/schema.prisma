@@ -930,46 +930,6 @@ model Referral {
 }
 
 // =============================================================================
-// PARTNER / META-AFFILIATE PROGRAM
-// =============================================================================
-
-model Partner {
-  id                String   @id @default(uuid()) @db.Uuid
-  displayName       String   @db.VarChar(255)
-  email             String   @unique @db.VarChar(255)
-  referralCode      String   @unique @db.VarChar(32) // short code like "MATT" or "LENNY"
-  revenueShareBps   Int      @default(50) // basis points of conversion volume (e.g., 50 = 0.5%)
-  totalEarnedCents  Int      @default(0)
-  pendingCents      Int      @default(0)
-  paidOutCents      Int      @default(0)
-  websiteUrl        String?  @db.VarChar(2048)
-  bio               String?  @db.Text
-  active            Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  referredAgents PartnerReferral[]
-
-  @@index([referralCode])
-  @@index([active])
-  @@map("partners")
-}
-
-model PartnerReferral {
-  id           String   @id @default(uuid()) @db.Uuid
-  partnerId    String   @db.Uuid
-  agentId      String   @unique @db.Uuid // each agent can only be referred once
-  agentType    AgentType
-  createdAt    DateTime @default(now())
-
-  partner Partner @relation(fields: [partnerId], references: [id])
-
-  @@index([partnerId])
-  @@index([agentId])
-  @@map("partner_referrals")
-}
-
-// =============================================================================
 // 6. DOMAIN EVENTS (append-only event log)
 // =============================================================================
 

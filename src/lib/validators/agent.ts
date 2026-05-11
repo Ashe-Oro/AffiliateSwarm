@@ -14,7 +14,6 @@ export const RegisterAgentSchema = z.object({
   capabilities: z.array(z.string()).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
   email: z.string().email("Your human's email address is required for account communications").max(255),
-  partnerCode: z.string().max(32).optional(),
 
   // Affiliate profile fields (optional, prompted by skill file for AFFILIATE agents)
   audienceSize: z.number().int().min(0).optional(),

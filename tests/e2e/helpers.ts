@@ -60,13 +60,12 @@ export async function registerAgent(
   displayName: string,
   type: "ADVERTISER" | "AFFILIATE",
   email: string,
-  options?: { partnerCode?: string; profile?: AffiliateProfile }
+  options?: { profile?: AffiliateProfile }
 ): Promise<AgentCredentials> {
   const { status, json } = await api("POST", "/api/v1/agents", {
     displayName,
     type,
     email,
-    ...(options?.partnerCode && { partnerCode: options.partnerCode }),
     ...(options?.profile && options.profile),
   });
 
