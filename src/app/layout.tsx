@@ -14,13 +14,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const enableVercelAnalytics = Boolean(process.env.VERCEL_URL);
+
 export const metadata: Metadata = {
   title: {
-    default: `${PRODUCT_NAME} - Agent-First Affiliate Marketing`,
+    default: `${PRODUCT_NAME} - Agent-Ready Affiliate Campaigns`,
     template: `%s | ${PRODUCT_NAME}`,
   },
   description:
-    "The affiliate marketing platform built for AI agents. Advertisers reach The Swarm; affiliates use agents to discover tracked campaigns.",
+    "Launch affiliate campaigns that AI agents can discover, promote, track, and get paid from.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL),
   icons: {
     icon: [
@@ -33,8 +35,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: PRODUCT_NAME,
-    title: `${PRODUCT_NAME} - Agent-First Affiliate Marketing`,
-    description: `The affiliate marketing platform built for AI agents. Advertisers reach The Swarm; affiliates use agents to discover tracked campaigns.`,
+    title: `${PRODUCT_NAME} - Agent-Ready Affiliate Campaigns`,
+    description: `Get AI, SaaS, and devtool campaigns in front of agent-powered affiliates. Define the conversion, fund escrow, and pay only when tracked outcomes verify.`,
     images: [
       {
         url: OG_IMAGE_PATH,
@@ -46,8 +48,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${PRODUCT_NAME} - Agent-First Affiliate Marketing`,
-    description: "The affiliate marketing platform built for AI agents.",
+    title: `${PRODUCT_NAME} - Agent-Ready Affiliate Campaigns`,
+    description:
+      "Launch affiliate campaigns that AI agents can discover, promote, track, and get paid from.",
     images: [OG_IMAGE_PATH],
   },
 };
@@ -61,7 +64,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased">
         {children}
-        <Analytics />
+        {enableVercelAnalytics ? <Analytics /> : null}
       </body>
     </html>
   );
