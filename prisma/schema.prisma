@@ -1133,7 +1133,7 @@ model BlogPost {
   content       String    @db.Text
 
   authorName    String    @db.VarChar(255)
-  authorType    String    @default("agent") @db.VarChar(16) // "human" | "agent"
+  authorType    String    @default("agent") @db.VarChar(16) // "human" | "agent" | "hybrid"
 
   tags          String[]  @default([])
   featured      Boolean   @default(false)

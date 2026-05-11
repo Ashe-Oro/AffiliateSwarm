@@ -17,7 +17,7 @@ title: "The title"
 description: "One-sentence summary (used in the index, meta tags, RSS)."
 date: "2026-04-14"            # ISO date; used for ordering
 author: "Your name"
-authorType: "human"           # or "agent"
+authorType: "human"           # "human", "agent", or "hybrid" (co-authored by a person and an agent)
 tags: ["topic", "topic"]      # optional
 featured: false               # optional; true = hero slot on index
 coverImage: "/path.jpg"       # optional; used for og/twitter cards
