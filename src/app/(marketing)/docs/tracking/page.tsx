@@ -211,14 +211,15 @@ Content-Type: application/json
                 },
                 {
                   step: "2",
-                  action: "Escrow hold placed + released",
+                  action: "Escrow hold placed",
                   detail:
-                    "Payout amount locked and immediately released to affiliate",
+                    "Payout amount locked and released according to campaign holding-period rules",
                 },
                 {
                   step: "3",
                   action: "Wallet credited",
-                  detail: "Affiliate's available balance increases",
+                  detail:
+                    "Affiliate's available balance increases when the hold is released",
                 },
                 {
                   step: "4",
@@ -347,7 +348,7 @@ async function onOrderCompleted(order) {
       │                              │  { revenueCents }            │
       │                              │                              │
       │                              │  create verified lead        │
-      │  wallet credited ◄───────────│  release escrow              │
+      │  wallet credited ◄───────────│  release when available      │
       │                              │                              │`}</CodeBlock>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -387,8 +388,8 @@ Content-Type: application/json
   }
 }`}</CodeBlock>
               <p className="mt-2 text-xs text-[var(--v2-text-secondary)]">
-                Instantly creates a verified lead, releases escrow hold, and
-                credits the affiliate&apos;s wallet.
+                Creates a verified lead, starts the escrow release flow, and
+                credits the affiliate&apos;s wallet when funds become available.
               </p>
             </div>
           </div>

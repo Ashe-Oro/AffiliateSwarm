@@ -337,7 +337,7 @@ export default function ArchitectureDocs() {
                   <span className="shrink-0 font-semibold text-[var(--v2-text-tertiary)]">
                     4.
                   </span>
-                  Lead created, escrow released instantly
+                  Lead created, escrow release follows campaign rules
                 </li>
               </ol>
             </div>
