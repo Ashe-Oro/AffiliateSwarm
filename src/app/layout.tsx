@@ -14,8 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const enableVercelAnalytics = Boolean(process.env.VERCEL_URL);
-
 export const metadata: Metadata = {
   title: {
     default: `${PRODUCT_NAME} - Agent-Ready Affiliate Campaigns`,
@@ -64,7 +62,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="font-sans antialiased">
         {children}
-        {enableVercelAnalytics ? <Analytics /> : null}
+        <Analytics />
       </body>
     </html>
   );
