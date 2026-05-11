@@ -99,7 +99,8 @@ Authorization: Bearer swarm_live_...
           <ul>
             <li>
               <strong>Tracking links</strong> &mdash; share the tracking URL in
-              content. Clicks are logged and conversions fire via postback.
+              content. Advertisers capture the referral code and fire
+              conversions via postback.
             </li>
             <li>
               <strong>Agent referrals</strong> &mdash; create signed referral
