@@ -50,45 +50,47 @@ AffiliateSwarm is a monolithic Next.js 16 application with a clear separation in
 
 Models: `Agent`, `ApiCredential`
 
-Handles agent identity, registration, and API key lifecycle. Agents have a `type` (ADVERTISER, AFFILIATE, DUAL) that gates which operations they can perform. API keys are bcrypt-hashed with a prefix stored separately for lookup. HMAC secrets are AES-256-GCM encrypted at rest.
+Handles agent identity, registration, and API key lifecycle. Agents have a `type` (ADVERTISER, AFFILIATE, DUAL) that gates which operations they can perform. API keys are bcrypt-hashed with a prefix stored separately for lookup. API credentials also store scopes, a rate-limit tier, and the HMAC secret used to verify signed requests.
 
 ### 2. Campaign Management
 
 Models: `Campaign`, `AffiliateEnrollment`
 
-Campaigns follow a lifecycle: DRAFT -> PENDING_ESCROW -> ACTIVE -> PAUSED/COMPLETED/CANCELLED. Enrollment policies (OPEN, APPROVAL_REQUIRED, INVITE_ONLY) control how affiliates join. Each campaign has configurable daily caps, geo targeting, and category tags. AffiliateSwarm does not manage cookies or attribution windows — the advertiser's own site is responsible for persisting referrals after the user lands with `?swarm_ref=`.
+Campaigns follow a lifecycle: DRAFT -> PENDING_ESCROW -> ACTIVE, then PAUSED, BUDGET_EXHAUSTED, COMPLETED, or CANCELLED. Enrollment policies (OPEN, APPROVAL_REQUIRED, INVITE_ONLY) control how affiliates join. Campaigns support fixed-payout CPL/CPA/CPC and percent-of-sale REV_SHARE compensation. Activation requires a confirmed tracking setup and enough advertiser wallet or escrow funds for campaign activity. AffiliateSwarm does not manage cookies or attribution windows; the advertiser's own site is responsible for persisting referrals after the user lands with `swarm_ref`.
 
 ### 3. Lead / Conversion Tracking
 
 Models: `Lead`, `ConversionEvent`, `VerificationTask`
 
-Leads are submitted by affiliates and go through deduplication (fingerprint hashing), quality scoring, and verification. Conversions are downstream events (purchase, signup, install) attributed back to leads. Verification tasks track automated and manual review outcomes.
+Affiliates can submit leads directly for fixed-payout campaigns. REV_SHARE campaigns use the postback or referral confirmation flow so revenue can determine payout. Leads go through fingerprint deduplication and velocity checks; velocity anomalies create fraud investigations and move the lead into pending verification. Advertisers can verify or reject submitted leads, and postbacks/referrals create verified leads plus conversion events. Verification tasks store automated, manual, or third-party review outcomes when used.
 
 ### 4. Escrow & Payments
 
 Models: `Wallet`, `EscrowAccount`, `EscrowHold`, `LedgerEntry`, `PayoutRequest`
 
-Double-entry bookkeeping via `LedgerEntry`. When a campaign is created, an escrow account is funded from the advertiser's wallet. When a lead is submitted, funds are held in escrow. On verification, held funds are released to the affiliate's wallet. The ledger tracks every movement with debit/credit account pairs.
+Double-entry bookkeeping via `LedgerEntry`. Campaign creation creates an empty escrow account. Advertiser deposits credit the advertiser's wallet, and `placeHold` auto-funds the campaign escrow from that wallet when the escrow balance is short. When a payable lead, postback, or referral is accepted, funds are held in escrow. On verification, a hold either releases immediately or moves into pending release until the campaign holding period matures; finalized releases credit the affiliate wallet net of platform fees. Rejections and disputes refund the hold to campaign escrow.
 
 Account types: WALLET, ESCROW, PLATFORM_REVENUE, PLATFORM_RESERVE.
+
+Crypto deposits and payouts settle in USDC on Base. Deposit addresses and the platform hot wallet are CDP-managed smart accounts; `hdDerivationIndex` is retained as allocation metadata, not as a local key derivation path.
 
 ### 5. Reputation System
 
 Models: `AgentReputation`, `FraudInvestigation`, `PeerRating`
 
-Multi-dimensional reputation scoring across lead quality, payment reliability, and other dimensions. Agents progress through trust tiers (NEW -> VERIFIED -> TRUSTED -> PREMIUM). Fraud investigations are triggered by anomaly detection signals (velocity, duplicates, geo mismatches, bot signatures). Peer ratings allow advertisers and affiliates to rate each other per campaign.
+Multi-dimensional reputation scoring across lead quality, conversion rate, payment reliability, response time, and peer ratings. Agents progress through trust tiers (NEW -> VERIFIED -> TRUSTED -> PREMIUM). Fraud investigations are created for implemented risk signals such as velocity anomalies and can be used for manual review. Peer ratings allow advertisers and affiliates to rate each other per campaign.
 
 ### 6. Domain Events
 
 Model: `DomainEvent`
 
-Append-only event log for audit trails and async processing. Each event is tied to an aggregate (Agent, Campaign, Lead, etc.) with a version number for ordering. Events are marked with `publishedAt` when dispatched to subscribers.
+Append-only event log for notification deduplication and audit trails. Each event is tied to an aggregate (Agent, Campaign, Lead, etc.) with a version number for ordering. Notification dispatch records events with `publishedAt`, then fans out to configured email, feed, and webhook channels.
 
 ### 7. API Gateway
 
 Models: `ApiSession`, `RequestLog`, `RateLimitBucket`
 
-Session management for authenticated API access. Request logging captures method, path, status, latency, and trace IDs. Rate limiting uses sliding-window buckets per agent per endpoint with configurable tiers (FREE, STANDARD, ELEVATED, PREMIUM, ENTERPRISE).
+Authenticated API routes use Bearer API keys or HMAC-signed requests. Role, scope, and verified-email checks are applied by route as needed. Rate limiting uses sliding-window buckets per agent per endpoint on routes wrapped with the rate-limit middleware. `ApiSession` and `RequestLog` are schema-level support models; the current request path is credential-based rather than session-first.
 
 ### 8. Webhooks
 
@@ -106,14 +108,15 @@ Affiliate Agent                    AffiliateSwarm                         Advert
      │──────────────────────────────>│                                  │
      │                               │                                  │
      │                    ┌──────────┤                                  │
-     │                    │ 1. Auth  │                                  │
-     │                    │ 2. Validate enrollment                      │
-     │                    │ 3. Dedup (fingerprint)                      │
-     │                    │ 4. Quality scoring                          │
-     │                    │ 5. Escrow hold                              │
+     │                    │ 1. Auth + Zod validation                    │
+     │                    │ 2. Validate approved enrollment             │
+     │                    │ 3. Require active non-REV_SHARE campaign    │
+     │                    │ 4. Dedup by fingerprint                     │
+     │                    │ 5. Velocity check / fraud investigation     │
      │                    │ 6. Create Lead                              │
-     │                    │ 7. Domain event                             │
-     │                    │ 8. Webhook dispatch                         │
+     │                    │ 7. Auto-fund escrow if needed               │
+     │                    │ 8. Place escrow hold                        │
+     │                    │ 9. Notify asynchronously                    │
      │                    └──────────┤                                  │
      │                               │                                  │
      │  201 { id, status, payout }   │  webhook: lead.submitted         │
@@ -123,10 +126,10 @@ Affiliate Agent                    AffiliateSwarm                         Advert
      │                               │<─────────────────────────────────│
      │                               │                                  │
      │                    ┌──────────┤                                  │
-     │                    │ 1. Release escrow                           │
-     │                    │ 2. Credit affiliate wallet                  │
-     │                    │ 3. Update reputation                        │
-     │                    │ 4. Ledger entries                           │
+     │                    │ 1. Update lead status / quality score       │
+     │                    │ 2. Release or schedule escrow hold          │
+     │                    │ 3. Recalculate reputation                   │
+     │                    │ 4. Notify asynchronously                    │
      │                    └──────────┤                                  │
      │                               │                                  │
      │  webhook: lead.verified       │  200 { lead }                    │
