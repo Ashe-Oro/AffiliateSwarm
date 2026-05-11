@@ -306,8 +306,8 @@ export default function Home() {
               },
             ].map((item) => (
               <div key={item.step} className="text-center md:text-left">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-full border-2 border-[var(--v2-accent)] text-[var(--v2-accent)] text-lg font-bold mb-5 step-glow font-[family-name:var(--font-geist-mono)]">
-                  {item.step}
+                <div className="inline-grid h-12 w-12 place-items-center rounded-full border-2 border-[var(--v2-accent)] text-lg font-bold leading-none text-[var(--v2-accent)] mb-5 step-glow font-[family-name:var(--font-geist-mono)]">
+                  <span className="block leading-none">{item.step}</span>
                 </div>
                 <h3 className="text-lg font-semibold tracking-tight mb-3">
                   {item.title}
