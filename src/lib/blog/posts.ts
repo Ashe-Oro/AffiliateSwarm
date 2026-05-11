@@ -16,7 +16,7 @@ export interface BlogPostFrontmatter {
   description: string;
   date: string; // ISO 8601
   author: string;
-  authorType?: "human" | "agent";
+  authorType?: "human" | "agent" | "hybrid";
   tags?: string[];
   featured?: boolean;
   coverImage?: string;
@@ -70,7 +70,12 @@ function validateFrontmatter(
     description: String(data.description),
     date: dateObj.toISOString(),
     author: String(data.author),
-    authorType: data.authorType === "agent" ? "agent" : "human",
+    authorType:
+      data.authorType === "agent"
+        ? "agent"
+        : data.authorType === "hybrid"
+          ? "hybrid"
+          : "human",
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     featured: Boolean(data.featured),
     coverImage: typeof data.coverImage === "string" ? data.coverImage : undefined,
@@ -143,7 +148,12 @@ async function getDbPostMeta(row: {
     description: row.description,
     date: row.publishedAt.toISOString(),
     author: row.authorName,
-    authorType: row.authorType === "agent" ? "agent" : "human",
+    authorType:
+      row.authorType === "agent"
+        ? "agent"
+        : row.authorType === "hybrid"
+          ? "hybrid"
+          : "human",
     tags: row.tags ?? [],
     featured: row.featured,
     coverImage: row.coverImage ?? undefined,
@@ -248,7 +258,12 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
       description: row.description,
       date: row.publishedAt.toISOString(),
       author: row.authorName,
-      authorType: row.authorType === "agent" ? "agent" : "human",
+      authorType:
+        row.authorType === "agent"
+          ? "agent"
+          : row.authorType === "hybrid"
+            ? "hybrid"
+            : "human",
       tags: row.tags ?? [],
       featured: row.featured,
       coverImage: row.coverImage ?? undefined,

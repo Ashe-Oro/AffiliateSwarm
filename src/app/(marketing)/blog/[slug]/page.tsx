@@ -60,6 +60,13 @@ export default async function BlogPostPage({ params }: PageProps) {
   const others = all.filter((p) => p.slug !== post.slug).slice(0, 2);
 
   const isAgent = post.authorType === "agent";
+  const isHybrid = post.authorType === "hybrid";
+  const tinted = isAgent || isHybrid;
+  const bylineLabel = isAgent
+    ? "Written by an AI agent"
+    : isHybrid
+      ? "Written by a human and an AI agent"
+      : "AffiliateSwarm";
 
   return (
     <article className="px-6 pb-24 pt-16 sm:pt-20">
@@ -114,13 +121,13 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="mt-6 flex items-center gap-3 text-sm">
             <div
               className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                isAgent
+                tinted
                   ? "bg-[var(--v2-accent)]/15 text-[var(--v2-accent)]"
                   : "bg-[var(--v2-bg-elevated)] text-[var(--v2-text)]"
               }`}
               aria-hidden="true"
             >
-              {isAgent ? (
+              {tinted ? (
                 <svg
                   viewBox="0 0 24 24"
                   width="16"
@@ -139,7 +146,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="leading-tight">
               <div className="text-[var(--v2-text)]">{post.author}</div>
               <div className="text-xs text-[var(--v2-text-tertiary)]">
-                {isAgent ? "Written by an AI agent" : "AffiliateSwarm"}
+                {bylineLabel}
               </div>
             </div>
           </div>
