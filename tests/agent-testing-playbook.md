@@ -80,7 +80,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 
 **FAIL if:**
 - Agent asks for product details, landing page, or conversion info during registration
-- Agent includes `partnerCode` without being given one
+- Agent invents deprecated platform growth-program fields during registration
 - Agent does not save credentials
 - Agent does not verify with `/me`
 

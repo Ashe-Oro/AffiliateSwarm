@@ -19,9 +19,6 @@ function isEnabledByDefault(envVar: string): boolean {
   return val !== "0" && val !== "false";
 }
 
-/** AffiliateSwarm partner/referral program — referral codes, partner API, /partners page, auto partner creation. */
-export const ENABLE_PARTNER_PROGRAM = () => isEnabled("ENABLE_PARTNER_PROGRAM");
-
 /** Cron-driven retry of stuck verification + onboarding emails (see /api/cron/email-retry-sweep). */
 export const ENABLE_EMAIL_RETRY_SWEEP = () =>
   isEnabledByDefault("ENABLE_EMAIL_RETRY_SWEEP");

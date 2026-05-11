@@ -110,12 +110,9 @@ export const apiReferenceSections: ApiReferenceSection[] = [
     ],
   },
   {
-    section: "Onboarding & Partners",
+    section: "Onboarding",
     routes: [
       { method: "GET", path: "/api/v1/onboarding/status", description: "Get onboarding checklist and next action" },
-      { method: "POST", path: "/api/v1/partners", description: "Register a platform partner (no auth required)" },
-      { method: "GET", path: "/api/v1/partners", description: "Get partner info by code query parameter" },
-      { method: "GET", path: "/api/v1/partners/stats", description: "Get partner stats by code query parameter" },
     ],
   },
   {

@@ -31,10 +31,6 @@ vi.mock("@/lib/prisma", () => ({
     },
     wallet: { create: vi.fn() },
     agentReputation: { create: vi.fn() },
-    partner: {
-      create: vi.fn().mockResolvedValue({}),
-      findUnique: vi.fn().mockResolvedValue(null),
-    },
     $transaction: vi.fn(),
   },
 }));

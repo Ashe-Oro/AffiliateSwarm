@@ -76,10 +76,6 @@ export async function POST(req: NextRequest) {
     const escrowAccount = await tx.escrowAccount.deleteMany();
     const campaign = await tx.campaign.deleteMany();
 
-    // Partner layer
-    const partnerReferral = await tx.partnerReferral.deleteMany();
-    const partner = await tx.partner.deleteMany();
-
     // Agent layer
     const agentReputation = await tx.agentReputation.deleteMany();
     const apiCredential = await tx.apiCredential.deleteMany();

@@ -61,7 +61,6 @@ async function main() {
   const campaignId = keys.advertiser.campaignId;
   const affKey = keys.affiliate.apiKey;
   const affId = keys.affiliate.agentId;
-  const partnerCode = keys.partner.referralCode;
 
   console.log(`\nAffiliateSwarm E2E Test — ${BASE_URL}\n`);
   console.log("=".repeat(60));
@@ -86,31 +85,6 @@ async function main() {
     assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
     const loc = res.headers.get("location") || "";
     assert(loc.includes("/affiliate/skill.md"), `Should redirect to affiliate, got: ${loc}`);
-  });
-
-  // ── 2. Referral Link Flow ──
-  console.log("\n2. Referral Link Flow\n");
-
-  await test("GET /r/:code — sets cookie and redirects", async () => {
-    const res = await fetch(`${BASE_URL}/r/${partnerCode}`, { redirect: "manual" });
-    assert(res.status === 302 || res.status === 307, `Expected redirect, got ${res.status}`);
-    const loc = res.headers.get("location") || "";
-    assert(loc.includes(`ref=${partnerCode}`), `Should include ref param, got: ${loc}`);
-    const cookie = res.headers.get("set-cookie") || "";
-    assert(cookie.includes("affiliateswarm_ref"), `Should set affiliateswarm_ref cookie`);
-  });
-
-  await test("GET /affiliate/skill.md?ref=CODE — injects partnerCode", async () => {
-    const res = await fetch(`${BASE_URL}/affiliate/skill.md?ref=${partnerCode}`);
-    const text = await res.text();
-    assert(text.includes(`"partnerCode": "${partnerCode}"`), "Should inject partner code");
-    assert(!text.includes("OPTIONAL_PARTNER_CODE"), "Should replace placeholder");
-  });
-
-  await test("GET /affiliate/skill.md (no ref) — keeps placeholder", async () => {
-    const res = await fetch(`${BASE_URL}/affiliate/skill.md`);
-    const text = await res.text();
-    assert(text.includes("OPTIONAL_PARTNER_CODE"), "Should keep placeholder");
   });
 
   // ── 3. Auth ──
@@ -212,16 +186,6 @@ async function main() {
     assert(json.data.budgetSpentCents > 0, `Budget spent should be > 0, got ${json.data.budgetSpentCents}`);
   });
 
-  // ── 9. Partner Revenue Share ──
-  console.log("\n9. Partner Revenue Share\n");
-
-  await test("Partner earned credit from affiliate's conversion", async () => {
-    const { status, json } = await api("GET", `/api/v1/partners/stats?code=${partnerCode}`);
-    assert(status === 200, `Expected 200, got ${status}`);
-    assert(json.data.partner.totalEarnedCents > 0, `Partner should have earned, got ${json.data.partner.totalEarnedCents}`);
-    assert(json.data.referrals.total >= 1, `Should have referrals, got ${json.data.referrals.total}`);
-  });
-
   // ── 10. Analytics ──
   console.log("\n10. Analytics\n");
 
@@ -235,23 +199,6 @@ async function main() {
     const { status, json } = await api("GET", "/api/v1/onboarding/status", undefined, advKey);
     assert(status === 200, `Expected 200, got ${status}`);
     assert(json.data.steps.length > 0, "Should have onboarding steps");
-  });
-
-  // ── 11. New Agent Registration with Referral ──
-  console.log("\n11. New Agent Registration with Referral\n");
-
-  await test("Register new agent with partnerCode — referral tracked", async () => {
-    const { status, json } = await api("POST", "/api/v1/agents", {
-      displayName: `E2E-New-${Date.now()}`,
-      type: "AFFILIATE",
-      email: `e2e-new-${Date.now()}@test.affiliateswarm.dev`,
-      partnerCode,
-    });
-    assert(status === 201, `Expected 201, got ${status}: ${JSON.stringify(json)}`);
-
-    // Verify partner referral count went up
-    const { json: statsJson } = await api("GET", `/api/v1/partners/stats?code=${partnerCode}`);
-    assert(statsJson.data.referrals.total >= 2, `Should have 2+ referrals, got ${statsJson.data.referrals.total}`);
   });
 
   // ── 12. Login Code ──

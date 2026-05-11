@@ -379,8 +379,8 @@ export async function processMaturedHolds() {
 }
 
 /**
- * Internal: finalize a hold release — credit affiliate wallet, record ledger entries,
- * emit events, and credit partner revenue share.
+ * Internal: finalize a hold release — credit affiliate wallet, record ledger
+ * entries, and emit events.
  */
 async function finalizeHoldRelease(
   tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
@@ -394,20 +394,6 @@ async function finalizeHoldRelease(
       releasedAt: new Date(),
     },
   });
-
-  // If coming from PENDING_RELEASE, escrow totals were already updated.
-  // If coming from HELD (immediate release), update now.
-  const escrowAccount = await tx.escrowAccount.findUnique({
-    where: { id: hold.escrowId },
-    select: { campaignId: true, advertiserId: true },
-  });
-
-  // Only update escrow totals if this is an immediate release (not from processMaturedHolds)
-  // For PENDING_RELEASE, these were already updated in releaseHold()
-  // We detect this by checking if totalReleasedCents needs updating
-  // Actually, for simplicity: the caller (releaseHold with holdingDays=0) doesn't update totals,
-  // so we always do it here for immediate release path.
-  // For PENDING_RELEASE path, totals were already updated, so we skip.
 
   // Platform fee: deducted from the conversion payout at release time (industry standard)
   const platformFeeCents = Math.ceil(hold.amountCents * PLATFORM_FEE_RATE);
@@ -484,48 +470,7 @@ async function finalizeHoldRelease(
     },
   });
 
-  // Credit partner revenue share for the affiliate side
-  await creditPartnerRevShare(tx, hold.affiliateId, hold.amountCents);
-
-  // Credit partner revenue share for the advertiser side
-  if (escrowAccount) {
-    await creditPartnerRevShare(tx, escrowAccount.advertiserId, hold.amountCents);
-  }
-
   return updatedHold;
-}
-
-/**
- * Credit a partner their revenue share when a referred agent generates revenue.
- * Partner gets revenueShareBps basis points of the conversion amount directly.
- * Accepts a transaction client so it runs inside the caller's transaction.
- */
-async function creditPartnerRevShare(
-  tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
-  agentId: string,
-  conversionAmountCents: number
-) {
-  const referral = await tx.partnerReferral.findUnique({
-    where: { agentId },
-    include: { partner: true },
-  });
-
-  if (!referral || !referral.partner.active) return;
-
-  // Partner share = revenueShareBps basis points of conversion amount
-  const partnerShareCents = Math.round(
-    (conversionAmountCents * referral.partner.revenueShareBps) / 10000
-  );
-
-  if (partnerShareCents <= 0) return;
-
-  await tx.partner.update({
-    where: { id: referral.partnerId },
-    data: {
-      totalEarnedCents: { increment: partnerShareCents },
-      pendingCents: { increment: partnerShareCents },
-    },
-  });
 }
 
 // ---------------------------------------------------------------------------

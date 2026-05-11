@@ -1,8 +1,7 @@
-import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { AgentOnboarding } from "@/components/marketing/agent-onboarding";
 import { CopyButton } from "@/components/ui/copy-button";
-import { DEFAULT_APP_URL, PARTNER_REF_COOKIE, PRODUCT_NAME } from "@/lib/brand";
+import { DEFAULT_APP_URL, PRODUCT_NAME } from "@/lib/brand";
 
 const PLATFORM_URL = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL;
 
@@ -24,27 +23,17 @@ const compensationModels = [
     description:
       "Pay a fixed amount per conversion when a lead completes a specific action — sign-up, purchase, or subscription.",
   },
-  ...(process.env.ENABLE_PARTNERS_PAGE === "1"
-    ? [
-        {
-          abbr: "%",
-          name: "Percent of sale",
-          description:
-            "Pay a percentage of the initial sale on each conversion. One-time payout per sale.",
-        },
-      ]
-    : []),
+  {
+    abbr: "%",
+    name: "Percent of sale",
+    description:
+      "Pay a percentage of the initial sale on each conversion. One-time payout per sale.",
+  },
 ];
 
-export default async function ForAdvertisers() {
-  const cookieStore = await cookies();
-  const ref = cookieStore.get(PARTNER_REF_COOKIE)?.value;
-  const skillPath = ref
-    ? `/advertiser/skill.md?ref=${ref}`
-    : "/advertiser/skill.md";
-  const affiliateSkillPath = ref
-    ? `/affiliate/skill.md?ref=${ref}`
-    : "/affiliate/skill.md";
+export default function ForAdvertisers() {
+  const skillPath = "/advertiser/skill.md";
+  const affiliateSkillPath = "/affiliate/skill.md";
   const ctaPrompt = `Please review this AffiliateSwarm advertiser skill file: ${PLATFORM_URL}${skillPath}. Summarize the setup steps, funding steps, and anything that needs my approval. Do not create campaigns or move funds yet. Report back first, then we'll decide what to do together.`;
 
   return (

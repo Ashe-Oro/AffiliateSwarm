@@ -122,7 +122,6 @@ export const API_KEY_PREFIX = "swarm_live_";
 export const TEST_API_KEY_PREFIX = "swarm_test_";
 export const SESSION_COOKIE = "affiliateswarm_session";
 export const ADMIN_COOKIE = "affiliateswarm_admin_token";
-export const PARTNER_REF_COOKIE = "affiliateswarm_ref";
 ```
 
 Then replace hard-coded values in app metadata, email, discovery, docs routes, sitemap, robots, and tests where it is straightforward.
@@ -345,7 +344,7 @@ X-Regatta-Timestamp -> X-AffiliateSwarm-Timestamp
 X-Regatta-Signature -> X-AffiliateSwarm-Signature
 regatta_session -> affiliateswarm_session
 regatta_admin_token -> affiliateswarm_admin_token
-regatta_ref -> affiliateswarm_ref
+regatta_ref -> removed platform-growth cookie
 ```
 
 Update generated examples, docs, tests, request validation, CORS headers, cookies, and local setup scripts to use the new names directly.
@@ -487,7 +486,6 @@ New cookies:
 ```txt
 affiliateswarm_session
 affiliateswarm_admin_token
-affiliateswarm_ref
 ```
 
 Recommendation: read and write only the new cookies. There are no current users, so no session/referral cookie migration is required.
@@ -526,19 +524,19 @@ Rename script:
 
 ```txt
 scripts/ensure-regatta-campaign.ts
--> scripts/ensure-affiliateswarm-campaign.ts
+-> decommissioned with the platform growth campaign
 ```
 
 Update references:
 
 ```txt
 Regatta advertiser account -> AffiliateSwarm advertiser account
-Grow Regatta -> Grow AffiliateSwarm
+Grow Regatta -> decommissioned platform growth campaign
 https://regatta.network -> https://affiliateswarm.ai
 https://regatta.network/logo.png -> new AffiliateSwarm logo URL
 ```
 
-Example campaign name:
+Historical campaign name, now decommissioned:
 
 ```txt
 Grow AffiliateSwarm - Refer Advertisers & Affiliates
@@ -784,7 +782,7 @@ webhook subscriptions
 
 Seed-data note:
 
-- If the app needs a platform-owned advertiser or "Grow AffiliateSwarm" campaign, create it through the rebranded seed path.
+- The platform-owned advertiser and "Grow AffiliateSwarm" campaign were decommissioned and should not be recreated in seed data.
 - Do not keep "Grow Regatta" seed data in a fresh production DB.
 - Fresh launch means no existing API keys survive; every user/agent will register again and receive new keys.
 
@@ -1037,7 +1035,7 @@ Update assertions for:
 - `regatta-affiliate` -> `swarm-affiliate`
 - `regatta-advertiser` -> `swarm-advertiser`
 - `~/.config/regatta` -> `~/.config/affiliateswarm`
-- `rgta_ref` / `regatta_ref` -> `swarm_ref` / `affiliateswarm_ref`
+- `rgta_ref` / `regatta_ref` -> `swarm_ref`; the platform-growth cookie was removed
 - `rgt_live_` -> `swarm_live_`
 - `rgt_test_` -> `swarm_test_`
 - `REGATTA_*` -> `AFFILIATESWARM_*`
@@ -1119,7 +1117,7 @@ The migration is complete when:
 - Tracking links and postback docs use `swarm_ref`, not `rgta_ref`.
 - API keys mint and validate with `swarm_live_`; sandbox/test examples use `swarm_test_`.
 - HMAC request docs and CORS use `X-AffiliateSwarm-*`, not `X-Regatta-*`.
-- Runtime cookies use `affiliateswarm_session`, `affiliateswarm_admin_token`, and `affiliateswarm_ref`.
+- Runtime cookies use `affiliateswarm_session` and `affiliateswarm_admin_token`.
 - Env docs use `AFFILIATESWARM_*` names outside removed MCP server and SDK paths.
 - MCP server onboarding code, package metadata, active docs, and docs routes are removed.
 - Legacy TypeScript SDK source is removed.
