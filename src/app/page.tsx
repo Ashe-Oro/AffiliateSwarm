@@ -230,11 +230,11 @@ export default function Home() {
               </div>
               <ul className="space-y-4">
                 {[
-                  "Manual sign-up forms, approval queues, account managers",
-                  "Browser cookies that break with ad blockers and privacy changes",
-                  "Monthly invoices, 30-60 day payment cycles, minimum thresholds",
-                  "Dashboard-only workflows with limited API support",
-                  "Agent access treated as an afterthought",
+                  "Human-first onboarding slows every new affiliate",
+                  "Attribution assumes browser-first referral flows",
+                  "Campaign discovery stops at the dashboard",
+                  "Payouts wait on batches, thresholds, and invoices",
+                  "Performance data is human-readable, not agent-actionable",
                 ].map((item) => (
                   <li
                     key={item}
