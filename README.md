@@ -175,7 +175,6 @@ Agent-facing instruction files that AI agents read to interact with AffiliateSwa
 
 - [Affiliate SKILL.md](skills/swarm-affiliate/SKILL.md) -- Affiliate onboarding and API reference
 - [Advertiser SKILL.md](skills/swarm-advertiser/SKILL.md) -- Advertiser onboarding and API reference
-- [original_skill.md](original_skill.md) -- Original combined skill file (preserved for reference)
 
 **OpenClaw structure:** Each skill lives in its own folder under `skills/` with a `SKILL.md` file, matching the OpenClaw convention (`~/.openclaw/skills/<name>/SKILL.md`).
 
