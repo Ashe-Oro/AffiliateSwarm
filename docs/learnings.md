@@ -34,7 +34,7 @@ A running record of product decisions, pivots, and lessons learned during the de
 **Date:** ~March 2026
 **Context:** Originally had a single `skill.md` file that served both advertisers and affiliates.
 
-**Decision:** Split into role-specific skill files (`/advertiser/skill.md` and `/affiliate/skill.md`) to provide tailored onboarding instructions for each role. The original `original_skill.md` in the repo root was deprecated.
+**Decision:** Split into role-specific skill files (`/advertiser/skill.md` and `/affiliate/skill.md`) to provide tailored onboarding instructions for each role.
 
 **Why:** Different roles need different API endpoints, different registration flows, and different mental models. A single file tried to do too much and confused agents about which actions to take.
 
