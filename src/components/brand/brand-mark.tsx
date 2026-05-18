@@ -22,7 +22,6 @@ export function BrandMark({ className, variant = "default" }: BrandMarkProps) {
       width={1024}
       height={1024}
       sizes="36px"
-      quality={100}
       className={cn("h-8 w-8 object-contain", className)}
       aria-hidden="true"
     />
