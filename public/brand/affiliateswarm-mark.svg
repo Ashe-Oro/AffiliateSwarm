@@ -1,16 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#05080a"/>
-  <rect x="5" y="5" width="54" height="54" rx="13" fill="#10191b" stroke="rgba(53,242,208,0.3)"/>
-  <path d="M18 18h13l15 8 7 14-13 9H23L11 38l7-20Z" fill="none" stroke="#35f2d0" stroke-width="2.1" stroke-linejoin="round"/>
-  <path d="M18 18 32 32 46 26M11 38l21-6 21 8M23 49l9-17 8 17" fill="none" stroke="#b6f44a" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" opacity="0.9"/>
-  <path d="M32 18v14l8 17" fill="none" stroke="#a4bdb6" stroke-linecap="round" stroke-width="1.3" opacity="0.75"/>
-  <circle cx="32" cy="32" r="5.5" fill="#05080a"/>
-  <circle cx="32" cy="32" r="3.2" fill="#35f2d0"/>
-  <circle cx="18" cy="18" r="3.4" fill="#b6f44a" stroke="#05080a" stroke-width="1.7"/>
-  <circle cx="46" cy="26" r="3.4" fill="#35f2d0" stroke="#05080a" stroke-width="1.7"/>
-  <circle cx="53" cy="40" r="3.4" fill="#b6f44a" stroke="#05080a" stroke-width="1.7"/>
-  <circle cx="40" cy="49" r="3.4" fill="#ff6b6b" stroke="#05080a" stroke-width="1.7"/>
-  <circle cx="23" cy="49" r="3.4" fill="#35f2d0" stroke="#05080a" stroke-width="1.7"/>
-  <circle cx="11" cy="38" r="3.4" fill="#b6f44a" stroke="#05080a" stroke-width="1.7"/>
-  <circle cx="32" cy="18" r="3.4" fill="#effff8" stroke="#05080a" stroke-width="1.7"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="96 83 1062 1062" role="img" aria-labelledby="title">
+  <title id="title">AffiliateSwarm bee mark</title>
+  <defs>
+    <linearGradient id="teal-left" x1="167" y1="442" x2="459" y2="753" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#28d4cc"/>
+      <stop offset="1" stop-color="#18b5b0"/>
+    </linearGradient>
+    <linearGradient id="teal-right" x1="797" y1="442" x2="1086" y2="753" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#28d4cc"/>
+      <stop offset="1" stop-color="#18b5b0"/>
+    </linearGradient>
+    <linearGradient id="teal-head" x1="489" y1="240" x2="766" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#28d4cc"/>
+      <stop offset="1" stop-color="#18b5b0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="460" y1="117" x2="795" y2="1114" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffd034"/>
+      <stop offset="1" stop-color="#f6ae13"/>
+    </linearGradient>
+    <linearGradient id="navy" x1="490" y1="495" x2="766" y2="962" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06274f"/>
+      <stop offset="1" stop-color="#001832"/>
+    </linearGradient>
+    <linearGradient id="cream" x1="490" y1="730" x2="766" y2="903" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fffdfa"/>
+      <stop offset="1" stop-color="#f8f2e5"/>
+    </linearGradient>
+  </defs>
+  <path d="M168 442 459 539v81L243 753Z" fill="url(#teal-left)"/>
+  <path d="M1086 442 797 539v81l214 133Z" fill="url(#teal-right)"/>
+  <g fill="none" stroke="url(#gold)" stroke-width="24" stroke-linecap="butt">
+    <path d="M531 258 469 148"/>
+    <path d="M723 258 785 148"/>
+  </g>
+  <g fill="url(#gold)">
+    <circle cx="460" cy="146" r="29"/>
+    <circle cx="793" cy="146" r="29"/>
+  </g>
+  <path d="M557 240h141l68 115-68 115H557l-68-115Z" fill="url(#teal-head)"/>
+  <path d="M532 963h192l-96 151Z" fill="url(#gold)"/>
+  <path d="M544 495h167l55 44v423H490V539Z" fill="url(#navy)"/>
+  <path d="M544 495h167l55 44v71L628 700 490 610v-71Z" fill="url(#gold)"/>
+  <path d="M490 730 628 835l138-105v60L628 903 490 790Z" fill="url(#cream)"/>
 </svg>
