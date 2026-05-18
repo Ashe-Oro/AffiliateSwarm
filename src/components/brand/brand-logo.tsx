@@ -1,10 +1,14 @@
-import { BrandMark } from "@/components/brand/brand-mark";
+import {
+  BrandMark,
+  type BrandMarkVariant,
+} from "@/components/brand/brand-mark";
 import { PRODUCT_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 interface BrandLogoProps {
   className?: string;
   markClassName?: string;
+  markVariant?: BrandMarkVariant;
   textClassName?: string;
   suffix?: string;
 }
@@ -12,13 +16,17 @@ interface BrandLogoProps {
 export function BrandLogo({
   className,
   markClassName,
+  markVariant,
   textClassName,
   suffix,
 }: BrandLogoProps) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
       <span className="brand-mark-shell">
-        <BrandMark className={cn("h-7 w-7", markClassName)} />
+        <BrandMark
+          className={cn("h-7 w-7", markClassName)}
+          variant={markVariant}
+        />
       </span>
       <span className={cn("tracking-tight", textClassName)}>
         {PRODUCT_NAME}
