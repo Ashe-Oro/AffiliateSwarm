@@ -22,7 +22,7 @@ export function Navbar() {
           href="/"
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-[var(--v2-text)]"
         >
-          <BrandLogo markClassName="h-9 w-9" />
+          <BrandLogo markClassName="h-7 w-7" />
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
