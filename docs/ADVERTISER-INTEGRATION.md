@@ -54,3 +54,4 @@ Campaigns receive a `testTrackingCode` at creation. Before activation, fire a
 normal postback with `swarm_ref` set to that test code. AffiliateSwarm marks the
 campaign as tracking-confirmed, returns a synthetic test `leadId`, creates no
 real lead, and unlocks activation.
+Do not use the synthetic test `leadId` with lead lookup or dispute endpoints.

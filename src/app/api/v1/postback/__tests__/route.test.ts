@@ -44,7 +44,7 @@ function expectNoFundingInternals(body: unknown) {
   expect(rawBody).not.toContain("fundingContext");
 }
 
-describe("POST /api/v1/postback funding shortfall responses", () => {
+describe("POST /api/v1/postback responses", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetAuthContext.mockReturnValue({
@@ -153,6 +153,76 @@ describe("POST /api/v1/postback funding shortfall responses", () => {
           "message": "Test postback received — tracking confirmed. You can now activate this campaign.",
           "test": true,
           "trackingConfirmedAt": "2026-05-20T16:00:00.000Z",
+        },
+        "success": true,
+      }
+    `);
+  });
+
+  it("adds leadId to newly created lead responses", async () => {
+    mockProcessPostback.mockResolvedValueOnce({
+      lead: {
+        id: "lead-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        externalId: "order_1",
+      },
+      created: true,
+    });
+
+    const res = await POST(
+      buildRequest({
+        swarm_ref: "abc",
+        externalId: "order_1",
+        eventType: "PURCHASE",
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(201);
+    expect(body).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "affiliateId": "affiliate-1",
+          "campaignId": "campaign-1",
+          "externalId": "order_1",
+          "id": "lead-1",
+          "leadId": "lead-1",
+        },
+        "success": true,
+      }
+    `);
+  });
+
+  it("adds leadId to duplicate postback responses", async () => {
+    mockProcessPostback.mockResolvedValueOnce({
+      lead: {
+        id: "lead-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        externalId: "order_1",
+      },
+      created: false,
+    });
+
+    const res = await POST(
+      buildRequest({
+        swarm_ref: "abc",
+        externalId: "order_1",
+        eventType: "PURCHASE",
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "affiliateId": "affiliate-1",
+          "campaignId": "campaign-1",
+          "externalId": "order_1",
+          "id": "lead-1",
+          "leadId": "lead-1",
         },
         "success": true,
       }

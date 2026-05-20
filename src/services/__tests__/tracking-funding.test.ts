@@ -207,12 +207,48 @@ describe("processPostback test tracking confirmation", () => {
       trackingConfirmedAt: confirmedAt,
     });
     expect(result.id).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-a[0-9a-f]{3}-[0-9a-f]{12}$/
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
     );
     expect(result.leadId).toBe(result.id);
     expect(mockPrisma.affiliateEnrollment.findUnique).not.toHaveBeenCalled();
     expect(mockPrisma.lead.create).not.toHaveBeenCalled();
     expect(mockPrisma.conversionEvent.create).not.toHaveBeenCalled();
+    expect(mockPlaceHold).not.toHaveBeenCalled();
+  });
+
+  it("confirms tracking the first time a test postback is received", async () => {
+    mockPrisma.campaign.findUnique.mockResolvedValueOnce({
+      id: CAMPAIGN_ID,
+      advertiserId: ADVERTISER_ID,
+      name: "Mock Mugs",
+      trackingConfirmedAt: null,
+    });
+    mockPrisma.campaign.update.mockResolvedValueOnce({});
+
+    const result = await processPostback(ADVERTISER_ID, {
+      swarm_ref: "TEST1234",
+      externalId: "test-confirm-1",
+      eventType: "PURCHASE",
+    });
+
+    expect("test" in result).toBe(true);
+    if (!("test" in result)) {
+      throw new Error("Expected test postback result");
+    }
+    expect(result.trackingConfirmedAt).toBeInstanceOf(Date);
+    expect(mockPrisma.campaign.update).toHaveBeenCalledWith({
+      where: { id: CAMPAIGN_ID },
+      data: { trackingConfirmedAt: result.trackingConfirmedAt },
+    });
+    expect(mockNotify).toHaveBeenCalledWith({
+      type: "campaign.tracking_confirmed",
+      data: {
+        campaignId: CAMPAIGN_ID,
+        campaignName: "Mock Mugs",
+        advertiserId: ADVERTISER_ID,
+      },
+    });
+    expect(mockPrisma.lead.create).not.toHaveBeenCalled();
     expect(mockPlaceHold).not.toHaveBeenCalled();
   });
 });
