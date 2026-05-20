@@ -272,9 +272,8 @@ Open the app in a browser and walk through `tests/ui-qa-checklist.md`.
 | `/dashboard/campaigns/new` | All creation fields render, defaults correct (720h window, 30d hold) |
 | `/dashboard/campaigns/[id]` | Edit/delete visibility by status, budget allocation form, max button |
 | `/dashboard/leads` | Status filter buttons, pagination, table columns |
-| `/dashboard/conversions` | Stats cards (total, verified, revenue), table with badges, pagination |
 | `/dashboard/discover` | Affiliate cards with trust tier, scores, pagination |
-| `/dashboard/analytics` | Period selector (7d/30d/90d), 5 KPI cards, bar chart, revenue table |
+| `/dashboard/performance` | Period selector, KPI cards, live status, conversion ledger, pagination |
 
 ### Affiliate Dashboard
 | Page | Key Checks |

@@ -1,22 +1,19 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
-import { getDashboardUser } from "@/lib/auth/dashboard";
+import { requireAdvertiserAgent } from "@/lib/auth/dashboard";
 import { successResponse, errorResponse } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-  let user;
+  let auth;
   try {
-    user = await getDashboardUser(req);
+    auth = await requireAdvertiserAgent(req);
   } catch {
     return errorResponse("UNAUTHORIZED", "Authentication required", 401);
   }
 
-  const agentId = user.agents[0]?.id;
-  if (!agentId) {
-    return errorResponse("NO_AGENT", "No agent found for user", 404);
-  }
+  const agentId = auth.agent.id;
 
   const now = new Date();
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);

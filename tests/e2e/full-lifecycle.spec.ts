@@ -758,21 +758,21 @@ test("10.4 advertiser leads page shows verified leads", async ({ page }) => {
   });
 });
 
-test("10.5 advertiser conversions page shows unified CPA view", async ({
+test("10.5 advertiser performance page shows unified CPA conversions", async ({
   page,
 }) => {
   await loginViaBrowser(
     page,
     state.advertiser!.apiKey,
-    "/dashboard/conversions"
+    "/dashboard/performance#conversions"
   );
-  // Page has an h2 "Conversions" and an h3 "CPA Conversions"
   await expect(
-    page.locator("h2", { hasText: /conversions/i })
+    page.getByRole("heading", { name: /performance/i })
   ).toBeVisible({ timeout: 10_000 });
   await expect(
-    page.locator("h3", { hasText: /cpa conversions/i })
+    page.getByRole("heading", { name: /conversion ledger/i })
   ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText("Total CPA Conversions")).toBeVisible();
 
   // Unified table exposes the columns requested by issue #224
   await expect(page.getByRole("columnheader", { name: "Status" })).toBeVisible();
@@ -805,16 +805,16 @@ test("10.5b advertiser CPA campaign detail shows Recent Conversions (not Recent 
   ).toHaveCount(0);
 });
 
-test("10.6 advertiser analytics page shows non-zero KPIs", async ({
+test("10.6 advertiser performance page shows non-zero KPIs", async ({
   page,
 }) => {
   await loginViaBrowser(
     page,
     state.advertiser!.apiKey,
-    "/dashboard/analytics"
+    "/dashboard/performance"
   );
   await expect(
-    page.getByRole("heading", { name: /analytics/i })
+    page.getByRole("heading", { name: /performance/i })
   ).toBeVisible({ timeout: 10_000 });
   // At least one KPI card should show a non-zero number
   await expect(page.getByText("Total Leads")).toBeVisible();

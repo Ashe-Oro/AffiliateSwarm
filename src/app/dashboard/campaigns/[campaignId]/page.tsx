@@ -251,7 +251,7 @@ export default async function CampaignDetailPage({
           </Link>
         )}
         {isCpa && (
-          <Link href={`/dashboard/conversions?campaignId=${campaign.id}`}>
+          <Link href={`/dashboard/performance?campaignId=${campaign.id}#conversions`}>
             <Button variant="outline">View All Conversions</Button>
           </Link>
         )}
