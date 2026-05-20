@@ -161,7 +161,20 @@ export default async function PerformancePage({
         page: cpaPage,
         pageSize: PAGE_SIZE,
       })
-    : { rows: [], totalCount: 0, page: cpaPage, pageSize: PAGE_SIZE };
+    : {
+        rows: [],
+        totalCount: 0,
+        statusCounts: {
+          PENDING: 0,
+          HELD: 0,
+          MATURED: 0,
+          PAID: 0,
+          DISPUTED: 0,
+          REVERSED: 0,
+        },
+        page: cpaPage,
+        pageSize: PAGE_SIZE,
+      };
 
   const legacyCampaignIds = campaignIdFilter
     ? nonCpaIds.filter((id) => id === campaignIdFilter)
@@ -445,10 +458,7 @@ export default async function PerformancePage({
                 <CardHeader className="pb-2">
                   <CardDescription>In Hold Window</CardDescription>
                   <CardTitle className="text-3xl">
-                    {
-                      cpaResult.rows.filter((r) => r.unifiedStatus === "HELD")
-                        .length
-                    }
+                    {cpaResult.statusCounts.HELD}
                   </CardTitle>
                 </CardHeader>
               </Card>
@@ -456,10 +466,7 @@ export default async function PerformancePage({
                 <CardHeader className="pb-2">
                   <CardDescription>Paid</CardDescription>
                   <CardTitle className="text-3xl">
-                    {
-                      cpaResult.rows.filter((r) => r.unifiedStatus === "PAID")
-                        .length
-                    }
+                    {cpaResult.statusCounts.PAID}
                   </CardTitle>
                 </CardHeader>
               </Card>

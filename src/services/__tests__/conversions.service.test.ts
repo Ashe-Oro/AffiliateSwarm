@@ -1,4 +1,12 @@
-import { describe, it, expect, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from "vitest";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -6,11 +14,29 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
+import { prisma } from "@/lib/prisma";
 import {
   deriveUnifiedStatus,
   deriveAffiliateStatus,
   affiliateStatusFilterToWhere,
+  listAdvertiserConversions,
 } from "@/services/conversions.service";
+
+const prismaMock = prisma as unknown as {
+  lead: {
+    findMany: Mock;
+    count: Mock;
+  };
+};
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.useRealTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe("deriveUnifiedStatus", () => {
   const past = new Date("2026-01-01T00:00:00Z");
@@ -182,5 +208,64 @@ describe("affiliateStatusFilterToWhere", () => {
         },
       ],
     });
+  });
+});
+
+describe("listAdvertiserConversions", () => {
+  it("returns aggregate status counts instead of counts from the current page", async () => {
+    const now = new Date("2026-04-20T00:00:00Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    prismaMock.lead.findMany.mockResolvedValue([
+      {
+        id: "lead-paid-1",
+        externalId: "external-paid-1",
+        submittedAt: new Date("2026-04-19T00:00:00Z"),
+        payoutCents: 1000,
+        status: "VERIFIED",
+        affiliate: { displayName: "Affiliate One" },
+        campaign: { id: "campaign-1", name: "CPA Campaign" },
+        escrowHold: {
+          status: "RELEASED",
+          releaseAt: new Date("2026-04-19T00:00:00Z"),
+          amountCents: 1000,
+        },
+      },
+    ]);
+    prismaMock.lead.count
+      .mockResolvedValueOnce(42) // totalCount
+      .mockResolvedValueOnce(2) // PENDING
+      .mockResolvedValueOnce(30) // HELD
+      .mockResolvedValueOnce(4) // MATURED
+      .mockResolvedValueOnce(6) // PAID
+      .mockResolvedValueOnce(0) // DISPUTED
+      .mockResolvedValueOnce(0); // REVERSED
+
+    const result = await listAdvertiserConversions({
+      advertiserId: "advertiser-1",
+      campaignId: "campaign-1",
+      page: 2,
+      pageSize: 1,
+    });
+
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0].unifiedStatus).toBe("PAID");
+    expect(result.totalCount).toBe(42);
+    expect(result.statusCounts).toEqual({
+      PENDING: 2,
+      HELD: 30,
+      MATURED: 4,
+      PAID: 6,
+      DISPUTED: 0,
+      REVERSED: 0,
+    });
+    expect(prismaMock.lead.count).toHaveBeenCalledTimes(7);
+    expect(prismaMock.lead.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        skip: 1,
+        take: 1,
+      })
+    );
   });
 });

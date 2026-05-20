@@ -13,6 +13,20 @@ export type UnifiedConversionStatus =
   | "DISPUTED"
   | "REVERSED";
 
+export type UnifiedConversionStatusCounts = Record<
+  UnifiedConversionStatus,
+  number
+>;
+
+const UNIFIED_CONVERSION_STATUSES: UnifiedConversionStatus[] = [
+  "PENDING",
+  "HELD",
+  "MATURED",
+  "PAID",
+  "DISPUTED",
+  "REVERSED",
+];
+
 export interface UnifiedConversionRow {
   leadId: string;
   source: string;
@@ -49,6 +63,57 @@ export function deriveUnifiedStatus(
   }
 
   return "PENDING";
+}
+
+function unifiedStatusFilterToWhere(
+  status: UnifiedConversionStatus,
+  now: Date = new Date()
+): Prisma.LeadWhereInput {
+  switch (status) {
+    case "PENDING":
+      return { status: { in: ["SUBMITTED", "PENDING_VERIFICATION"] } };
+    case "HELD":
+      return {
+        status: "VERIFIED",
+        OR: [
+          { escrowHold: null },
+          { escrowHold: { is: { status: "HELD" } } },
+          { escrowHold: { is: { status: "EXPIRED" } } },
+          {
+            escrowHold: {
+              is: {
+                status: "PENDING_RELEASE",
+                OR: [{ releaseAt: null }, { releaseAt: { gt: now } }],
+              },
+            },
+          },
+        ],
+      };
+    case "MATURED":
+      return {
+        status: "VERIFIED",
+        escrowHold: {
+          is: { status: "PENDING_RELEASE", releaseAt: { lte: now } },
+        },
+      };
+    case "PAID":
+      return {
+        status: "VERIFIED",
+        escrowHold: { is: { status: "RELEASED" } },
+      };
+    case "DISPUTED":
+      return { status: "DISPUTED" };
+    case "REVERSED":
+      return {
+        OR: [
+          { status: { in: ["REJECTED", "EXPIRED"] } },
+          {
+            status: "VERIFIED",
+            escrowHold: { is: { status: "REFUNDED" } },
+          },
+        ],
+      };
+  }
 }
 
 /**
@@ -180,10 +245,11 @@ export async function listAdvertiserConversions({
 }: ListAdvertiserConversionsInput): Promise<{
   rows: UnifiedConversionRow[];
   totalCount: number;
+  statusCounts: UnifiedConversionStatusCounts;
   page: number;
   pageSize: number;
 }> {
-  const where = {
+  const where: Prisma.LeadWhereInput = {
     campaign: {
       advertiserId,
       ...(campaignId ? { id: campaignId } : {}),
@@ -192,7 +258,8 @@ export async function listAdvertiserConversions({
     },
   };
 
-  const [leads, totalCount] = await Promise.all([
+  const now = new Date();
+  const [leads, totalCount, ...statusCountsByStatus] = await Promise.all([
     prisma.lead.findMany({
       where,
       orderBy: { submittedAt: "desc" },
@@ -211,9 +278,22 @@ export async function listAdvertiserConversions({
       },
     }),
     prisma.lead.count({ where }),
+    ...UNIFIED_CONVERSION_STATUSES.map((status) =>
+      prisma.lead.count({
+        where: {
+          AND: [where, unifiedStatusFilterToWhere(status, now)],
+        },
+      })
+    ),
   ]);
 
-  const now = new Date();
+  const statusCounts = Object.fromEntries(
+    UNIFIED_CONVERSION_STATUSES.map((status, index) => [
+      status,
+      statusCountsByStatus[index] ?? 0,
+    ])
+  ) as UnifiedConversionStatusCounts;
+
   const rows: UnifiedConversionRow[] = leads.map((lead) => {
     const hold = lead.escrowHold;
     const unifiedStatus = deriveUnifiedStatus(
@@ -243,5 +323,5 @@ export async function listAdvertiserConversions({
     };
   });
 
-  return { rows, totalCount, page, pageSize };
+  return { rows, totalCount, statusCounts, page, pageSize };
 }
