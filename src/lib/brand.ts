@@ -1,7 +1,7 @@
 export const PRODUCT_NAME = "AffiliateSwarm";
 export const PRODUCT_DOMAIN = "affiliateswarm.ai";
 export const DEFAULT_APP_URL = `https://${PRODUCT_DOMAIN}`;
-export const OG_IMAGE_PATH = "/og-image-affiliateswarm-20260509.jpg";
+export const OG_IMAGE_PATH = "/og-image-affiliateswarm-20260520.jpg";
 export const SUPPORT_EMAIL = `support@${PRODUCT_DOMAIN}`;
 export const LEGAL_EMAIL = `legal@${PRODUCT_DOMAIN}`;
 export const PRIVACY_EMAIL = `privacy@${PRODUCT_DOMAIN}`;
