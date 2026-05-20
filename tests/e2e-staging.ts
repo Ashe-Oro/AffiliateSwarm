@@ -585,11 +585,14 @@ async function main() {
     assert(json.data.description === "Updated E2E test agent description", "Description should be updated");
   });
 
-  await test("GET /api/v1/agents?type=AFFILIATE — search agents by type", async () => {
+  await test("GET /api/v1/agents?type=AFFILIATE — search affiliate-capable agents", async () => {
     const { status, json } = await api("GET", "/api/v1/agents?type=AFFILIATE", undefined, newApiKey);
     assert(status === 200, `Expected 200, got ${status}`);
     assert(Array.isArray(json.data), "Should return array");
-    assert(json.data.every((a: any) => a.type === "AFFILIATE"), "All results should be AFFILIATE type");
+    assert(
+      json.data.every((a: any) => a.type === "AFFILIATE" || a.type === "DUAL"),
+      "All results should be affiliate-capable agents"
+    );
   });
 
   await test("POST /api/v1/agents — reject registration with missing email", async () => {

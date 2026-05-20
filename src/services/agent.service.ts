@@ -29,6 +29,56 @@ export interface RegistrationResult {
   verificationEmailError?: string;
 }
 
+const publicAgentProfileSelect = {
+  id: true,
+  type: true,
+  displayName: true,
+  description: true,
+  websiteUrl: true,
+  contactEndpoint: true,
+  logoUrl: true,
+  capabilities: true,
+  audienceSize: true,
+  channels: true,
+  contentType: true,
+  relevantUrls: true,
+  audienceGeo: true,
+  createdAt: true,
+  reputation: {
+    select: {
+      trustTier: true,
+      overallScore: true,
+      totalLeadsSubmitted: true,
+      totalLeadsVerified: true,
+      totalConversions: true,
+    },
+  },
+} satisfies Prisma.AgentSelect;
+
+type PublicAgentProfileRow = Prisma.AgentGetPayload<{
+  select: typeof publicAgentProfileSelect;
+}>;
+
+export interface PublicAgentProfile {
+  id: string;
+  type: PublicAgentProfileRow["type"];
+  displayName: string;
+  description: string | null;
+  websiteUrl: string | null;
+  contactEndpoint: string | null;
+  logoUrl: string | null;
+  capabilities: string[];
+  affiliateProfile: {
+    audienceSize: number | null;
+    channels: string[];
+    contentType: string | null;
+    relevantUrls: string[];
+    audienceGeo: string | null;
+  };
+  reputation: NonNullable<PublicAgentProfileRow["reputation"]> | null;
+  createdAt: Date;
+}
+
 const EMAIL_VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
 
 export function createEmailVerificationToken() {
@@ -586,18 +636,42 @@ export async function deactivateAgent(
   });
 }
 
+function toPublicAgentProfile(agent: PublicAgentProfileRow): PublicAgentProfile {
+  return {
+    id: agent.id,
+    type: agent.type,
+    displayName: agent.displayName,
+    description: agent.description,
+    websiteUrl: agent.websiteUrl,
+    contactEndpoint: agent.contactEndpoint,
+    logoUrl: agent.logoUrl,
+    capabilities: agent.capabilities,
+    affiliateProfile: {
+      audienceSize: agent.audienceSize,
+      channels: agent.channels,
+      contentType: agent.contentType,
+      relevantUrls: agent.relevantUrls,
+      audienceGeo: agent.audienceGeo,
+    },
+    reputation: agent.reputation
+      ? {
+          trustTier: agent.reputation.trustTier,
+          overallScore: agent.reputation.overallScore,
+          totalLeadsSubmitted: agent.reputation.totalLeadsSubmitted,
+          totalLeadsVerified: agent.reputation.totalLeadsVerified,
+          totalConversions: agent.reputation.totalConversions,
+        }
+      : null,
+    createdAt: agent.createdAt,
+  };
+}
+
 export async function searchAgents(filters: SearchAgentsInput) {
   const where: Prisma.AgentWhereInput = {
     deletedAt: null,
+    status: "ACTIVE",
+    type: { in: ["AFFILIATE", "DUAL"] },
   };
-
-  if (filters.type) {
-    where.type = filters.type;
-  }
-
-  if (filters.status) {
-    where.status = filters.status;
-  }
 
   if (filters.query) {
     where.displayName = { contains: filters.query, mode: "insensitive" };
@@ -606,6 +680,7 @@ export async function searchAgents(filters: SearchAgentsInput) {
   const [agents, totalCount] = await Promise.all([
     prisma.agent.findMany({
       where,
+      select: publicAgentProfileSelect,
       skip: (filters.page - 1) * filters.pageSize,
       take: filters.pageSize,
       orderBy: { createdAt: "desc" },
@@ -613,7 +688,12 @@ export async function searchAgents(filters: SearchAgentsInput) {
     prisma.agent.count({ where }),
   ]);
 
-  return { agents, totalCount, page: filters.page, pageSize: filters.pageSize };
+  return {
+    agents: agents.map(toPublicAgentProfile),
+    totalCount,
+    page: filters.page,
+    pageSize: filters.pageSize,
+  };
 }
 
 // ---------------------------------------------------------------------------

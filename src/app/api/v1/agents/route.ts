@@ -4,7 +4,7 @@ import {
   errorResponse,
   paginatedResponse,
 } from "@/lib/api-response";
-import { withAuth, getAuthContext } from "@/lib/auth";
+import { withAuth } from "@/lib/auth";
 import { RegisterAgentSchema, SearchAgentsSchema } from "@/lib/validators/agent";
 import { registerAgent, searchAgents } from "@/services/agent.service";
 import { AppError } from "@/lib/errors";
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * GET /api/v1/agents — Search agents (authenticated).
+ * GET /api/v1/agents — Search active public affiliate-agent profiles (authenticated).
  */
 export const GET = withAuth(async (req: NextRequest) => {
   try {

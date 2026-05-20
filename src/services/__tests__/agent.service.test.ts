@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 
 // ---------------------------------------------------------------------------
 // 1. API Key generation (pure logic, no DB)
@@ -130,7 +130,6 @@ describe("HMAC signing and verification", () => {
 
 import {
   RegisterAgentSchema,
-  UpdateAgentSchema,
   SearchAgentsSchema,
 } from "@/lib/validators/agent";
 
@@ -267,6 +266,29 @@ describe("SearchAgentsSchema", () => {
   it("rejects pageSize > 100", () => {
     const result = SearchAgentsSchema.safeParse({ pageSize: 200 });
     expect(result.success).toBe(false);
+  });
+
+  it("only accepts AFFILIATE as the optional type filter", () => {
+    expect(SearchAgentsSchema.safeParse({ type: "AFFILIATE" }).success).toBe(
+      true
+    );
+    expect(SearchAgentsSchema.safeParse({ type: "ADVERTISER" }).success).toBe(
+      false
+    );
+    expect(SearchAgentsSchema.safeParse({ type: "DUAL" }).success).toBe(false);
+  });
+
+  it("accepts ACTIVE as the only searchable status", () => {
+    expect(SearchAgentsSchema.safeParse({ status: "ACTIVE" }).success).toBe(true);
+    expect(
+      SearchAgentsSchema.safeParse({ status: "PENDING_VERIFICATION" }).success
+    ).toBe(false);
+    expect(SearchAgentsSchema.safeParse({ status: "SUSPENDED" }).success).toBe(
+      false
+    );
+    expect(SearchAgentsSchema.safeParse({ status: "DEACTIVATED" }).success).toBe(
+      false
+    );
   });
 });
 

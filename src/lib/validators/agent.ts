@@ -49,10 +49,8 @@ export const UpdateAgentSchema = z.object({
 export type UpdateAgentInput = z.infer<typeof UpdateAgentSchema>;
 
 export const SearchAgentsSchema = z.object({
-  type: z.enum(["ADVERTISER", "AFFILIATE", "DUAL"]).optional(),
-  status: z
-    .enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "DEACTIVATED"])
-    .optional(),
+  type: z.literal("AFFILIATE").optional(),
+  status: z.literal("ACTIVE").optional(),
   query: z.string().max(255).optional(),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(20),
