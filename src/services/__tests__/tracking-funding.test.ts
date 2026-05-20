@@ -174,3 +174,81 @@ describe("processPostback funding failures", () => {
     expect(mockPrisma.conversionEvent.create).not.toHaveBeenCalled();
   });
 });
+
+describe("processPostback test tracking confirmation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns a synthetic lead id without creating a real lead", async () => {
+    const confirmedAt = new Date("2026-05-20T16:00:00.000Z");
+    mockPrisma.campaign.findUnique.mockResolvedValueOnce({
+      id: CAMPAIGN_ID,
+      advertiserId: ADVERTISER_ID,
+      name: "Mock Mugs",
+      trackingConfirmedAt: confirmedAt,
+    });
+
+    const result = await processPostback(ADVERTISER_ID, {
+      swarm_ref: "TEST1234",
+      externalId: "test-confirm-1",
+      eventType: "PURCHASE",
+    });
+
+    expect("test" in result).toBe(true);
+    if (!("test" in result)) {
+      throw new Error("Expected test postback result");
+    }
+    expect(result).toMatchObject({
+      test: true,
+      created: false,
+      campaignId: CAMPAIGN_ID,
+      externalId: "test-confirm-1",
+      trackingConfirmedAt: confirmedAt,
+    });
+    expect(result.id).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+    );
+    expect(result.leadId).toBe(result.id);
+    expect(mockPrisma.affiliateEnrollment.findUnique).not.toHaveBeenCalled();
+    expect(mockPrisma.lead.create).not.toHaveBeenCalled();
+    expect(mockPrisma.conversionEvent.create).not.toHaveBeenCalled();
+    expect(mockPlaceHold).not.toHaveBeenCalled();
+  });
+
+  it("confirms tracking the first time a test postback is received", async () => {
+    mockPrisma.campaign.findUnique.mockResolvedValueOnce({
+      id: CAMPAIGN_ID,
+      advertiserId: ADVERTISER_ID,
+      name: "Mock Mugs",
+      trackingConfirmedAt: null,
+    });
+    mockPrisma.campaign.update.mockResolvedValueOnce({});
+
+    const result = await processPostback(ADVERTISER_ID, {
+      swarm_ref: "TEST1234",
+      externalId: "test-confirm-1",
+      eventType: "PURCHASE",
+    });
+
+    expect("test" in result).toBe(true);
+    if (!("test" in result)) {
+      throw new Error("Expected test postback result");
+    }
+    expect(result.trackingConfirmedAt).toBeInstanceOf(Date);
+    expect(mockPrisma.campaign.update).toHaveBeenCalledWith({
+      where: { id: CAMPAIGN_ID },
+      data: { trackingConfirmedAt: result.trackingConfirmedAt },
+    });
+    expect(mockNotify).toHaveBeenCalledWith({
+      type: "campaign.tracking_confirmed",
+      data: {
+        campaignId: CAMPAIGN_ID,
+        campaignName: "Mock Mugs",
+        advertiserId: ADVERTISER_ID,
+      },
+    });
+    expect(mockPrisma.lead.create).not.toHaveBeenCalled();
+    expect(mockPlaceHold).not.toHaveBeenCalled();
+  });
+});

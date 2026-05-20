@@ -104,7 +104,7 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| POST | `/api/v1/postback` | Yes | Server-to-server advertiser conversion postback. Body includes `swarm_ref`, `externalId`, `eventType`, optional `revenueCents`, `conversionData`, and `occurredAt`. |
+| POST | `/api/v1/postback` | Yes | Server-to-server advertiser conversion postback. Body includes `swarm_ref`, `externalId`, `eventType`, optional `revenueCents`, `conversionData`, and `occurredAt`. Test postbacks return `test: true`, `created: false`, and a synthetic `leadId`; no real lead is created. |
 | POST | `/api/v1/referrals` | Yes | Create a signed agent-to-agent referral token (affiliate). |
 | POST | `/api/v1/referrals/:referralId/confirm` | Yes | Confirm a referral token and attribute the handoff (advertiser). |
 
