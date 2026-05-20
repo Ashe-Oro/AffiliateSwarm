@@ -839,10 +839,11 @@ test("10.7 legacy advertiser performance routes redirect", async ({ page }) => {
   expect(url.searchParams.get("page")).toBe("2");
   expect(url.hash).toBe("#conversions");
 
-  await page.goto("/dashboard/live");
+  await page.goto("/dashboard/live?period=24h");
   await page.waitForURL(/\/dashboard\/performance/);
   url = new URL(page.url());
   expect(url.pathname).toBe("/dashboard/performance");
+  expect(url.searchParams.get("period")).toBe("24h");
   expect(url.hash).toBe("#live-status");
 });
 
