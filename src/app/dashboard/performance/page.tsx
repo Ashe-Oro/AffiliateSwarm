@@ -21,15 +21,12 @@ import {
 import { ConversionsTable } from "@/components/dashboard/conversions-table";
 import { LivePerformancePanel } from "@/components/dashboard/live-performance-panel";
 import { requireDashboardAuth } from "@/lib/auth/dashboard";
+import { formatCents } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { getOverview, getTimeseries } from "@/services/analytics.service";
 import { listAdvertiserConversions } from "@/services/conversions.service";
 
 const PAGE_SIZE = 25;
-
-function formatCents(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
-}
 
 function statusVariant(status: string) {
   switch (status) {
@@ -45,23 +42,32 @@ function statusVariant(status: string) {
 
 function performanceHref({
   period,
-  page,
+  cpaPage,
+  legacyPage,
   campaignId,
   hash,
 }: {
   period?: string;
-  page?: number;
+  cpaPage?: number;
+  legacyPage?: number;
   campaignId?: string;
   hash?: string;
 }) {
   const query = new URLSearchParams();
   if (period) query.set("period", period);
-  if (page && page > 1) query.set("page", String(page));
+  if (cpaPage && cpaPage > 1) query.set("cpaPage", String(cpaPage));
+  if (legacyPage && legacyPage > 1) {
+    query.set("legacyPage", String(legacyPage));
+  }
   if (campaignId) query.set("campaignId", campaignId);
   const queryString = query.toString();
   return `/dashboard/performance${queryString ? `?${queryString}` : ""}${
     hash ?? ""
   }`;
+}
+
+function parsePageParam(value: string | string[] | undefined): number {
+  return Math.max(1, parseInt(String(value ?? "1"), 10) || 1);
 }
 
 export default async function PerformancePage({
@@ -73,7 +79,9 @@ export default async function PerformancePage({
   const agentId = advertiserAgent.id;
   const params = await searchParams;
   const period = typeof params.period === "string" ? params.period : "30d";
-  const page = Math.max(1, parseInt(String(params.page ?? "1"), 10) || 1);
+  const fallbackPage = parsePageParam(params.page);
+  const cpaPage = parsePageParam(params.cpaPage ?? String(fallbackPage));
+  const legacyPage = parsePageParam(params.legacyPage ?? String(fallbackPage));
   const campaignIdFilter =
     typeof params.campaignId === "string" ? params.campaignId : undefined;
 
@@ -102,6 +110,37 @@ export default async function PerformancePage({
     }),
   ]);
 
+  const leadByDate = new Map(
+    timeseries.leads.map((row) => [row.date.toISOString(), row])
+  );
+  const conversionByDate = new Map(
+    timeseries.conversions.map((row) => [row.date.toISOString(), row])
+  );
+  const revenueByDate = new Map(
+    timeseries.revenue.map((row) => [row.date.toISOString(), row])
+  );
+  const trendRows = Array.from(
+    new Set([
+      ...leadByDate.keys(),
+      ...conversionByDate.keys(),
+      ...revenueByDate.keys(),
+    ])
+  )
+    .sort()
+    .map((dateKey) => {
+      const lead = leadByDate.get(dateKey);
+      const conversion = conversionByDate.get(dateKey);
+      const revenue = revenueByDate.get(dateKey);
+
+      return {
+        date:
+          lead?.date ?? conversion?.date ?? revenue?.date ?? new Date(dateKey),
+        leadCount: lead?.count ?? 0,
+        conversionCount: conversion?.count ?? 0,
+        totalCents: revenue?.totalCents ?? 0,
+      };
+    });
+
   const maxLeads = Math.max(...timeseries.leads.map((d) => d.count), 1);
   const cpaCampaignIds = new Set(
     campaigns.filter((c) => c.compensationModel === "CPA").map((c) => c.id)
@@ -119,10 +158,10 @@ export default async function PerformancePage({
     ? await listAdvertiserConversions({
         advertiserId: agentId,
         campaignId: campaignIdFilter,
-        page,
+        page: cpaPage,
         pageSize: PAGE_SIZE,
       })
-    : { rows: [], totalCount: 0, page, pageSize: PAGE_SIZE };
+    : { rows: [], totalCount: 0, page: cpaPage, pageSize: PAGE_SIZE };
 
   const legacyCampaignIds = campaignIdFilter
     ? nonCpaIds.filter((id) => id === campaignIdFilter)
@@ -135,7 +174,7 @@ export default async function PerformancePage({
             where: legacyWhere,
             include: { affiliate: { select: { displayName: true } } },
             orderBy: { occurredAt: "desc" },
-            skip: (page - 1) * PAGE_SIZE,
+            skip: (legacyPage - 1) * PAGE_SIZE,
             take: PAGE_SIZE,
           }),
           prisma.conversionEvent.count({ where: legacyWhere }),
@@ -161,9 +200,8 @@ export default async function PerformancePage({
     }
   }
 
-  const totalPages = Math.ceil(
-    (hasCpa ? cpaResult.totalCount : legacyCount) / PAGE_SIZE
-  );
+  const cpaTotalPages = Math.ceil(cpaResult.totalCount / PAGE_SIZE);
+  const legacyTotalPages = Math.ceil(legacyCount / PAGE_SIZE);
   const totalRevenue = legacyStats.reduce(
     (sum, s) => sum + (s._sum.revenueCents ?? 0),
     0
@@ -198,7 +236,7 @@ export default async function PerformancePage({
         </div>
       </div>
 
-      <section id="trends" className="space-y-4 scroll-mt-6">
+      <section id="trends" className="space-y-4 scroll-mt-16">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-xl font-semibold tracking-tight">
@@ -328,7 +366,7 @@ export default async function PerformancePage({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {timeseries.leads.length === 0 ? (
+                  {trendRows.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={4}
@@ -338,29 +376,25 @@ export default async function PerformancePage({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    timeseries.leads.map((point, i) => {
-                      const conv = timeseries.conversions[i];
-                      const rev = timeseries.revenue[i];
-                      return (
-                        <TableRow key={String(point.date)}>
-                          <TableCell className="text-sm">
-                            {point.date.toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {point.count}
-                          </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {conv?.count ?? 0}
-                          </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {formatCents(rev?.totalCents ?? 0)}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
+                    trendRows.map((row) => (
+                      <TableRow key={row.date.toISOString()}>
+                        <TableCell className="text-sm">
+                          {row.date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {row.leadCount}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {row.conversionCount}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {formatCents(row.totalCents)}
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>
@@ -371,7 +405,7 @@ export default async function PerformancePage({
 
       <LivePerformancePanel />
 
-      <section id="conversions" className="space-y-4 scroll-mt-6">
+      <section id="conversions" className="space-y-4 scroll-mt-16">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="text-xl font-semibold tracking-tight">
@@ -436,18 +470,19 @@ export default async function PerformancePage({
               showCampaignColumn
               leadCampaignMap={leadCampaignMap}
             />
-            {totalPages > 1 && (
+            {cpaTotalPages > 1 && (
               <div className="mt-3 flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  Page {page} of {totalPages} ({cpaResult.totalCount}{" "}
+                  Page {cpaPage} of {cpaTotalPages} ({cpaResult.totalCount}{" "}
                   conversions)
                 </p>
                 <div className="flex gap-2">
-                  {page > 1 && (
+                  {cpaPage > 1 && (
                     <Link
                       href={performanceHref({
                         period,
-                        page: page - 1,
+                        cpaPage: cpaPage - 1,
+                        legacyPage,
                         campaignId: campaignIdFilter,
                         hash: "#conversions",
                       })}
@@ -457,11 +492,12 @@ export default async function PerformancePage({
                       </Button>
                     </Link>
                   )}
-                  {page < totalPages && (
+                  {cpaPage < cpaTotalPages && (
                     <Link
                       href={performanceHref({
                         period,
-                        page: page + 1,
+                        cpaPage: cpaPage + 1,
+                        legacyPage,
                         campaignId: campaignIdFilter,
                         hash: "#conversions",
                       })}
@@ -575,6 +611,46 @@ export default async function PerformancePage({
                 </TableBody>
               </Table>
             </div>
+            {legacyTotalPages > 1 && (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Page {legacyPage} of {legacyTotalPages} ({legacyCount}{" "}
+                  conversions)
+                </p>
+                <div className="flex gap-2">
+                  {legacyPage > 1 && (
+                    <Link
+                      href={performanceHref({
+                        period,
+                        cpaPage,
+                        legacyPage: legacyPage - 1,
+                        campaignId: campaignIdFilter,
+                        hash: "#conversions",
+                      })}
+                    >
+                      <Button variant="outline" size="sm">
+                        Previous
+                      </Button>
+                    </Link>
+                  )}
+                  {legacyPage < legacyTotalPages && (
+                    <Link
+                      href={performanceHref({
+                        period,
+                        cpaPage,
+                        legacyPage: legacyPage + 1,
+                        campaignId: campaignIdFilter,
+                        hash: "#conversions",
+                      })}
+                    >
+                      <Button variant="outline" size="sm">
+                        Next
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

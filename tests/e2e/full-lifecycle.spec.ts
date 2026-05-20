@@ -767,7 +767,7 @@ test("10.5 advertiser performance page shows unified CPA conversions", async ({
     "/dashboard/performance#conversions"
   );
   await expect(
-    page.getByRole("heading", { name: /performance/i })
+    page.getByRole("heading", { level: 2, name: "Performance" })
   ).toBeVisible({ timeout: 10_000 });
   await expect(
     page.getByRole("heading", { name: /conversion ledger/i })
@@ -814,10 +814,36 @@ test("10.6 advertiser performance page shows non-zero KPIs", async ({
     "/dashboard/performance"
   );
   await expect(
-    page.getByRole("heading", { name: /performance/i })
+    page.getByRole("heading", { level: 2, name: "Performance" })
   ).toBeVisible({ timeout: 10_000 });
   // At least one KPI card should show a non-zero number
   await expect(page.getByText("Total Leads")).toBeVisible();
+});
+
+test("10.7 legacy advertiser performance routes redirect", async ({ page }) => {
+  await loginViaBrowser(
+    page,
+    state.advertiser!.apiKey,
+    "/dashboard/analytics?period=7d"
+  );
+  await page.waitForURL(/\/dashboard\/performance/);
+  let url = new URL(page.url());
+  expect(url.pathname).toBe("/dashboard/performance");
+  expect(url.searchParams.get("period")).toBe("7d");
+  expect(url.hash).toBe("#trends");
+
+  await page.goto("/dashboard/conversions?page=2");
+  await page.waitForURL(/\/dashboard\/performance/);
+  url = new URL(page.url());
+  expect(url.pathname).toBe("/dashboard/performance");
+  expect(url.searchParams.get("page")).toBe("2");
+  expect(url.hash).toBe("#conversions");
+
+  await page.goto("/dashboard/live");
+  await page.waitForURL(/\/dashboard\/performance/);
+  url = new URL(page.url());
+  expect(url.pathname).toBe("/dashboard/performance");
+  expect(url.hash).toBe("#live-status");
 });
 
 // ═══════════════════════════════════════════════════════════════════════

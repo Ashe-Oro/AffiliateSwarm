@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatCents } from "@/lib/format";
 
 interface LeadPerHour {
   hour: string;
@@ -60,10 +61,6 @@ interface LiveStats {
   };
   activityFeed: ActivityItem[];
   generatedAt: string;
-}
-
-function formatCents(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
 }
 
 function statusVariant(status: string) {
@@ -160,7 +157,7 @@ export function LivePerformancePanel() {
 
   if (loading && !stats) {
     return (
-      <section id="live-status" className="space-y-4">
+      <section id="live-status" className="space-y-4 scroll-mt-16">
         <div>
           <h3 className="text-xl font-semibold tracking-tight">Live Status</h3>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -186,7 +183,7 @@ export function LivePerformancePanel() {
 
   if (error && !stats) {
     return (
-      <section id="live-status" className="space-y-4">
+      <section id="live-status" className="space-y-4 scroll-mt-16">
         <div>
           <h3 className="text-xl font-semibold tracking-tight">Live Status</h3>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -234,7 +231,7 @@ export function LivePerformancePanel() {
   ];
 
   return (
-    <section id="live-status" className="space-y-4 scroll-mt-6">
+    <section id="live-status" className="space-y-4 scroll-mt-16">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-xl font-semibold tracking-tight">Live Status</h3>
