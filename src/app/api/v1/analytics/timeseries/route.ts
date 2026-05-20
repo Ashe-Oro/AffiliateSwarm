@@ -38,11 +38,15 @@ export const GET = withAuth(
     }
 
     const filters = { ...parsed.data };
+    filters.agentId = undefined;
+    filters.role = undefined;
 
     // ── Role-based scoping ──────────────────────────────────────────
     if (agent.type === "AFFILIATE" || agent.type === "DUAL") {
       // Affiliates can only see their own data
       filters.affiliateId = agent.id;
+      filters.agentId = agent.id;
+      filters.role = "AFFILIATE";
 
       // If they specify a campaign, verify they're enrolled
       if (filters.campaignId) {
@@ -50,6 +54,9 @@ export const GET = withAuth(
       }
     } else {
       // ADVERTISER
+      filters.agentId = agent.id;
+      filters.role = "ADVERTISER";
+
       if (filters.campaignId) {
         // Must own the campaign
         await assertCampaignAccess(filters.campaignId, agent.id);
@@ -72,9 +79,8 @@ export const GET = withAuth(
         }
       }
 
-      // If no campaignId or affiliateId, the advertiser gets an unscoped
-      // timeseries — which is fine since the service already limits data
-      // to the caller's campaigns via their own relationships.
+      // If no campaignId or affiliateId, the advertiser gets a timeseries
+      // scoped to campaigns they own.
     }
 
     const result = await getTimeseries(filters);

@@ -84,15 +84,18 @@
 - [ ] **Previous/Next buttons** navigate between pages, URL updates with `?page=`
 - [ ] Filtering resets to page 1
 
-### 1.5 Conversions Page — `/dashboard/conversions`
+### 1.5 Performance Page — `/dashboard/performance`
 
-**Issue #68 (Conversions), #70 (Pagination)**
+**Issue #66 (Analytics Dashboard), #68 (Conversions), #70 (Pagination)**
 
-- [ ] Page loads with header "Conversions" and description text
-- [ ] **Three stats cards:** Total Conversions, Verified, Total Revenue
-- [ ] **Conversions table** with columns: Campaign, Affiliate, Action, Status, Revenue, Payout, Date
+- [ ] Page loads with header "Performance"
+- [ ] **Period selector**: 7d, 30d, 90d — active period highlighted
+- [ ] **Five KPI cards:** Total Leads, Verified Leads, Conversions, Payout Spend, Active Campaigns
+- [ ] **Live Status** section shows 24h leads, verification rate, escrow balance, and burn rate
+- [ ] **Conversion Ledger** includes conversion tables and pagination when needed
+- [ ] **Non-CPA conversions table** with columns: Campaign, Affiliate, Action, Status, Revenue, Payout, Date
 - [ ] Action type shown as outline badge, Status as colored badge (green for verified/attributed, red for rejected)
-- [ ] If more than 25 conversions: pagination controls at bottom
+- [ ] If more than 25 conversions: pagination controls appear in the Conversion Ledger
 - [ ] Empty state shows "No conversion events yet." if no data
 
 ### 1.6 Discover Affiliates — `/dashboard/discover`
@@ -107,21 +110,9 @@
 - [ ] If more than 20 affiliates: pagination controls with Previous/Next
 - [ ] Empty state: "No affiliates found." card
 
-### 1.7 Analytics Page — `/dashboard/analytics`
-
-**Issue #66 (Analytics Dashboard)**
-
-- [ ] Page loads with header "Analytics" and description
-- [ ] **Period selector** at top right: 7d, 30d, 90d — active period highlighted
-- [ ] Click different periods → URL changes to `?period=7d` etc., data updates
-- [ ] **Five KPI cards** in a row: Total Leads, Verified Leads, Conversions, Revenue, Active Campaigns
-- [ ] **Leads Over Time** card: horizontal bar chart with date labels on left, bars proportional to count, count on right
-- [ ] **Revenue Breakdown** card: table with Date, Leads, Conversions, Revenue columns
-- [ ] Empty state: "No data yet." / "No data for this period."
-
 ### 1.8 Navigation
 
-- [ ] Sidebar includes all expected items: Overview, Campaigns, Leads, Conversions, Discover Affiliates, Analytics, Wallet, Live, Settings
+- [ ] Sidebar includes all expected items: Overview, Campaigns, Leads, Performance, Wallet, Settings
 - [ ] All sidebar links navigate to the correct pages
 
 ---

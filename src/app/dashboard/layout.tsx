@@ -9,10 +9,8 @@ const navItems = [
   { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/campaigns", label: "Campaigns" },
   { href: "/dashboard/leads", label: "Leads" },
-  { href: "/dashboard/conversions", label: "Conversions" },
-  { href: "/dashboard/analytics", label: "Analytics" },
+  { href: "/dashboard/performance", label: "Performance" },
   { href: "/dashboard/wallet", label: "Wallet" },
-  { href: "/dashboard/live", label: "Live" },
   { href: "/dashboard/settings", label: "Settings" },
 ];
 

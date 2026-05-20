@@ -37,7 +37,8 @@ export const TimeseriesSchema = z.object({
   granularity: GranularityEnum.default("day"),
   campaignId: z.string().uuid().optional(),
   affiliateId: z.string().uuid().optional(),
+  agentId: z.string().uuid().optional(),
+  role: z.enum(["ADVERTISER", "AFFILIATE", "DUAL"]).optional(),
 });
 
 export type TimeseriesInput = z.infer<typeof TimeseriesSchema>;
-

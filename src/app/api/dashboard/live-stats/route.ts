@@ -1,22 +1,19 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
-import { getDashboardUser } from "@/lib/auth/dashboard";
+import { requireAdvertiserAgent } from "@/lib/auth/dashboard";
 import { successResponse, errorResponse } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-  let user;
+  let auth;
   try {
-    user = await getDashboardUser(req);
+    auth = await requireAdvertiserAgent(req);
   } catch {
     return errorResponse("UNAUTHORIZED", "Authentication required", 401);
   }
 
-  const agentId = user.agents[0]?.id;
-  if (!agentId) {
-    return errorResponse("NO_AGENT", "No agent found for user", 404);
-  }
+  const agentId = auth.agent.id;
 
   const now = new Date();
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -30,6 +27,9 @@ export async function GET(req: NextRequest) {
     escrowAccounts,
     leads24hRaw,
     spentLast7Days,
+    totalLeadsAllTime,
+    verifiedLeadsAllTime,
+    topAffiliatesRaw,
   ] = await Promise.all([
     // Total leads in last 24h
     prisma.lead.count({
@@ -90,6 +90,23 @@ export async function GET(req: NextRequest) {
       },
       _sum: { payoutCents: true },
     }),
+
+    // All-time totals for verification rate
+    prisma.lead.count({
+      where: { campaign: { advertiserId: agentId } },
+    }),
+    prisma.lead.count({
+      where: { campaign: { advertiserId: agentId }, status: "VERIFIED" },
+    }),
+
+    // Top 5 affiliates by lead count
+    prisma.lead.groupBy({
+      by: ["affiliateId"],
+      where: { campaign: { advertiserId: agentId } },
+      _count: { id: true },
+      orderBy: { _count: { id: "desc" } },
+      take: 5,
+    }),
   ]);
 
   // --- Leads per hour (last 24h) ---
@@ -107,32 +124,19 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // --- Conversion rate ---
-  const totalLeadsAllTime = await prisma.lead.count({
-    where: { campaign: { advertiserId: agentId } },
-  });
-  const verifiedLeadsAllTime = await prisma.lead.count({
-    where: { campaign: { advertiserId: agentId }, status: "VERIFIED" },
-  });
   const conversionRate =
     totalLeadsAllTime > 0
       ? Math.round((verifiedLeadsAllTime / totalLeadsAllTime) * 10000) / 100
       : 0;
 
-  // --- Top 5 affiliates by lead count ---
-  const topAffiliatesRaw = await prisma.lead.groupBy({
-    by: ["affiliateId"],
-    where: { campaign: { advertiserId: agentId } },
-    _count: { id: true },
-    orderBy: { _count: { id: "desc" } },
-    take: 5,
-  });
-
   const affiliateIds = topAffiliatesRaw.map((a) => a.affiliateId);
-  const affiliateNames = await prisma.agent.findMany({
-    where: { id: { in: affiliateIds } },
-    select: { id: true, displayName: true },
-  });
+  const affiliateNames =
+    affiliateIds.length > 0
+      ? await prisma.agent.findMany({
+          where: { id: { in: affiliateIds } },
+          select: { id: true, displayName: true },
+        })
+      : [];
   const nameMap = new Map(affiliateNames.map((a) => [a.id, a.displayName]));
 
   const topAffiliates = topAffiliatesRaw.map((a) => ({

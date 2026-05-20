@@ -175,72 +175,107 @@ export async function getCampaignAnalytics(
 // ---------------------------------------------------------------------------
 
 export async function getTimeseries(filters: TimeseriesInput) {
-  const { startDate, endDate, granularity, campaignId, affiliateId } = filters;
-
-  // Build shared where clauses
-  const leadWhere: Prisma.LeadWhereInput = {
-    submittedAt: { gte: startDate, lte: endDate },
-  };
-  const conversionWhere: Prisma.ConversionEventWhereInput = {
-    occurredAt: { gte: startDate, lte: endDate },
-  };
-  const ledgerWhere: Prisma.LedgerEntryWhereInput = {
-    entryType: "PAYOUT",
-    createdAt: { gte: startDate, lte: endDate },
-  };
-
-  if (campaignId) {
-    leadWhere.campaignId = campaignId;
-    conversionWhere.campaignId = campaignId;
-  }
-  if (affiliateId) {
-    leadWhere.affiliateId = affiliateId;
-    conversionWhere.affiliateId = affiliateId;
-    ledgerWhere.creditAccountId = affiliateId;
-  }
+  const {
+    startDate,
+    endDate,
+    granularity,
+    campaignId,
+    affiliateId,
+    agentId,
+    role,
+  } = filters;
 
   // Determine the date_trunc interval
   const truncInterval =
     granularity === "week" ? "week" : granularity === "month" ? "month" : "day";
+  const advertiserScope =
+    agentId && (role === "ADVERTISER" || role === "DUAL");
+  const affiliateScope = agentId && role === "AFFILIATE";
+  type QueryParam = string | Date;
+
+  function buildActivityQueryParts(alias: string, dateColumn: string) {
+    const params: QueryParam[] = [truncInterval, startDate, endDate];
+    const clauses = [
+      `${alias}."${dateColumn}" >= $2`,
+      `${alias}."${dateColumn}" <= $3`,
+    ];
+    const addParam = (value: QueryParam) => {
+      params.push(value);
+      return `$${params.length}`;
+    };
+
+    if (campaignId) {
+      clauses.push(`${alias}."campaignId" = ${addParam(campaignId)}`);
+    }
+    if (affiliateId) {
+      clauses.push(`${alias}."affiliateId" = ${addParam(affiliateId)}`);
+    } else if (affiliateScope) {
+      clauses.push(`${alias}."affiliateId" = ${addParam(agentId)}`);
+    }
+    if (advertiserScope) {
+      clauses.push(
+        `EXISTS (
+          SELECT 1 FROM campaigns c
+          WHERE c.id = ${alias}."campaignId"
+            AND c."advertiserId" = ${addParam(agentId)}
+            AND c."deletedAt" IS NULL
+        )`
+      );
+    }
+
+    return { params, whereSql: clauses.join(" AND ") };
+  }
+
+  function buildLedgerQueryParts() {
+    const params: QueryParam[] = [truncInterval, startDate, endDate];
+    const clauses = [
+      `le."entryType" = 'PAYOUT'`,
+      `le."createdAt" >= $2`,
+      `le."createdAt" <= $3`,
+    ];
+    const addParam = (value: QueryParam) => {
+      params.push(value);
+      return `$${params.length}`;
+    };
+
+    if (affiliateId) {
+      clauses.push(`le."creditAccountId" = ${addParam(affiliateId)}`);
+    } else if (affiliateScope) {
+      clauses.push(`le."creditAccountId" = ${addParam(agentId)}`);
+    }
+    if (advertiserScope) {
+      clauses.push(`le."debitAccountId" = ${addParam(agentId)}`);
+    }
+
+    return { params, whereSql: clauses.join(" AND ") };
+  }
+
+  const leadQuery = buildActivityQueryParts("l", "submittedAt");
+  const conversionQuery = buildActivityQueryParts("ce", "occurredAt");
+  const ledgerQuery = buildLedgerQueryParts();
 
   // Use raw queries for date-based grouping since Prisma groupBy doesn't support date_trunc
   const [leadSeries, conversionSeries, revenueSeries] = await Promise.all([
     prisma.$queryRawUnsafe<Array<{ date: Date; count: bigint }>>(
-      `SELECT date_trunc($1, "submittedAt") as date, COUNT(*)::bigint as count
-       FROM leads
-       WHERE "submittedAt" >= $2 AND "submittedAt" <= $3
-       ${campaignId ? `AND "campaignId" = $4` : ""}
-       ${affiliateId ? `AND "affiliateId" = ${campaignId ? "$5" : "$4"}` : ""}
+      `SELECT date_trunc($1, l."submittedAt") as date, COUNT(*)::bigint as count
+       FROM leads l
+       WHERE ${leadQuery.whereSql}
        GROUP BY date ORDER BY date`,
-      truncInterval,
-      startDate,
-      endDate,
-      ...(campaignId ? [campaignId] : []),
-      ...(affiliateId ? [affiliateId] : [])
+      ...leadQuery.params
     ),
     prisma.$queryRawUnsafe<Array<{ date: Date; count: bigint }>>(
-      `SELECT date_trunc($1, "occurredAt") as date, COUNT(*)::bigint as count
-       FROM conversion_events
-       WHERE "occurredAt" >= $2 AND "occurredAt" <= $3
-       ${campaignId ? `AND "campaignId" = $4` : ""}
-       ${affiliateId ? `AND "affiliateId" = ${campaignId ? "$5" : "$4"}` : ""}
+      `SELECT date_trunc($1, ce."occurredAt") as date, COUNT(*)::bigint as count
+       FROM conversion_events ce
+       WHERE ${conversionQuery.whereSql}
        GROUP BY date ORDER BY date`,
-      truncInterval,
-      startDate,
-      endDate,
-      ...(campaignId ? [campaignId] : []),
-      ...(affiliateId ? [affiliateId] : [])
+      ...conversionQuery.params
     ),
     prisma.$queryRawUnsafe<Array<{ date: Date; total_cents: bigint }>>(
-      `SELECT date_trunc($1, "createdAt") as date, COALESCE(SUM("amountCents"), 0)::bigint as total_cents
-       FROM ledger_entries
-       WHERE "entryType" = 'PAYOUT' AND "createdAt" >= $2 AND "createdAt" <= $3
-       ${affiliateId ? `AND "creditAccountId" = $4` : ""}
+      `SELECT date_trunc($1, le."createdAt") as date, COALESCE(SUM(le."amountCents"), 0)::bigint as total_cents
+       FROM ledger_entries le
+       WHERE ${ledgerQuery.whereSql}
        GROUP BY date ORDER BY date`,
-      truncInterval,
-      startDate,
-      endDate,
-      ...(affiliateId ? [affiliateId] : [])
+      ...ledgerQuery.params
     ),
   ]);
 
@@ -262,4 +297,3 @@ export async function getTimeseries(filters: TimeseriesInput) {
     })),
   };
 }
-
