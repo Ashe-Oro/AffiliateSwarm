@@ -74,7 +74,7 @@ All request and response bodies are JSON. Paginated endpoints return `{ data, to
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/api/v1/discover/campaigns` | Yes | Search active campaigns. Query params: `query`, `compensationModel`, `category`, `geo`, `page`, `pageSize`. Responses include `payoutPerUnitCents` for fixed-payout campaigns and `payoutPercentage` for `REV_SHARE`; the non-applicable payout field is `null`. |
+| GET | `/api/v1/discover/campaigns` | Yes | Search active campaigns and advertiser offers. Query params: `query`, `compensationModel`, `category`, `geo`, `page`, `pageSize`. Responses include `payoutPerUnitCents` for fixed-payout campaigns and `payoutPercentage` for `REV_SHARE`; the non-applicable payout field is `null`. |
 
 ---
 
