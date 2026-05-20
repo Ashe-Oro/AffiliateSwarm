@@ -57,6 +57,7 @@ import { NextRequest } from "next/server";
 import { POST, GET } from "../route";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
+import { signRequest } from "@/lib/auth/hmac";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -79,6 +80,26 @@ function buildRequest(
     init.body = JSON.stringify(body);
   }
   return new NextRequest(new URL(url, "http://localhost:3000"), init);
+}
+
+function buildHmacHeaders(
+  method: string,
+  path: string,
+  secret: string,
+  keyId = "TESTKEY1"
+): Record<string, string> {
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  return {
+    "X-AffiliateSwarm-Key-Id": keyId,
+    "X-AffiliateSwarm-Timestamp": timestamp,
+    "X-AffiliateSwarm-Signature": signRequest(
+      secret,
+      method,
+      path,
+      timestamp,
+      ""
+    ),
+  };
 }
 
 const VALID_REGISTRATION = {
@@ -277,5 +298,183 @@ describe("GET /api/v1/agents", () => {
 
     expect(res.status).toBe(401);
     expect(json.success).toBe(false);
+  });
+
+  it("returns active public profiles without internal agent fields", async () => {
+    const secret = "test-hmac-secret";
+    const createdAt = new Date("2026-05-01T12:00:00.000Z");
+
+    (prisma.apiCredential.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: "credential-1",
+      apiKeyPrefix: "TESTKEY1",
+      hmacSecret: secret,
+      status: "ACTIVE",
+      agent: { id: "auth-agent", status: "ACTIVE" },
+    });
+    (prisma.apiCredential.update as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    (prisma.agent.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
+      {
+        id: "agent-1",
+        type: "AFFILIATE",
+        displayName: "Recruitable Agent",
+        description: "Promotes technical SaaS products.",
+        websiteUrl: "https://agent.example.com",
+        contactEndpoint: "https://agent.example.com/contact",
+        logoUrl: "https://agent.example.com/logo.png",
+        capabilities: ["content_creation", "lead_submit"],
+        audienceSize: 25000,
+        channels: ["blog", "newsletter"],
+        contentType: "review",
+        relevantUrls: ["https://agent.example.com/reviews"],
+        audienceGeo: "US",
+        createdAt,
+        reputation: {
+          trustTier: "NEW",
+          overallScore: 82,
+          totalLeadsSubmitted: 12,
+          totalLeadsVerified: 9,
+          totalConversions: 4,
+        },
+        email: "private@example.com",
+        emailVerifyToken: "secret-token",
+        status: "ACTIVE",
+        metadata: { ipAllowlist: ["127.0.0.1"] },
+      },
+    ]);
+    (prisma.agent.count as ReturnType<typeof vi.fn>).mockResolvedValue(1);
+
+    const req = buildRequest(
+      "GET",
+      "/api/v1/agents?type=AFFILIATE&status=ACTIVE",
+      undefined,
+      buildHmacHeaders("GET", "/api/v1/agents", secret)
+    );
+    const res = await GET(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.data).toEqual([
+      {
+        id: "agent-1",
+        type: "AFFILIATE",
+        displayName: "Recruitable Agent",
+        description: "Promotes technical SaaS products.",
+        websiteUrl: "https://agent.example.com",
+        contactEndpoint: "https://agent.example.com/contact",
+        logoUrl: "https://agent.example.com/logo.png",
+        capabilities: ["content_creation", "lead_submit"],
+        affiliateProfile: {
+          audienceSize: 25000,
+          channels: ["blog", "newsletter"],
+          contentType: "review",
+          relevantUrls: ["https://agent.example.com/reviews"],
+          audienceGeo: "US",
+        },
+        reputation: {
+          trustTier: "NEW",
+          overallScore: 82,
+          totalLeadsSubmitted: 12,
+          totalLeadsVerified: 9,
+          totalConversions: 4,
+        },
+        createdAt: createdAt.toISOString(),
+      },
+    ]);
+
+    const profile = json.data[0];
+    expect(profile).not.toHaveProperty("email");
+    expect(profile).not.toHaveProperty("emailVerifyToken");
+    expect(profile).not.toHaveProperty("status");
+    expect(profile).not.toHaveProperty("metadata");
+
+    const findManyArgs = (prisma.agent.findMany as ReturnType<typeof vi.fn>).mock
+      .calls[0][0];
+    expect(findManyArgs.where).toEqual({
+      deletedAt: null,
+      status: "ACTIVE",
+      type: { in: ["AFFILIATE", "DUAL"] },
+    });
+    expect(findManyArgs.select).not.toHaveProperty("email");
+    expect(findManyArgs.select).not.toHaveProperty("emailVerifyToken");
+    expect(findManyArgs.select).not.toHaveProperty("metadata");
+  });
+
+  it("rejects inactive status filters", async () => {
+    const secret = "test-hmac-secret";
+    (prisma.apiCredential.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: "credential-1",
+      apiKeyPrefix: "TESTKEY1",
+      hmacSecret: secret,
+      status: "ACTIVE",
+      agent: { id: "auth-agent", status: "ACTIVE" },
+    });
+    (prisma.apiCredential.update as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const req = buildRequest(
+      "GET",
+      "/api/v1/agents?status=SUSPENDED",
+      undefined,
+      buildHmacHeaders("GET", "/api/v1/agents", secret)
+    );
+    const res = await GET(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe("VALIDATION_ERROR");
+    expect(prisma.agent.findMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects DUAL as a standalone type filter", async () => {
+    const secret = "test-hmac-secret";
+    (prisma.apiCredential.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: "credential-1",
+      apiKeyPrefix: "TESTKEY1",
+      hmacSecret: secret,
+      status: "ACTIVE",
+      agent: { id: "auth-agent", status: "ACTIVE" },
+    });
+    (prisma.apiCredential.update as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const req = buildRequest(
+      "GET",
+      "/api/v1/agents?type=DUAL",
+      undefined,
+      buildHmacHeaders("GET", "/api/v1/agents", secret)
+    );
+    const res = await GET(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe("VALIDATION_ERROR");
+    expect(prisma.agent.findMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects ADVERTISER as a type filter", async () => {
+    const secret = "test-hmac-secret";
+    (prisma.apiCredential.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      id: "credential-1",
+      apiKeyPrefix: "TESTKEY1",
+      hmacSecret: secret,
+      status: "ACTIVE",
+      agent: { id: "auth-agent", status: "ACTIVE" },
+    });
+    (prisma.apiCredential.update as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const req = buildRequest(
+      "GET",
+      "/api/v1/agents?type=ADVERTISER",
+      undefined,
+      buildHmacHeaders("GET", "/api/v1/agents", secret)
+    );
+    const res = await GET(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe("VALIDATION_ERROR");
+    expect(prisma.agent.findMany).not.toHaveBeenCalled();
   });
 });

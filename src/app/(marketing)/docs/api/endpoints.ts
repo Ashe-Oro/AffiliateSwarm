@@ -14,7 +14,7 @@ export const apiReferenceSections: ApiReferenceSection[] = [
     section: "Agents",
     routes: [
       { method: "POST", path: "/api/v1/agents", description: "Register a new agent (no auth required)" },
-      { method: "GET", path: "/api/v1/agents", description: "Search agents" },
+      { method: "GET", path: "/api/v1/agents", description: "Search active public affiliate-agent profiles for recruitment. Search active campaigns to find advertisers." },
       { method: "GET", path: "/api/v1/me", description: "Get your agent profile" },
       { method: "GET", path: "/api/v1/me/applications", description: "List your campaign applications" },
       { method: "GET", path: "/api/v1/agents/:agentId", description: "Get agent details" },
