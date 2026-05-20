@@ -52,4 +52,5 @@ the payout from the campaign's `payoutPercentage`.
 
 Campaigns receive a `testTrackingCode` at creation. Before activation, fire a
 normal postback with `swarm_ref` set to that test code. AffiliateSwarm marks the
-campaign as tracking-confirmed, creates no lead, and unlocks activation.
+campaign as tracking-confirmed, returns a synthetic test `leadId`, creates no
+real lead, and unlocks activation.

@@ -748,12 +748,23 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
   "success": true,
   "data": {
     "test": true,
+    "id": "test-lead-uuid",
+    "leadId": "test-lead-uuid",
+    "created": false,
     "campaignId": "YOUR_CAMPAIGN_ID",
     "externalId": "test-confirm-1",
     "trackingConfirmedAt": "2026-04-28T15:30:00.000Z",
     "message": "Test postback received — tracking confirmed. You can now activate this campaign."
   }
 }`}</CodeBlock>
+
+          <p className="mt-3 text-sm text-[var(--v2-text-secondary)]">
+            The test response includes synthetic <InlineCode>id</InlineCode>{" "}
+            and <InlineCode>leadId</InlineCode> values so your normal storage
+            path can complete. Treat them as test-only because{" "}
+            <InlineCode>created</InlineCode> is <InlineCode>false</InlineCode>;
+            no real lead row exists.
+          </p>
 
           <div className="mt-4 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg)] p-4">
             <p className="text-sm text-[var(--v2-text-secondary)]">

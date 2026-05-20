@@ -37,6 +37,9 @@ export const POST = withAuth(
           return successResponse(
             {
               test: true,
+              id: result.id,
+              leadId: result.leadId,
+              created: result.created,
               campaignId: result.campaignId,
               externalId: result.externalId,
               trackingConfirmedAt: result.trackingConfirmedAt,
@@ -46,7 +49,10 @@ export const POST = withAuth(
           );
         }
 
-        return successResponse(result.lead, result.created ? 201 : 200);
+        return successResponse(
+          { ...result.lead, leadId: result.lead.id },
+          result.created ? 201 : 200
+        );
       } catch (err) {
         if (err instanceof AppError) {
           // AppError messages must be integrator-safe by construction.

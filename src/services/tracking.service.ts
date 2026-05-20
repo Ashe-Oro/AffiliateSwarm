@@ -1,10 +1,9 @@
-import { createHmac, randomUUID } from "crypto";
+import { createHash, createHmac, randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 import {
   NotFoundError,
   ValidationError,
   ForbiddenError,
-  ConflictError,
 } from "@/lib/errors";
 import * as escrowService from "@/services/escrow.service";
 import * as reputationService from "@/services/reputation.service";
@@ -15,6 +14,20 @@ import { logger } from "@/lib/logger";
 
 const REFERRAL_SECRET =
   process.env.AFFILIATESWARM_REFERRAL_SECRET || "affiliateswarm-dev-secret";
+
+function syntheticTestLeadId(campaignId: string, externalId: string): string {
+  const digest = createHash("sha256")
+    .update(`${campaignId}:${externalId}`)
+    .digest("hex");
+
+  return [
+    digest.slice(0, 8),
+    digest.slice(8, 12),
+    `4${digest.slice(13, 16)}`,
+    `a${digest.slice(17, 20)}`,
+    digest.slice(20, 32),
+  ].join("-");
+}
 
 // ---------------------------------------------------------------------------
 // Track Click
@@ -130,8 +143,12 @@ export async function processPostback(
       });
     }
 
+    const leadId = syntheticTestLeadId(testMatch.id, data.externalId);
+
     return {
       test: true as const,
+      id: leadId,
+      leadId,
       created: false,
       campaignId: testMatch.id,
       externalId: data.externalId,
@@ -244,7 +261,7 @@ export async function processPostback(
   await escrowService.releaseHold(hold.id);
 
   // Create ConversionEvent record so conversions dashboard is populated
-  const conversionEvent = await prisma.conversionEvent.create({
+  await prisma.conversionEvent.create({
     data: {
       leadId: lead.id,
       campaignId: enrollment.campaignId,

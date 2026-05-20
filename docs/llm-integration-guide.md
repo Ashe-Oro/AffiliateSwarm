@@ -207,6 +207,7 @@ The postback endpoint is **idempotent on `(campaignId, externalId)`**: posting t
   "success": true,
   "data": {
     "id": "lead-uuid",
+    "leadId": "lead-uuid",
     "status": "VERIFIED",
     "externalId": "order_12345",
     "trackingCode": "abc123xyz",
@@ -496,6 +497,9 @@ curl -X POST "https://affiliateswarm.ai/api/v1/postback" \
   "success": true,
   "data": {
     "test": true,
+    "id": "test-lead-uuid",
+    "leadId": "test-lead-uuid",
+    "created": false,
     "campaignId": "camp-uuid",
     "externalId": "integration-test-001",
     "trackingConfirmedAt": "2026-04-13T10:30:00.000Z",
@@ -503,6 +507,8 @@ curl -X POST "https://affiliateswarm.ai/api/v1/postback" \
   }
 }
 ```
+
+For test responses, `id` and `leadId` are synthetic identifiers returned so your normal "store the returned lead id" code path can complete. Because `test` is `true` and `created` is `false`, do not call the lead lookup or dispute endpoints with this value — no real lead row was created.
 
 After this succeeds, activate the campaign from the dashboard or via:
 

@@ -118,4 +118,44 @@ describe("POST /api/v1/postback funding shortfall responses", () => {
     `);
     expectNoFundingInternals(body);
   });
+
+  it("returns synthetic lead identifiers for test confirmation postbacks", async () => {
+    mockProcessPostback.mockResolvedValueOnce({
+      test: true,
+      id: "test-lead-id",
+      leadId: "test-lead-id",
+      created: false,
+      campaignId: "campaign-1",
+      externalId: "test-confirm-1",
+      trackingConfirmedAt: new Date("2026-05-20T16:00:00.000Z"),
+      message:
+        "Test postback received — tracking confirmed. You can now activate this campaign.",
+    });
+
+    const res = await POST(
+      buildRequest({
+        swarm_ref: "TEST1234",
+        externalId: "test-confirm-1",
+        eventType: "PURCHASE",
+      })
+    );
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body).toMatchInlineSnapshot(`
+      {
+        "data": {
+          "campaignId": "campaign-1",
+          "created": false,
+          "externalId": "test-confirm-1",
+          "id": "test-lead-id",
+          "leadId": "test-lead-id",
+          "message": "Test postback received — tracking confirmed. You can now activate this campaign.",
+          "test": true,
+          "trackingConfirmedAt": "2026-05-20T16:00:00.000Z",
+        },
+        "success": true,
+      }
+    `);
+  });
 });
