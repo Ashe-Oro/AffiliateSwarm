@@ -1,0 +1,42 @@
+# Shopify CLI app config — generated, then customized.
+# Run `shopify app config push` to sync this to Shopify Partners.
+# The actual API key/secret live in environment variables, not in this file.
+
+name = "AffiliateSwarm"
+client_id = "${SHOPIFY_API_KEY}"
+application_url = "${SHOPIFY_APP_URL}"
+embedded = true
+
+[access_scopes]
+scopes = "read_orders,write_orders"
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [
+  "${SHOPIFY_APP_URL}/shopify/auth/callback",
+]
+
+[webhooks]
+api_version = "2025-01"
+
+[[webhooks.subscriptions]]
+topics = ["orders/paid"]
+uri = "${SHOPIFY_APP_URL}/shopify/webhooks/orders-paid"
+
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+uri = "${SHOPIFY_APP_URL}/shopify/webhooks/app-uninstalled"
+
+[[webhooks.subscriptions]]
+compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+
+[app_proxy]
+url = ""
+subpath = ""
+prefix = ""
+
+[pos]
+embedded = false
+
+[build]
+include_config_on_deploy = true

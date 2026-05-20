@@ -1,0 +1,10 @@
+# Theme App Extension — injected into Online Store 2.0 themes.
+# Captures ?swarm_ref= on landing, stores in a cookie, attaches as a cart
+# attribute on add-to-cart and checkout.
+
+api_version = "2025-01"
+
+[[extensions]]
+name = "Swarm Attribution"
+handle = "swarm-attribution"
+type = "theme"

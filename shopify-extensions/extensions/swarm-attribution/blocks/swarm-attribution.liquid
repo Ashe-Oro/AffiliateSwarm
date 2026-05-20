@@ -1,0 +1,14 @@
+{% comment %}
+  AffiliateSwarm — attribution capture.
+  Add this block to theme.liquid (or any layout) via the theme editor.
+{% endcomment %}
+
+<script src="{{ 'swarm-attribution.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "AffiliateSwarm tracking",
+  "target": "head",
+  "settings": []
+}
+{% endschema %}

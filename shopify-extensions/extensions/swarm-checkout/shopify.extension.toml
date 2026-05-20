@@ -1,0 +1,18 @@
+# Checkout UI Extension — runs inside Shopify's new (Checkout Extensibility)
+# checkout. Reads the swarm_ref cookie and applies it as a checkout attribute
+# so it propagates to the order webhook even when the cart-attribute path
+# misses (e.g. native pay buttons that bypass the cart).
+
+api_version = "2025-01"
+
+[[extensions]]
+name = "Swarm Checkout Attribution"
+handle = "swarm-checkout"
+type = "ui_extension"
+
+[[extensions.targeting]]
+module = "./src/index.tsx"
+target = "purchase.checkout.block.render"
+
+[extensions.capabilities]
+network_access = false

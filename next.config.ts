@@ -11,7 +11,10 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Link", value: HOMEPAGE_LINK_HEADER }],
       },
       {
-        source: "/(.*)",
+        // Exclude /shopify/admin — that page must be loadable inside the
+        // Shopify admin iframe, so it sets its own CSP frame-ancestors header
+        // instead of inheriting X-Frame-Options: DENY.
+        source: "/((?!shopify/admin).*)",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
@@ -19,6 +22,19 @@ const nextConfig: NextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        source: "/shopify/admin/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Content-Security-Policy",
+            value:
+              "frame-ancestors https://*.myshopify.com https://admin.shopify.com;",
           },
         ],
       },
