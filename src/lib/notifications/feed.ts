@@ -116,8 +116,8 @@ const RENDERERS: Partial<Record<NotificationEvent["type"], ContentRenderer<any>>
   }),
 
   "application.approved": (event) => ({
-    title: "Application approved",
-    summary: `You were approved for ${event.data.campaignName}`,
+    title: "Campaign joined",
+    summary: `You joined ${event.data.campaignName}`,
   }),
 
   "application.rejected": (event) => ({

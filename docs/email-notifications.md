@@ -25,7 +25,7 @@ These are sent through the notification event system with configurable triggers.
 | #   | Event                   | Subject                                            | Recipient  | Trigger                                                            |
 | --- | ----------------------- | -------------------------------------------------- | ---------- | ------------------------------------------------------------------ |
 | 5   | `application.submitted` | "New affiliate application for {CAMPAIGN}"         | Advertiser | Affiliate applies to a non-OPEN campaign                           |
-| 6   | `application.approved`  | "You were approved for {CAMPAIGN}"                 | Affiliate  | Auto-approved (OPEN enrollment) or manually approved by advertiser |
+| 6   | `application.approved`  | "You've joined {CAMPAIGN}"                         | Affiliate  | Affiliate joins through OPEN enrollment or is manually approved by advertiser |
 | 7   | `application.rejected`  | "Your application for {CAMPAIGN} was not approved" | Affiliate  | Advertiser rejects application                                     |
 
 ### Campaign Lifecycle

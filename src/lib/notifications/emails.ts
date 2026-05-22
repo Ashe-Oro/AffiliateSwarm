@@ -64,11 +64,11 @@ const RENDERERS: Partial<Record<NotificationEvent["type"], Renderer<any>>> = {
   }),
 
   "application.approved": (event, recipient) => ({
-    subject: `You were approved for ${event.data.campaignName}`,
+    subject: `You've joined ${event.data.campaignName}`,
     html: wrap(`
-<h2>Application approved</h2>
+<h2>Campaign joined</h2>
 <p>Hi ${recipient.displayName},</p>
-<p>Your application for <strong>${event.data.campaignName}</strong> was approved.</p>
+<p>You've joined <strong>${event.data.campaignName}</strong>.</p>
 ${event.data.trackingUrl ? `<p>Your tracking link is ready: <a href="${event.data.trackingUrl}">${event.data.trackingUrl}</a></p>` : ""}
 <p>Start promoting and earning commissions!</p>
     `),
