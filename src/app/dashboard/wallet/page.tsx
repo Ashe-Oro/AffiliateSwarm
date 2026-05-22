@@ -25,29 +25,11 @@ import {
 } from "@/lib/feature-flags";
 import { DepositForm } from "@/components/dashboard/deposit-form";
 import { DepositStatusBanner } from "@/components/dashboard/deposit-status-banner";
-
-function formatCents(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
-}
-
-function entryTypeVariant(entryType: string) {
-  switch (entryType) {
-    case "DEPOSIT":
-    case "CHAIN_DEPOSIT":
-    case "STRIPE_DEPOSIT":
-    case "ESCROW_RELEASE":
-      return "default" as const;
-    case "PAYOUT":
-    case "CHAIN_PAYOUT":
-      return "secondary" as const;
-    case "FEE":
-      return "outline" as const;
-    case "REFUND":
-      return "destructive" as const;
-    default:
-      return "secondary" as const;
-  }
-}
+import {
+  formatCents,
+  getAdvertiserWalletTotalCents,
+  getWalletLedgerEntryDisplay,
+} from "./ledger-display";
 
 export default async function DashboardWalletPage() {
   const { advertiserAgent } = await requireDashboardAuth();
@@ -62,11 +44,18 @@ export default async function DashboardWalletPage() {
     );
   }
 
-  const [wallet, escrowAgg] = await Promise.all([
+  const [wallet, escrowAgg, activeEscrowHoldAgg] = await Promise.all([
     prisma.wallet.findUnique({ where: { agentId } }),
     prisma.escrowAccount.aggregate({
       where: { advertiserId: agentId },
       _sum: { currentBalanceCents: true, totalReleasedCents: true },
+    }),
+    prisma.escrowHold.aggregate({
+      where: {
+        status: { in: ["HELD", "PENDING_RELEASE"] },
+        escrowAccount: { advertiserId: agentId },
+      },
+      _sum: { amountCents: true },
     }),
   ]);
 
@@ -74,8 +63,8 @@ export default async function DashboardWalletPage() {
     ? await prisma.ledgerEntry.findMany({
         where: {
           OR: [
-            { debitAccountId: wallet.id },
-            { creditAccountId: wallet.id },
+            { debitAccountType: "WALLET", debitAccountId: wallet.id },
+            { creditAccountType: "WALLET", creditAccountId: wallet.id },
           ],
         },
         orderBy: { createdAt: "desc" },
@@ -83,20 +72,45 @@ export default async function DashboardWalletPage() {
       })
     : [];
 
-  const heldInEscrow = escrowAgg._sum.currentBalanceCents ?? 0;
-  const paidToAffiliates = escrowAgg._sum.totalReleasedCents ?? 0;
+  const campaignEscrow = escrowAgg._sum.currentBalanceCents ?? 0;
+  const affiliateEscrow = activeEscrowHoldAgg._sum.amountCents ?? 0;
+  const committedSpend = escrowAgg._sum.totalReleasedCents ?? 0;
   const available = wallet?.availableCents ?? 0;
-  const pendingPayout = wallet?.pendingPayoutCents ?? 0;
-  const total = available + (wallet?.heldCents ?? 0) + pendingPayout;
+  const walletId = wallet?.id;
+  const total = getAdvertiserWalletTotalCents({
+    availableCents: available,
+    campaignEscrowCents: campaignEscrow,
+    affiliateEscrowCents: affiliateEscrow,
+  });
   const enableStripeDeposits = ENABLE_STRIPE_DEPOSITS();
   const enableBankTransfer = enableStripeDeposits && ENABLE_BANK_TRANSFER();
 
   const balanceCards = [
-    { title: "Available", value: formatCents(available), description: "Available to campaigns" },
-    { title: "Committed to Campaigns", value: formatCents(heldInEscrow), description: "Held in escrow for active campaigns" },
-    { title: "Committed to Payouts", value: formatCents(pendingPayout), description: "Owed to affiliates, awaiting release" },
-    { title: "Paid to Affiliates", value: formatCents(paidToAffiliates), description: "Released from escrow to affiliates" },
-    { title: "Total On Platform", value: formatCents(total), description: "Available, committed to campaigns, and owed to affiliates" },
+    {
+      title: "Available",
+      value: formatCents(available),
+      description: "Ready to fund campaigns",
+    },
+    {
+      title: "Campaign Escrow",
+      value: formatCents(campaignEscrow),
+      description: "Allocated to campaigns, not yet tied to conversions",
+    },
+    {
+      title: "Affiliate Escrow",
+      value: formatCents(affiliateEscrow),
+      description: "Held for pending or verified conversions",
+    },
+    {
+      title: "Committed Spend",
+      value: formatCents(committedSpend),
+      description: "Verified payouts, including pending release",
+    },
+    {
+      title: "Total On Platform",
+      value: formatCents(total),
+      description: "Available wallet funds plus active escrow",
+    },
   ];
 
   return (
@@ -206,7 +220,7 @@ export default async function DashboardWalletPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.length === 0 ? (
+              {transactions.length === 0 || !walletId ? (
                 <TableRow>
                   <TableCell
                     colSpan={5}
@@ -216,30 +230,36 @@ export default async function DashboardWalletPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                transactions.map((tx) => (
-                  <TableRow key={tx.id}>
-                    <TableCell>
-                      <Badge variant={entryTypeVariant(tx.entryType)}>
-                        {tx.entryType.toLowerCase().replace(/_/g, " ")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatCents(tx.amountCents)}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {tx.referenceType?.toLowerCase() ?? "--"}
-                    </TableCell>
-                    <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground">
-                      {tx.memo ?? "--"}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {tx.createdAt.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </TableCell>
-                  </TableRow>
-                ))
+                transactions.map((tx) => {
+                  const display = getWalletLedgerEntryDisplay(tx, walletId);
+
+                  return (
+                    <TableRow key={tx.id}>
+                      <TableCell>
+                        <Badge variant={display.badgeVariant}>
+                          {display.label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell
+                        className={`text-right font-medium ${display.amountClassName}`}
+                      >
+                        {display.amountLabel}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {display.referenceLabel}
+                      </TableCell>
+                      <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground">
+                        {tx.memo ?? "--"}
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {tx.createdAt.toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
