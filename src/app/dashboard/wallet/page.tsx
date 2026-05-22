@@ -76,6 +76,7 @@ export default async function DashboardWalletPage() {
   const affiliateEscrow = activeEscrowHoldAgg._sum.amountCents ?? 0;
   const committedSpend = escrowAgg._sum.totalReleasedCents ?? 0;
   const available = wallet?.availableCents ?? 0;
+  const walletId = wallet?.id;
   const total = getAdvertiserWalletTotalCents({
     availableCents: available,
     campaignEscrowCents: campaignEscrow,
@@ -219,7 +220,7 @@ export default async function DashboardWalletPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.length === 0 ? (
+              {transactions.length === 0 || !walletId ? (
                 <TableRow>
                   <TableCell
                     colSpan={5}
@@ -230,7 +231,7 @@ export default async function DashboardWalletPage() {
                 </TableRow>
               ) : (
                 transactions.map((tx) => {
-                  const display = getWalletLedgerEntryDisplay(tx, wallet!.id);
+                  const display = getWalletLedgerEntryDisplay(tx, walletId);
 
                   return (
                     <TableRow key={tx.id}>

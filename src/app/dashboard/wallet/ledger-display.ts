@@ -1,10 +1,12 @@
+import type { AccountType, LedgerEntryType } from "@/generated/prisma/client";
+
 type WalletLedgerEntry = {
   amountCents: number;
-  debitAccountType: string;
+  debitAccountType: AccountType;
   debitAccountId: string | null;
-  creditAccountType: string;
+  creditAccountType: AccountType;
   creditAccountId: string | null;
-  entryType: string;
+  entryType: LedgerEntryType;
   referenceType: string | null;
 };
 
@@ -23,6 +25,16 @@ function entryTouchesWallet(entry: WalletLedgerEntry, walletId: string) {
       entry.creditAccountType === "WALLET" &&
       entry.creditAccountId === walletId,
   };
+}
+
+function isEscrowFundingEntry(entry: WalletLedgerEntry, walletId: string) {
+  const { debitsWallet } = entryTouchesWallet(entry, walletId);
+
+  return (
+    entry.entryType === "DEPOSIT" &&
+    debitsWallet &&
+    entry.creditAccountType === "ESCROW"
+  );
 }
 
 function getWalletDirection(
@@ -46,13 +58,7 @@ function getWalletDirection(
 }
 
 function getEntryLabel(entry: WalletLedgerEntry, walletId: string): string {
-  const { debitsWallet } = entryTouchesWallet(entry, walletId);
-
-  if (
-    entry.entryType === "DEPOSIT" &&
-    debitsWallet &&
-    entry.creditAccountType === "ESCROW"
-  ) {
+  if (isEscrowFundingEntry(entry, walletId)) {
     return "escrow funding";
   }
 
@@ -66,8 +72,11 @@ function getEntryLabel(entry: WalletLedgerEntry, walletId: string): string {
   return entry.entryType.toLowerCase().replace(/_/g, " ");
 }
 
-function getReferenceLabel(entry: WalletLedgerEntry, label: string): string {
-  if (entry.referenceType === "LEAD" && label === "escrow funding") {
+function getReferenceLabel(
+  entry: WalletLedgerEntry,
+  isEscrowFunding: boolean
+): string {
+  if (entry.referenceType === "LEAD" && isEscrowFunding) {
     return "lead escrow";
   }
 
@@ -96,11 +105,12 @@ export function getWalletLedgerEntryDisplay(
   walletId: string
 ) {
   const direction = getWalletDirection(entry, walletId);
+  const isEscrowFunding = isEscrowFundingEntry(entry, walletId);
   const label = getEntryLabel(entry, walletId);
 
   return {
     label,
-    referenceLabel: getReferenceLabel(entry, label),
+    referenceLabel: getReferenceLabel(entry, isEscrowFunding),
     amountLabel: formatSignedCents(entry.amountCents, direction),
     amountClassName:
       direction === "inflow"
