@@ -115,9 +115,11 @@ const RENDERERS: Partial<Record<NotificationEvent["type"], ContentRenderer<any>>
     summary: `${event.data.affiliateName} applied to ${event.data.campaignName}`,
   }),
 
+  // application.approved is configured as affiliate-only, so keep this copy in
+  // the affiliate voice even though the event name is preserved for webhooks.
   "application.approved": (event) => ({
-    title: "Application approved",
-    summary: `You were approved for ${event.data.campaignName}`,
+    title: "Campaign joined",
+    summary: `You joined ${event.data.campaignName}`,
   }),
 
   "application.rejected": (event) => ({

@@ -625,6 +625,15 @@ vi.mock("@/lib/prisma", () => ({
     wallet: {
       findUnique: vi.fn(),
     },
+    agent: {
+      findUnique: vi.fn(),
+    },
+    affiliateEnrollment: {
+      findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+    },
   },
 }));
 
@@ -641,6 +650,8 @@ import {
   deleteCampaign,
   discoverCampaigns,
   computeAdvertiserBudgetCoverage,
+  applyToCampaign,
+  reviewApplication,
 } from "@/services/campaign.service";
 
 const mockFindFirst = prisma.campaign.findFirst as ReturnType<typeof vi.fn>;
@@ -1079,6 +1090,171 @@ describe("computeAdvertiserBudgetCoverage", () => {
     expect(result.activeCampaignCount).toBe(0);
     expect(result.activeBudgetHeadroomCents).toBe(0);
     expect(result.oversubscribed).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Enrollment notifications
+// ---------------------------------------------------------------------------
+
+describe("Campaign enrollment notifications", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("notifies the affiliate when OPEN enrollment auto-joins them to a campaign", async () => {
+    mockFindFirst.mockResolvedValue({
+      id: "campaign-1",
+      name: "Open Campaign",
+      status: "ACTIVE",
+      advertiserId: "advertiser-1",
+      enrollmentPolicy: "OPEN",
+      refSeed:
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      landingUrl: "https://example.com/signup",
+      buyerCouponCode: "SWARM20",
+    });
+    (prisma.affiliateEnrollment.findUnique as ReturnType<typeof vi.fn>)
+      .mockResolvedValue(null);
+    (prisma.agent.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+      displayName: "Affiliate Agent",
+    });
+    (prisma.affiliateEnrollment.create as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "APPROVED",
+        trackingCode: "TRACK123",
+      });
+
+    const enrollment = await applyToCampaign("campaign-1", "affiliate-1", {});
+
+    expect(enrollment.status).toBe("APPROVED");
+    expect(notify).toHaveBeenCalledWith({
+      type: "application.approved",
+      data: expect.objectContaining({
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        enrollmentId: "enrollment-1",
+        campaignName: "Open Campaign",
+        affiliateName: "Affiliate Agent",
+        trackingCode: "TRACK123",
+        trackingUrl: "https://example.com/signup?swarm_ref=TRACK123&promo=SWARM20",
+      }),
+    });
+  });
+
+  it("notifies the affiliate when a gated application is approved", async () => {
+    mockFindFirst.mockResolvedValue({
+      id: "campaign-1",
+      name: "Gated Campaign",
+      status: "ACTIVE",
+      advertiserId: "advertiser-1",
+      enrollmentPolicy: "APPROVAL_REQUIRED",
+      refSeed:
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      landingUrl: "https://example.com/apply",
+      buyerCouponCode: null,
+    });
+    (prisma.affiliateEnrollment.findFirst as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "PENDING",
+      });
+    (prisma.affiliateEnrollment.update as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "APPROVED",
+        trackingCode: "TRACK123",
+        affiliate: {
+          id: "affiliate-1",
+          displayName: "Affiliate Agent",
+          type: "AFFILIATE",
+        },
+      });
+
+    const enrollment = await reviewApplication(
+      "campaign-1",
+      "enrollment-1",
+      "advertiser-1",
+      { decision: "APPROVED" }
+    );
+
+    expect(enrollment.status).toBe("APPROVED");
+    expect(notify).toHaveBeenCalledWith({
+      type: "application.approved",
+      data: expect.objectContaining({
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        enrollmentId: "enrollment-1",
+        campaignName: "Gated Campaign",
+        affiliateName: "Affiliate Agent",
+        trackingCode: "TRACK123",
+        trackingUrl: "https://example.com/apply?swarm_ref=TRACK123",
+      }),
+    });
+  });
+
+  it("does not fire a campaign joined notification when a gated application is rejected", async () => {
+    mockFindFirst.mockResolvedValue({
+      id: "campaign-1",
+      name: "Gated Campaign",
+      status: "ACTIVE",
+      advertiserId: "advertiser-1",
+      enrollmentPolicy: "APPROVAL_REQUIRED",
+      refSeed:
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      landingUrl: "https://example.com/apply",
+      buyerCouponCode: null,
+    });
+    (prisma.affiliateEnrollment.findFirst as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "PENDING",
+      });
+    (prisma.affiliateEnrollment.update as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "REJECTED",
+        revokeReason: "Not a fit",
+        affiliate: {
+          id: "affiliate-1",
+          displayName: "Affiliate Agent",
+          type: "AFFILIATE",
+        },
+      });
+
+    const enrollment = await reviewApplication(
+      "campaign-1",
+      "enrollment-1",
+      "advertiser-1",
+      { decision: "REJECTED", revokeReason: "Not a fit" }
+    );
+
+    expect(enrollment.status).toBe("REJECTED");
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "application.approved" })
+    );
+    expect(notify).toHaveBeenCalledWith({
+      type: "application.rejected",
+      data: expect.objectContaining({
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        enrollmentId: "enrollment-1",
+        campaignName: "Gated Campaign",
+        affiliateName: "Affiliate Agent",
+        reason: "Not a fit",
+      }),
+    });
   });
 });
 
