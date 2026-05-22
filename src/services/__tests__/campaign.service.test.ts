@@ -1199,6 +1199,63 @@ describe("Campaign enrollment notifications", () => {
       }),
     });
   });
+
+  it("does not fire a campaign joined notification when a gated application is rejected", async () => {
+    mockFindFirst.mockResolvedValue({
+      id: "campaign-1",
+      name: "Gated Campaign",
+      status: "ACTIVE",
+      advertiserId: "advertiser-1",
+      enrollmentPolicy: "APPROVAL_REQUIRED",
+      refSeed:
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      landingUrl: "https://example.com/apply",
+      buyerCouponCode: null,
+    });
+    (prisma.affiliateEnrollment.findFirst as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "PENDING",
+      });
+    (prisma.affiliateEnrollment.update as ReturnType<typeof vi.fn>)
+      .mockResolvedValue({
+        id: "enrollment-1",
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        status: "REJECTED",
+        revokeReason: "Not a fit",
+        affiliate: {
+          id: "affiliate-1",
+          displayName: "Affiliate Agent",
+          type: "AFFILIATE",
+        },
+      });
+
+    const enrollment = await reviewApplication(
+      "campaign-1",
+      "enrollment-1",
+      "advertiser-1",
+      { decision: "REJECTED", revokeReason: "Not a fit" }
+    );
+
+    expect(enrollment.status).toBe("REJECTED");
+    expect(notify).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: "application.approved" })
+    );
+    expect(notify).toHaveBeenCalledWith({
+      type: "application.rejected",
+      data: expect.objectContaining({
+        campaignId: "campaign-1",
+        affiliateId: "affiliate-1",
+        enrollmentId: "enrollment-1",
+        campaignName: "Gated Campaign",
+        affiliateName: "Affiliate Agent",
+        reason: "Not a fit",
+      }),
+    });
+  });
 });
 
 // Silence the unused-import lint for the mocked notify function; imported so
