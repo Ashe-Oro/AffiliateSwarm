@@ -16,7 +16,11 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [openForPath, setOpenForPath] = useState<string | null>(null);
+  const open = openForPath === pathname;
+  const closeMenu = () => setOpenForPath(null);
+  const toggleMenu = () =>
+    setOpenForPath((value) => (value === pathname ? null : pathname));
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[var(--v2-border-light)] bg-[var(--v2-bg)]/80 backdrop-blur-lg">
@@ -24,7 +28,7 @@ export function Navbar() {
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-[var(--v2-text)]"
-          onClick={() => setOpen(false)}
+          onClick={closeMenu}
         >
           <BrandLogo markClassName="h-7 w-7" />
         </Link>
@@ -59,7 +63,7 @@ export function Navbar() {
           type="button"
           aria-label={open ? "Close navigation" : "Open navigation"}
           aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
+          onClick={toggleMenu}
           className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-[var(--v2-border)] text-[var(--v2-accent)] transition-colors hover:bg-[var(--v2-accent-muted)] md:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -73,7 +77,7 @@ export function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                onClick={() => setOpen(false)}
+                onClick={closeMenu}
                 className={`flex min-h-11 items-center justify-between rounded-md px-3 text-sm transition-colors ${
                   pathname === link.href ||
                   (link.href !== "/" && pathname.startsWith(link.href))
@@ -87,7 +91,7 @@ export function Navbar() {
             ))}
             <Link
               href="/login"
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
               className="flex min-h-11 items-center justify-between rounded-md px-3 text-sm text-[var(--v2-accent)] transition-colors hover:bg-[var(--v2-accent-muted)]"
             >
               Log in

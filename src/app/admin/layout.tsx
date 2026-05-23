@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { MobileDashboardNav } from "@/components/dashboard/mobile-dashboard-nav";
 
 const navItems = [
   { href: "/admin", label: "Overview" },
@@ -37,20 +38,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex min-h-14 items-center border-b border-border px-4 py-3 md:px-6">
           <h1 className="text-sm font-medium text-muted-foreground">
-            Dashboard
+            Admin Dashboard
           </h1>
         </header>
-        <nav className="flex gap-2 overflow-x-auto border-b border-border px-4 py-2 md:hidden">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="shrink-0 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <MobileDashboardNav items={navItems} label="Admin dashboard navigation" />
         <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>

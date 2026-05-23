@@ -2,6 +2,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { requireDashboardAuth } from "@/lib/auth/dashboard";
+import { MobileDashboardNav } from "@/components/dashboard/mobile-dashboard-nav";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { RoleTag } from "@/components/ui/role-tag";
 
@@ -20,9 +21,10 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const { user, agents } = await requireDashboardAuth();
-  const hasAffiliateAgent = agents.some(
-    (a) => a.type === "AFFILIATE" || a.type === "DUAL"
-  );
+  const hasAffiliateAgent = agents.some((a) => a.type === "AFFILIATE");
+  const mobileNavItems = hasAffiliateAgent
+    ? [...navItems, { href: "/affiliate", label: "Affiliate" }]
+    : navItems;
 
   return (
     <div className="v2-brand flex min-h-screen overflow-x-hidden">
@@ -79,17 +81,7 @@ export default async function DashboardLayout({
             </form>
           </div>
         </header>
-        <nav className="flex gap-2 overflow-x-auto border-b border-border px-4 py-2 md:hidden">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="shrink-0 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <MobileDashboardNav items={mobileNavItems} />
         <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>

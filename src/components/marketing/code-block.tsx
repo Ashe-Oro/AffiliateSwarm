@@ -20,7 +20,7 @@ export function CodeBlock({
         </div>
       )}
       <pre className="max-w-full overflow-x-auto bg-[var(--v2-code-bg)] p-4">
-        <code className="whitespace-pre-wrap break-words font-[family-name:var(--font-geist-mono)] text-xs leading-relaxed text-[var(--v2-code-text)] sm:whitespace-pre sm:break-normal sm:text-sm">
+        <code className="whitespace-pre font-[family-name:var(--font-geist-mono)] text-xs leading-relaxed text-[var(--v2-code-text)] sm:text-sm">
           {children}
         </code>
       </pre>
