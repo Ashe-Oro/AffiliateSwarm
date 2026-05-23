@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/brand/brand-logo";
 
 const navLinks = [
@@ -14,13 +16,15 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 border-b border-[var(--v2-border-light)] bg-[var(--v2-bg)]/80 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-bold tracking-tight text-[var(--v2-text)]"
+          onClick={() => setOpen(false)}
         >
           <BrandLogo markClassName="h-7 w-7" />
         </Link>
@@ -42,7 +46,7 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
             className="nav-link text-sm text-[var(--v2-text-secondary)] transition-colors hover:text-[var(--v2-text)]"
@@ -50,7 +54,48 @@ export function Navbar() {
             Log in
           </Link>
         </div>
+
+        <button
+          type="button"
+          aria-label={open ? "Close navigation" : "Open navigation"}
+          aria-expanded={open}
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-[var(--v2-border)] text-[var(--v2-accent)] transition-colors hover:bg-[var(--v2-accent-muted)] md:hidden"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      {open ? (
+        <div className="border-t border-[var(--v2-border-light)] bg-[var(--v2-bg)] px-4 py-3 md:hidden">
+          <div className="grid gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={`flex min-h-11 items-center justify-between rounded-md px-3 text-sm transition-colors ${
+                  pathname === link.href ||
+                  (link.href !== "/" && pathname.startsWith(link.href))
+                    ? "bg-[var(--v2-accent-muted)] font-medium text-[var(--v2-text)]"
+                    : "text-[var(--v2-text-secondary)] hover:bg-[var(--v2-accent-muted)] hover:text-[var(--v2-text)]"
+                }`}
+              >
+                {link.label}
+                <span aria-hidden="true">-&gt;</span>
+              </Link>
+            ))}
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="flex min-h-11 items-center justify-between rounded-md px-3 text-sm text-[var(--v2-accent)] transition-colors hover:bg-[var(--v2-accent-muted)]"
+            >
+              Log in
+              <span aria-hidden="true">-&gt;</span>
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </nav>
   );
 }

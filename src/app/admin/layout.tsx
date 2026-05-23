@@ -12,9 +12,9 @@ const navItems = [
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="v2-brand flex min-h-screen">
+    <div className="v2-brand flex min-h-screen overflow-x-hidden">
       {/* Sidebar */}
-      <aside className="w-60 shrink-0 border-r border-border bg-sidebar text-sidebar-foreground">
+      <aside className="hidden w-60 shrink-0 border-r border-border bg-sidebar text-sidebar-foreground md:block">
         <div className="flex h-14 items-center border-b border-border px-5">
           <Link href="/admin" className="text-lg font-semibold tracking-tight">
             <BrandLogo markClassName="h-6 w-6" suffix="Admin" />
@@ -34,13 +34,24 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-14 items-center border-b border-border px-6">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex min-h-14 items-center border-b border-border px-4 py-3 md:px-6">
           <h1 className="text-sm font-medium text-muted-foreground">
             Dashboard
           </h1>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <nav className="flex gap-2 overflow-x-auto border-b border-border px-4 py-2 md:hidden">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="shrink-0 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

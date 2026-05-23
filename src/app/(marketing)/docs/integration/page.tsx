@@ -899,7 +899,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           <h2 className="text-2xl font-bold text-[var(--v2-text)]">
             Postback Field Reference
           </h2>
-          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -977,7 +977,7 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
           <h2 className="text-2xl font-bold text-[var(--v2-text)]">
             Troubleshooting
           </h2>
-          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
