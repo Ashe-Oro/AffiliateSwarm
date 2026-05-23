@@ -55,19 +55,21 @@ export default function ApiDocs() {
                 {section.routes.map((route) => (
                   <div
                     key={`${route.method}-${route.path}`}
-                    className="flex items-start gap-3 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-4"
+                    className="grid gap-3 rounded-lg border border-[var(--v2-border)] bg-[var(--v2-bg-elevated)] p-4 sm:grid-cols-[4rem_minmax(0,1fr)] sm:items-start"
                   >
                     <span
-                      className={`inline-block w-16 shrink-0 rounded px-2 py-0.5 text-center font-[family-name:var(--font-geist-mono)] text-xs font-semibold ${methodColor(route.method)}`}
+                      className={`inline-block w-16 rounded px-2 py-0.5 text-center font-[family-name:var(--font-geist-mono)] text-xs font-semibold ${methodColor(route.method)}`}
                     >
                       {route.method}
                     </span>
-                    <code className="shrink-0 font-[family-name:var(--font-geist-mono)] text-sm text-[var(--v2-code-text)]">
-                      {route.path}
-                    </code>
-                    <span className="text-sm text-[var(--v2-text-secondary)]">
-                      {route.description}
-                    </span>
+                    <div className="min-w-0 space-y-2">
+                      <code className="block break-all font-[family-name:var(--font-geist-mono)] text-sm text-[var(--v2-code-text)] sm:break-normal">
+                        {route.path}
+                      </code>
+                      <span className="block text-sm text-[var(--v2-text-secondary)]">
+                        {route.description}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>

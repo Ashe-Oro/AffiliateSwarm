@@ -2,6 +2,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { BrandLogo } from "@/components/brand/brand-logo";
 import { requireAffiliateDashboardAuth } from "@/lib/auth/affiliate-dashboard";
+import { MobileDashboardNav } from "@/components/dashboard/mobile-dashboard-nav";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
 import { RoleTag } from "@/components/ui/role-tag";
 import {
@@ -39,15 +40,16 @@ export default async function AffiliateDashboardLayout({
   children: ReactNode;
 }) {
   const { user, agents } = await requireAffiliateDashboardAuth();
-  const hasAdvertiserAgent = agents.some(
-    (a) => a.type === "ADVERTISER" || a.type === "DUAL"
-  );
+  const hasAdvertiserAgent = agents.some((a) => a.type === "ADVERTISER");
   const navItems = getNavItems();
+  const mobileNavItems = hasAdvertiserAgent
+    ? [...navItems, { href: "/dashboard", label: "Advertiser" }]
+    : navItems;
 
   return (
-    <div className="v2-brand flex min-h-screen">
+    <div className="v2-brand flex min-h-screen overflow-x-hidden">
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      <aside className="hidden w-64 shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:block">
         <div className="flex h-14 items-center border-b border-sidebar-border px-5">
           <Link
             href="/affiliate"
@@ -82,14 +84,14 @@ export default async function AffiliateDashboardLayout({
       </aside>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col bg-background">
-        <header className="flex h-14 items-center justify-between border-b border-border px-6">
+      <div className="flex min-w-0 flex-1 flex-col bg-background">
+        <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 md:flex-nowrap md:px-6">
           <h1 className="text-sm font-medium text-muted-foreground">
             Affiliate Dashboard
           </h1>
-          <div className="flex items-center gap-4">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <NotificationBell agentIds={agents.map((a) => a.id)} />
-            <span className="text-sm text-muted-foreground">
+            <span className="hidden max-w-32 truncate text-sm text-muted-foreground sm:inline">
               {user.displayName}
             </span>
             <form action="/api/auth/logout" method="POST">
@@ -102,7 +104,11 @@ export default async function AffiliateDashboardLayout({
             </form>
           </div>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <MobileDashboardNav
+          items={mobileNavItems}
+          label="Affiliate dashboard navigation"
+        />
+        <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

@@ -476,7 +476,7 @@ Content-Type: application/json
           <h3 className="mt-8 text-lg font-semibold text-[var(--v2-text)]">
             Evidence Types
           </h3>
-          <div className="mt-4 overflow-hidden rounded-lg border border-[var(--v2-border)]">
+          <div className="mt-4 overflow-x-auto rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
@@ -535,7 +535,7 @@ Content-Type: application/json
             Choosing a Method
           </h2>
 
-          <div className="mt-6 overflow-hidden rounded-lg border border-[var(--v2-border)]">
+          <div className="mt-6 overflow-x-auto rounded-lg border border-[var(--v2-border)]">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--v2-border)] bg-[var(--v2-bg-elevated)]">
