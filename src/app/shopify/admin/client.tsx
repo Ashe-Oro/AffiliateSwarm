@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { saveApiKeyAction, testConnectionAction } from "./actions";
+import { useCallback, useEffect, useState } from "react";
+
+interface MeResponse {
+  shop: string;
+  installedAt: string | null;
+  apiKeyConfigured: boolean;
+  apiKeyValid: boolean;
+  recentOrders: RecentOrder[];
+}
 
 interface RecentOrder {
   shopifyOrderId: string;
@@ -14,34 +21,97 @@ interface RecentOrder {
 }
 
 interface Props {
-  shop: string;
-  connected: boolean;
-  apiKeyConfigured: boolean;
-  apiKeyValid: boolean;
-  installedAt: string | null;
-  recentOrders: RecentOrder[];
+  hintedShop: string | null;
 }
 
-export function ShopifyAdminClient(props: Props) {
-  const [saveMsg, setSaveMsg] = useState<string | null>(null);
-  const [testMsg, setTestMsg] = useState<string | null>(null);
-  const [saving, startSave] = useTransition();
-  const [testing, startTest] = useTransition();
+/**
+ * Fetches everything via App Bridge-authenticated calls. The `hintedShop`
+ * prop is a render hint only — the server re-derives the true shop from
+ * the verified session-token JWT.
+ */
+export function ShopifyAdminClient({ hintedShop }: Props) {
+  const [state, setState] = useState<MeResponse | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState("");
+  const [testCode, setTestCode] = useState("");
+  const [busy, setBusy] = useState<"save" | "test" | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
 
-  function onSave(form: FormData) {
-    setSaveMsg(null);
-    startSave(async () => {
-      const result = await saveApiKeyAction(form);
-      setSaveMsg(result.ok ? "Saved and validated." : (result.error ?? "Save failed."));
-    });
+  const load = useCallback(async () => {
+    setLoadError(null);
+    try {
+      const res = await fetch("/shopify/admin/api/me", { cache: "no-store" });
+      if (!res.ok) {
+        setLoadError(`Failed to load state (HTTP ${res.status}). Try reopening the app from your Shopify admin.`);
+        return;
+      }
+      const body = (await res.json()) as MeResponse;
+      setState(body);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Unknown error");
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function saveApiKey(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setBusy("save");
+    setMsg(null);
+    try {
+      const res = await fetch("/shopify/admin/api/api-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apiKey }),
+      });
+      const body = (await res.json()) as { ok: boolean; error?: string };
+      setMsg(body.ok ? "Saved and validated." : body.error ?? "Save failed.");
+      if (body.ok) {
+        setApiKey("");
+        void load();
+      }
+    } finally {
+      setBusy(null);
+    }
   }
 
-  function onTest(form: FormData) {
-    setTestMsg(null);
-    startTest(async () => {
-      const result = await testConnectionAction(form);
-      setTestMsg(result.message);
-    });
+  async function fireTest(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setBusy("test");
+    setMsg(null);
+    try {
+      const res = await fetch("/shopify/admin/api/test-postback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ testTrackingCode: testCode }),
+      });
+      const body = (await res.json()) as { ok: boolean; message: string };
+      setMsg(body.message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  if (loadError) {
+    return (
+      <main className="p-6 max-w-3xl mx-auto font-sans">
+        <h1 className="text-2xl font-semibold">AffiliateSwarm</h1>
+        <p className="text-sm text-red-600 mt-2">{loadError}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          {hintedShop ? <>Shop hinted as <code>{hintedShop}</code>.</> : null}
+        </p>
+      </main>
+    );
+  }
+
+  if (!state) {
+    return (
+      <main className="p-6 max-w-3xl mx-auto font-sans">
+        <p className="text-sm text-muted-foreground">Loading…</p>
+      </main>
+    );
   }
 
   return (
@@ -49,9 +119,9 @@ export function ShopifyAdminClient(props: Props) {
       <header>
         <h1 className="text-2xl font-semibold">AffiliateSwarm</h1>
         <p className="text-sm text-muted-foreground">
-          Connected to <code>{props.shop}</code>
-          {props.installedAt && (
-            <> — installed {new Date(props.installedAt).toLocaleDateString()}</>
+          Connected to <code>{state.shop}</code>
+          {state.installedAt && (
+            <> — installed {new Date(state.installedAt).toLocaleDateString()}</>
           )}
         </p>
       </header>
@@ -63,32 +133,31 @@ export function ShopifyAdminClient(props: Props) {
             Paste your advertiser API key from <a className="underline" href="https://affiliateswarm.ai/dashboard/settings" target="_blank" rel="noopener">affiliateswarm.ai/dashboard/settings</a>.
           </p>
         </div>
-        <form action={onSave} className="space-y-3">
-          <input type="hidden" name="shop" value={props.shop} />
+        <form onSubmit={saveApiKey} className="space-y-3">
           <input
-            name="apiKey"
             type="password"
             required
             placeholder="swarm_live_..."
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
             className="w-full border rounded px-3 py-2 text-sm"
           />
           <button
             type="submit"
-            disabled={saving}
+            disabled={busy === "save"}
             className="px-4 py-2 rounded bg-black text-white text-sm disabled:opacity-50"
           >
-            {saving ? "Saving…" : props.apiKeyConfigured ? "Update key" : "Save key"}
+            {busy === "save" ? "Saving…" : state.apiKeyConfigured ? "Update key" : "Save key"}
           </button>
         </form>
-        {props.apiKeyConfigured && (
+        {state.apiKeyConfigured && (
           <p className="text-sm">
             Status:{" "}
-            <span className={props.apiKeyValid ? "text-green-600" : "text-amber-600"}>
-              {props.apiKeyValid ? "key validated" : "key saved but not validated"}
+            <span className={state.apiKeyValid ? "text-green-600" : "text-amber-600"}>
+              {state.apiKeyValid ? "key validated" : "key saved but not validated"}
             </span>
           </p>
         )}
-        {saveMsg && <p className="text-sm">{saveMsg}</p>}
       </section>
 
       <section className="border rounded-lg p-5 space-y-4">
@@ -100,28 +169,29 @@ export function ShopifyAdminClient(props: Props) {
             activation.
           </p>
         </div>
-        <form action={onTest} className="space-y-3">
-          <input type="hidden" name="shop" value={props.shop} />
+        <form onSubmit={fireTest} className="space-y-3">
           <input
-            name="testTrackingCode"
             required
             placeholder="8-character code"
+            value={testCode}
+            onChange={(e) => setTestCode(e.target.value)}
             className="w-full border rounded px-3 py-2 text-sm"
           />
           <button
             type="submit"
-            disabled={testing}
+            disabled={busy === "test"}
             className="px-4 py-2 rounded border text-sm disabled:opacity-50"
           >
-            {testing ? "Testing…" : "Fire test postback"}
+            {busy === "test" ? "Testing…" : "Fire test postback"}
           </button>
         </form>
-        {testMsg && <p className="text-sm">{testMsg}</p>}
       </section>
+
+      {msg && <p className="text-sm">{msg}</p>}
 
       <section className="border rounded-lg p-5 space-y-3">
         <h2 className="font-medium">Recent attributed orders</h2>
-        {props.recentOrders.length === 0 ? (
+        {state.recentOrders.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             None yet. Once a customer lands with{" "}
             <code>?swarm_ref=…</code> or uses an affiliate&apos;s discount code,
@@ -139,7 +209,7 @@ export function ShopifyAdminClient(props: Props) {
               </tr>
             </thead>
             <tbody>
-              {props.recentOrders.map((o) => (
+              {state.recentOrders.map((o) => (
                 <tr key={o.shopifyOrderId} className="border-t">
                   <td className="py-1">{o.shopifyOrderId}</td>
                   <td>{o.attributionPath}</td>

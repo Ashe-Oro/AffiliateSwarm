@@ -1,23 +1,23 @@
-# Shopify CLI app config — generated, then customized.
-# Run `shopify app config push` to sync this to Shopify Partners.
-# The actual API key/secret live in environment variables, not in this file.
+# Shopify CLI app config. Push changes with `shopify app deploy`
+# (the legacy `shopify app config push` was removed in CLI 3.x).
+# Auth follows the managed-install + token-exchange model — no manual
+# OAuth routes needed in the Next.js backend.
 
 name = "AffiliateSwarm"
 client_id = "${SHOPIFY_API_KEY}"
-application_url = "${SHOPIFY_APP_URL}"
+application_url = "${SHOPIFY_APP_URL}/shopify/admin"
 embedded = true
 
 [access_scopes]
 scopes = "read_orders,write_orders"
 use_legacy_install_flow = false
 
-[auth]
-redirect_urls = [
-  "${SHOPIFY_APP_URL}/shopify/auth/callback",
-]
+[access.admin]
+direct_api_mode = "offline"
+embedded_app_direct_api_access = false
 
 [webhooks]
-api_version = "2025-01"
+api_version = "2026-04"
 
 [[webhooks.subscriptions]]
 topics = ["orders/paid"]
@@ -29,11 +29,7 @@ uri = "${SHOPIFY_APP_URL}/shopify/webhooks/app-uninstalled"
 
 [[webhooks.subscriptions]]
 compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
-
-[app_proxy]
-url = ""
-subpath = ""
-prefix = ""
+uri = "${SHOPIFY_APP_URL}/shopify/webhooks/compliance"
 
 [pos]
 embedded = false

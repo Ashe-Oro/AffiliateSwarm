@@ -9,7 +9,8 @@ import { sendPostback } from "./postback";
 import { findShopByDomain, touchWebhookReceived } from "./shop-store";
 
 export * from "./hmac";
-export * from "./oauth";
+export * from "./session-token";
+export * from "./token-exchange";
 export * from "./shop-store";
 export * from "./attribution";
 export * from "./postback";

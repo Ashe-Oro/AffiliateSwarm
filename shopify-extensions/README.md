@@ -14,8 +14,12 @@ the Shopify CLI to Shopify's infrastructure.
 
 ## Prerequisites
 
-1. A Shopify Partner account.
-2. An app created in Partners with the same name (so the CLI can link it).
+1. A Shopify Dev Dashboard account (the successor to the Partner Dashboard
+   for app management — Shopify deprecated legacy custom-app creation in
+   January 2026).
+2. An app created in the Dev Dashboard with the same name (so the CLI can
+   link it). Choose distribution = **Public > Unlisted** for a shareable
+   install link.
 3. `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` set in your environment.
 4. `SHOPIFY_APP_URL` pointing at your deployed Next.js app
    (or a tunnel like ngrok during local dev).
@@ -39,16 +43,20 @@ local machine.
 npm run deploy
 ```
 
-This publishes a new version of both extensions and updates the app config
-in Partners. The Next.js server has to be re-deployed separately (it lives
-in the parent repo).
+This publishes a new version of both extensions **and pushes the app
+config** (webhooks, scopes, app URL) defined in `shopify.app.toml`. The
+legacy `shopify app config push` command was removed in CLI v3.x — config
+now rides with `shopify app deploy`.
+
+The Next.js server has to be re-deployed separately (it lives in the
+parent repo).
 
 ## What ships with the Next.js repo, what ships from here
 
 | Concern | Lives in |
 |---|---|
-| OAuth install/callback | Next.js `src/app/shopify/auth/*` |
-| Webhook handlers (orders/paid, app/uninstalled, GDPR) | Next.js `src/app/shopify/webhooks/*` |
-| Embedded admin page (`/shopify/admin`) | Next.js `src/app/shopify/admin/*` |
+| Session-token + token-exchange auth | Next.js `src/services/shopify-app/{session-token,token-exchange}.ts` |
+| Webhook handlers (orders/paid, app/uninstalled, GDPR compliance) | Next.js `src/app/shopify/webhooks/*` |
+| Embedded admin page + App Bridge + JWT-protected APIs | Next.js `src/app/shopify/admin/*` |
 | Theme + Checkout extensions | This directory, deployed via `shopify app deploy` |
 | Shopify app config (Partners) | `shopify.app.toml` in this directory, pushed with `shopify app config push` |

@@ -1,8 +1,17 @@
 # Shopify App for AffiliateSwarm — v1 Design
 
-**Status:** approved (2026-05-20)
+**Status:** approved (2026-05-20), modernized for current Shopify patterns (2026-05-25)
 **Owner:** Omri
 **Implementation branch:** `shopify-app`
+
+> **2026-05-25 update:** Auth flow rewritten to use managed installation +
+> App Bridge session tokens + token exchange, replacing the classic OAuth
+> redirect flow described in earlier revisions. See the "Auth & security"
+> section below for current state. Programmatic webhook registration was
+> removed (TOML-only). API versions bumped to 2026-04. The checkout UI
+> extension's `document.cookie` read was deleted (Shopify's checkout
+> sandbox blocks DOM access) — attribution from checkout now relies
+> entirely on the cart attribute set by the Theme App Extension.
 
 ## Goal
 
@@ -54,10 +63,9 @@ Three planes:
 
 | Component | Path | Purpose |
 |---|---|---|
-| Service module | `src/services/shopify-app/` | shop store, OAuth, HMAC, attribution resolver, postback forwarder |
-| Auth routes | `src/app/shopify/auth/{install,callback}/route.ts` | OAuth handshake with HMAC verification on the install URL |
-| Webhook handlers | `src/app/shopify/webhooks/[topic]/route.ts` | HMAC-verified webhook receivers |
-| Embedded admin | `src/app/shopify/admin/page.tsx` + server actions | API key paste + connection status + test connection + recent attributed orders |
+| Service module | `src/services/shopify-app/` | shop store, session-token verification, token exchange, HMAC, attribution resolver, postback forwarder |
+| Embedded admin | `src/app/shopify/admin/page.tsx` (App Bridge shell) + client component + JWT-protected `api/*` routes | API key paste + connection status + test connection + recent attributed orders |
+| Webhook handlers | `src/app/shopify/webhooks/{orders-paid,app-uninstalled,compliance}/route.ts` | HMAC-verified webhook receivers; one combined endpoint for the three GDPR topics |
 | Discount lookup API | `src/app/api/v1/advertiser/discount-lookup/route.ts` | Bearer-auth advertiser lookup of swarm_ref by buyer coupon code |
 | Theme App Extension | `shopify-extensions/extensions/swarm-attribution/` | Liquid block + JS that captures swarm_ref on landing pages |
 | Checkout UI Extension | `shopify-extensions/extensions/swarm-checkout/` | React extension that propagates swarm_ref through new-checkout |
@@ -189,17 +197,29 @@ Other webhook handlers:
 
 ## Auth & security
 
-- **OAuth install:** `/shopify/auth/install?shop=<domain>` validates the shop
-  domain, builds the Shopify authorize URL with `state` (signed nonce stored
-  in a short-lived cookie), redirects to Shopify.
-- **OAuth callback:** verifies `state` cookie, verifies the install HMAC over
-  the query parameters (per Shopify spec), exchanges the code for an access
-  token, persists the shop encrypted, registers webhooks via the Admin API.
-- **Webhook HMAC:** every webhook is verified against the app secret over the
-  raw body. Constant-time compare.
+- **Managed installation:** Shopify handles install entirely from the scopes
+  declared in `shopify.app.toml`. No `/shopify/auth/install` or `/callback`
+  routes — Shopify just deep-links the merchant straight to `/shopify/admin`
+  inside the admin iframe after they approve.
+- **App Bridge session tokens:** the embedded admin loads
+  `https://cdn.shopify.com/shopifycloud/app-bridge.js` with a
+  `<meta name="shopify-api-key">`. App Bridge auto-injects
+  `Authorization: Bearer <jwt>` on same-origin fetches. All
+  `/shopify/admin/api/*` routes verify the JWT (HS256 against the app
+  secret) before doing anything shop-scoped — see
+  `src/services/shopify-app/session-token.ts`.
+- **Token exchange:** on the first admin visit, the backend trades the
+  session token for an offline access token via
+  `POST /admin/oauth/access_token` with
+  `grant_type=urn:ietf:params:oauth:grant-type:token-exchange`. Cached
+  encrypted on the `ShopifyShop` row. Implementation:
+  `src/services/shopify-app/token-exchange.ts`.
+- **Webhook HMAC:** every webhook is verified against the app secret over
+  the raw body. Constant-time compare. Webhooks are declared in
+  `shopify.app.toml` only — no programmatic registration.
 - **Token encryption at rest:** access tokens and pasted API keys are
   AES-256-GCM encrypted using `HMAC_ENCRYPTION_KEY` (existing env var; same
-  key already used for other secrets in this project). New helper:
+  key already used for other secrets in this project). Helper:
   `src/lib/shopify/crypto.ts`.
 - **CSP for embedded admin:** `/shopify/admin/*` returns
   `Content-Security-Policy: frame-ancestors https://*.myshopify.com https://admin.shopify.com;`
