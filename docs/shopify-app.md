@@ -84,11 +84,19 @@ SHOPIFY_API_VERSION=2026-04
 ```bash
 cd shopify-extensions
 npm install
-# Link to the app you just created in the Dev Dashboard
+# Link to the app you just created in the Dev Dashboard. This generates
+# a `shopify.app.<handle>.toml` (e.g. shopify.app.affiliate-swarm.toml)
+# from the Shopify-side config. Commit that file.
 npx shopify app config link
-# Deploy extensions AND push the TOML config (webhooks, scopes, app URL)
-# Note: `shopify app config push` was removed in CLI v3.x — config now
-# rides with `app deploy`.
+# Open the generated TOML and:
+#  - set `application_url` to your production HTTPS URL
+#  - confirm `scopes = "read_orders,write_orders"`
+#  - confirm webhook subscriptions use RELATIVE paths
+#    (e.g. "/shopify/webhooks/orders-paid"). Shopify CLI does NOT do
+#    `${VAR}` substitution — absolute URLs must be hard-coded.
+# Then deploy extensions AND push the config (the legacy
+# `shopify app config push` was removed in CLI v3.x — config rides with
+# `app deploy`):
 npm run deploy
 ```
 
