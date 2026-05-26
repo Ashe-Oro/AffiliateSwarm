@@ -8,6 +8,7 @@
 # sandbox has no access to `document.cookie` of the parent page.
 
 api_version = "2026-04"
+uid = "1bd93476-42d6-3865-4d6e-3a64f1bbf35fe941cb80"
 
 [[extensions]]
 name = "Swarm Checkout Attribution"

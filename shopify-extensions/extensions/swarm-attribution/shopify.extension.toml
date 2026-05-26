@@ -3,6 +3,7 @@
 # attribute on add-to-cart and checkout.
 
 api_version = "2025-01"
+uid = "2d8c637b-257a-0bef-87fd-9f112912a3518a1f5a90"
 
 [[extensions]]
 name = "Swarm Attribution"

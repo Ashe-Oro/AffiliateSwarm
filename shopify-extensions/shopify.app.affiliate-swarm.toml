@@ -1,46 +1,40 @@
-# Linked config for the "Affiliate Swarm" app in the Two Two LLC org.
-# `shopify app config link` writes this file; commit it so the team shares
-# one source of truth. Update `application_url` to your real deployment
-# before running `shopify app deploy`.
-#
-# Webhook `uri` values use relative paths — Shopify resolves them against
-# `application_url` automatically. (Shopify CLI does NOT interpolate
-# environment variables in this file.)
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "Affiliate Swarm"
 client_id = "fefc89faedc6db5b8ff2f6ac2b7a3c6a"
-application_url = "https://example.com"  # TODO: replace with your production URL before `shopify app deploy`
+name = "Affiliate Swarm"
+application_url = "https://affiliateswarm.ai"
 embedded = true
 
-[access_scopes]
-scopes = "read_orders,write_orders"
-use_legacy_install_flow = false
-optional_scopes = []
-
-[access.admin]
-direct_api_mode = "offline"
-embedded_app_direct_api_access = false
+[build]
+include_config_on_deploy = true
 
 [webhooks]
 api_version = "2026-04"
 
   [[webhooks.subscriptions]]
-  uri = "/shopify/webhooks/orders-paid"
-  topics = ["orders/paid"]
+  uri = "/shopify/webhooks/compliance"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
 
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks/app-uninstalled"
-  topics = ["app/uninstalled"]
+  topics = [ "app/uninstalled" ]
 
   [[webhooks.subscriptions]]
-  uri = "/shopify/webhooks/compliance"
-  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+  uri = "/shopify/webhooks/orders-paid"
+  topics = [ "orders/paid" ]
+
+[access.admin]
+direct_api_mode = "offline"
+embedded_app_direct_api_access = false
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_orders,write_orders"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [ ]
 
 [pos]
 embedded = false
-
-[auth]
-redirect_urls = []
-
-[build]
-include_config_on_deploy = true
