@@ -3,3 +3,7 @@ node_modules/
 dist/
 .env
 .env.*
+
+# Editor swap files
+.*.swp
+.*.swo
