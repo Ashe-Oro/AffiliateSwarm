@@ -6,7 +6,6 @@ application_url = "https://affiliateswarm.ai"
 embedded = true
 
 [build]
-include_config_on_deploy = true
 
 [webhooks]
 api_version = "2026-04"
