@@ -1,0 +1,23 @@
+# Checkout UI Extension — runs inside Shopify's new (Checkout Extensibility)
+# checkout in a sandboxed Web Worker. Its job is defensive: if the storefront
+# theme extension already set `swarm_ref` as a cart attribute it will carry
+# through automatically, so this extension is mostly a no-op observer that
+# can surface a missing-attribute diagnostic in the checkout block.
+#
+# Cookie reads from the storefront are NOT possible from here — the
+# sandbox has no access to `document.cookie` of the parent page.
+
+api_version = "2026-04"
+uid = "1bd93476-42d6-3865-4d6e-3a64f1bbf35fe941cb80"
+
+[[extensions]]
+name = "Swarm Checkout Attribution"
+handle = "swarm-checkout"
+type = "ui_extension"
+
+[[extensions.targeting]]
+module = "./src/index.tsx"
+target = "purchase.checkout.block.render"
+
+[extensions.capabilities]
+network_access = false

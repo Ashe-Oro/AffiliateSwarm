@@ -254,6 +254,20 @@ enum NotificationCategory {
   PAYOUTS
 }
 
+enum ShopifyAttributionPath {
+  URL_COOKIE
+  CHECKOUT_EXT
+  DISCOUNT_CODE
+  NONE
+}
+
+enum ShopifyPostbackStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
 // =============================================================================
 // USER ACCOUNTS
 // =============================================================================
@@ -1084,6 +1098,60 @@ model Notification {
 // slug collision (see src/lib/blog/posts.ts). Writes go through
 // POST /api/v1/blog-posts, gated by a BLOG_API_KEY env bearer. Not tied to
 // an Agent — the publisher is whoever holds the key.
+
+// =============================================================================
+// SHOPIFY APP
+// =============================================================================
+// State for the embedded Shopify app that lets merchants auto-track
+// conversions. ShopifyShop holds the OAuth token + the AffiliateSwarm
+// advertiser API key the merchant pasted into the embedded admin.
+// ShopifyAttributedOrder is one row per Shopify order we processed —
+// dedup key for webhook idempotency and audit log for the admin page.
+
+model ShopifyShop {
+  id                    String    @id @default(uuid()) @db.Uuid
+  shopDomain            String    @unique @db.VarChar(255)
+  accessToken           String    @db.VarChar(512) // AES-256-GCM encrypted with HMAC_ENCRYPTION_KEY
+  scopes                String    @db.VarChar(512)
+  advertiserApiKey      String?   @db.VarChar(512) // AES-256-GCM encrypted; null until merchant pastes one
+  advertiserApiKeyValid Boolean   @default(false)
+  advertiserAgentId     String?   @db.Uuid           // set on successful key validation; powers dashboard listing
+  installedAt           DateTime  @default(now())
+  uninstalledAt         DateTime?
+  lastWebhookAt         DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  attributedOrders ShopifyAttributedOrder[]
+
+  @@index([shopDomain])
+  @@index([uninstalledAt])
+  @@index([advertiserAgentId])
+  @@map("shopify_shops")
+}
+
+model ShopifyAttributedOrder {
+  id              String                 @id @default(uuid()) @db.Uuid
+  shopId          String                 @db.Uuid
+  shopifyOrderId  String                 @db.VarChar(64)
+  swarmRef        String?                @db.VarChar(64)
+  discountCode    String?                @db.VarChar(64)
+  attributionPath ShopifyAttributionPath
+  revenueCents    Int
+  postbackStatus  ShopifyPostbackStatus
+  postbackError   String?                @db.Text
+  postbackLeadId  String?                @db.VarChar(64)
+  attemptCount    Int                    @default(0)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  shop ShopifyShop @relation(fields: [shopId], references: [id])
+
+  @@unique([shopId, shopifyOrderId])
+  @@index([shopId, createdAt])
+  @@index([postbackStatus])
+  @@map("shopify_attributed_orders")
+}
 
 model BlogPost {
   id            String    @id @default(uuid()) @db.Uuid

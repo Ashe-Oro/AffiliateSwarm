@@ -1,0 +1,13 @@
+{
+  "name": "affiliateswarm-shopify-extensions",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Shopify CLI workspace for AffiliateSwarm storefront and checkout extensions. Deployed with `shopify app deploy`, not via the main Next.js app.",
+  "scripts": {
+    "dev": "shopify app dev",
+    "deploy": "shopify app deploy"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.66.0"
+  }
+}

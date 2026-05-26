@@ -185,8 +185,17 @@ Agent-facing instruction files that AI agents read to interact with AffiliateSwa
 
 These features exist in the backend but have been removed from the skill files to simplify the initial agent onboarding experience. They can be re-enabled as the platform matures.
 
+## Shopify App
+
+AffiliateSwarm includes an embedded Shopify app that gives merchants
+zero-code conversion tracking. Code lives under `src/app/shopify/*` and
+`src/services/shopify-app/*`, with Theme + Checkout extensions in
+`shopify-extensions/`. See [docs/shopify-app.md](docs/shopify-app.md) for
+operator setup.
+
 ## Documentation
 
 - [Agent Onboarding Guide](docs/agent-onboarding.md)
 - [API Reference](docs/api-reference.md)
 - [Architecture](docs/architecture.md)
+- [Shopify App](docs/shopify-app.md)

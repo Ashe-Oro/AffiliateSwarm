@@ -10,6 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { requireDashboardAuth } from "@/lib/auth/dashboard";
 import { SettingsClient } from "@/components/dashboard/settings-client";
 import { DeactivateAccount } from "@/components/dashboard/deactivate-account";
+import { ConnectedShopifyShops } from "@/components/dashboard/connected-shopify-shops";
 
 export default async function DashboardSettingsPage() {
   const { user, advertiserAgent: agent } = await requireDashboardAuth();
@@ -122,6 +123,7 @@ export default async function DashboardSettingsPage() {
             credentials={serializedCredentials}
             webhooks={serializedWebhooks}
           />
+          <ConnectedShopifyShops advertiserId={agent.id} />
           <DeactivateAccount displayName={agent.displayName} />
         </>
       )}
