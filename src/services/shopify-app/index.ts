@@ -87,10 +87,7 @@ export async function processOrderPaid(params: {
     return { outcome: "skipped", reason: "duplicate" };
   }
 
-  const swarmRef =
-    attribution.path === "DISCOUNT_CODE"
-      ? attribution.swarmRef
-      : attribution.swarmRef;
+  const swarmRef = attribution.swarmRef;
   const discountCode = attribution.path === "DISCOUNT_CODE" ? attribution.discountCode : undefined;
 
   const result = await sendPostback(shop.advertiserApiKey, {
