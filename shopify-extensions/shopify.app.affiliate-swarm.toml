@@ -18,9 +18,16 @@ api_version = "2026-04"
   uri = "/shopify/webhooks/app-uninstalled"
   topics = [ "app/uninstalled" ]
 
+  # `orders/paid` is technically a protected-customer-data topic, but we
+  # only ask for fields needed by the attribution resolver — no PII (no
+  # customer, email, billing_address, shipping_address, line_items, etc).
+  # You still need to request Level 0 protected-data access in the Dev
+  # Dashboard (App → API access → Customer data); approval is usually
+  # instant for non-PII fields.
   [[webhooks.subscriptions]]
   uri = "/shopify/webhooks/orders-paid"
   topics = [ "orders/paid" ]
+  include_fields = [ "id", "current_subtotal_price", "subtotal_price", "total_price", "note_attributes", "discount_codes" ]
 
 [access.admin]
 direct_api_mode = "offline"
