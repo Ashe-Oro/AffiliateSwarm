@@ -11,7 +11,7 @@ const footerLinks = [
   { label: "Terms", href: "/terms" },
 ];
 
-const X_ACCOUNT_URL = "https://x.com/affiliateSwarm/";
+const X_ACCOUNT_URL = "https://x.com/affiliateswarm/";
 
 function XLogo({ className }: { className?: string }) {
   return (
@@ -48,7 +48,7 @@ export function Footer() {
           <Link
             href={X_ACCOUNT_URL}
             aria-label="AffiliateSwarm on X"
-            className="nav-link inline-flex text-[var(--v2-text-secondary)] transition-colors hover:text-[var(--v2-text)]"
+            className="nav-link inline-flex text-sm text-[var(--v2-text-secondary)] transition-colors hover:text-[var(--v2-text)]"
             target="_blank"
             rel="noopener noreferrer"
           >
