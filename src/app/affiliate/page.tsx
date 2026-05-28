@@ -51,7 +51,6 @@ export default async function AffiliateOverviewPage() {
 
   const [
     enrolledCampaigns,
-    totalClicks,
     totalLeads,
     verifiedLeads,
     earningsAgg,
@@ -60,9 +59,6 @@ export default async function AffiliateOverviewPage() {
   ] = await Promise.all([
     prisma.affiliateEnrollment.count({
       where: { affiliateId: agentId, status: "APPROVED" },
-    }),
-    prisma.clickEvent.count({
-      where: { affiliateId: agentId },
     }),
     prisma.lead.count({
       where: { affiliateId: agentId },
@@ -98,11 +94,6 @@ export default async function AffiliateOverviewPage() {
       description: "Campaigns you're enrolled in",
     },
     {
-      title: "Total Clicks",
-      value: totalClicks.toLocaleString(),
-      description: "Across all tracking links",
-    },
-    {
       title: "Total Leads",
       value: totalLeads.toLocaleString(),
       description: `${verifiedLeads} verified`,
@@ -120,7 +111,7 @@ export default async function AffiliateOverviewPage() {
         Welcome, {user.displayName}
       </h2>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {kpis.map((kpi) => (
           <Card key={kpi.title}>
             <CardHeader className="pb-2">
