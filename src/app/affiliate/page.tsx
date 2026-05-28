@@ -74,7 +74,10 @@ export default async function AffiliateOverviewPage() {
       where: { affiliateId: agentId, status: "VERIFIED" },
       _sum: { payoutCents: true },
     }),
-    prisma.wallet.findUnique({ where: { agentId } }),
+    prisma.wallet.findUnique({
+      where: { agentId },
+      select: { availableCents: true },
+    }),
     prisma.lead.findMany({
       where: { affiliateId: agentId },
       include: { campaign: true },
@@ -84,6 +87,9 @@ export default async function AffiliateOverviewPage() {
   ]);
 
   const totalEarnings = earningsAgg._sum.payoutCents ?? 0;
+  // Match requestPayout(): only wallet.availableCents can be withdrawn.
+  // Held, pending-release, and pending-payout funds are intentionally excluded.
+  const withdrawableBalance = wallet?.availableCents ?? 0;
 
   const kpis = [
     {
@@ -102,9 +108,9 @@ export default async function AffiliateOverviewPage() {
       description: `${verifiedLeads} verified`,
     },
     {
-      title: "Total Earnings",
-      value: formatCents(totalEarnings),
-      description: `${formatCents(wallet?.availableCents ?? 0)} available`,
+      title: "Available to Withdraw",
+      value: formatCents(withdrawableBalance),
+      description: `${formatCents(totalEarnings)} total earned`,
     },
   ];
 
