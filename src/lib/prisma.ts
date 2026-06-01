@@ -35,12 +35,14 @@ function createPoolConfig(connectionString?: string) {
       5_000
     ),
     idleTimeoutMillis: readPositiveInt("DATABASE_IDLE_TIMEOUT_MS", 10_000),
+    // pg-pool supports maxLifetimeSeconds; it rotates long-lived warm clients.
     maxLifetimeSeconds: readPositiveInt("DATABASE_MAX_LIFETIME_SECONDS", 60),
     query_timeout: queryTimeoutMs,
     statement_timeout: readPositiveInt(
       "DATABASE_STATEMENT_TIMEOUT_MS",
       queryTimeoutMs
     ),
+    // pg forwards these as PostgreSQL startup parameters on each connection.
     lock_timeout: readPositiveInt("DATABASE_LOCK_TIMEOUT_MS", 5_000),
     idle_in_transaction_session_timeout: readPositiveInt(
       "DATABASE_IDLE_TRANSACTION_TIMEOUT_MS",
@@ -50,6 +52,7 @@ function createPoolConfig(connectionString?: string) {
 }
 
 function createPrismaClient(connectionString?: string): PrismaClient {
+  // PrismaPgOptions in @prisma/adapter-pg 7.x exposes these error callbacks.
   const adapter = new PrismaPg(createPoolConfig(connectionString), {
     onPoolError: (err) => {
       logger.error({ err }, "Postgres pool error");
