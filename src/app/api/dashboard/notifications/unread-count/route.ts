@@ -4,6 +4,8 @@ import { successResponse, errorResponse } from "@/lib/api-response";
 import { AppError } from "@/lib/errors";
 import { getUnreadCount } from "@/services/notification-feed.service";
 
+export const maxDuration = 20;
+
 /**
  * GET /api/dashboard/notifications/unread-count — Unread notification count.
  */
