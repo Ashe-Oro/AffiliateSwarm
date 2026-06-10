@@ -17,6 +17,9 @@ services:
       REDIS_URL: redis://redis:6379
       NODE_ENV: production
       ENABLE_TEST_ROUTES: "1"
+      # Required to call the mutating /api/test/* routes under NODE_ENV=production.
+      # Local-only default; never reuse this value in a real deployment.
+      TEST_ROUTES_SECRET: ${TEST_ROUTES_SECRET:-local-test-secret}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       NEXT_PUBLIC_SHORT_URL: ${NEXT_PUBLIC_SHORT_URL:-http://localhost:3000}
       HMAC_ENCRYPTION_KEY: ${HMAC_ENCRYPTION_KEY:-local-dev-key}

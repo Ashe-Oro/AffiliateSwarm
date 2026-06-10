@@ -2,6 +2,9 @@
 set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:3000}"
+# Secret for the gated /api/test/* routes when the app runs NODE_ENV=production
+# (see docker-compose.app.yml). Sent on every request; ignored by other routes.
+TEST_ROUTES_SECRET="${TEST_ROUTES_SECRET:-local-test-secret}"
 
 require_cmd() {
   command -v "$1" >/dev/null || {
@@ -36,13 +39,13 @@ request() {
   local http_code
 
   if [ -n "$body" ] && [ -n "$auth" ]; then
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -H "Authorization: Bearer $auth" -d "$body")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -H "x-test-secret: $TEST_ROUTES_SECRET" -H "Authorization: Bearer $auth" -d "$body")"
   elif [ -n "$body" ]; then
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -d "$body")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -H "x-test-secret: $TEST_ROUTES_SECRET" -d "$body")"
   elif [ -n "$auth" ]; then
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Authorization: Bearer $auth")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "x-test-secret: $TEST_ROUTES_SECRET" -H "Authorization: Bearer $auth")"
   else
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "x-test-secret: $TEST_ROUTES_SECRET")"
   fi
 
   if [ "$http_code" = "$expected" ]; then
@@ -68,13 +71,13 @@ request_any() {
   local http_code
 
   if [ -n "$body" ] && [ -n "$auth" ]; then
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -H "Authorization: Bearer $auth" -d "$body")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -H "x-test-secret: $TEST_ROUTES_SECRET" -H "Authorization: Bearer $auth" -d "$body")"
   elif [ -n "$body" ]; then
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -d "$body")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Content-Type: application/json" -H "x-test-secret: $TEST_ROUTES_SECRET" -d "$body")"
   elif [ -n "$auth" ]; then
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "Authorization: Bearer $auth")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "x-test-secret: $TEST_ROUTES_SECRET" -H "Authorization: Bearer $auth")"
   else
-    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path")"
+    http_code="$(curl -sS -o "$out_file" -w "%{http_code}" -X "$method" "$BASE_URL$path" -H "x-test-secret: $TEST_ROUTES_SECRET")"
   fi
 
   local ok="0"
