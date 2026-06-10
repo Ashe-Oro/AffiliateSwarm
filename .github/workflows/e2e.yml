@@ -138,6 +138,11 @@ jobs:
           PLATFORM_HD_SEED: test test test test test test test test test test test junk
           ADMIN_SECRET: test-admin-secret-for-ci-00000000
           CRON_SECRET: test-cron-secret-for-ci-000000000
+          # Enables the /api/test/* helper routes the suite relies on (e.g.
+          # /api/test/verify-email). The guard requires this flag to be exactly
+          # "1"/"true"; since CI is non-production, no x-test-secret is needed.
+          # The Playwright-spawned `next dev` inherits this env.
+          ENABLE_TEST_ROUTES: "1"
           # Feature flags that gate pages exercised by full-lifecycle.spec.ts.
           # Off-by-default in the app so real deployments can roll them out
           # deliberately, but tests cover the rendered state and need them on.
