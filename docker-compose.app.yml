@@ -18,8 +18,12 @@ services:
       NODE_ENV: production
       ENABLE_TEST_ROUTES: "1"
       # Required to call the mutating /api/test/* routes under NODE_ENV=production.
-      # Local-only default; never reuse this value in a real deployment.
-      TEST_ROUTES_SECRET: ${TEST_ROUTES_SECRET:-local-test-secret}
+      # NO committed default: if TEST_ROUTES_SECRET is unset the guard fail-closes
+      # (every /api/test/* mutating route returns 404), so an exposed instance of
+      # this compose file does not ship a publicly-known working secret.
+      # scripts/bootstrap-local.sh generates one into .env, which Compose loads
+      # automatically; export your own to run the smoke/e2e suites.
+      TEST_ROUTES_SECRET: ${TEST_ROUTES_SECRET:-}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       NEXT_PUBLIC_SHORT_URL: ${NEXT_PUBLIC_SHORT_URL:-http://localhost:3000}
       HMAC_ENCRYPTION_KEY: ${HMAC_ENCRYPTION_KEY:-local-dev-key}

@@ -359,7 +359,7 @@ Re-registration, wrong-role actions, invalid destinations, insufficient balance,
 - **redis:7-alpine** — cache (port 6379)
 - **app** (overlay) — Next.js production build (port `$AFFILIATESWARM_APP_PORT`, default 3000)
 
-The app container runs with `ENABLE_TEST_ROUTES=1`, which exposes `/api/test/*` endpoints used by smoke tests and E2E (e.g., `/api/test/verify-email` for bypassing real email verification).
+The app container runs with `ENABLE_TEST_ROUTES=1`, which exposes `/api/test/*` endpoints used by smoke tests and E2E (e.g., `/api/test/verify-email` for bypassing real email verification). Because the container runs `NODE_ENV=production`, the mutating test routes also require an `x-test-secret` header matching `TEST_ROUTES_SECRET`. There is **no** committed default — `scripts/bootstrap-local.sh` generates one into `.env` (which Docker Compose loads), and the smoke/e2e suites read the same value, so an exposed instance ships no publicly-known working secret.
 
 ### Seed Scripts
 

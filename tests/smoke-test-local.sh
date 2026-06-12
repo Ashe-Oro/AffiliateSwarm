@@ -3,8 +3,16 @@ set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:3000}"
 # Secret for the gated /api/test/* routes when the app runs NODE_ENV=production
-# (see docker-compose.app.yml). Sent on every request; ignored by other routes.
-TEST_ROUTES_SECRET="${TEST_ROUTES_SECRET:-local-test-secret}"
+# (see docker-compose.app.yml). No baked-in default — fall back to the value in
+# .env, which bootstrap-local.sh generates and Docker Compose loads into the app
+# container so both sides match. Sent on every request; ignored by other routes.
+if [ -z "${TEST_ROUTES_SECRET:-}" ] && [ -f .env ]; then
+  TEST_ROUTES_SECRET="$(grep -E '^TEST_ROUTES_SECRET=' .env 2>/dev/null | tail -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' || true)"
+fi
+if [ -z "${TEST_ROUTES_SECRET:-}" ]; then
+  echo "TEST_ROUTES_SECRET is not set. Run scripts/bootstrap-local.sh (writes it to .env), or export it to match the running app." >&2
+  exit 1
+fi
 
 require_cmd() {
   command -v "$1" >/dev/null || {
