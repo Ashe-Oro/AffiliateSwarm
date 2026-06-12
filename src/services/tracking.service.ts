@@ -214,20 +214,47 @@ export async function processPostback(
     throw new ValidationError("Campaign has no escrow account");
   }
 
-  // Create lead as VERIFIED (postbacks are server-to-server, trusted)
-  const lead = await prisma.lead.create({
-    data: {
-      campaignId: enrollment.campaignId,
-      affiliateId: enrollment.affiliateId,
-      externalId: data.externalId,
-      trackingCode,
-      status: "VERIFIED",
-      verifiedAt: new Date(),
-      payoutCents,
-      currency: enrollment.campaign.currency,
-      leadData: (data.metadata as Prisma.InputJsonValue) ?? undefined,
-    },
-  });
+  // Create lead as VERIFIED (postbacks are server-to-server, trusted).
+  //
+  // The @@unique([campaignId, externalId]) constraint is the authoritative
+  // dedup guard: the findFirst check above is racy (two concurrent postbacks
+  // for the same externalId both see "no existing"), so we rely on the DB to
+  // reject the second insert. On a P2002 we return the row the winner created
+  // WITHOUT placing/releasing a second escrow hold — that is what prevents the
+  // double payout.
+  let lead;
+  try {
+    lead = await prisma.lead.create({
+      data: {
+        campaignId: enrollment.campaignId,
+        affiliateId: enrollment.affiliateId,
+        externalId: data.externalId,
+        trackingCode,
+        status: "VERIFIED",
+        verifiedAt: new Date(),
+        payoutCents,
+        currency: enrollment.campaign.currency,
+        leadData: (data.metadata as Prisma.InputJsonValue) ?? undefined,
+      },
+    });
+  } catch (err) {
+    if (
+      err &&
+      typeof err === "object" &&
+      (err as { code?: string }).code === "P2002"
+    ) {
+      const existingLead = await prisma.lead.findFirst({
+        where: {
+          externalId: data.externalId,
+          campaignId: enrollment.campaignId,
+        },
+      });
+      if (existingLead) {
+        return { lead: existingLead, created: false };
+      }
+    }
+    throw err;
+  }
 
   // Place escrow hold and immediately release. If the wallet or campaign
   // budget can't cover it, notify both sides so the affiliate can pause

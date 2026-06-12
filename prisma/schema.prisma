@@ -557,6 +557,11 @@ model Lead {
   clickEvents       ClickEvent[]
   referral          Referral?
 
+  // Dedup guarantee for server-to-server postbacks, which carry a required
+  // externalId and pay out immediately. Postgres treats NULLs as distinct, so
+  // leads without an externalId (e.g. fingerprint-deduped submitLead) are
+  // unaffected. Prevents concurrent duplicate postbacks from double-paying.
+  @@unique([campaignId, externalId])
   @@index([campaignId, status])
   @@index([affiliateId, status])
   @@index([campaignId, affiliateId])

@@ -35,7 +35,9 @@ const ConversionStatusEnum = z.enum([
 
 export const SubmitLeadSchema = z.object({
   campaignId: z.string().uuid(),
-  externalId: z.string().max(255).optional(),
+  // Optional, but when provided must be non-empty: "" would collide under the
+  // @@unique([campaignId, externalId]) constraint shared with postbacks.
+  externalId: z.string().min(1).max(255).optional(),
   trackingCode: z.string().max(64).optional(),
   leadData: z.record(z.string(), z.unknown()).optional(),
   ipAddress: z.string().max(45).optional(),

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendPayout } from "@/services/chain.service";
+import { assertTestRoutesEnabled } from "../_guard";
 
 /**
  * POST /api/test/process-payout — Test-only: process a single CRYPTO payout.
- * Bypasses admin auth so e2e can drive the full onchain payout flow.
+ * Gated by assertTestRoutesEnabled (never reachable unauthenticated in prod).
  */
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV === "production" && !process.env.ENABLE_TEST_ROUTES) {
-    return NextResponse.json({ error: "Not available in production" }, { status: 404 });
-  }
+  const blocked = assertTestRoutesEnabled(req);
+  if (blocked) return blocked;
 
   const { payoutRequestId } = await req.json();
   if (!payoutRequestId) {

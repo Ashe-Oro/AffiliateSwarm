@@ -23,6 +23,11 @@ export async function api(
 ): Promise<ApiResponse> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+  // Gated /api/test/* routes require this header when the target runs
+  // NODE_ENV=production (e.g. the docker-compose app). Harmless elsewhere.
+  if (process.env.TEST_ROUTES_SECRET) {
+    headers["x-test-secret"] = process.env.TEST_ROUTES_SECRET;
+  }
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers,

@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { ENABLE_STRIPE_DEPOSITS } from "@/lib/feature-flags";
 import { creditFromCheckout } from "@/services/stripe.service";
+import { assertTestRoutesEnabled } from "../_guard";
 
 /**
  * POST /api/test/process-stripe-checkout — Test-only: process a completed Stripe
@@ -12,12 +13,11 @@ import { creditFromCheckout } from "@/services/stripe.service";
  * This endpoint fetches the session from Stripe, checks payment status,
  * and triggers creditFromCheckout() — exactly what the webhook handler does.
  *
- * Only available when NODE_ENV !== "production".
+ * Gated by assertTestRoutesEnabled (never reachable unauthenticated in prod).
  */
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV === "production" && !process.env.ENABLE_TEST_ROUTES) {
-    return NextResponse.json({ error: "Not available in production" }, { status: 404 });
-  }
+  const blocked = assertTestRoutesEnabled(req);
+  if (blocked) return blocked;
 
   if (!ENABLE_STRIPE_DEPOSITS()) {
     return NextResponse.json(

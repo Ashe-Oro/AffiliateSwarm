@@ -68,6 +68,10 @@ upsert_env "NODE_ENV" "development"
 upsert_env "HMAC_ENCRYPTION_KEY" "$(openssl rand -hex 32)"
 upsert_env "ADMIN_SECRET" "$(openssl rand -hex 32)"
 upsert_env "CRON_SECRET" "$(openssl rand -hex 32)"
+# Secret for the gated /api/test/* routes when the docker app runs in
+# NODE_ENV=production. Docker Compose auto-loads .env, so the app container and
+# the smoke/e2e suites (which read .env) share this generated value.
+upsert_env "TEST_ROUTES_SECRET" "$(openssl rand -hex 32)"
 
 # Optional but useful local defaults
 upsert_env "AFFILIATESWARM_REFERRAL_SECRET" "affiliateswarm-local-referral-secret"

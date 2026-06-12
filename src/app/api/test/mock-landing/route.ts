@@ -11,11 +11,19 @@ import { NextRequest, NextResponse } from "next/server";
  * Only available when NODE_ENV !== "production".
  */
 export async function GET(req: NextRequest) {
-  if (process.env.NODE_ENV === "production" && !process.env.ENABLE_TEST_ROUTES) {
+  // Flag-only gate: this page is navigated to by a real browser (it is a
+  // campaign landingUrl), so it cannot carry the x-test-secret header that the
+  // mutating /api/test/* routes require. The flag must still be an explicit
+  // allow-list value so a stray env value cannot enable it.
+  const flag = process.env.ENABLE_TEST_ROUTES;
+  if (flag !== "1" && flag !== "true") {
     return NextResponse.json({ error: "Not available in production" }, { status: 404 });
   }
 
-  const swarmRef = req.nextUrl.searchParams.get("swarm_ref");
+  // Sanitise to the tracking-code charset to neutralise reflected XSS — the
+  // value is echoed into both HTML and an inline script below.
+  const rawRef = req.nextUrl.searchParams.get("swarm_ref");
+  const swarmRef = rawRef ? rawRef.replace(/[^A-Za-z0-9_-]/g, "") : null;
 
   // Return a simple HTML page that shows the tracking code and a "Buy Now" button.
   // The value is also available as a data attribute for Playwright to extract.

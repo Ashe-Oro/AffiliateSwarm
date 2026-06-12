@@ -46,6 +46,11 @@ describe("PostbackSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejects empty-string externalId (would collide under dedup constraint)", () => {
+    const result = PostbackSchema.safeParse({ ...validInput, externalId: "" });
+    expect(result.success).toBe(false);
+  });
+
   it("rejects invalid eventType", () => {
     const result = PostbackSchema.safeParse({
       ...validInput,
@@ -211,5 +216,15 @@ describe("SubmitLeadSchema with evidence", () => {
       evidence,
     });
     expect(result.success).toBe(false);
+  });
+
+  it("accepts an omitted externalId but rejects an empty-string one", () => {
+    expect(SubmitLeadSchema.safeParse(validLead).success).toBe(true);
+    expect(
+      SubmitLeadSchema.safeParse({ ...validLead, externalId: "" }).success
+    ).toBe(false);
+    expect(
+      SubmitLeadSchema.safeParse({ ...validLead, externalId: "ext_1" }).success
+    ).toBe(true);
   });
 });
