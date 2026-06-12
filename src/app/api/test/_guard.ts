@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { timingSafeEqual } from "crypto";
+import { createHash, timingSafeEqual } from "crypto";
 
 /**
  * Shared gate for the test-only `/api/test/*` endpoints.
@@ -44,11 +44,11 @@ export function assertTestRoutesEnabled(req: NextRequest): NextResponse | null {
 }
 
 function timingSafeEqualStr(a: string, b: string): boolean {
-  const aBuf = Buffer.from(a);
-  const bBuf = Buffer.from(b);
-  // timingSafeEqual throws on length mismatch; compare against a fixed-length
-  // digest-free guard by short-circuiting on length without leaking via timing
-  // of the secret contents.
-  if (aBuf.length !== bBuf.length) return false;
-  return timingSafeEqual(aBuf, bBuf);
+  // Hash both sides to fixed-length (32-byte) digests before comparing. This
+  // avoids a length-mismatch short-circuit (which would leak the configured
+  // secret's length via timing) while keeping the comparison constant-time:
+  // the digests are always equal length, and equal iff the inputs are equal.
+  const aHash = createHash("sha256").update(a).digest();
+  const bHash = createHash("sha256").update(b).digest();
+  return timingSafeEqual(aHash, bHash);
 }

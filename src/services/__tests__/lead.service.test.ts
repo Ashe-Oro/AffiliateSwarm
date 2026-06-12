@@ -244,6 +244,25 @@ describe("submitLead", () => {
     ).rejects.toThrow("Duplicate lead detected");
   });
 
+  it("maps a P2002 unique-constraint violation to a ConflictError", async () => {
+    const enrollment = mockEnrollment();
+    const campaign = mockCampaign();
+
+    (prisma.affiliateEnrollment.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(enrollment);
+    (prisma.campaign.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(campaign);
+    (prisma.lead.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null); // passes fingerprint dedup
+    (prisma.lead.count as ReturnType<typeof vi.fn>).mockResolvedValue(0);
+    // Reused externalId from a different IP / outside the 24h window: the DB
+    // unique constraint rejects it even though the fingerprint check passed.
+    (prisma.lead.create as ReturnType<typeof vi.fn>).mockRejectedValue(
+      Object.assign(new Error("Unique constraint failed"), { code: "P2002" })
+    );
+
+    await expect(
+      submitLead(AFFILIATE_ID, defaultSubmitInput)
+    ).rejects.toThrow("already exists for this campaign");
+  });
+
   it("flags velocity anomaly when >=10 leads per minute", async () => {
     const enrollment = mockEnrollment();
     const campaign = mockCampaign();

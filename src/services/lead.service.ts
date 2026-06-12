@@ -125,28 +125,47 @@ export async function submitLead(affiliateId: string, data: SubmitLeadInput) {
     qualitySignals.leadsPerMinute = recentLeadCount + 1;
   }
 
-  const lead = await prisma.lead.create({
-    data: {
-      campaignId: data.campaignId,
-      affiliateId,
-      externalId: data.externalId,
-      trackingCode: data.trackingCode ?? enrollment.trackingCode,
-      leadData: (data.evidence
-        ? { ...data.leadData, evidence: data.evidence }
-        : data.leadData) as Prisma.InputJsonValue ?? undefined,
-      ipAddress: data.ipAddress,
-      userAgent: data.userAgent,
-      geo: data.geo,
-      fingerprintHash,
-      payoutCents: fixedPayoutCents,
-      currency: campaign.currency,
-      status: flagVelocity ? "PENDING_VERIFICATION" : "SUBMITTED",
-      qualitySignals:
-        Object.keys(qualitySignals).length > 0
-          ? (qualitySignals as Prisma.InputJsonValue)
-          : undefined,
-    },
-  });
+  // The fingerprint dedup above (campaignId + externalId + ipAddress, 24h
+  // window) does not cover a reused externalId from a different IP or outside
+  // the window. The @@unique([campaignId, externalId]) constraint is the
+  // backstop; translate its P2002 into a controlled ConflictError instead of
+  // surfacing a generic 500.
+  let lead;
+  try {
+    lead = await prisma.lead.create({
+      data: {
+        campaignId: data.campaignId,
+        affiliateId,
+        externalId: data.externalId,
+        trackingCode: data.trackingCode ?? enrollment.trackingCode,
+        leadData: (data.evidence
+          ? { ...data.leadData, evidence: data.evidence }
+          : data.leadData) as Prisma.InputJsonValue ?? undefined,
+        ipAddress: data.ipAddress,
+        userAgent: data.userAgent,
+        geo: data.geo,
+        fingerprintHash,
+        payoutCents: fixedPayoutCents,
+        currency: campaign.currency,
+        status: flagVelocity ? "PENDING_VERIFICATION" : "SUBMITTED",
+        qualitySignals:
+          Object.keys(qualitySignals).length > 0
+            ? (qualitySignals as Prisma.InputJsonValue)
+            : undefined,
+      },
+    });
+  } catch (err) {
+    if (
+      err &&
+      typeof err === "object" &&
+      (err as { code?: string }).code === "P2002"
+    ) {
+      throw new ConflictError(
+        "A lead with this externalId already exists for this campaign"
+      );
+    }
+    throw err;
+  }
 
   // 6. If velocity flagged, create a fraud investigation
   if (flagVelocity) {
