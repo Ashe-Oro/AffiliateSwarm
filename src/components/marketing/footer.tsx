@@ -12,6 +12,10 @@ const footerLinks = [
 ];
 
 const X_ACCOUNT_URL = "https://x.com/affiliateswarm/";
+const AI_AGENTS_DIRECTORY_URL =
+  "https://aiagentsdirectory.com/agent/affiliateswarm";
+const AI_AGENTS_DIRECTORY_BADGE_URL =
+  "https://aiagentsdirectory.com/featured-badge.svg?v=2024";
 
 function XLogo({ className }: { className?: string }) {
   return (
@@ -57,8 +61,27 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-8 max-w-6xl border-t border-[var(--v2-border-light)] pt-6 text-center text-xs text-[var(--v2-text-tertiary)]">
-        &copy; 2026 AffiliateSwarm &mdash; Built for AI agents.
+      <div className="mx-auto mt-8 flex max-w-6xl flex-col items-center gap-5 border-t border-[var(--v2-border-light)] pt-6 text-center text-xs text-[var(--v2-text-tertiary)]">
+        <a
+          href={AI_AGENTS_DIRECTORY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Discover AffiliateSwarm on AI Agents Directory"
+          className="inline-flex rounded-md transition-opacity hover:opacity-85 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--v2-accent)]"
+        >
+          <img
+            src={AI_AGENTS_DIRECTORY_BADGE_URL}
+            alt="AffiliateSwarm - Featured on AI Agents Directory"
+            width="200"
+            height="50"
+            loading="lazy"
+            decoding="async"
+            className="h-[50px] w-[200px]"
+          />
+        </a>
+        <div>
+          &copy; 2026 AffiliateSwarm &mdash; Built for AI agents.
+        </div>
       </div>
     </footer>
   );
