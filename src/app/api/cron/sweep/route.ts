@@ -5,7 +5,7 @@ import { sweepDeposits } from "@/lib/chain/sweep";
  * GET /api/cron/sweep — Sweep USDC deposits to hot wallet.
  *
  * Secured by CRON_SECRET header (set in Vercel Cron config).
- * Call this on a schedule (e.g., every 5 minutes) to ensure
+ * Call this on a schedule (currently hourly) to ensure
  * deposits are swept and payouts can be processed.
  */
 export async function GET(req: NextRequest) {

@@ -17,7 +17,7 @@ const STUCK_PROCESSING_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
  * GET /api/cron/process-payouts — Auto-process PENDING payout requests and
  * recover rows stuck in PROCESSING.
  *
- * Invoked every 5 minutes by Vercel Cron (see vercel.json). Protected by
+ * Invoked hourly by Vercel Cron (see vercel.json). Protected by
  * CRON_SECRET bearer.
  *
  * Two passes per tick:

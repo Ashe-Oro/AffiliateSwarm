@@ -4,7 +4,7 @@ import { processMaturedHolds } from "@/services/escrow.service";
 /**
  * GET /api/cron/process-holds — Process matured escrow holds.
  *
- * Invoked every 5 minutes by Vercel Cron (see vercel.json).
+ * Invoked hourly by Vercel Cron (see vercel.json).
  * Protected by CRON_SECRET header to prevent unauthorized access.
  */
 export async function GET(req: NextRequest) {

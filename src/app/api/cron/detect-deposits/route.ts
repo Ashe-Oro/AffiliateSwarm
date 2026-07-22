@@ -4,7 +4,7 @@ import { scanForDeposits } from "@/lib/chain/deposit-scanner";
 /**
  * GET /api/cron/detect-deposits — Auto-detect USDC deposits on Base.
  *
- * Invoked every 2 minutes by Vercel Cron (see vercel.json).
+ * Invoked hourly by Vercel Cron (see vercel.json).
  * Protected by CRON_SECRET header to prevent unauthorized access.
  */
 export async function GET(req: NextRequest) {
