@@ -9,7 +9,7 @@ import { logger } from "@/lib/logger";
 /**
  * GET /api/cron/email-retry-sweep — Retry stuck verification + onboarding emails.
  *
- * Invoked every 5 minutes by Vercel Cron (see vercel.json).
+ * Invoked hourly by Vercel Cron (see vercel.json).
  * Protected by CRON_SECRET header to prevent unauthorized access.
  *
  * Catches the "inline retries exhausted, request died, fire-and-forget didn't
