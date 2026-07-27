@@ -9,6 +9,10 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Migrations take advisory locks and run DDL, neither of which survives a
+    // connection pooler. Neon exposes a direct connection alongside the pooled
+    // one; prefer it for every CLI operation. The app's runtime client reads
+    // DATABASE_URL directly (src/lib/prisma.ts) and stays on the pooled URL.
+    url: process.env["DATABASE_URL_UNPOOLED"] ?? process.env["DATABASE_URL"],
   },
 });
