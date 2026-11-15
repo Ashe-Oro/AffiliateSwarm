@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { readAgentSkillContent } from "@/lib/agent-skills";
+import { renderAgentSkillContent } from "@/lib/agent-skills";
 
 /**
  * GET /affiliate/skill.md — Serve the affiliate skill file.
  */
 export async function GET() {
-  const content = readAgentSkillContent("affiliate");
+  const content = renderAgentSkillContent("affiliate");
 
   return new NextResponse(content, {
     status: 200,

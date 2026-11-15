@@ -6,7 +6,7 @@
  */
 import { readFileSync } from "fs";
 
-const BASE_URL = process.argv[2] || "https://affiliateswarm.ai";
+const BASE_URL = process.argv[2] || "https://your-deployment.example";
 const stripeDepositsEnabled = ["1", "true", "yes", "on"].includes(
   (process.env.ENABLE_STRIPE_DEPOSITS ?? "").toLowerCase()
 );
@@ -124,7 +124,7 @@ async function main() {
     assert(status === 200, `Expected 200, got ${status}`);
     assert(json.data.length > 0, "Should have at least 1 campaign");
     const names = json.data.map((c: any) => c.name);
-    assert(names.some((n: string) => n.includes("Venice")), "Should include Venice campaign");
+    assert(names.some((n: string) => n.includes("Example SaaS")), "Should include Example SaaS campaign");
   });
 
   await test("GET /api/v1/discover/campaigns?compensationModel=CPA — filter works", async () => {

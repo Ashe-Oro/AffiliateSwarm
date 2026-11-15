@@ -24,7 +24,7 @@ when the campaign has a buyer coupon code.
 ## Postback
 
 ```http
-POST https://affiliateswarm.ai/api/v1/postback
+POST https://your-deployment.example/api/v1/postback
 Authorization: Bearer ADVERTISER_API_KEY
 Content-Type: application/json
 ```

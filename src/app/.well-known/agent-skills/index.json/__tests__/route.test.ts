@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { readAgentSkillContent, sha256Hex } from "@/lib/agent-skills";
+import { renderAgentSkillContent, sha256Hex } from "@/lib/agent-skills";
 import { GET } from "../route";
 
 describe("GET /.well-known/agent-skills/index.json", () => {
@@ -16,7 +16,7 @@ describe("GET /.well-known/agent-skills/index.json", () => {
     );
     expect(body.publisher).toEqual({
       name: "AffiliateSwarm",
-      url: "https://affiliateswarm.ai",
+      url: "https://your-deployment.example",
     });
     expect(body.skills).toHaveLength(2);
 
@@ -25,11 +25,11 @@ describe("GET /.well-known/agent-skills/index.json", () => {
       "swarm-advertiser",
     ]);
     expect(body.skills.map((skill: { url: string }) => skill.url)).toEqual([
-      "https://affiliateswarm.ai/affiliate/skill.md",
-      "https://affiliateswarm.ai/advertiser/skill.md",
+      "https://your-deployment.example/affiliate/skill.md",
+      "https://your-deployment.example/advertiser/skill.md",
     ]);
     expect(body.skills.map((skill: { url: string }) => skill.url)).not.toContain(
-      "https://affiliateswarm.ai/skill.md"
+      "https://your-deployment.example/skill.md"
     );
   });
 
@@ -44,10 +44,10 @@ describe("GET /.well-known/agent-skills/index.json", () => {
     );
 
     expect(skills["swarm-affiliate"]).toBe(
-      sha256Hex(readAgentSkillContent("affiliate"))
+      sha256Hex(renderAgentSkillContent("affiliate"))
     );
     expect(skills["swarm-advertiser"]).toBe(
-      sha256Hex(readAgentSkillContent("advertiser"))
+      sha256Hex(renderAgentSkillContent("advertiser"))
     );
     expect(skills["swarm-affiliate"]).toMatch(/^[a-f0-9]{64}$/);
     expect(skills["swarm-advertiser"]).toMatch(/^[a-f0-9]{64}$/);

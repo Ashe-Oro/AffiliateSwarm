@@ -12,6 +12,16 @@ export function getResend(): Resend | null {
 
 export const FROM = FROM_EMAIL;
 
+/**
+ * Resend sender. `EMAIL_FROM` wins so a deployment can use a verified domain.
+ * The brand default is the sanitized placeholder (`noreply@your-deployment.example`),
+ * which Resend will reject.
+ */
+export function getFromAddress(): string {
+  const configured = process.env.EMAIL_FROM?.trim();
+  return configured ? configured : FROM_EMAIL;
+}
+
 // ---------------------------------------------------------------------------
 // Retry helper for transient Resend failures
 // ---------------------------------------------------------------------------
@@ -90,7 +100,7 @@ export async function sendVerificationEmail(
   await sendWithRetry(
     () =>
       resend.emails.send({
-        from: FROM,
+        from: getFromAddress(),
         to,
         subject: "Verify your email address",
         html: `
@@ -137,7 +147,7 @@ export async function sendLoginCodeEmail(
   await sendWithRetry(
     () =>
       resend.emails.send({
-        from: FROM,
+        from: getFromAddress(),
         to,
         subject: `Your ${PRODUCT_NAME} login code: ${code}`,
         html: `
@@ -191,7 +201,7 @@ export async function sendOnboardingEmail(
   await sendWithRetry(
     () =>
       resend.emails.send({
-        from: FROM,
+        from: getFromAddress(),
         to,
         subject: `Welcome to ${PRODUCT_NAME} — you're registered as ${typeLabel === "advertiser and affiliate" ? "an" : (/^[aeiou]/i.test(typeLabel) ? "an" : "a")} ${typeLabel}`,
         html: `

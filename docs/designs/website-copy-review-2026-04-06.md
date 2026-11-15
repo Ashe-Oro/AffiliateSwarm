@@ -103,12 +103,12 @@ shared `DEFAULT_APP_URL` fallback.
 
 **Pattern observed:**
 
-- Homepage agent-onboarding component: `https://affiliateswarm.ai/affiliate/skill.md` (hardcoded full URL)
+- Homepage agent-onboarding component: `https://your-deployment.example/affiliate/skill.md` (hardcoded full URL)
 - For-affiliates/for-advertisers pages: `{PLATFORM_HOST}/affiliate/skill.md` (domain without protocol)
 - Historical growth-program page: same domain-without-protocol pattern
-- Skill files themselves: `https://www.affiliateswarm.ai/affiliate/skill.md` (www subdomain)
+- Skill files themselves: `https://www.your-deployment.example/affiliate/skill.md` (www subdomain)
 
-**Recommendation:** Standardize on one format. Since the agent prompt is meant to be copy-pasted, it should always include the full URL with protocol. Choose between `affiliateswarm.ai` and `www.affiliateswarm.ai` and use it everywhere.
+**Recommendation:** Standardize on one format. Since the agent prompt is meant to be copy-pasted, it should always include the full URL with protocol. Choose between `your-deployment.example` and `www.your-deployment.example` and use it everywhere.
 
 ---
 

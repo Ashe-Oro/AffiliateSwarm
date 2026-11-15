@@ -36,7 +36,7 @@ custom checkout liquid.
   today — explicitly punted to v2).
 - Campaign creation or affiliate browsing inside Shopify admin.
 - Auto-provisioning advertiser accounts on install (merchants sign up on
-  affiliateswarm.ai first, then paste their API key).
+  your-deployment.example first, then paste their API key).
 - Public Shopify App Store submission.
 
 ## Architecture

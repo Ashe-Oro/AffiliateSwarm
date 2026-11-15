@@ -4,13 +4,14 @@
 #
 # Usage: bash scripts/demo-complete-setup.sh
 
-PROD_URL="https://affiliateswarm.ai"
+# Point these at your own deployment. Do not commit live keys or production ids.
+PROD_URL="${PROD_URL:-https://your-deployment.example}"
 LANDING_URL="${LANDING_URL:-https://example.com/product}"
-ADV_KEY="swarm_live_6Y0xO9lf1sEqX1zqqaGDdIjzJuV-PYeV"
-ADV_ID="6bc0d50f-0421-4116-905f-7b8bb087151c"
-CAMP_ID="ee8c27b2-afa0-473d-862f-eef6ab90b5f9"
-AFF_KEY="swarm_live_L5vW5iLwc7Mh_ZTIaRCs0Tr7hzxg_rsJ"
-AFF_ID="ce3efd90-8fd7-4f6f-bb10-b1a20f720d13"
+ADV_KEY="${ADV_KEY:-swarm_live_EXAMPLE_ADVERTISER_KEY}"
+ADV_ID="${ADV_ID:-00000000-0000-4000-8000-000000000001}"
+CAMP_ID="${CAMP_ID:-00000000-0000-4000-8000-000000000002}"
+AFF_KEY="${AFF_KEY:-swarm_live_EXAMPLE_AFFILIATE_KEY}"
+AFF_ID="${AFF_ID:-00000000-0000-4000-8000-000000000003}"
 
 echo "=== Step 1: Activate Campaign ==="
 curl -s -X POST "$PROD_URL/api/v1/campaigns/$CAMP_ID/activate" \

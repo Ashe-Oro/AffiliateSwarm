@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
-import { getResend, FROM } from "@/lib/email";
+import { getResend, getFromAddress } from "@/lib/email";
 import { deliverEvent } from "@/services/webhook.service";
 import { createFeedNotifications } from "@/services/notification-feed.service";
 import { EVENT_CONFIG, getAggregateInfo } from "@/lib/notifications/events";
@@ -81,7 +81,7 @@ async function sendEmails(event: NotificationEvent): Promise<void> {
 
     if (resend) {
       const { error } = await resend.emails.send({
-        from: FROM,
+        from: getFromAddress(),
         to: recipient.email,
         subject: rendered.subject,
         html: rendered.html,

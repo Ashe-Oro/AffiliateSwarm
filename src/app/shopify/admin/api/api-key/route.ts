@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   if (!valid) {
     return NextResponse.json(
-      { ok: false, error: "Key saved, but AffiliateSwarm rejected it. Double-check it on affiliateswarm.ai." },
+      { ok: false, error: "Key saved, but AffiliateSwarm rejected it. Double-check it on your-deployment.example." },
       { status: 200 },
     );
   }

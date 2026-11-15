@@ -11,23 +11,23 @@ describe("GET /.well-known/api-catalog", () => {
     expect(res.headers.get("content-type")).toContain("application/linkset+json");
     expect(body.linkset).toHaveLength(2);
 
-    expect(body.linkset[0].anchor).toBe("https://affiliateswarm.ai/api/v1");
+    expect(body.linkset[0].anchor).toBe("https://your-deployment.example/api/v1");
     expect(body.linkset[0]["service-doc"][0]).toMatchObject({
-      href: "https://affiliateswarm.ai/docs/api",
+      href: "https://your-deployment.example/docs/api",
       type: "text/html",
     });
     expect(body.linkset[0].status[0]).toMatchObject({
-      href: "https://affiliateswarm.ai/api/health",
+      href: "https://your-deployment.example/api/health",
       type: "application/json",
     });
 
     expect(body.linkset[1]["service-desc"][0]).toMatchObject({
-      href: "https://affiliateswarm.ai/.well-known/agent-skills/index.json",
+      href: "https://your-deployment.example/.well-known/agent-skills/index.json",
       type: "application/json",
     });
     expect(body.linkset[1]["service-doc"].map((link: { href: string }) => link.href)).toEqual([
-      "https://affiliateswarm.ai/affiliate/skill.md",
-      "https://affiliateswarm.ai/advertiser/skill.md",
+      "https://your-deployment.example/affiliate/skill.md",
+      "https://your-deployment.example/advertiser/skill.md",
     ]);
   });
 });

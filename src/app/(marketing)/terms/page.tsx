@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = "April 13, 2026";
-const CONTACT_EMAIL = "legal@affiliateswarm.ai";
+const CONTACT_EMAIL = "legal@your-deployment.example";
 
 const sections = [
   {
