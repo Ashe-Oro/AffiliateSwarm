@@ -4,16 +4,16 @@ import { buildAgentIntegrationPrompt } from "../agent-integration-prompt";
 describe("buildAgentIntegrationPrompt", () => {
   const base = {
     testTrackingCode: "M4TSbpS8",
-    postbackUrl: "https://affiliateswarm.ai/api/v1/postback",
-    llmGuideUrl: "https://affiliateswarm.ai/docs/llm-integration-guide.md",
+    postbackUrl: "https://your-deployment.example/api/v1/postback",
+    llmGuideUrl: "https://your-deployment.example/docs/llm-integration-guide.md",
   };
 
   it("embeds the test tracking code, endpoint, and guide URL", () => {
     const prompt = buildAgentIntegrationPrompt(base);
     expect(prompt).toContain("M4TSbpS8");
-    expect(prompt).toContain("https://affiliateswarm.ai/api/v1/postback");
+    expect(prompt).toContain("https://your-deployment.example/api/v1/postback");
     expect(prompt).toContain(
-      "https://affiliateswarm.ai/docs/llm-integration-guide.md",
+      "https://your-deployment.example/docs/llm-integration-guide.md",
     );
   });
 

@@ -122,7 +122,7 @@ Adds `shopify_shops` and `shopify_attributed_orders` tables.
    the backend trades it for an access token, and persists a
    `ShopifyShop` row.
 4. Merchant pastes their AffiliateSwarm advertiser API key
-   (from `https://affiliateswarm.ai/dashboard/settings`).
+   (from `https://your-deployment.example/dashboard/settings`).
 5. Merchant pastes their campaign's `testTrackingCode` and clicks "Fire
    test postback" — confirms tracking, unlocks the campaign in
    AffiliateSwarm.

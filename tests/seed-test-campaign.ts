@@ -103,7 +103,7 @@ async function main() {
       compensationModel: "CPA",
       payoutPerUnitCents: 1000,
       budgetCents: 1000000,
-      landingUrl: "https://affiliateswarm.ai/demo/landing",
+      landingUrl: "https://your-deployment.example/demo/landing",
       categories: ["testing", "e2e"],
       geoTargets: [],
       enrollmentPolicy: "OPEN",

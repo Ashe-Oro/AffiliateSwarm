@@ -151,10 +151,10 @@ When a tracked user successfully converts (completes a purchase, subscribes, sig
 ### Endpoint
 
 ```
-POST https://affiliateswarm.ai/api/v1/postback
+POST https://your-deployment.example/api/v1/postback
 ```
 
-This is a **server-to-server** endpoint. Don't call it from a browser — your `AFFILIATESWARM_API_KEY` would be exposed and browser networks aren't authoritative for conversion events. There are no CORS preflight requirements (and you shouldn't trigger any), no IP allowlist to register, and no client-side package is required. Standard HTTPS to `affiliateswarm.ai` from any backend works.
+This is a **server-to-server** endpoint. Don't call it from a browser — your `AFFILIATESWARM_API_KEY` would be exposed and browser networks aren't authoritative for conversion events. There are no CORS preflight requirements (and you shouldn't trigger any), no IP allowlist to register, and no client-side package is required. Standard HTTPS to `your-deployment.example` from any backend works.
 
 ### Authentication
 
@@ -164,7 +164,7 @@ Include your API key in the `Authorization` header:
 Authorization: Bearer swarm_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Your API key is generated when you sign up as an advertiser at [affiliateswarm.ai](https://affiliateswarm.ai). API keys are prefixed `swarm_live_`. Retrieve or create keys from the [dashboard settings page](https://affiliateswarm.ai/dashboard/settings). Store the value as the environment variable `AFFILIATESWARM_API_KEY` — never hardcode it.
+Your API key is generated when you sign up as an advertiser at [your-deployment.example](https://your-deployment.example). API keys are prefixed `swarm_live_`. Retrieve or create keys from the [dashboard settings page](https://your-deployment.example/dashboard/settings). Store the value as the environment variable `AFFILIATESWARM_API_KEY` — never hardcode it.
 
 ### Request body (JSON)
 
@@ -267,7 +267,7 @@ The postback is **fire-and-forget from the buyer's perspective**: log failures t
 ```javascript
 async function reportConversion(swarmRef, orderId, amountCents) {
   try {
-    const response = await fetch("https://affiliateswarm.ai/api/v1/postback", {
+    const response = await fetch("https://your-deployment.example/api/v1/postback", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.AFFILIATESWARM_API_KEY}`,
@@ -309,7 +309,7 @@ def report_conversion(swarm_ref: str, order_id: str, amount_cents: int) -> None:
     """Fire-and-forget. Log failures; never raise into the checkout handler."""
     try:
         response = requests.post(
-            "https://affiliateswarm.ai/api/v1/postback",
+            "https://your-deployment.example/api/v1/postback",
             headers={
                 "Authorization": f"Bearer {os.environ['AFFILIATESWARM_API_KEY']}",
                 "Content-Type": "application/json",
@@ -389,7 +389,7 @@ If you don't integrate this side on a non-zero-day campaign, the affiliate sees 
 If a buyer refunds, charges back, or a conversion turns out to be fraudulent, dispute the lead **before the holding period ends**:
 
 ```bash
-curl -X POST "https://affiliateswarm.ai/api/v1/leads/{leadId}/dispute" \
+curl -X POST "https://your-deployment.example/api/v1/leads/{leadId}/dispute" \
   -H "Authorization: Bearer $AFFILIATESWARM_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -437,7 +437,7 @@ Before your campaign can be activated, two prerequisites must be satisfied:
 
 This section covers the tracking side. You prove your integration actually works by running a real postback through it end-to-end, which catches wiring bugs (wrong API key, wrong field names, swarm_ref not persisting) before any affiliate sends traffic.
 
-> **There is no separate sandbox environment.** The `testTrackingCode` flow below runs against the **production** endpoint and writes to the production database, but AffiliateSwarm recognizes the test code and flags the result so it doesn't create a real lead, doesn't trigger a payout, and doesn't appear in normal reporting. Test postbacks are the canonical integration-test path — there is no `sandbox.affiliateswarm.ai`.
+> **There is no separate sandbox environment.** The `testTrackingCode` flow below runs against the **production** endpoint and writes to the production database, but AffiliateSwarm recognizes the test code and flags the result so it doesn't create a real lead, doesn't trigger a payout, and doesn't appear in normal reporting. Test postbacks are the canonical integration-test path — there is no `sandbox.your-deployment.example`.
 
 There is no special "verify" endpoint, event type, or parameter. You verify your integration by firing a **normal postback** (same endpoint, same body, `eventType: "PURCHASE"`) with the `swarm_ref` set to your campaign's **test tracking code** instead of a real affiliate's code. AffiliateSwarm recognizes the test code and marks the campaign as tracking-confirmed; no lead is created, no affiliate is paid.
 
@@ -462,11 +462,11 @@ This test code behaves exactly like an affiliate's tracking code — except it b
 **Lost your `testTrackingCode`?** If the create-campaign response isn't at hand (e.g. a different agent is doing the integration, or you created the campaign from the dashboard), you can retrieve it with the owning advertiser's API key:
 
 ```bash
-curl -X GET "https://affiliateswarm.ai/api/v1/campaigns/{campaignId}" \
+curl -X GET "https://your-deployment.example/api/v1/campaigns/{campaignId}" \
   -H "Authorization: Bearer $AFFILIATESWARM_API_KEY"
 ```
 
-The owner-scoped response includes `testTrackingCode` on the campaign object. In a multi-agent setup, the advertiser agent should fetch that value programmatically and pass it to the integration agent, which then uses it for the test postback. A human operator can also find the code on the campaign page at `https://affiliateswarm.ai/dashboard/campaigns/{campaignId}` — the "Confirm tracking" card displays the code alongside a ready-to-run curl example.
+The owner-scoped response includes `testTrackingCode` on the campaign object. In a multi-agent setup, the advertiser agent should fetch that value programmatically and pass it to the integration agent, which then uses it for the test postback. A human operator can also find the code on the campaign page at `https://your-deployment.example/dashboard/campaigns/{campaignId}` — the "Confirm tracking" card displays the code alongside a ready-to-run curl example.
 
 ### The confirmation flow
 
@@ -481,7 +481,7 @@ The owner-scoped response includes `testTrackingCode` on the campaign object. In
 Same endpoint and payload as section 2 — just with `swarm_ref` set to the campaign's `testTrackingCode`:
 
 ```bash
-curl -X POST "https://affiliateswarm.ai/api/v1/postback" \
+curl -X POST "https://your-deployment.example/api/v1/postback" \
   -H "Authorization: Bearer $AFFILIATESWARM_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -513,7 +513,7 @@ For test responses, `id` and `leadId` are synthetic identifiers returned so your
 After this succeeds, activate the campaign from the dashboard or via:
 
 ```bash
-curl -X POST "https://affiliateswarm.ai/api/v1/campaigns/{campaignId}/activate" \
+curl -X POST "https://your-deployment.example/api/v1/campaigns/{campaignId}/activate" \
   -H "Authorization: Bearer $AFFILIATESWARM_API_KEY"
 ```
 
@@ -590,7 +590,7 @@ Ensure the job reuses the same `externalId` on retry so idempotency holds.
 AFFILIATESWARM_API_KEY=swarm_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Retrieve or create keys from the [dashboard settings page](https://affiliateswarm.ai/dashboard/settings). If you need to rotate, create the new key first, deploy it, then revoke the old one.
+Retrieve or create keys from the [dashboard settings page](https://your-deployment.example/dashboard/settings). If you need to rotate, create the new key first, deploy it, then revoke the old one.
 
 ---
 

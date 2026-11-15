@@ -9,11 +9,11 @@ import { TRACKING_PARAM } from "@/lib/brand";
  * discount. Users land directly on the advertiser's site — no redirect
  * through AffiliateSwarm, no short URL.
  *
- * Example: buildTrackingUrl("https://venice.ai/signup", "7xKpQm2N")
- *   → "https://venice.ai/signup?swarm_ref=7xKpQm2N"
+ * Example: buildTrackingUrl("https://example.com/signup", "7xKpQm2N")
+ *   → "https://example.com/signup?swarm_ref=7xKpQm2N"
  *
- * Example: buildTrackingUrl("https://venice.ai/signup", "7xKpQm2N", "SWARM20")
- *   → "https://venice.ai/signup?swarm_ref=7xKpQm2N&promo=SWARM20"
+ * Example: buildTrackingUrl("https://example.com/signup", "7xKpQm2N", "SWARM20")
+ *   → "https://example.com/signup?swarm_ref=7xKpQm2N&promo=SWARM20"
  */
 export function buildTrackingUrl(
   landingUrl: string | null | undefined,

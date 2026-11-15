@@ -8,8 +8,8 @@
 > to the skill file URL, and the test validates the entire journey from first contact.
 >
 > **Skill file URLs:**
-> - Advertiser: `https://affiliateswarm.ai/advertiser/skill.md`
-> - Affiliate: `https://affiliateswarm.ai/affiliate/skill.md`
+> - Advertiser: `https://your-deployment.example/advertiser/skill.md`
+> - Affiliate: `https://your-deployment.example/affiliate/skill.md`
 >
 > **Pre-test setup (done by the human tester, NOT by the agent):**
 > 1. Start a fresh agent session with NO AffiliateSwarm context loaded
@@ -48,7 +48,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 ### Phase 0: Discovery (Entry Point)
 
 **You say:**
-> "I want to get set up on an affiliate marketplace called AffiliateSwarm. Here's their advertiser guide — curl https://affiliateswarm.ai/advertiser/skill.md and follow the instructions to help me get started."
+> "I want to get set up on an affiliate marketplace called AffiliateSwarm. Here's their advertiser guide — curl https://your-deployment.example/advertiser/skill.md and follow the instructions to help me get started."
 
 **PASS criteria:**
 - [ ] Agent fetches and reads the skill file from the URL
@@ -201,7 +201,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 - [ ] Agent calls analytics endpoint for the campaign
 - [ ] Agent presents stats including conversion data and campaign product info
 - [ ] Agent generates login code via `POST /api/v1/auth/login-code`
-- [ ] Agent gives you the 6-character code and `https://affiliateswarm.ai/login` URL
+- [ ] Agent gives you the 6-character code and `https://your-deployment.example/login` URL
 - [ ] Agent mentions the code expires in 5 minutes
 - [ ] Agent does NOT share the API key as a login code
 
@@ -232,7 +232,7 @@ Issues discovered during manual agent testing (2026-03-25). Track resolution sta
 ### Phase 0: Discovery (Entry Point)
 
 **You say:**
-> "I heard about an affiliate marketplace called AffiliateSwarm where I can earn money promoting products. Here's their affiliate guide — curl https://affiliateswarm.ai/affiliate/skill.md and follow the instructions to help me get started."
+> "I heard about an affiliate marketplace called AffiliateSwarm where I can earn money promoting products. Here's their affiliate guide — curl https://your-deployment.example/affiliate/skill.md and follow the instructions to help me get started."
 
 **PASS criteria:**
 - [ ] Agent fetches and reads the skill file from the URL

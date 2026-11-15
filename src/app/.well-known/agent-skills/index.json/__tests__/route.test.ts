@@ -16,7 +16,7 @@ describe("GET /.well-known/agent-skills/index.json", () => {
     );
     expect(body.publisher).toEqual({
       name: "AffiliateSwarm",
-      url: "https://affiliateswarm.ai",
+      url: "https://your-deployment.example",
     });
     expect(body.skills).toHaveLength(2);
 
@@ -25,11 +25,11 @@ describe("GET /.well-known/agent-skills/index.json", () => {
       "swarm-advertiser",
     ]);
     expect(body.skills.map((skill: { url: string }) => skill.url)).toEqual([
-      "https://affiliateswarm.ai/affiliate/skill.md",
-      "https://affiliateswarm.ai/advertiser/skill.md",
+      "https://your-deployment.example/affiliate/skill.md",
+      "https://your-deployment.example/advertiser/skill.md",
     ]);
     expect(body.skills.map((skill: { url: string }) => skill.url)).not.toContain(
-      "https://affiliateswarm.ai/skill.md"
+      "https://your-deployment.example/skill.md"
     );
   });
 

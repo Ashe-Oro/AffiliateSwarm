@@ -41,7 +41,7 @@ npm run redeploy:local && npm test && BASE_URL=http://localhost:3000 npm run smo
 
 ```bash
 # Set your base URL
-BASE_URL="http://localhost:3000"  # or https://affiliateswarm.ai
+BASE_URL="http://localhost:3000"  # or https://your-deployment.example
 ```
 
 ---

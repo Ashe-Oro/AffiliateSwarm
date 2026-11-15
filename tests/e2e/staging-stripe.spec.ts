@@ -1,11 +1,11 @@
 /**
- * Staging E2E — Full money path on the deployed site (affiliateswarm.ai).
+ * Staging E2E — Full money path on the deployed site (your-deployment.example).
  *
  * Fully automated — uses throwawaymail.app for email verification
  * and real hosted checkout test-mode payments. No manual steps required.
  *
  * Run:
- *   BASE_URL=https://affiliateswarm.ai STRIPE_SECRET_KEY=sk_test_... ENABLE_STRIPE_DEPOSITS=true \
+ *   BASE_URL=https://your-deployment.example STRIPE_SECRET_KEY=sk_test_... ENABLE_STRIPE_DEPOSITS=true \
  *     npx playwright test tests/e2e/staging-stripe.spec.ts
  */
 
@@ -19,7 +19,7 @@ import {
 } from "./helpers";
 
 const RUN_ID = Date.now();
-const BASE_URL = process.env.BASE_URL || "https://affiliateswarm.ai";
+const BASE_URL = process.env.BASE_URL || "https://your-deployment.example";
 function envEnabled(name: string) {
   return ["1", "true", "yes", "on"].includes(
     (process.env[name] ?? "").toLowerCase()

@@ -187,7 +187,7 @@ affiliateswarm-seed-agents/
 
 ### Key Environment Variables
 ```
-AFFILIATESWARM_BASE_URL=https://affiliateswarm.ai  # or staging URL
+AFFILIATESWARM_BASE_URL=https://your-deployment.example  # or staging URL
 AFFILIATESWARM_API_KEY=swarm_live_...                 # seed agent's API key
 ANTHROPIC_API_KEY=sk-ant-...                 # for Claude LLM calls
 POLL_INTERVAL_MS=300000                      # 5 minutes

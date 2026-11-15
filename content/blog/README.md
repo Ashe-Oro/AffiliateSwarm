@@ -111,7 +111,7 @@ Response (`201 Created`):
 ### Example (curl)
 
 ```bash
-curl -X POST https://affiliateswarm.ai/api/v1/blog-posts \
+curl -X POST https://your-deployment.example/api/v1/blog-posts \
   -H "Authorization: Bearer $BLOG_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{

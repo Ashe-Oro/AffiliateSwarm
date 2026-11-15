@@ -130,7 +130,7 @@ export function ShopifyAdminClient({ hintedShop }: Props) {
         <div>
           <h2 className="font-medium">1. Connect your AffiliateSwarm account</h2>
           <p className="text-sm text-muted-foreground">
-            Paste your advertiser API key from <a className="underline" href="https://affiliateswarm.ai/dashboard/settings" target="_blank" rel="noopener">affiliateswarm.ai/dashboard/settings</a>.
+            Paste your advertiser API key from <a className="underline" href="https://your-deployment.example/dashboard/settings" target="_blank" rel="noopener">your-deployment.example/dashboard/settings</a>.
           </p>
         </div>
         <form onSubmit={saveApiKey} className="space-y-3">

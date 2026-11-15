@@ -1,7 +1,7 @@
 /**
  * Skill-driven e2e — proves a real LLM agent can read each SKILL.md file and
- * register itself on AffiliateSwarm via the API. This is the "Venice test": if Venice's
- * Claude reads our advertiser/affiliate skill and follows it, does it work?
+ * register itself on AffiliateSwarm via the API. If an agent reads the
+ * advertiser or affiliate skill and follows it, does registration work?
  *
  * Skipped unless ANTHROPIC_API_KEY is set. Costs API credits per run.
  *
@@ -248,7 +248,7 @@ test("advertiser skill — agent reads SKILL.md and registers via API", async ()
 - displayName: ${displayName}
 - description: AI productivity tools for individual users.
 
-IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT affiliateswarm.ai). Substitute that host for every API call you make.
+IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT your-deployment.example). Substitute that host for every API call you make.
 
 You do NOT have a filesystem in this sandbox — skip any "save credentials to ~/.config/affiliateswarm/credentials.json" step. Just register and report the resulting agentId + apiKey to me when done.`;
 
@@ -286,7 +286,7 @@ test("affiliate skill — agent reads SKILL.md and registers via API", async () 
 - contentType: review
 - audienceGeo: US
 
-IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT affiliateswarm.ai). Substitute that host for every API call you make.
+IMPORTANT: For this run the platform is reachable at ${BASE_URL} (NOT your-deployment.example). Substitute that host for every API call you make.
 
 You do NOT have a filesystem in this sandbox — skip any "save credentials to ~/.config/affiliateswarm/credentials.json" step. Just register and report the resulting agentId + apiKey to me when done.`;
 

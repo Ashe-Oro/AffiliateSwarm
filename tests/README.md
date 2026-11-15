@@ -170,7 +170,7 @@ npm run test:e2e:ui    # interactive Playwright dashboard (great for debugging)
 ```bash
 npx tsx tests/seed-test-campaign.ts   # one-time setup
 npx tsx tests/e2e-test.ts             # default: localhost:3099
-npx tsx tests/e2e-test.ts https://affiliateswarm.ai  # against production
+npx tsx tests/e2e-test.ts https://your-deployment.example  # against production
 ```
 
 **What it covers:** Skill files, auth, campaign discovery, affiliate enrollment, click tracking, postback conversions, earnings, analytics, new agent registration, login codes, and error handling.
@@ -226,7 +226,7 @@ Comprehensive curl-based test scripts for manual verification. Useful when you n
 
 **When to use:**
 - Debugging a specific API endpoint
-- Testing against production (`affiliateswarm.ai`)
+- Testing against production (`your-deployment.example`)
 - Verifying a single fix without running the full suite
 - Onboarding — understanding how the API works
 
@@ -446,7 +446,7 @@ Most E2E testing now runs automatically via GitHub Actions on PRs. You only need
 | Just changed service logic | `npm test` |
 | Changed an API route | `npm run smoke:local` |
 | Changed payment rail integration | `npx playwright test full-journey` |
-| Quick check against production | `npx tsx tests/e2e-test.ts https://affiliateswarm.ai` |
+| Quick check against production | `npx tsx tests/e2e-test.ts https://your-deployment.example` |
 | Debugging a single endpoint | Copy the relevant curl from `tests/manual-test-scripts.md` |
 | Docker seems broken | `npm run redeploy:local && npm run smoke:local` |
 | Changed dashboard UI visually | Ask Claude to test via Preview tool, or walk `tests/ui-qa-checklist.md` manually |

@@ -1,8 +1,8 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "fefc89faedc6db5b8ff2f6ac2b7a3c6a"
+client_id = "your-shopify-app-client-id"
 name = "Affiliate Swarm"
-application_url = "https://affiliateswarm.ai"
+application_url = "https://your-deployment.example"
 embedded = true
 
 [build]

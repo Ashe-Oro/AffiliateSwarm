@@ -1070,10 +1070,10 @@ function reportConversion($swarmRef, $orderId, $amountCents) {
             AffiliateSwarm&apos;s affiliate network. Questions? Reach out via
             your dashboard or email{" "}
             <a
-              href="mailto:support@affiliateswarm.ai"
+              href="mailto:support@your-deployment.example"
               className="text-[var(--v2-accent-light)] hover:underline"
             >
-              support@affiliateswarm.ai
+              support@your-deployment.example
             </a>
             .
           </p>

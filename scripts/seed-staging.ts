@@ -48,16 +48,16 @@ interface AdvertiserDef {
 
 const advertisers: AdvertiserDef[] = [
   {
-    name: "Venice AI",
-    description: "Private, uncensored AI platform. Privacy-first generative AI.",
-    website: "https://venice.ai",
+    name: "Example SaaS",
+    description: "Example B2B product used as seed data.",
+    website: "https://example.com",
     campaign: {
-      name: "Venice AI — Pro Subscriptions",
-      description: "Drive paid subscriptions to Venice AI Pro. $15 per signup that converts to a paid plan within 30 days.",
+      name: "Example SaaS — Pro Subscriptions",
+      description: "Example CPA campaign. $15 per signup that converts to a paid plan within 30 days.",
       model: "CPA",
       payoutCents: 1500,
       budgetCents: 5000000,
-      landingUrl: "https://venice.ai/pricing",
+      landingUrl: "https://example.com/pricing",
       categories: ["ai", "privacy", "saas"],
       geoTargets: ["US", "CA", "GB", "DE"],
     },

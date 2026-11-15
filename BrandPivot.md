@@ -7,7 +7,7 @@ Do not treat this as a simple string replacement. The codebase has user-facing b
 ## Target Brand
 
 - Product display name: `AffiliateSwarm`
-- Public domain: `https://affiliateswarm.ai`
+- Public domain: `https://your-deployment.example`
 - Domain in prose: `AffiliateSwarm.ai`
 - Lowercase/internal slug where needed: `affiliateswarm`
 - Affiliate skill name: `swarm-affiliate`
@@ -20,10 +20,10 @@ Do not treat this as a simple string replacement. The codebase has user-facing b
 
 - GitHub repository: `Ashe-Oro/AffiliateSwarm`
 - Hosting platform: Vercel
-- Production domain: `affiliateswarm.ai`
-- Optional canonical redirect: `www.affiliateswarm.ai` -> `affiliateswarm.ai`
-- Production app URL env: `NEXT_PUBLIC_APP_URL=https://affiliateswarm.ai`
-- Production short URL env: `NEXT_PUBLIC_SHORT_URL=https://affiliateswarm.ai`, unless a separate short domain is chosen
+- Production domain: `your-deployment.example`
+- Optional canonical redirect: `www.your-deployment.example` -> `your-deployment.example`
+- Production app URL env: `NEXT_PUBLIC_APP_URL=https://your-deployment.example`
+- Production short URL env: `NEXT_PUBLIC_SHORT_URL=https://your-deployment.example`, unless a separate short domain is chosen
 - Production chain network: `CHAIN_NETWORK=base`
 - Preview/staging chain network: `base-sepolia` or mock CDP, never production CDP against preview data
 - Database: create a fresh AffiliateSwarm production Postgres database
@@ -110,13 +110,13 @@ Suggested constants:
 
 ```ts
 export const PRODUCT_NAME = "AffiliateSwarm";
-export const PRODUCT_DOMAIN = "affiliateswarm.ai";
-export const DEFAULT_APP_URL = "https://affiliateswarm.ai";
-export const SUPPORT_EMAIL = "support@affiliateswarm.ai";
-export const LEGAL_EMAIL = "legal@affiliateswarm.ai";
-export const PRIVACY_EMAIL = "privacy@affiliateswarm.ai";
-export const NOREPLY_EMAIL = "noreply@affiliateswarm.ai";
-export const FROM_EMAIL = "AffiliateSwarm <noreply@affiliateswarm.ai>";
+export const PRODUCT_DOMAIN = "your-deployment.example";
+export const DEFAULT_APP_URL = "https://your-deployment.example";
+export const SUPPORT_EMAIL = "support@your-deployment.example";
+export const LEGAL_EMAIL = "legal@your-deployment.example";
+export const PRIVACY_EMAIL = "privacy@your-deployment.example";
+export const NOREPLY_EMAIL = "noreply@your-deployment.example";
+export const FROM_EMAIL = "AffiliateSwarm <noreply@your-deployment.example>";
 export const TRACKING_PARAM = "swarm_ref";
 export const API_KEY_PREFIX = "swarm_live_";
 export const TEST_API_KEY_PREFIX = "swarm_test_";
@@ -138,7 +138,7 @@ next.config.ts
 
 ## Visible Product Rebrand
 
-Replace user-facing `Regatta` with `AffiliateSwarm` and `regatta.network` with `affiliateswarm.ai`.
+Replace user-facing `Regatta` with `AffiliateSwarm` and `regatta.network` with `your-deployment.example`.
 
 Primary files and areas:
 
@@ -179,7 +179,7 @@ Be careful with CSS class names such as `.regatta-prose`. If they are purely int
 
 ## Domain, SEO, And Public Discovery
 
-Update public URLs and generated metadata to use `https://affiliateswarm.ai`.
+Update public URLs and generated metadata to use `https://your-deployment.example`.
 
 Important files:
 
@@ -201,13 +201,13 @@ src/app/.well-known/agent-skills/index.json/__tests__/route.test.ts
 Expected generated/public values:
 
 ```txt
-https://affiliateswarm.ai
-https://affiliateswarm.ai/docs/api
-https://affiliateswarm.ai/api/health
-https://affiliateswarm.ai/.well-known/api-catalog
-https://affiliateswarm.ai/.well-known/agent-skills/index.json
-https://affiliateswarm.ai/affiliate/skill.md
-https://affiliateswarm.ai/advertiser/skill.md
+https://your-deployment.example
+https://your-deployment.example/docs/api
+https://your-deployment.example/api/health
+https://your-deployment.example/.well-known/api-catalog
+https://your-deployment.example/.well-known/agent-skills/index.json
+https://your-deployment.example/affiliate/skill.md
+https://your-deployment.example/advertiser/skill.md
 ```
 
 Publisher metadata should become:
@@ -215,7 +215,7 @@ Publisher metadata should become:
 ```json
 {
   "name": "AffiliateSwarm",
-  "url": "https://affiliateswarm.ai"
+  "url": "https://your-deployment.example"
 }
 ```
 
@@ -234,22 +234,22 @@ Update `skills/swarm-affiliate/SKILL.md` frontmatter:
 
 ```yaml
 name: swarm-affiliate
-description: Register as an affiliate on the AffiliateSwarm marketplace (affiliateswarm.ai), discover and apply to campaigns, submit leads, track commissions through the holding period, and request USDC payouts on Base.
+description: Register as an affiliate on the AffiliateSwarm marketplace (your-deployment.example), discover and apply to campaigns, submit leads, track commissions through the holding period, and request USDC payouts on Base.
 ```
 
 Update `skills/swarm-advertiser/SKILL.md` frontmatter:
 
 ```yaml
 name: swarm-advertiser
-description: Register an advertiser on the AffiliateSwarm affiliate marketplace (affiliateswarm.ai), create flat-fee or percent-of-sale campaigns, fund a wallet, confirm postback tracking, and manage affiliate applications.
+description: Register an advertiser on the AffiliateSwarm affiliate marketplace (your-deployment.example), create flat-fee or percent-of-sale campaigns, fund a wallet, confirm postback tracking, and manage affiliate applications.
 ```
 
 Update all skill content:
 
 ```txt
 Regatta -> AffiliateSwarm
-regatta.network -> affiliateswarm.ai
-https://regatta.network/api/v1 -> https://affiliateswarm.ai/api/v1
+regatta.network -> your-deployment.example
+https://regatta.network/api/v1 -> https://your-deployment.example/api/v1
 ~/.config/regatta -> ~/.config/affiliateswarm
 regatta-affiliate -> swarm-affiliate
 regatta-advertiser -> swarm-advertiser
@@ -292,7 +292,7 @@ Update tests expecting:
 ```txt
 regatta-affiliate -> swarm-affiliate
 regatta-advertiser -> swarm-advertiser
-https://regatta.network/... -> https://affiliateswarm.ai/...
+https://regatta.network/... -> https://your-deployment.example/...
 ```
 
 ## Emails And Legal Pages
@@ -313,16 +313,16 @@ Replace:
 
 ```txt
 Regatta <noreply@regatta.network>
--> AffiliateSwarm <noreply@affiliateswarm.ai>
+-> AffiliateSwarm <noreply@your-deployment.example>
 
 privacy@regatta.network
--> privacy@affiliateswarm.ai
+-> privacy@your-deployment.example
 
 legal@regatta.network
--> legal@affiliateswarm.ai
+-> legal@your-deployment.example
 
 support@regatta.network
--> support@affiliateswarm.ai
+-> support@your-deployment.example
 ```
 
 Email bodies should say `Welcome to AffiliateSwarm`, `AffiliateSwarm dashboard`, and `The AffiliateSwarm team`.
@@ -532,7 +532,7 @@ Update references:
 ```txt
 Regatta advertiser account -> AffiliateSwarm advertiser account
 Grow Regatta -> decommissioned platform growth campaign
-https://regatta.network -> https://affiliateswarm.ai
+https://regatta.network -> https://your-deployment.example
 https://regatta.network/logo.png -> new AffiliateSwarm logo URL
 ```
 
@@ -637,15 +637,15 @@ Production branch: master, or the chosen release branch for the new repo
 Domain setup:
 
 ```txt
-affiliateswarm.ai -> Vercel production deployment
-www.affiliateswarm.ai -> redirect to affiliateswarm.ai, unless marketing wants www canonical
+your-deployment.example -> Vercel production deployment
+www.your-deployment.example -> redirect to your-deployment.example, unless marketing wants www canonical
 ```
 
 DNS setup depends on the registrar, but the usual Vercel shape is:
 
 ```txt
-A record for apex affiliateswarm.ai -> Vercel's apex IP
-CNAME for www.affiliateswarm.ai -> cname.vercel-dns.com
+A record for apex your-deployment.example -> Vercel's apex IP
+CNAME for www.your-deployment.example -> cname.vercel-dns.com
 ```
 
 Use the exact records Vercel shows for the project. Do not guess if Vercel gives different instructions.
@@ -654,7 +654,7 @@ Old-domain handling:
 
 - There is no old-domain migration for this plan.
 - Do not spend launch time preserving `regatta.network` redirects.
-- If stale code/docs mention `regatta.network`, update them to `affiliateswarm.ai` unless they are explicitly historical.
+- If stale code/docs mention `regatta.network`, update them to `your-deployment.example` unless they are explicitly historical.
 
 Vercel crons are declared in `vercel.json`:
 
@@ -688,8 +688,8 @@ Core app:
 
 ```txt
 DATABASE_URL
-NEXT_PUBLIC_APP_URL=https://affiliateswarm.ai
-NEXT_PUBLIC_SHORT_URL=https://affiliateswarm.ai
+NEXT_PUBLIC_APP_URL=https://your-deployment.example
+NEXT_PUBLIC_SHORT_URL=https://your-deployment.example
 NODE_ENV=production
 HMAC_ENCRYPTION_KEY
 ADMIN_SECRET
@@ -737,7 +737,7 @@ Because this is a fresh deployment, generate new values for every secret and do 
 - Generate a new `CRON_SECRET`.
 - Generate new CDP credentials and `CDP_WALLET_SECRET`.
 - Keep card/bank processor credentials unset until that rail is explicitly enabled.
-- Generate or configure new Resend/domain credentials for `affiliateswarm.ai`.
+- Generate or configure new Resend/domain credentials for `your-deployment.example`.
 
 Old `REGATTA_*` fallbacks should not be needed outside removed MCP server and SDK paths. Prefer documenting and setting new `AFFILIATESWARM_*` names only.
 
@@ -921,13 +921,13 @@ Card/bank rail:
 
 - Leave processor credentials unset until this rail is explicitly enabled.
 - Keep webhook configuration disabled while Base USDC is the only live funding and payout rail.
-- Verify success/cancel URLs use `affiliateswarm.ai` before enabling this rail later.
+- Verify success/cancel URLs use `your-deployment.example` before enabling this rail later.
 
 Resend/email:
 
-- Verify `affiliateswarm.ai` is added and DNS-verified in Resend, or whichever email provider is used.
+- Verify `your-deployment.example` is added and DNS-verified in Resend, or whichever email provider is used.
 - Set SPF/DKIM/DMARC records for the new domain.
-- Confirm emails can send from `noreply@affiliateswarm.ai`.
+- Confirm emails can send from `noreply@your-deployment.example`.
 
 ### Fresh Production Launch Runbook
 
@@ -950,7 +950,7 @@ Recommended runbook for the fresh AffiliateSwarm deployment:
 15. Verify a new API key can be generated and used.
 16. Verify CDP creates a new test deposit address in the intended environment.
 17. Verify Base USDC deposit detection and Resend domain.
-18. Add/verify Vercel domains for `affiliateswarm.ai`.
+18. Add/verify Vercel domains for `your-deployment.example`.
 19. Enable/monitor AffiliateSwarm crons.
 20. Watch logs for `detect-deposits`, `sweep`, `process-holds`, `process-payouts`, and `email-retry-sweep`.
 
@@ -978,7 +978,7 @@ src/app/(marketing)/docs/**
 Update live examples:
 
 ```txt
-https://regatta.network -> https://affiliateswarm.ai
+https://regatta.network -> https://your-deployment.example
 Regatta -> AffiliateSwarm
 ~/.config/regatta -> ~/.config/affiliateswarm
 regatta-affiliate -> swarm-affiliate
@@ -1031,7 +1031,7 @@ tests/**
 Update assertions for:
 
 - `Regatta` -> `AffiliateSwarm`
-- `regatta.network` -> `affiliateswarm.ai`
+- `regatta.network` -> `your-deployment.example`
 - `regatta-affiliate` -> `swarm-affiliate`
 - `regatta-advertiser` -> `swarm-advertiser`
 - `~/.config/regatta` -> `~/.config/affiliateswarm`
@@ -1107,10 +1107,10 @@ rg -n --hidden \
 The migration is complete when:
 
 - User-facing app UI says `AffiliateSwarm`.
-- Public domain defaults use `https://affiliateswarm.ai`.
+- Public domain defaults use `https://your-deployment.example`.
 - Metadata, OpenGraph, Twitter cards, sitemap, robots, blog feed, API catalog, and agent skill index use AffiliateSwarm branding.
-- Emails come from `AffiliateSwarm <noreply@affiliateswarm.ai>`.
-- Legal/privacy/support emails use `affiliateswarm.ai`.
+- Emails come from `AffiliateSwarm <noreply@your-deployment.example>`.
+- Legal/privacy/support emails use `your-deployment.example`.
 - Public skill index publishes `swarm-affiliate` and `swarm-advertiser`.
 - Skill files live under `skills/swarm-affiliate` and `skills/swarm-advertiser`.
 - Skill docs use `~/.config/affiliateswarm`.
@@ -1127,7 +1127,7 @@ The migration is complete when:
 - Fresh production secrets are created by the operator and stored in Vercel, not committed.
 - Fresh Coinbase CDP credentials, wallet secret, Base RPC URL, and mainnet paymaster URL are configured.
 - Base USDC funding and payout flows are verified, and optional card/bank processor webhooks remain disabled until explicitly enabled.
-- Resend/email sending is verified for `noreply@affiliateswarm.ai`.
+- Resend/email sending is verified for `noreply@your-deployment.example`.
 - Tests, lint, and build pass.
 - Final stale-reference search has only intentional historical/ignored hits.
 
@@ -1140,4 +1140,4 @@ The migration is complete when:
 - Decommission MCP server onboarding and the legacy SDK source for this pass.
 - Use `swarm_ref`, `swarm_live_`, `swarm_test_`, `AFFILIATESWARM_*`, `X-AffiliateSwarm-*`, and `affiliateswarm_*` cookies.
 - The operator will create all production secrets manually; never commit secrets.
-- The most important new names are `AffiliateSwarm`, `affiliateswarm.ai`, `swarm-affiliate`, and `swarm-advertiser`.
+- The most important new names are `AffiliateSwarm`, `your-deployment.example`, `swarm-affiliate`, and `swarm-advertiser`.

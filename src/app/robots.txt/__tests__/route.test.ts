@@ -17,6 +17,6 @@ describe("GET /robots.txt", () => {
     expect(body).toContain("User-agent: OAI-SearchBot");
     expect(body).toContain("User-agent: Claude-Web");
     expect(body).toContain("User-agent: Google-Extended");
-    expect(body).toContain("Sitemap: https://affiliateswarm.ai/sitemap.xml");
+    expect(body).toContain("Sitemap: https://your-deployment.example/sitemap.xml");
   });
 });
