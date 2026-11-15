@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendPayout, recoverStuckPayout } from "@/services/chain.service";
 import { processAchPayout } from "@/services/stripe.service";
 import { cancelBankTransferPayoutForDisabledRail } from "@/services/escrow.service";
-import { getResend, FROM } from "@/lib/email";
+import { getResend, getFromAddress } from "@/lib/email";
 import { ENABLE_STRIPE_WITHDRAWALS } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 
@@ -189,7 +189,7 @@ async function sendAdminAlert(params: {
   }
   try {
     await resend.emails.send({
-      from: FROM,
+      from: getFromAddress(),
       to,
       subject: params.subject,
       html: `<pre style="font-family: monospace; font-size: 12px;">${JSON.stringify(

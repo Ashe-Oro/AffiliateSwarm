@@ -20,7 +20,8 @@ vi.mock("@/lib/logger", () => ({
   },
 }));
 
-import { sendOnboardingEmail, sendWithRetry, RETRY_DELAYS_MS } from "@/lib/email";
+import { getFromAddress, sendOnboardingEmail, sendWithRetry, RETRY_DELAYS_MS } from "@/lib/email";
+import { FROM_EMAIL } from "@/lib/brand";
 import { logger } from "@/lib/logger";
 
 const CONTEXT = { operation: "test send", to: "test@example.com" };
@@ -198,5 +199,25 @@ describe("sendOnboardingEmail", () => {
     expect(payload.html).toContain(
       "Start earning commissions on every conversion"
     );
+  });
+});
+
+describe("getFromAddress", () => {
+  const original = process.env.EMAIL_FROM;
+
+  afterEach(() => {
+    if (original === undefined) delete process.env.EMAIL_FROM;
+    else process.env.EMAIL_FROM = original;
+  });
+
+  it("uses the placeholder until EMAIL_FROM is set", () => {
+    delete process.env.EMAIL_FROM;
+    expect(getFromAddress()).toBe(FROM_EMAIL);
+    expect(FROM_EMAIL).toContain("noreply@your-deployment.example");
+  });
+
+  it("reads EMAIL_FROM at send time", () => {
+    process.env.EMAIL_FROM = "  AffiliateSwarm <noreply@operator.example>  ";
+    expect(getFromAddress()).toBe("AffiliateSwarm <noreply@operator.example>");
   });
 });

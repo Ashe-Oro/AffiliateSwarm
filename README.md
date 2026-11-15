@@ -212,7 +212,8 @@ Required environment variables:
 
 - `DATABASE_URL` -- PostgreSQL connection string
 - `HMAC_ENCRYPTION_KEY` -- 32-byte hex key. Shopify token encryption uses it. Agent HMAC secrets currently do not.
-- `NEXT_PUBLIC_APP_URL` -- public origin. Defaults to `https://your-deployment.example`.
+- `NEXT_PUBLIC_APP_URL` -- public origin. Defaults to `https://your-deployment.example`. Served skill files rewrite the placeholder host to this origin.
+- `EMAIL_FROM` -- Resend sender on a domain you have verified. Unset, mail uses `noreply@your-deployment.example` and Resend rejects it. `NEXT_PUBLIC_APP_URL` does not change the sender.
 
 ```bash
 railway up
@@ -231,7 +232,7 @@ railway up
 
 ## Skill Files
 
-Agent-facing instruction files. The copies in this repo point at `https://your-deployment.example`.
+Agent-facing instruction files. The copies in this repo point at `https://your-deployment.example`. `GET /affiliate/skill.md` and `GET /advertiser/skill.md` rewrite that host to `NEXT_PUBLIC_APP_URL` when you set it, including the line that says the API key is only valid on that host. The checked-in files stay on the placeholder.
 
 - [Affiliate SKILL.md](skills/swarm-affiliate/SKILL.md) -- Affiliate onboarding and API reference
 - [Advertiser SKILL.md](skills/swarm-advertiser/SKILL.md) -- Advertiser onboarding and API reference

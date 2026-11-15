@@ -73,6 +73,24 @@ export function readAgentSkillContent(slug: AgentSkillSlug): string {
   return content;
 }
 
+/**
+ * Checked-in skill files use the placeholder origin. When a deployment sets
+ * NEXT_PUBLIC_APP_URL, the served copy and its content hash use that origin
+ * instead, including the "this key is only valid on this host" instruction.
+ */
+export function renderAgentSkillContent(
+  slug: AgentSkillSlug,
+  baseUrl = process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_URL
+): string {
+  const origin = normalizeBaseUrl(baseUrl);
+  const raw = readAgentSkillContent(slug);
+  if (origin === DEFAULT_APP_URL) return raw;
+
+  const host = new URL(origin).host;
+  const placeholderHost = new URL(DEFAULT_APP_URL).host;
+  return raw.split(DEFAULT_APP_URL).join(origin).split(placeholderHost).join(host);
+}
+
 export function sha256Hex(content: string): string {
   return createHash("sha256").update(content, "utf8").digest("hex");
 }
@@ -87,7 +105,7 @@ export function getAgentSkillsIndex(baseUrl = process.env.NEXT_PUBLIC_APP_URL ||
       url: normalizedBaseUrl,
     },
     skills: agentSkillDefinitions.map((definition) => {
-      const content = readAgentSkillContent(definition.slug);
+      const content = renderAgentSkillContent(definition.slug, normalizedBaseUrl);
 
       return {
         name: definition.name,

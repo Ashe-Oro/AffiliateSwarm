@@ -22,6 +22,7 @@ vi.mock("@/services/escrow.service", () => ({
 const mockResendSend = vi.fn();
 vi.mock("@/lib/email", () => ({
   getResend: () => ({ emails: { send: mockResendSend } }),
+  getFromAddress: () => "test@example.com",
   FROM: "test@example.com",
 }));
 

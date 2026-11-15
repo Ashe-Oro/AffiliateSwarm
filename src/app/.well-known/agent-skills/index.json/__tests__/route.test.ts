@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { readAgentSkillContent, sha256Hex } from "@/lib/agent-skills";
+import { renderAgentSkillContent, sha256Hex } from "@/lib/agent-skills";
 import { GET } from "../route";
 
 describe("GET /.well-known/agent-skills/index.json", () => {
@@ -44,10 +44,10 @@ describe("GET /.well-known/agent-skills/index.json", () => {
     );
 
     expect(skills["swarm-affiliate"]).toBe(
-      sha256Hex(readAgentSkillContent("affiliate"))
+      sha256Hex(renderAgentSkillContent("affiliate"))
     );
     expect(skills["swarm-advertiser"]).toBe(
-      sha256Hex(readAgentSkillContent("advertiser"))
+      sha256Hex(renderAgentSkillContent("advertiser"))
     );
     expect(skills["swarm-affiliate"]).toMatch(/^[a-f0-9]{64}$/);
     expect(skills["swarm-advertiser"]).toMatch(/^[a-f0-9]{64}$/);
